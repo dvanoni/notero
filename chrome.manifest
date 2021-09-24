@@ -1,0 +1,5 @@
+content	notero				content/
+locale	notero	en-US		locale/en-US/
+skin	notero	default		skin/
+
+overlay	chrome://zotero/content/zoteroPane.xul	chrome://notero/content/notero.xul

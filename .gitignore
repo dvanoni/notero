@@ -1,0 +1,15 @@
+build
+gen
+node_modules
+.env
+.eslintcache
+profile.json
+*~
+*.cache
+*.debug
+*.js.map
+*.log
+*.status
+*.swp
+*.tmp
+*.xpi

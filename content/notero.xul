@@ -10,6 +10,13 @@
   <stringbundleset>
     <stringbundle id="notero-strings" src="chrome://notero/locale/notero.properties"/>
   </stringbundleset>
+  <menupopup id="menu_ToolsPopup">
+    <menuitem
+      id="notero-preferences"
+      label="&notero.preferences.title;"
+      oncommand="Zotero.Notero.openPreferences();"
+    />
+  </menupopup>
 
 	<!-- Include the main extension logic -->
   <script src="chrome://zotero/content/include.js"/>

@@ -10,20 +10,9 @@
     "preserveConstEnums": false,
     "sourceMap": false,
     "downlevelIteration": true,
-    "lib": [ "es2017", "dom" ],
-    "typeRoots": [
-      "./typings",
-      "./node_modules/@types"
-    ]
+    "lib": ["es2017", "dom"],
+    "typeRoots": ["./typings", "./node_modules/@types"]
   },
-  "include": [
-    "content/**/*",
-    "resource/**/*",
-    "*.ts"
-  ],
-  "exclude": [
-    "node_modules",
-    "**/*.spec.ts",
-    "typings"
-  ]
+  "include": ["content/**/*", "resource/**/*", "typings/**/*", "*.ts"],
+  "exclude": ["node_modules", "**/*.spec.ts"]
 }

@@ -25,6 +25,17 @@ class Notero {
 
     this.strings = globals.document.getElementById('notero-strings');
   }
+
+  public openPreferences() {
+    window.openDialog(
+      'chrome://notero/content/preferences.xul',
+      'notero-preferences'
+    );
+  }
+
+  private getPref(pref): unknown {
+    return Zotero.Prefs.get(`extensions.notero.${pref}`, true);
+  }
 }
 
 Zotero.Notero = new Notero();

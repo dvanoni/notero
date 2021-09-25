@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://zotero-platform/content/preferences.css"?>
+<!DOCTYPE prefwindow SYSTEM "chrome://notero/locale/notero.dtd">
+
+<prefwindow
+  id="notero-prefwindow"
+  title="&notero.preferences.title;"
+  xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+>
+  <prefpane id="notero-prefpane" style="width: 500px;">
+    <preferences>
+      <preference id="pref-collectionName" name="extensions.notero.collectionName" type="string" />
+      <preference id="pref-notionToken" name="extensions.notero.notionToken" type="string" />
+      <preference id="pref-notionDatabaseID" name="extensions.notero.notionDatabaseID" type="string" />
+    </preferences>
+
+    <label id="notero-collectionName-label" value="&notero.preferences.collectionName;" control="notero-collectionName" />
+    <textbox id="notero-collectionName" preference="pref-collectionName" />
+    <separator />
+
+    <label id="notero-notionToken-label" value="&notero.preferences.notionToken;" control="notero-notionToken" />
+    <textbox id="notero-notionToken" preference="pref-notionToken" />
+    <separator />
+
+    <label id="notero-notionDatabaseID-label" value="&notero.preferences.notionDatabaseID;" control="notero-notionDatabaseID" />
+    <textbox id="notero-notionDatabaseID" preference="pref-notionDatabaseID" />
+    <separator />
+  </prefpane>
+</prefwindow>

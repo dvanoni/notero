@@ -1,1 +1,5 @@
-<!ENTITY zotero.notero "Adds Zotero items into a Notion database">
+<!ENTITY notero "Adds Zotero items into a Notion database">
+<!ENTITY notero.preferences.title "Notero Preferences">
+<!ENTITY notero.preferences.collectionName "Collection Name">
+<!ENTITY notero.preferences.notionToken "Notion Integration Token">
+<!ENTITY notero.preferences.notionDatabaseID "Notion Database ID">

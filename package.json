@@ -4,6 +4,7 @@
   "description": "Adds Zotero items into a Notion database",
   "scripts": {
     "lint": "eslint . --ext .ts --cache --cache-location .eslintcache/",
+    "start": "zotero-start",
     "prebuild": "npm run lint",
     "build": "tsc --noEmit && node esbuild.js",
     "postbuild": "zotero-plugin-zipup build notero",
@@ -40,7 +41,6 @@
   "xpi": {
     "name": "Notero",
     "updateLink": "https://github.com/dvanoni/notero/releases/download/v{version}/notero-{version}.xpi",
-    "releaseURL": "https://github.com/dvanoni/notero/releases/download/release/",
-    "bootstrapped": true
+    "releaseURL": "https://github.com/dvanoni/notero/releases/download/release/"
   }
 }

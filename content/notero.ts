@@ -1,4 +1,5 @@
-import { NoteroItem, NoteroPref } from './types';
+import { NoteroPref } from './types';
+import NoteroItem from './notero-item';
 import Notion from './notion';
 
 const monkey_patch_marker = 'NoteroMonkeyPatched';
@@ -91,23 +92,6 @@ class Notero {
     void this.saveItemsToNotion(items);
   }
 
-  private getNoteroItem(item: Zotero.Item): NoteroItem {
-    const authors = item
-      .getCreators()
-      .map(({ firstName, lastName }) => `${lastName}, ${firstName}`);
-    const year = Number.parseInt(item.getField('year') || '');
-
-    return {
-      authors,
-      doi: item.getField('DOI') || null,
-      itemType: Zotero.ItemTypes.getLocalizedString(item.itemTypeID),
-      title: item.getDisplayTitle(),
-      url: item.getField('url') || null,
-      year: Number.isNaN(year) ? null : year,
-      zoteroURI: Zotero.URI.getItemURI(item),
-    };
-  }
-
   private getNotion() {
     const authToken = this.getPref(NoteroPref.notionToken);
     const databaseID = this.getPref(NoteroPref.notionDatabaseID);
@@ -141,7 +125,7 @@ class Notero {
       let step = 0;
 
       for (const item of items) {
-        await notion.addItemToDatabase(this.getNoteroItem(item));
+        await notion.addItemToDatabase(new NoteroItem(item));
         item.addTag('notion');
         await item.saveTx();
 

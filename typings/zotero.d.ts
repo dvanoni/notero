@@ -122,6 +122,34 @@ declare namespace Zotero {
     type Value = boolean | number | string | undefined;
   }
 
+  interface QuickCopy {
+    /**
+     * Get text and (when applicable) HTML content from items
+     *
+     * @param items an array of Zotero.Item objects
+     *
+     * @param format may be a Quick Copy format string
+     * (e.g. "bibliography=http://www.zotero.org/styles/apa")
+     * or a Quick Copy format object
+     *
+     * @param callback is only necessary if using an export format and should be
+     * a function suitable for Zotero.Translate.setHandler, taking parameters
+     * `obj` and `worked`. The generated content should be placed in `obj.string`
+     * and `worked` should be true if the operation is successful.
+     *
+     * @param modified if true, copy citations instead of bibliographies
+     *
+     * If bibliography format, the process is synchronous and an object
+     * containing properties `text` and `html` is returned.
+     */
+    getContentFromItems(
+      items: [Item],
+      format: string,
+      callback?: (obj: { string: string }, worked: boolean) => void,
+      modified?: boolean
+    ): { html: string; text: string };
+  }
+
   interface URI {
     getItemURI(item: Item): string;
   }
@@ -133,6 +161,7 @@ declare const Zotero: {
   ItemTypes: Zotero.ItemTypes;
   Notifier: Zotero.Notifier;
   Prefs: Zotero.Prefs;
+  QuickCopy: Zotero.QuickCopy;
   URI: Zotero.URI;
 
   /** Display an alert in a given window */

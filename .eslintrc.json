@@ -146,7 +146,8 @@
       {
         "objects": "always-multiline",
         "arrays": "always-multiline",
-        "functions": "never"
+        "functions": "never",
+        "imports": "always-multiline"
       }
     ],
     "complexity": "off",

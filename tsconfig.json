@@ -4,6 +4,7 @@
     "target": "es2017",
     "disableSizeLimit": true,
     "module": "commonjs",
+    "strict": true,
     "noImplicitAny": false,
     "esModuleInterop": true,
     "removeComments": false,

@@ -1,6 +1,3 @@
-declare const Zotero: any;
-// declare const Components: any
-
 const monkey_patch_marker = 'NoteroMonkeyPatched';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars

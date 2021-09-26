@@ -1,4 +1,21 @@
 declare namespace Zotero {
+  interface Attachments {
+    /**
+     * Create a link attachment from a URL.
+     *
+     * @param options.saveOptions Options to pass to Zotero.Item::save()
+     * @return A promise for the created attachment item
+     */
+    linkFromURL(options: {
+      url: string;
+      parentItemID: number;
+      contentType?: string;
+      title?: string;
+      collections?: (number | string)[];
+      saveOptions?: DataObject.SaveOptions;
+    }): Promise<Zotero.Item>;
+  }
+
   interface Collection extends DataObject {
     name: string;
   }
@@ -156,6 +173,7 @@ declare namespace Zotero {
 }
 
 declare const Zotero: {
+  Attachments: Zotero.Attachments;
   Collections: Zotero.Collections;
   Items: Zotero.Items;
   ItemTypes: Zotero.ItemTypes;

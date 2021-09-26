@@ -30,6 +30,10 @@ export default class Notion {
     );
   };
 
+  static convertWebURLToLocal(url: string): string {
+    return url.replace(/^https/, 'notion');
+  }
+
   public constructor(authToken: string, databaseID: string) {
     this.client = new Client({
       auth: authToken,

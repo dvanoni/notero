@@ -125,9 +125,7 @@ class Notero {
       let step = 0;
 
       for (const item of items) {
-        await notion.addItemToDatabase(new NoteroItem(item));
-        item.addTag('notion');
-        await item.saveTx();
+        await this.saveItemToNotion(item, notion);
 
         Zotero.updateZoteroPaneProgressMeter(
           (++step / items.length) * PERCENTAGE_MULTIPLIER
@@ -138,6 +136,19 @@ class Notero {
     } finally {
       Zotero.hideZoteroPaneOverlays();
     }
+  }
+
+  private async saveItemToNotion(item: Zotero.Item, notion: Notion) {
+    const response = await notion.addItemToDatabase(new NoteroItem(item));
+
+    item.addTag('notion');
+    await item.saveTx();
+
+    await Zotero.Attachments.linkFromURL({
+      url: Notion.convertWebURLToLocal(response.url),
+      parentItemID: item.id,
+      title: 'Notion',
+    });
   }
 }
 

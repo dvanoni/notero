@@ -13,7 +13,6 @@ function patch(object, method, patcher) {
 class Notero {
   private initialized = false;
   private globals!: Record<string, any>;
-  private notion?: Notion;
 
   private stringBundle = Services.strings.createBundle(
     'chrome://notero/locale/notero.properties'
@@ -39,15 +38,6 @@ class Notero {
       },
       false
     );
-
-    const notionToken = this.getPref(NoteroPref.notionToken);
-    const databaseID = this.getPref(NoteroPref.notionDatabaseID);
-
-    if (typeof notionToken !== 'string' || typeof databaseID !== 'string') {
-      return;
-    }
-
-    this.notion = new Notion(notionToken, databaseID);
   }
 
   private notifierCallback = {
@@ -118,18 +108,51 @@ class Notero {
     };
   }
 
+  private getNotion() {
+    const authToken = this.getPref(NoteroPref.notionToken);
+    const databaseID = this.getPref(NoteroPref.notionDatabaseID);
+
+    if (typeof authToken !== 'string' || !authToken) {
+      throw new Error(
+        `Missing ${this.getLocalizedString(NoteroPref.notionToken)}`
+      );
+    }
+
+    if (typeof databaseID !== 'string' || !databaseID) {
+      throw new Error(
+        `Missing ${this.getLocalizedString(NoteroPref.notionDatabaseID)}`
+      );
+    }
+
+    return new Notion(authToken, databaseID);
+  }
+
   private async saveItemsToNotion(items: Zotero.Item[]) {
+    const PERCENTAGE_MULTIPLIER = 100;
+
     try {
-      if (!this.notion) {
-        throw new Error('Notion client not initialized');
-      }
+      const notion = this.getNotion();
+
+      const itemsText = items.length === 1 ? 'item' : 'items';
+      Zotero.showZoteroPaneProgressMeter(
+        `Saving ${items.length} ${itemsText} to Notion...`
+      );
+
+      let step = 0;
+
       for (const item of items) {
-        await this.notion.addItemToDatabase(this.getNoteroItem(item));
-        item.addTag('notero');
+        await notion.addItemToDatabase(this.getNoteroItem(item));
+        item.addTag('notion');
         await item.saveTx();
+
+        Zotero.updateZoteroPaneProgressMeter(
+          (++step / items.length) * PERCENTAGE_MULTIPLIER
+        );
       }
     } catch (error) {
       Zotero.alert(window, 'Failed to save item(s) to Notion', String(error));
+    } finally {
+      Zotero.hideZoteroPaneOverlays();
     }
   }
 }

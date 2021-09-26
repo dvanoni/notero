@@ -8,9 +8,8 @@ function patch(object, method, patcher) {
 }
 
 class Notero {
-  // tslint:disable-line:variable-name
   private initialized = false;
-  private globals: Record<string, any>;
+  private globals!: Record<string, any>;
   private strings: any;
 
   private notifierCallback = {
@@ -23,13 +22,14 @@ class Notero {
       if (event !== 'add' || type !== 'collection-item') return;
 
       const collectionName = this.getPref('collectionName');
+      if (!collectionName) return;
 
       ids.forEach((collectionItem: string) => {
-        const [collectionID, itemID] = collectionItem.split('-');
+        const [collectionID, itemID] = collectionItem.split('-').map(Number);
         const collection = Zotero.Collections.get(collectionID);
 
-        if (collection.name === collectionName) {
-          this.onItemAddedToCollection(itemID);
+        if (collection?.name === collectionName) {
+          this.onAddItemToCollection(itemID);
         }
       });
     },
@@ -50,7 +50,6 @@ class Notero {
       'notero'
     );
 
-    // Unregister callback when the window closes
     window.addEventListener(
       'unload',
       () => {
@@ -67,17 +66,28 @@ class Notero {
     );
   }
 
-  private getPref(pref): unknown {
+  private getPref(pref: string) {
     return Zotero.Prefs.get(`extensions.notero.${pref}`, true);
   }
 
-  private onItemAddedToCollection(itemID: string) {
-    window.alert(`added ${itemID}`);
-
+  private onAddItemToCollection(itemID: number) {
     const item = Zotero.Items.get(itemID);
 
-    Zotero.debug(`Item URI: zotero://select/library/items/${item.key}`);
+    if (!item || !item.isRegularItem()) return;
+
+    Zotero.log(JSON.stringify(this.getItemFields(item)));
+  }
+
+  private getItemFields(item: Zotero.Item) {
+    return {
+      doi: item.getField('DOI'),
+      itemType: Zotero.ItemTypes.getLocalizedString(item.itemTypeID),
+      itemURI: `zotero://select/library/items/${item.key}`,
+      title: item.getDisplayTitle(),
+      url: item.getField('url'),
+      year: item.getField('year'),
+    };
   }
 }
 
-Zotero.Notero = new Notero();
+(Zotero as any).Notero = new Notero();

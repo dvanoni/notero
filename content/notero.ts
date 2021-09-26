@@ -1,3 +1,6 @@
+import { NoteroItem, NoteroPref } from './types';
+import Notion from './notion';
+
 const monkey_patch_marker = 'NoteroMonkeyPatched';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -11,29 +14,7 @@ class Notero {
   private initialized = false;
   private globals!: Record<string, any>;
   private strings: any;
-
-  private notifierCallback = {
-    notify: (
-      event: string,
-      type: string,
-      ids: string[],
-      _: Record<string, unknown>
-    ) => {
-      if (event !== 'add' || type !== 'collection-item') return;
-
-      const collectionName = this.getPref('collectionName');
-      if (!collectionName) return;
-
-      ids.forEach((collectionItem: string) => {
-        const [collectionID, itemID] = collectionItem.split('-').map(Number);
-        const collection = Zotero.Collections.get(collectionID);
-
-        if (collection?.name === collectionName) {
-          this.onAddItemToCollection(itemID);
-        }
-      });
-    },
-  };
+  private notion?: Notion;
 
   // eslint-disable-next-line @typescript-eslint/require-await
   public async load(globals: Record<string, any>) {
@@ -57,7 +38,43 @@ class Notero {
       },
       false
     );
+
+    const notionToken = this.getPref(NoteroPref.notionToken);
+    const databaseID = this.getPref(NoteroPref.notionDatabaseID);
+
+    if (typeof notionToken !== 'string' || typeof databaseID !== 'string') {
+      return;
+    }
+
+    this.notion = new Notion(notionToken, databaseID);
   }
+
+  private notifierCallback = {
+    notify: (
+      event: string,
+      type: string,
+      ids: string[],
+      _: Record<string, unknown>
+    ) => {
+      if (event !== 'add' || type !== 'collection-item') return;
+
+      const collectionName = this.getPref(NoteroPref.collectionName);
+      if (!collectionName) return;
+
+      const itemIDs = ids
+        .map((collectionItem: string) => {
+          const [collectionID, itemID] = collectionItem.split('-').map(Number);
+          return { collectionID, itemID };
+        })
+        .filter(({ collectionID }) => {
+          const collection = Zotero.Collections.get(collectionID);
+          return collection?.name === collectionName;
+        })
+        .map(({ itemID }) => itemID);
+
+      this.onAddItemsToCollection(itemIDs);
+    },
+  };
 
   public openPreferences() {
     window.openDialog(
@@ -66,27 +83,48 @@ class Notero {
     );
   }
 
-  private getPref(pref: string) {
+  private getPref(pref: NoteroPref) {
     return Zotero.Prefs.get(`extensions.notero.${pref}`, true);
   }
 
-  private onAddItemToCollection(itemID: number) {
-    const item = Zotero.Items.get(itemID);
+  private onAddItemsToCollection(itemIDs: number[]) {
+    const items = Zotero.Items.get(itemIDs).filter(item =>
+      item.isRegularItem()
+    );
 
-    if (!item || !item.isRegularItem()) return;
-
-    Zotero.log(JSON.stringify(this.getItemFields(item)));
+    void this.saveItemsToNotion(items);
   }
 
-  private getItemFields(item: Zotero.Item) {
+  private getNoteroItem(item: Zotero.Item): NoteroItem {
+    const authors = item
+      .getCreators()
+      .map(({ firstName, lastName }) => `${lastName}, ${firstName}`);
+    const year = Number.parseInt(item.getField('year') || '');
+
     return {
-      doi: item.getField('DOI'),
+      authors,
+      doi: item.getField('DOI') || null,
       itemType: Zotero.ItemTypes.getLocalizedString(item.itemTypeID),
-      itemURI: `zotero://select/library/items/${item.key}`,
       title: item.getDisplayTitle(),
-      url: item.getField('url'),
-      year: item.getField('year'),
+      url: item.getField('url') || null,
+      year: Number.isNaN(year) ? null : year,
+      zoteroURI: Zotero.URI.getItemURI(item),
     };
+  }
+
+  private async saveItemsToNotion(items: Zotero.Item[]) {
+    try {
+      if (!this.notion) {
+        throw new Error('Notion client not initialized');
+      }
+      for (const item of items) {
+        await this.notion.addItemToDatabase(this.getNoteroItem(item));
+        item.addTag('notero');
+        await item.saveTx();
+      }
+    } catch (error) {
+      Zotero.alert(window, 'Failed to save item(s) to Notion', String(error));
+    }
   }
 }
 

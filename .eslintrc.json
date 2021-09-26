@@ -141,13 +141,6 @@
     "@typescript-eslint/unified-signatures": "error",
     "arrow-body-style": "error",
     "arrow-parens": ["error", "as-needed"],
-    "brace-style": [
-      "error",
-      "stroustrup",
-      {
-        "allowSingleLine": true
-      }
-    ],
     "comma-dangle": [
       "error",
       {
@@ -166,7 +159,6 @@
       "error",
       "any",
       "Number",
-      "number",
       "String",
       "string",
       "Boolean",

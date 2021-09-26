@@ -13,8 +13,11 @@ function patch(object, method, patcher) {
 class Notero {
   private initialized = false;
   private globals!: Record<string, any>;
-  private strings: any;
   private notion?: Notion;
+
+  private stringBundle = Services.strings.createBundle(
+    'chrome://notero/locale/notero.properties'
+  );
 
   // eslint-disable-next-line @typescript-eslint/require-await
   public async load(globals: Record<string, any>) {
@@ -22,8 +25,6 @@ class Notero {
 
     if (this.initialized) return;
     this.initialized = true;
-
-    this.strings = globals.document.getElementById('notero-strings');
 
     const notifierID = Zotero.Notifier.registerObserver(
       this.notifierCallback,
@@ -81,6 +82,11 @@ class Notero {
       'chrome://notero/content/preferences.xul',
       'notero-preferences'
     );
+  }
+
+  private getLocalizedString(name: NoteroPref | string): string {
+    const fullName = name in NoteroPref ? `notero.preferences.${name}` : name;
+    return this.stringBundle.GetStringFromName(fullName);
   }
 
   private getPref(pref: NoteroPref) {

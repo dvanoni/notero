@@ -106,4 +106,12 @@ declare const Zotero: {
   ): void;
 };
 
-// declare const Components: any
+declare const Components: any;
+
+declare const Services: {
+  strings: {
+    createBundle(name: string): {
+      GetStringFromName(name: string): string;
+    };
+  };
+};

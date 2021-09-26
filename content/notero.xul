@@ -13,7 +13,7 @@
   <menupopup id="menu_ToolsPopup">
     <menuitem
       id="notero-preferences"
-      label="&notero.preferences.title;"
+      label="&notero.preferences.menuitem;"
       oncommand="Zotero.Notero.openPreferences();"
     />
   </menupopup>

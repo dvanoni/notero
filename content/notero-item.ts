@@ -9,6 +9,8 @@ export default class NoteroItem {
   }
 
   private zoteroItem: Zotero.Item;
+  private _fullCitation?: string;
+  private _inTextCitation?: string;
 
   public constructor(zoteroItem: Zotero.Item) {
     this.zoteroItem = zoteroItem;
@@ -25,21 +27,27 @@ export default class NoteroItem {
   }
 
   public get fullCitation(): string {
-    const content = Zotero.QuickCopy.getContentFromItems(
-      [this.zoteroItem],
-      NoteroItem.getQuickCopyFormat()
-    );
-    return content.text.trim();
+    if (!this._fullCitation) {
+      const content = Zotero.QuickCopy.getContentFromItems(
+        [this.zoteroItem],
+        NoteroItem.getQuickCopyFormat()
+      );
+      this._fullCitation = content.text.trim();
+    }
+    return this._fullCitation;
   }
 
   public get inTextCitation(): string {
-    const content = Zotero.QuickCopy.getContentFromItems(
-      [this.zoteroItem],
-      NoteroItem.getQuickCopyFormat(),
-      undefined,
-      true
-    );
-    return content.text.trim();
+    if (!this._inTextCitation) {
+      const content = Zotero.QuickCopy.getContentFromItems(
+        [this.zoteroItem],
+        NoteroItem.getQuickCopyFormat(),
+        undefined,
+        true
+      );
+      this._inTextCitation = content.text.trim();
+    }
+    return this._inTextCitation;
   }
 
   public get itemType(): string {

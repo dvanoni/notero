@@ -57,7 +57,7 @@ export default class Notion {
         title: [
           {
             text: {
-              content: item.title,
+              content: item.inTextCitation,
             },
           },
         ],
@@ -96,6 +96,15 @@ export default class Notion {
         select: {
           name: item.itemType,
         },
+      },
+      Title: {
+        rich_text: [
+          {
+            text: {
+              content: item.title,
+            },
+          },
+        ],
       },
       URL: {
         url: item.url,

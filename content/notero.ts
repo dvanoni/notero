@@ -12,7 +12,6 @@ function patch(object, method, patcher) {
 }
 
 class Notero {
-  private initialized = false;
   private globals!: Record<string, any>;
 
   private stringBundle = Services.strings.createBundle(
@@ -22,9 +21,6 @@ class Notero {
   // eslint-disable-next-line @typescript-eslint/require-await
   public async load(globals: Record<string, any>) {
     this.globals = globals;
-
-    if (this.initialized) return;
-    this.initialized = true;
 
     const notifierID = Zotero.Notifier.registerObserver(
       this.notifierCallback,

@@ -8,7 +8,8 @@
     "prebuild": "npm run lint",
     "build": "tsc --noEmit && node esbuild.js",
     "postbuild": "zotero-plugin-zipup build notero",
-    "release": "zotero-plugin-release"
+    "release": "zotero-plugin-release",
+    "postversion": "git push --follow-tags"
   },
   "repository": {
     "type": "git",

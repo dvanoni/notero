@@ -2,7 +2,7 @@
 
 Install by downloading the [latest version](https://github.com/dvanoni/notero/releases/latest)
 
-Adds Zotero items into a Notion database
+Sync Zotero items into a Notion database
 
 # Support - read carefully
 

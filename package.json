@@ -1,7 +1,7 @@
 {
   "name": "notero",
   "version": "0.0.1",
-  "description": "Adds Zotero items into a Notion database",
+  "description": "Sync Zotero items into a Notion database",
   "scripts": {
     "lint": "eslint . --ext .ts --cache --cache-location .eslintcache/",
     "start": "zotero-start",

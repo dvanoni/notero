@@ -7,6 +7,8 @@ when added to a specific collection.
 Scaffolded with [generator-zotero-plugin](https://github.com/retorquere/generator-zotero-plugin)
 and built with [zotero-plugin-webpack](https://github.com/retorquere/zotero-plugin-webpack).
 
+![Notero in action](docs/notero.gif)
+
 ## Why use Notero?
 
 - Allows you to integrate your reference manager, task list, reading notes,

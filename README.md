@@ -146,3 +146,54 @@ See below for descriptions of how you can use the different views.
 - Add a cover image (e.g., right click → copy image address from Amazon).
 - Keep track of which books you own, borrow, and lend to others.
   - Add due dates and reminders for library books and interlibrary loans.
+
+## Developer Setup
+
+The steps below should allow you to build and run Notero yourself.
+
+1.  To avoid any potential damage to your default Zotero profile, you can
+    [create a new profile](https://www.zotero.org/support/kb/multiple_profiles)
+    for development purposes.
+
+1.  [Configure Zotero](https://www.zotero.org/support/dev/client_coding/plugin_development)
+    to run the plugin directly from source. Because the `start` script already
+    handles most of the steps, you only need to ensure your
+    [Zotero profile directory](https://www.zotero.org/support/kb/profile_directory)
+    has a directory named `extensions`.
+
+    - **Note:** The `start` script does not currently support Windows.
+      If developing on Windows, you will need to follow all the configuration
+      steps in the Zotero docs.
+
+1.  Create a `profile.json` file by copying [`profile.json.example`](profile.json.example).
+    This file is used by the [`zotero-start`](https://github.com/retorquere/zotero-plugin-webpack/blob/bc5532000c8b395792ab82e381b5493a8ebd9cfd/bin/start.ts)
+    command to determine where to install the extension when running a
+    development build.
+
+    - `dir` is the absolute path to your [Zotero profile directory](https://www.zotero.org/support/kb/profile_directory)
+    - `log` is the name of the file that Zotero debug output will be written to
+    - `name` is the name of your Zotero profile (e.g. `default`)
+
+1.  Install dependencies:
+
+        npm ci
+
+1.  Build the plugin and start Zotero with it installed:
+
+        npm start
+
+    The `start` script runs [`zotero-start`](https://github.com/retorquere/zotero-plugin-webpack/blob/bc5532000c8b395792ab82e381b5493a8ebd9cfd/bin/start.ts)
+    which performs a number of steps:
+
+    1.  Executes `npm run build` to build the plugin into the `build/` directory.
+    1.  Removes the `extensions.json` file and Notero `.xpi` file from your
+        Zotero profile directory.
+    1.  Writes a new `.xpi` file containing the absolute path to the `build/` directory.
+    1.  Starts Zotero with the profile specified in `profile.json` and the
+        following command line arguments:
+
+            -purgecaches -jsconsole -ZoteroDebugText
+
+    If you would like to see the commands without executing them, you can run:
+
+        npm start -- --dryRun

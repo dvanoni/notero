@@ -1,5 +1,5 @@
 {
-  "dir": "/Users/{user}/Library/Application Support/Zotero/Profiles/{profile}.default",
+  "dir": "/absolute/path/to/zotero/profile/directory",
   "log": "zotero.log",
-  "name": "default"
+  "name": "profile-name"
 }

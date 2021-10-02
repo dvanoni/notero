@@ -2,6 +2,7 @@ export default class NoteroItem {
   private static getQuickCopyFormat(): string {
     const format = Zotero.Prefs.get('export.quickCopy.setting');
 
+    Zotero.log(`Notero format: ${format}`, 'strict');
     if (typeof format === 'string' && format) {
       return format;
     }
@@ -42,7 +43,7 @@ export default class NoteroItem {
       const content = Zotero.QuickCopy.getContentFromItems(
         [this.zoteroItem],
         NoteroItem.getQuickCopyFormat(),
-        undefined,
+        () => null,
         true
       );
       this._inTextCitation = content.text.trim();

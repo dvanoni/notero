@@ -156,15 +156,31 @@ declare namespace Zotero {
      *
      * @param modified if true, copy citations instead of bibliographies
      *
-     * If bibliography format, the process is synchronous and an object
+     * @return If bibliography format, the process is synchronous and an object
      * containing properties `text` and `html` is returned.
+     * If export format, the process is asynchronous and `true` is returned.
+     * If length of `items` exceeds `export.quickCopy.dragLimit` preference,
+     * `false` is returned.
      */
     getContentFromItems(
       items: [Item],
-      format: string,
+      format: string | QuickCopy.Format,
       callback?: (obj: { string: string }, worked: boolean) => void,
       modified?: boolean
-    ): { html: string; text: string };
+    ): boolean | { html: string; text: string };
+  }
+
+  namespace QuickCopy {
+    type Format = {
+      /** "bibliography" (for styles) or "export" (for export translators) */
+      mode: string;
+      /** "" (plain text output) or "html" (HTML output; for styles only) */
+      contentType: string;
+      /** style ID or export translator ID */
+      id: string;
+      /** locale code (for styles only) */
+      locale: string;
+    };
   }
 
   interface URI {

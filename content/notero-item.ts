@@ -2,7 +2,6 @@ export default class NoteroItem {
   private static getQuickCopyFormat(): string {
     const format = Zotero.Prefs.get('export.quickCopy.setting');
 
-    Zotero.log(`Notero format: ${format}`, 'strict');
     if (typeof format === 'string' && format) {
       return format;
     }

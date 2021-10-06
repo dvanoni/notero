@@ -42,22 +42,22 @@ export default class Notion {
     this.databaseID = databaseID;
   }
 
-  public addItemToDatabase(item: NoteroItem): Promise<CreatePageResponse> {
+  public async addItemToDatabase(item: NoteroItem): Promise<CreatePageResponse> {
     return this.client.pages.create({
       parent: {
         database_id: this.databaseID,
       },
-      properties: this.getItemProperties(item),
+      properties: await this.getItemProperties(item),
     });
   }
 
-  private getItemProperties(item: NoteroItem): DatabasePageProperties {
+  private async getItemProperties(item: NoteroItem): Promise<DatabasePageProperties> {
     return {
       title: {
         title: [
           {
             text: {
-              content: item.inTextCitation,
+              content: await item.getInTextCitation() || item.title,
             },
           },
         ],
@@ -78,7 +78,7 @@ export default class Notion {
         rich_text: [
           {
             text: {
-              content: item.fullCitation,
+              content: await item.getFullCitation() || item.title,
             },
           },
         ],
@@ -87,7 +87,7 @@ export default class Notion {
         rich_text: [
           {
             text: {
-              content: item.inTextCitation,
+              content: await item.getInTextCitation() || item.title,
             },
           },
         ],

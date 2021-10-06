@@ -19,9 +19,11 @@ type CreateDatabasePageParameters = Extract<
 
 type DatabasePageProperties = CreateDatabasePageParameters['properties'];
 
+const TEXT_CONTENT_MAX_LENGTH = 2000;
+
 export default class Notion {
-  private client: Client;
-  private databaseID: string;
+  private readonly client: Client;
+  private readonly databaseID: string;
 
   static logger: Logger = (level, message, extraInfo) => {
     Zotero.log(
@@ -32,6 +34,10 @@ export default class Notion {
 
   static convertWebURLToLocal(url: string): string {
     return url.replace(/^https/, 'notion');
+  }
+
+  static truncateTextToMaxLength(str: string): string {
+    return str.substr(0, TEXT_CONTENT_MAX_LENGTH);
   }
 
   public constructor(authToken: string, databaseID: string) {
@@ -57,7 +63,7 @@ export default class Notion {
         title: [
           {
             text: {
-              content: await item.getInTextCitation() || item.title,
+              content: Notion.truncateTextToMaxLength(await item.getInTextCitation() || item.title),
             },
           },
         ],
@@ -66,7 +72,7 @@ export default class Notion {
         rich_text: [
           {
             text: {
-              content: item.authors.join('\n'),
+              content: Notion.truncateTextToMaxLength(item.authors.join('\n')),
             },
           },
         ],
@@ -78,7 +84,7 @@ export default class Notion {
         rich_text: [
           {
             text: {
-              content: await item.getFullCitation() || item.title,
+              content: Notion.truncateTextToMaxLength(await item.getFullCitation() || item.title),
             },
           },
         ],
@@ -87,7 +93,7 @@ export default class Notion {
         rich_text: [
           {
             text: {
-              content: await item.getInTextCitation() || item.title,
+              content: Notion.truncateTextToMaxLength(await item.getInTextCitation() || item.title),
             },
           },
         ],
@@ -101,7 +107,7 @@ export default class Notion {
         rich_text: [
           {
             text: {
-              content: item.title,
+              content: Notion.truncateTextToMaxLength(item.title),
             },
           },
         ],

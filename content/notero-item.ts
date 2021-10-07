@@ -1,3 +1,5 @@
+const APA_STYLE = 'bibliography=http://www.zotero.org/styles/apa';
+
 export default class NoteroItem {
   private static getQuickCopyFormat(): string {
     const format = Zotero.Prefs.get('export.quickCopy.setting');
@@ -5,12 +7,12 @@ export default class NoteroItem {
     if (typeof format === 'string' && format) {
       return format;
     }
-    return 'bibliography=http://www.zotero.org/styles/apa';
+    return APA_STYLE;
   }
 
-  private zoteroItem: Zotero.Item;
-  private _fullCitation?: string;
-  private _inTextCitation?: string;
+  private readonly zoteroItem: Zotero.Item;
+  private _fullCitation?: string | null;
+  private _inTextCitation?: string | null;
 
   public constructor(zoteroItem: Zotero.Item) {
     this.zoteroItem = zoteroItem;
@@ -26,26 +28,35 @@ export default class NoteroItem {
     return this.zoteroItem.getField('DOI') || null;
   }
 
-  public get fullCitation(): string {
-    if (!this._fullCitation) {
-      const content = Zotero.QuickCopy.getContentFromItems(
+  private getCitation(format: string, inTextCitation: boolean): Promise<string | null> {
+    return new Promise(resolve => {
+      const result = Zotero.QuickCopy.getContentFromItems(
         [this.zoteroItem],
-        NoteroItem.getQuickCopyFormat()
+        format,
+        (obj, worked) => {
+          resolve(worked ? obj.string.trim() : null);
+        },
+        inTextCitation
       );
-      this._fullCitation = content.text.trim();
+
+      if (result === false) {
+        resolve(null);
+      } else if (result !== true) {
+        resolve(result.text.trim());
+      }
+    });
+  }
+
+  public async getFullCitation(): Promise<string | null> {
+    if (this._fullCitation === undefined) {
+      this._fullCitation = await this.getCitation(NoteroItem.getQuickCopyFormat(), false);
     }
     return this._fullCitation;
   }
 
-  public get inTextCitation(): string {
-    if (!this._inTextCitation) {
-      const content = Zotero.QuickCopy.getContentFromItems(
-        [this.zoteroItem],
-        NoteroItem.getQuickCopyFormat(),
-        undefined,
-        true
-      );
-      this._inTextCitation = content.text.trim();
+  public async getInTextCitation(): Promise<string | null> {
+    if (this._inTextCitation === undefined) {
+      this._inTextCitation = await this.getCitation(APA_STYLE, true);
     }
     return this._inTextCitation;
   }

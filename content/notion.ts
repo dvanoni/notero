@@ -19,9 +19,11 @@ type CreateDatabasePageParameters = Extract<
 
 type DatabasePageProperties = CreateDatabasePageParameters['properties'];
 
+const TEXT_CONTENT_MAX_LENGTH = 2000;
+
 export default class Notion {
-  private client: Client;
-  private databaseID: string;
+  private readonly client: Client;
+  private readonly databaseID: string;
 
   static logger: Logger = (level, message, extraInfo) => {
     Zotero.log(
@@ -34,6 +36,10 @@ export default class Notion {
     return url.replace(/^https/, 'notion');
   }
 
+  static truncateTextToMaxLength(str: string): string {
+    return str.substr(0, TEXT_CONTENT_MAX_LENGTH);
+  }
+
   public constructor(authToken: string, databaseID: string) {
     this.client = new Client({
       auth: authToken,
@@ -42,22 +48,22 @@ export default class Notion {
     this.databaseID = databaseID;
   }
 
-  public addItemToDatabase(item: NoteroItem): Promise<CreatePageResponse> {
+  public async addItemToDatabase(item: NoteroItem): Promise<CreatePageResponse> {
     return this.client.pages.create({
       parent: {
         database_id: this.databaseID,
       },
-      properties: this.getItemProperties(item),
+      properties: await this.getItemProperties(item),
     });
   }
 
-  private getItemProperties(item: NoteroItem): DatabasePageProperties {
+  private async getItemProperties(item: NoteroItem): Promise<DatabasePageProperties> {
     return {
       title: {
         title: [
           {
             text: {
-              content: item.inTextCitation,
+              content: Notion.truncateTextToMaxLength(await item.getInTextCitation() || item.title),
             },
           },
         ],
@@ -66,7 +72,7 @@ export default class Notion {
         rich_text: [
           {
             text: {
-              content: item.authors.join('\n'),
+              content: Notion.truncateTextToMaxLength(item.authors.join('\n')),
             },
           },
         ],
@@ -78,7 +84,7 @@ export default class Notion {
         rich_text: [
           {
             text: {
-              content: item.fullCitation,
+              content: Notion.truncateTextToMaxLength(await item.getFullCitation() || item.title),
             },
           },
         ],
@@ -87,7 +93,7 @@ export default class Notion {
         rich_text: [
           {
             text: {
-              content: item.inTextCitation,
+              content: Notion.truncateTextToMaxLength(await item.getInTextCitation() || item.title),
             },
           },
         ],
@@ -101,7 +107,7 @@ export default class Notion {
         rich_text: [
           {
             text: {
-              content: item.title,
+              content: Notion.truncateTextToMaxLength(item.title),
             },
           },
         ],

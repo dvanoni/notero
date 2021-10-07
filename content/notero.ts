@@ -128,7 +128,11 @@ class Notero {
         );
       }
     } catch (error) {
-      Zotero.alert(window, 'Failed to save item(s) to Notion', String(error));
+      const errorMessage = String(error);
+      if (error instanceof Error) {
+        Zotero.log(`${errorMessage}\n${error.stack}`, 'error');
+      }
+      Zotero.alert(window, 'Failed to save item(s) to Notion', errorMessage);
     } finally {
       Zotero.hideZoteroPaneOverlays();
     }

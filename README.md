@@ -197,3 +197,22 @@ The steps below should allow you to build and run Notero yourself.
     If you would like to see the commands without executing them, you can run:
 
         npm start -- --dryRun
+
+## Releasing a New Version
+
+1.  Run the `version` script (not to be confused with `npm version`) to run
+    [`standard-version`](https://github.com/conventional-changelog/standard-version).
+    This will create a new commit with a bumped package version and updated
+    changelog, and then it will create a version tag on the commit.
+
+        npm run version
+
+2.  Push the new version to GitHub:
+
+        git push --follow-tags
+
+3.  GitHub Actions will run the [`release`](.github/workflows/release.yml)
+    workflow upon any new commit. This workflow will build the `.xpi` file and
+    then use the [`zotero-plugin-release`](https://github.com/retorquere/zotero-plugin-webpack/blob/master/bin/release.ts)
+    command from `zotero-plugin-webpack` to create a GitHub release with the
+    `.xpi` file.

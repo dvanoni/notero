@@ -1,6 +1,7 @@
 import { NoteroPref } from './types';
 import NoteroItem from './notero-item';
 import Notion from './notion';
+import { hasErrorStack } from './utils';
 
 const monkey_patch_marker = 'NoteroMonkeyPatched';
 
@@ -129,8 +130,9 @@ class Notero {
       }
     } catch (error) {
       const errorMessage = String(error);
-      if (error instanceof Error) {
-        Zotero.log(`${errorMessage}\n${error.stack}`, 'error');
+      Zotero.log(errorMessage, 'error');
+      if (hasErrorStack(error)) {
+        Zotero.log(error.stack, 'error');
       }
       Zotero.alert(window, 'Failed to save item(s) to Notion', errorMessage);
     } finally {

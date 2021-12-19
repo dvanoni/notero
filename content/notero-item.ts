@@ -28,8 +28,11 @@ export default class NoteroItem {
     return this.zoteroItem.getField('DOI') || null;
   }
 
-  private getCitation(format: string, inTextCitation: boolean): Promise<string | null> {
-    return new Promise(resolve => {
+  private getCitation(
+    format: string,
+    inTextCitation: boolean
+  ): Promise<string | null> {
+    return new Promise((resolve) => {
       const result = Zotero.QuickCopy.getContentFromItems(
         [this.zoteroItem],
         format,
@@ -49,7 +52,10 @@ export default class NoteroItem {
 
   public async getFullCitation(): Promise<string | null> {
     if (this._fullCitation === undefined) {
-      this._fullCitation = await this.getCitation(NoteroItem.getQuickCopyFormat(), false);
+      this._fullCitation = await this.getCitation(
+        NoteroItem.getQuickCopyFormat(),
+        false
+      );
     }
     return this._fullCitation;
   }

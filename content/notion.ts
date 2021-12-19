@@ -1,9 +1,9 @@
-import 'core-js/stable/object/from-entries';
 import { Client, Logger, LogLevel } from '@notionhq/client';
 import {
   CreatePageParameters,
   CreatePageResponse,
 } from '@notionhq/client/build/src/api-endpoints';
+import 'core-js/stable/object/from-entries';
 import NoteroItem from './notero-item';
 
 /* eslint-disable @typescript-eslint/indent */
@@ -48,7 +48,9 @@ export default class Notion {
     this.databaseID = databaseID;
   }
 
-  public async addItemToDatabase(item: NoteroItem): Promise<CreatePageResponse> {
+  public async addItemToDatabase(
+    item: NoteroItem
+  ): Promise<CreatePageResponse> {
     return this.client.pages.create({
       parent: {
         database_id: this.databaseID,
@@ -57,13 +59,17 @@ export default class Notion {
     });
   }
 
-  private async getItemProperties(item: NoteroItem): Promise<DatabasePageProperties> {
+  private async getItemProperties(
+    item: NoteroItem
+  ): Promise<DatabasePageProperties> {
     return {
       title: {
         title: [
           {
             text: {
-              content: Notion.truncateTextToMaxLength(await item.getInTextCitation() || item.title),
+              content: Notion.truncateTextToMaxLength(
+                (await item.getInTextCitation()) || item.title
+              ),
             },
           },
         ],
@@ -84,7 +90,9 @@ export default class Notion {
         rich_text: [
           {
             text: {
-              content: Notion.truncateTextToMaxLength(await item.getFullCitation() || item.title),
+              content: Notion.truncateTextToMaxLength(
+                (await item.getFullCitation()) || item.title
+              ),
             },
           },
         ],
@@ -93,7 +101,9 @@ export default class Notion {
         rich_text: [
           {
             text: {
-              content: Notion.truncateTextToMaxLength(await item.getInTextCitation() || item.title),
+              content: Notion.truncateTextToMaxLength(
+                (await item.getInTextCitation()) || item.title
+              ),
             },
           },
         ],

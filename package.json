@@ -3,12 +3,15 @@
   "version": "0.1.2",
   "description": "Sync Zotero items into a Notion database",
   "scripts": {
-    "lint": "eslint . --ext .ts --cache --cache-location .eslintcache/",
-    "start": "zotero-start",
-    "prebuild": "npm run lint",
     "build": "tsc --noEmit && node esbuild.js",
+    "lint": "eslint . --cache --cache-location .eslintcache/",
+    "lint:fix": "eslint . --fix",
     "postbuild": "zotero-plugin-zipup build notero",
+    "prebuild": "npm run lint && npm run prettier",
+    "prettier": "prettier --check .",
+    "prettier:fix": "prettier --write .",
     "release": "zotero-plugin-release",
+    "start": "zotero-start",
     "version": "standard-version"
   },
   "repository": {
@@ -30,9 +33,11 @@
     "core-js": "^3.18.0",
     "esbuild": "^0.13.2",
     "eslint": "^7.32.0",
+    "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-import": "^2.24.1",
     "eslint-plugin-jsdoc": "^36.0.7",
     "eslint-plugin-prefer-arrow": "^1.2.3",
+    "prettier": "2.5.1",
     "standard-version": "^9.3.2",
     "typescript": "^4.4.3",
     "zotero-plugin": "^1.0.58"

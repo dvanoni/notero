@@ -29,6 +29,8 @@
   },
   "homepage": "https://github.com/dvanoni/notero",
   "dependencies": {
+    "@commitlint/cli": "^15.0.0",
+    "@commitlint/config-conventional": "^15.0.0",
     "@notionhq/client": "^0.4.0",
     "@typescript-eslint/eslint-plugin": "^4.31.2",
     "@typescript-eslint/parser": "^4.31.2",

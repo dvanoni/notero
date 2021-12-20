@@ -82,7 +82,7 @@ class Notero {
   }
 
   private onAddItemsToCollection(itemIDs: number[]) {
-    const items = Zotero.Items.get(itemIDs).filter(item =>
+    const items = Zotero.Items.get(itemIDs).filter((item) =>
       item.isRegularItem()
     );
 

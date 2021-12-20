@@ -14,7 +14,7 @@
     "start": "zotero-start",
     "typecheck": "tsc --noEmit",
     "verify": "run-p lint prettier typecheck",
-    "version": "standard-version"
+    "version": "standard-version --sign"
   },
   "repository": {
     "type": "git",

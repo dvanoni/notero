@@ -4,9 +4,6 @@ A [Zotero plugin](https://www.zotero.org/support/plugins) that syncs items into
 a [Notion database](https://www.notion.so/Intro-to-databases-fd8cd2d212f74c50954c11086d85997e)
 when added to a specific collection.
 
-Scaffolded with [generator-zotero-plugin](https://github.com/retorquere/generator-zotero-plugin)
-and built with [zotero-plugin-webpack](https://github.com/retorquere/zotero-plugin-webpack).
-
 ![Notero in action](docs/notero.gif)
 
 ## Why use Notero?
@@ -147,7 +144,12 @@ See below for descriptions of how you can use the different views.
 - Keep track of which books you own, borrow, and lend to others.
   - Add due dates and reminders for library books and interlibrary loans.
 
-## Developer Setup
+## Development
+
+Notero was scaffolded with [generator-zotero-plugin](https://github.com/retorquere/generator-zotero-plugin)
+and is built with [zotero-plugin-webpack](https://github.com/retorquere/zotero-plugin-webpack).
+
+### Local Setup
 
 The steps below should allow you to build and run Notero yourself.
 
@@ -198,7 +200,7 @@ The steps below should allow you to build and run Notero yourself.
 
         npm start -- --dryRun
 
-## Releasing a New Version
+### Releasing a New Version
 
 1.  Run the `version` script (not to be confused with `npm version`) to run
     [`standard-version`](https://github.com/conventional-changelog/standard-version).

@@ -6,7 +6,6 @@ import {
 import 'core-js/stable/object/from-entries';
 import NoteroItem from './notero-item';
 
-/* eslint-disable @typescript-eslint/indent */
 type CreateDatabasePageParameters = Extract<
   CreatePageParameters,
   {
@@ -15,7 +14,6 @@ type CreateDatabasePageParameters = Extract<
     };
   }
 >;
-/* eslint-enable @typescript-eslint/indent */
 
 type DatabasePageProperties = CreateDatabasePageParameters['properties'];
 

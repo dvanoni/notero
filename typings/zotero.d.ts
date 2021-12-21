@@ -100,7 +100,7 @@ declare namespace Zotero {
           type: string,
           ids: (number | string)[],
           extraData: Record<string, unknown>
-        );
+        ): void;
       },
       types?: string[],
       id?: string,
@@ -110,7 +110,7 @@ declare namespace Zotero {
     /**
      * @param id observer id
      */
-    unregisterObserver(id: string);
+    unregisterObserver(id: string): void;
   }
 
   interface Prefs {

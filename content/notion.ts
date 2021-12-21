@@ -17,6 +17,11 @@ type CreateDatabasePageParameters = Extract<
 
 type DatabasePageProperties = CreateDatabasePageParameters['properties'];
 
+type RichText = Extract<
+  DatabasePageProperties[string],
+  { rich_text: any }
+>['rich_text'];
+
 const TEXT_CONTENT_MAX_LENGTH = 2000;
 
 export default class Notion {
@@ -29,6 +34,16 @@ export default class Notion {
       level === LogLevel.ERROR ? 'error' : 'warning'
     );
   };
+
+  static buildRichText(content: string): RichText {
+    return [
+      {
+        text: {
+          content: Notion.truncateTextToMaxLength(content),
+        },
+      },
+    ];
+  }
 
   static convertWebURLToLocal(url: string): string {
     return url.replace(/^https/, 'notion');
@@ -53,58 +68,34 @@ export default class Notion {
       parent: {
         database_id: this.databaseID,
       },
-      properties: await this.getItemProperties(item),
+      properties: await this.buildItemProperties(item),
     });
   }
 
-  private async getItemProperties(
+  private async buildItemProperties(
     item: NoteroItem
   ): Promise<DatabasePageProperties> {
     return {
       title: {
-        title: [
-          {
-            text: {
-              content: Notion.truncateTextToMaxLength(
-                (await item.getInTextCitation()) || item.title
-              ),
-            },
-          },
-        ],
+        title: Notion.buildRichText(
+          (await item.getInTextCitation()) || item.title
+        ),
       },
       Authors: {
-        rich_text: [
-          {
-            text: {
-              content: Notion.truncateTextToMaxLength(item.authors.join('\n')),
-            },
-          },
-        ],
+        rich_text: Notion.buildRichText(item.authors.join('\n')),
       },
       DOI: {
         url: item.doi && `https://doi.org/${item.doi}`,
       },
       'Full Citation': {
-        rich_text: [
-          {
-            text: {
-              content: Notion.truncateTextToMaxLength(
-                (await item.getFullCitation()) || item.title
-              ),
-            },
-          },
-        ],
+        rich_text: Notion.buildRichText(
+          (await item.getFullCitation()) || item.title
+        ),
       },
       'In-Text Citation': {
-        rich_text: [
-          {
-            text: {
-              content: Notion.truncateTextToMaxLength(
-                (await item.getInTextCitation()) || item.title
-              ),
-            },
-          },
-        ],
+        rich_text: Notion.buildRichText(
+          (await item.getInTextCitation()) || item.title
+        ),
       },
       'Item Type': {
         select: {
@@ -112,13 +103,7 @@ export default class Notion {
         },
       },
       Title: {
-        rich_text: [
-          {
-            text: {
-              content: Notion.truncateTextToMaxLength(item.title),
-            },
-          },
-        ],
+        rich_text: Notion.buildRichText(item.title),
       },
       URL: {
         url: item.url,

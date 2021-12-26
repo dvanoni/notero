@@ -2,6 +2,7 @@ import { Client, Logger, LogLevel } from '@notionhq/client';
 import {
   CreatePageParameters,
   CreatePageResponse,
+  GetDatabaseResponse,
 } from '@notionhq/client/build/src/api-endpoints';
 import 'core-js/stable/object/from-entries';
 import NoteroItem from './notero-item';
@@ -17,16 +18,26 @@ type CreateDatabasePageParameters = Extract<
 
 type DatabasePageProperties = CreateDatabasePageParameters['properties'];
 
-type RichText = Extract<
+type DatabaseProperties = GetDatabaseResponse['properties'];
+
+type DatabasePageProperty = Extract<
   DatabasePageProperties[string],
-  { rich_text: any }
->['rich_text'];
+  { type?: string }
+>;
+
+type PropertyType = NonNullable<DatabasePageProperty['type']>;
+
+type PropertyRequest<T extends PropertyType> = Extract<
+  DatabasePageProperty,
+  { [P in T]: any }
+>[T];
 
 const TEXT_CONTENT_MAX_LENGTH = 2000;
 
 export default class Notion {
   private readonly client: Client;
   private readonly databaseID: string;
+  private _databaseProperties?: DatabaseProperties;
 
   static logger: Logger = (level, message, extraInfo) => {
     Zotero.log(
@@ -35,7 +46,7 @@ export default class Notion {
     );
   };
 
-  static buildRichText(content: string): RichText {
+  static buildRichText(content: string): PropertyRequest<'rich_text'> {
     return [
       {
         text: {
@@ -61,6 +72,16 @@ export default class Notion {
     this.databaseID = databaseID;
   }
 
+  private async getDatabaseProperties(): Promise<DatabaseProperties> {
+    if (!this._databaseProperties) {
+      const database = await this.client.databases.retrieve({
+        database_id: this.databaseID,
+      });
+      this._databaseProperties = database.properties;
+    }
+    return this._databaseProperties;
+  }
+
   public async addItemToDatabase(
     item: NoteroItem
   ): Promise<CreatePageResponse> {
@@ -75,45 +96,94 @@ export default class Notion {
   private async buildItemProperties(
     item: NoteroItem
   ): Promise<DatabasePageProperties> {
-    return {
+    type Definition<T extends PropertyType = PropertyType> = {
+      [P in T]: {
+        name: string;
+        type: P;
+        buildRequest: () => PropertyRequest<P> | Promise<PropertyRequest<P>>;
+      };
+    }[T];
+
+    const databaseProperties = await this.getDatabaseProperties();
+
+    const databaseHasProperty = ({ name, type }: Definition) => {
+      const has = databaseProperties[name]?.type === type;
+      Zotero.log(`Database has '${name}': ${has}`, 'warning');
+      return has;
+    };
+
+    const itemProperties: DatabasePageProperties = {
       title: {
         title: Notion.buildRichText(
           (await item.getInTextCitation()) || item.title
         ),
       },
-      Authors: {
-        rich_text: Notion.buildRichText(item.authors.join('\n')),
-      },
-      DOI: {
-        url: item.doi && `https://doi.org/${item.doi}`,
-      },
-      'Full Citation': {
-        rich_text: Notion.buildRichText(
-          (await item.getFullCitation()) || item.title
-        ),
-      },
-      'In-Text Citation': {
-        rich_text: Notion.buildRichText(
-          (await item.getInTextCitation()) || item.title
-        ),
-      },
-      'Item Type': {
-        select: {
-          name: item.itemType,
-        },
-      },
-      Title: {
-        rich_text: Notion.buildRichText(item.title),
-      },
-      URL: {
-        url: item.url,
-      },
-      Year: {
-        number: item.year,
-      },
-      'Zotero URI': {
-        url: item.zoteroURI,
-      },
     };
+
+    const propertyDefinitions: Definition[] = [
+      {
+        name: 'Authors',
+        type: 'rich_text',
+        buildRequest: () => Notion.buildRichText(item.authors.join('\n')),
+      },
+      {
+        name: 'DOI',
+        type: 'url',
+        buildRequest: () => item.doi && `https://doi.org/${item.doi}`,
+      },
+      {
+        name: 'Full Citation',
+        type: 'rich_text',
+        buildRequest: async () =>
+          Notion.buildRichText((await item.getFullCitation()) || item.title),
+      },
+      {
+        name: 'In-Text Citation',
+        type: 'rich_text',
+        buildRequest: async () =>
+          Notion.buildRichText((await item.getInTextCitation()) || item.title),
+      },
+      {
+        name: 'Item Type',
+        type: 'select',
+        buildRequest: () => ({
+          name: item.itemType,
+        }),
+      },
+      {
+        name: 'Title',
+        type: 'rich_text',
+        buildRequest: () => Notion.buildRichText(item.title),
+      },
+      {
+        name: 'URL',
+        type: 'url',
+        buildRequest: () => item.url,
+      },
+      {
+        name: 'Year',
+        type: 'number',
+        buildRequest: () => item.year,
+      },
+      {
+        name: 'Zotero URI',
+        type: 'url',
+        buildRequest: () => item.zoteroURI,
+      },
+    ];
+
+    const validPropertyDefinitions =
+      propertyDefinitions.filter(databaseHasProperty);
+
+    for (const { name, type, buildRequest } of validPropertyDefinitions) {
+      const request = await buildRequest();
+
+      itemProperties[name] = {
+        type,
+        [type]: request,
+      } as DatabasePageProperty;
+    }
+
+    return itemProperties;
   }
 }

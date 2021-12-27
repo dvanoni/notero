@@ -61,7 +61,6 @@
     "@typescript-eslint/consistent-type-assertions": "error",
     "@typescript-eslint/dot-notation": "error",
     "@typescript-eslint/explicit-module-boundary-types": "warn",
-    "@typescript-eslint/indent": ["error", 2],
     "@typescript-eslint/member-delimiter-style": [
       "error",
       {

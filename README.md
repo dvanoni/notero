@@ -43,24 +43,6 @@ Detailed setup instructions are below.
     - See [Notion developer docs](https://developers.notion.com/docs/getting-started#step-2-share-a-database-with-your-integration)
       for detailed instructions.
 
-1.  Ensure the database has the following required properties:
-
-    | Property Name      | Property Type |
-    | ------------------ | ------------- |
-    | `Name`\*           | Title         |
-    | `Item Type`        | Select        |
-    | `Title`            | Text          |
-    | `Authors`          | Text          |
-    | `Year`             | Number        |
-    | `DOI`              | URL           |
-    | `URL`              | URL           |
-    | `Zotero URI`       | URL           |
-    | `Full Citation`    | Text          |
-    | `In-Text Citation` | Text          |
-
-    \* The title property can be named something other than `Name` as long as
-    it does not conflict with any of the other property names.
-
 1.  Take note of the database ID.
 
     - From the [Notion developer docs](https://developers.notion.com/docs/working-with-databases#adding-pages-to-a-database),
@@ -74,6 +56,32 @@ Detailed setup instructions are below.
       >
       > Find the part that corresponds to `{database_id}` in the URL you pasted.
       > It is a 36 character long string. This value is your database ID.
+
+1.  Configure the database properties as desired. See the
+    [database properties](#notion-database-properties) section below for more details.
+
+#### Notion Database Properties
+
+Notero can sync data for the properties listed below. The only property required
+by Notero is one with the **Title** property type. The other properties are
+optional so you can use only the ones that suit your needs.
+
+The **Title** property can be named something other than `Name` as long as it
+does not conflict with any of the other property names. The name and type of
+the other properties must be configured exactly as specified here.
+
+| Property Name      | Property Type | Required |
+| ------------------ | ------------- | -------- |
+| `Name`             | Title         | Yes      |
+| `Item Type`        | Select        | No       |
+| `Title`            | Text          | No       |
+| `Authors`          | Text          | No       |
+| `Year`             | Number        | No       |
+| `DOI`              | URL           | No       |
+| `URL`              | URL           | No       |
+| `Zotero URI`       | URL           | No       |
+| `Full Citation`    | Text          | No       |
+| `In-Text Citation` | Text          | No       |
 
 ### Install Notero Plugin
 
@@ -209,11 +217,11 @@ The steps below should allow you to build and run Notero yourself.
 
         npm run version
 
-2.  Push the new version to GitHub:
+1.  Push the new version to GitHub:
 
         git push --follow-tags
 
-3.  GitHub Actions will run the [`release`](.github/workflows/release.yml)
+1.  GitHub Actions will run the [`release`](.github/workflows/release.yml)
     workflow upon any new commit. This workflow will build the `.xpi` file and
     then use the [`zotero-plugin-release`](https://github.com/retorquere/zotero-plugin-webpack/blob/master/bin/release.ts)
     command from `zotero-plugin-webpack` to create a GitHub release with the

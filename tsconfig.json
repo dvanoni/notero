@@ -5,7 +5,6 @@
     "disableSizeLimit": true,
     "module": "commonjs",
     "strict": true,
-    "noImplicitAny": false,
     "esModuleInterop": true,
     "removeComments": false,
     "preserveConstEnums": false,

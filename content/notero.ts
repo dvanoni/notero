@@ -6,7 +6,11 @@ import { hasErrorStack } from './utils';
 const monkey_patch_marker = 'NoteroMonkeyPatched';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-function patch(object, method, patcher) {
+function patch(
+  object: { [x: string]: { [x: string]: boolean } },
+  method: string,
+  patcher: (arg0: any) => any
+) {
   if (object[method][monkey_patch_marker]) return;
   object[method] = patcher(object[method]);
   object[method][monkey_patch_marker] = true;

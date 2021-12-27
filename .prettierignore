@@ -2,3 +2,4 @@ build
 gen
 node_modules
 .eslintcache
+CHANGELOG.md

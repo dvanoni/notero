@@ -10,10 +10,10 @@ declare namespace Zotero {
      */
     linkFromURL(options: {
       url: string;
-      parentItemID: number;
+      parentItemID: DataObjectID;
       contentType?: string;
       title?: string;
-      collections?: (number | string)[];
+      collections?: (DataObjectID | DataObjectKey)[];
       saveOptions?: DataObject.SaveOptions;
     }): Promise<Zotero.Item>;
   }
@@ -24,15 +24,18 @@ declare namespace Zotero {
 
   type Collections = DataObjects<Collection>;
 
+  type DataObjectID = number;
+  type DataObjectKey = string;
+
   interface DataObject {
-    id: number;
-    key: string;
+    id: DataObjectID;
+    key: DataObjectKey;
 
     /**
      * Save changes to database.
      * @return Promise for itemID of new item, TRUE on item update, or FALSE if item was unchanged
      */
-    saveTx(options?: DataObject.SaveOptions): Promise<boolean | number>;
+    saveTx(options?: DataObject.SaveOptions): Promise<boolean | DataObjectID>;
   }
 
   namespace DataObject {
@@ -51,7 +54,9 @@ declare namespace Zotero {
   }
 
   interface DataObjects<T extends DataObject> {
-    get<I = number | number[]>(ids: I): I extends number ? T | undefined : T[];
+    get<I = DataObjectID | DataObjectID[]>(
+      ids: I
+    ): I extends DataObjectID ? T | undefined : T[];
   }
 
   interface Item extends DataObject {

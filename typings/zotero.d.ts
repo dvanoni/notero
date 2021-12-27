@@ -1,3 +1,5 @@
+/* eslint-disable id-blacklist */
+
 declare namespace Zotero {
   interface Attachments {
     /**
@@ -20,7 +22,7 @@ declare namespace Zotero {
     name: string;
   }
 
-  interface Collections extends DataObjects<Collection> {}
+  type Collections = DataObjects<Collection>;
 
   interface DataObject {
     id: number;
@@ -79,7 +81,7 @@ declare namespace Zotero {
     isRegularItem(): boolean;
   }
 
-  interface Items extends DataObjects<Item> {}
+  type Items = DataObjects<Item>;
 
   interface ItemTypes {
     getLocalizedString(idOrName: number | string): string;
@@ -188,6 +190,7 @@ declare namespace Zotero {
   }
 }
 
+// eslint-disable-next-line no-redeclare
 declare const Zotero: {
   Attachments: Zotero.Attachments;
   Collections: Zotero.Collections;

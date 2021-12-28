@@ -102,6 +102,8 @@ declare namespace Zotero {
 
     getAttachments(includeTrashed: boolean): DataObjectID[];
 
+    getCollections(): DataObjectID[];
+
     getCreators(): { firstName: string; lastName: string }[];
 
     getDisplayTitle(includeAuthorAndDate?: boolean): string;
@@ -224,6 +226,10 @@ declare namespace Zotero {
   interface URI {
     getItemURI(item: Item): string;
   }
+
+  interface ZoteroPane {
+    loadURI(uris: string | string[]): void;
+  }
 }
 
 // eslint-disable-next-line no-redeclare
@@ -248,6 +254,8 @@ declare const Zotero: {
     message: string,
     type: 'error' | 'warning' | 'exception' | 'strict'
   ): void;
+
+  getActiveZoteroPane(): Zotero.ZoteroPane | null;
 
   /**
    * Show Zotero pane overlay and progress bar in all windows

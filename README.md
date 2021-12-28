@@ -83,7 +83,7 @@ the other properties must be configured exactly as specified here.
 | `Full Citation`    | Text          | No       |
 | `In-Text Citation` | Text          | No       |
 
-### Install Notero Plugin
+### Install and Configure Notero Plugin
 
 1. Download the [latest version](https://github.com/dvanoni/notero/releases/latest)
    of the `.xpi` file.
@@ -93,17 +93,8 @@ the other properties must be configured exactly as specified here.
    - selecting it using the **Install Add-on From File...** option in the
      gear menu in the top-right corner of the window
 1. Restart Zotero to activate the plugin.
-
-### Configure Notero Preferences
-
-1.  Open the Notero preferences from the **Tools → Notero Preferences...** menu item.
-1.  Enter the required preferences:
-
-    | Field                    | Description                                            |
-    | ------------------------ | ------------------------------------------------------ |
-    | Collection Name          | Name of the Zotero collection to monitor for new items |
-    | Notion Integration Token | Your personal Notion internal integration token        |
-    | Notion Database ID       | ID of the Notion database to sync items into           |
+1. Open the Notero preferences from the **Tools → Notero Preferences...** menu
+   item, and enter the required preferences.
 
 ## Example Notion Databases
 

@@ -32,6 +32,11 @@ declare namespace Zotero {
     key: DataObjectKey;
 
     /**
+     * Delete object from database.
+     */
+    eraseTx(options?: DataObject.EraseOptions): Promise<void>;
+
+    /**
      * Save changes to database.
      * @return Promise for itemID of new item, TRUE on item update, or FALSE if item was unchanged
      */
@@ -39,24 +44,46 @@ declare namespace Zotero {
   }
 
   namespace DataObject {
+    type EraseOptions = {
+      /** Move descendant items to trash (Collection only) */
+      deleteItems?: boolean;
+      /** Don't add to sync delete log */
+      skipDeleteLog?: boolean;
+    };
+
     type SaveOptions = {
       /** Don't save add new object to the cache; if set, object is disabled after save */
-      skipCache: boolean;
-      skipDateModifiedUpdate: boolean;
-      skipClientDateModifiedUpdate: boolean;
+      skipCache?: boolean;
+      skipDateModifiedUpdate?: boolean;
+      skipClientDateModifiedUpdate?: boolean;
       /** Don't trigger Zotero.Notifier events */
-      skipNotifier: boolean;
+      skipNotifier?: boolean;
       /** Don't select object automatically in trees */
-      skipSelect: boolean;
+      skipSelect?: boolean;
       /** Don't automatically set 'synced' to false */
-      skipSyncedUpdate: boolean;
+      skipSyncedUpdate?: boolean;
     };
   }
 
   interface DataObjects<T extends DataObject> {
-    get<I = DataObjectID | DataObjectID[]>(
+    /**
+     * Delete one or more objects from the database and caches.
+     */
+    erase(
+      ids: DataObjectID | DataObjectID[],
+      options?: DataObject.EraseOptions
+    ): Promise<void>;
+
+    /**
+     * Retrieves one or more already-loaded items.
+     * If an item hasn't been loaded, an error is thrown.
+     *
+     * @return A Zotero.DataObject, if a scalar id was passed;
+     *         otherwise, an array of Zotero.DataObject
+     */
+    get<I extends DataObjectID | DataObjectID[]>(
       ids: I
-    ): I extends DataObjectID ? T | undefined : T[];
+    ): I extends DataObjectID ? T | false : T[];
   }
 
   interface Item extends DataObject {
@@ -73,6 +100,8 @@ declare namespace Zotero {
      */
     addTag(name: string, type?: number): boolean;
 
+    getAttachments(includeTrashed: boolean): DataObjectID[];
+
     getCreators(): { firstName: string; lastName: string }[];
 
     getDisplayTitle(includeAuthorAndDate?: boolean): string;
@@ -84,6 +113,8 @@ declare namespace Zotero {
     ): string | undefined;
 
     isRegularItem(): boolean;
+
+    setField(field: number | string, value: any, loadIn?: boolean): boolean;
   }
 
   type Items = DataObjects<Item>;

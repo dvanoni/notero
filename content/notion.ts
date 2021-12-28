@@ -39,6 +39,8 @@ export default class Notion {
   private readonly databaseID: string;
   private _databaseProperties?: DatabaseProperties;
 
+  static URL_PROTOCOL = 'notion:';
+
   static logger: Logger = (level, message, extraInfo) => {
     Zotero.log(
       `${message} - ${JSON.stringify(extraInfo)}`,
@@ -57,7 +59,7 @@ export default class Notion {
   }
 
   static convertWebURLToLocal(url: string): string {
-    return url.replace(/^https/, 'notion');
+    return url.replace(/^https:/, this.URL_PROTOCOL);
   }
 
   static truncateTextToMaxLength(str: string): string {
@@ -106,11 +108,8 @@ export default class Notion {
 
     const databaseProperties = await this.getDatabaseProperties();
 
-    const databaseHasProperty = ({ name, type }: Definition) => {
-      const has = databaseProperties[name]?.type === type;
-      Zotero.log(`Database has '${name}': ${has}`, 'warning');
-      return has;
-    };
+    const databaseHasProperty = ({ name, type }: Definition) =>
+      databaseProperties[name]?.type === type;
 
     const itemProperties: DatabasePageProperties = {
       title: {

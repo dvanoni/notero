@@ -1,3 +1,5 @@
+/* eslint-disable id-blacklist */
+
 declare namespace Zotero {
   interface Attachments {
     /**
@@ -8,10 +10,10 @@ declare namespace Zotero {
      */
     linkFromURL(options: {
       url: string;
-      parentItemID: number;
+      parentItemID: DataObjectID;
       contentType?: string;
       title?: string;
-      collections?: (number | string)[];
+      collections?: (DataObjectID | DataObjectKey)[];
       saveOptions?: DataObject.SaveOptions;
     }): Promise<Zotero.Item>;
   }
@@ -20,36 +22,68 @@ declare namespace Zotero {
     name: string;
   }
 
-  interface Collections extends DataObjects<Collection> {}
+  type Collections = DataObjects<Collection>;
+
+  type DataObjectID = number;
+  type DataObjectKey = string;
 
   interface DataObject {
-    id: number;
-    key: string;
+    id: DataObjectID;
+    key: DataObjectKey;
+
+    /**
+     * Delete object from database.
+     */
+    eraseTx(options?: DataObject.EraseOptions): Promise<void>;
 
     /**
      * Save changes to database.
      * @return Promise for itemID of new item, TRUE on item update, or FALSE if item was unchanged
      */
-    saveTx(options?: DataObject.SaveOptions): Promise<boolean | number>;
+    saveTx(options?: DataObject.SaveOptions): Promise<boolean | DataObjectID>;
   }
 
   namespace DataObject {
+    type EraseOptions = {
+      /** Move descendant items to trash (Collection only) */
+      deleteItems?: boolean;
+      /** Don't add to sync delete log */
+      skipDeleteLog?: boolean;
+    };
+
     type SaveOptions = {
       /** Don't save add new object to the cache; if set, object is disabled after save */
-      skipCache: boolean;
-      skipDateModifiedUpdate: boolean;
-      skipClientDateModifiedUpdate: boolean;
+      skipCache?: boolean;
+      skipDateModifiedUpdate?: boolean;
+      skipClientDateModifiedUpdate?: boolean;
       /** Don't trigger Zotero.Notifier events */
-      skipNotifier: boolean;
+      skipNotifier?: boolean;
       /** Don't select object automatically in trees */
-      skipSelect: boolean;
+      skipSelect?: boolean;
       /** Don't automatically set 'synced' to false */
-      skipSyncedUpdate: boolean;
+      skipSyncedUpdate?: boolean;
     };
   }
 
   interface DataObjects<T extends DataObject> {
-    get<I = number | number[]>(ids: I): I extends number ? T | undefined : T[];
+    /**
+     * Delete one or more objects from the database and caches.
+     */
+    erase(
+      ids: DataObjectID | DataObjectID[],
+      options?: DataObject.EraseOptions
+    ): Promise<void>;
+
+    /**
+     * Retrieves one or more already-loaded items.
+     * If an item hasn't been loaded, an error is thrown.
+     *
+     * @return A Zotero.DataObject, if a scalar id was passed;
+     *         otherwise, an array of Zotero.DataObject
+     */
+    get<I extends DataObjectID | DataObjectID[]>(
+      ids: I
+    ): I extends DataObjectID ? T | false : T[];
   }
 
   interface Item extends DataObject {
@@ -66,6 +100,10 @@ declare namespace Zotero {
      */
     addTag(name: string, type?: number): boolean;
 
+    getAttachments(includeTrashed: boolean): DataObjectID[];
+
+    getCollections(): DataObjectID[];
+
     getCreators(): { firstName: string; lastName: string }[];
 
     getDisplayTitle(includeAuthorAndDate?: boolean): string;
@@ -77,9 +115,11 @@ declare namespace Zotero {
     ): string | undefined;
 
     isRegularItem(): boolean;
+
+    setField(field: number | string, value: any, loadIn?: boolean): boolean;
   }
 
-  interface Items extends DataObjects<Item> {}
+  type Items = DataObjects<Item>;
 
   interface ItemTypes {
     getLocalizedString(idOrName: number | string): string;
@@ -186,8 +226,13 @@ declare namespace Zotero {
   interface URI {
     getItemURI(item: Item): string;
   }
+
+  interface ZoteroPane {
+    loadURI(uris: string | string[]): void;
+  }
 }
 
+// eslint-disable-next-line no-redeclare
 declare const Zotero: {
   Attachments: Zotero.Attachments;
   Collections: Zotero.Collections;
@@ -209,6 +254,8 @@ declare const Zotero: {
     message: string,
     type: 'error' | 'warning' | 'exception' | 'strict'
   ): void;
+
+  getActiveZoteroPane(): Zotero.ZoteroPane | null;
 
   /**
    * Show Zotero pane overlay and progress bar in all windows

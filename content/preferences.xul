@@ -13,18 +13,37 @@
       <preference id="pref-collectionName" name="extensions.notero.collectionName" type="string" />
       <preference id="pref-notionToken" name="extensions.notero.notionToken" type="string" />
       <preference id="pref-notionDatabaseID" name="extensions.notero.notionDatabaseID" type="string" />
+      <preference id="pref-syncOnModifyItems" name="extensions.notero.syncOnModifyItems" type="bool" />
     </preferences>
 
-    <label id="notero-collectionName-label" value="&notero.preferences.collectionName;" control="notero-collectionName" />
-    <textbox id="notero-collectionName" preference="pref-collectionName" />
+    <groupbox>
+      <caption label="&notero.preferences.syncGroupCaption;" />
+      <description>&notero.preferences.syncGroupDescription;</description>
+      <separator />
+      <label id="notero-collectionName-label" value="&notero.preferences.collectionName;" control="notero-collectionName" />
+      <textbox id="notero-collectionName" preference="pref-collectionName" />
+      <separator />
+      <checkbox id="notero-syncOnModifyItems" label="&notero.preferences.syncOnModifyItems;" preference="pref-syncOnModifyItems" />
+    </groupbox>
+
     <separator />
 
-    <label id="notero-notionToken-label" value="&notero.preferences.notionToken;" control="notero-notionToken" />
-    <textbox id="notero-notionToken" preference="pref-notionToken" />
-    <separator />
-
-    <label id="notero-notionDatabaseID-label" value="&notero.preferences.notionDatabaseID;" control="notero-notionDatabaseID" />
-    <textbox id="notero-notionDatabaseID" preference="pref-notionDatabaseID" />
-    <separator />
+    <groupbox style="margin-bottom: 4em;">
+      <caption label="&notero.preferences.notionGroupCaption;" />
+      <hbox>
+        <description style="margin-right: 0;" value="&notero.preferences.notionGroupDescription;" />
+        <description class="text-link" onclick="openReadme();" style="margin-left: 0; margin-right: 0;" value="&notero.preferences.readme;" />
+        <description style="margin-left: 0;" value="." />
+      </hbox>
+      <separator />
+      <label id="notero-notionToken-label" value="&notero.preferences.notionToken;" control="notero-notionToken" />
+      <textbox id="notero-notionToken" preference="pref-notionToken" />
+      <separator />
+      <label id="notero-notionDatabaseID-label" value="&notero.preferences.notionDatabaseID;" control="notero-notionDatabaseID" />
+      <textbox id="notero-notionDatabaseID" preference="pref-notionDatabaseID" />
+    </groupbox>
   </prefpane>
+
+  <script src="chrome://zotero/content/include.js" />
+  <script src="preferences.js" />
 </prefwindow>

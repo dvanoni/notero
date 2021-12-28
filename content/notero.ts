@@ -1,6 +1,6 @@
-import { NoteroPref } from './types';
 import NoteroItem from './notero-item';
 import Notion from './notion';
+import { NoteroPref } from './types';
 import { hasErrorStack } from './utils';
 
 const monkey_patch_marker = 'NoteroMonkeyPatched';
@@ -29,7 +29,7 @@ class Notero {
 
     const notifierID = Zotero.Notifier.registerObserver(
       this.notifierCallback,
-      ['collection-item'],
+      ['collection-item', 'item'],
       'notero'
     );
 
@@ -49,23 +49,15 @@ class Notero {
       ids: string[],
       _: Record<string, unknown>
     ) => {
-      if (event !== 'add' || type !== 'collection-item') return;
+      const syncOnModifyItems =
+        this.getPref(NoteroPref.syncOnModifyItems) === true;
 
-      const collectionName = this.getPref(NoteroPref.collectionName);
-      if (!collectionName) return;
-
-      const itemIDs = ids
-        .map((collectionItem: string) => {
-          const [collectionID, itemID] = collectionItem.split('-').map(Number);
-          return { collectionID, itemID };
-        })
-        .filter(({ collectionID }) => {
-          const collection = Zotero.Collections.get(collectionID);
-          return collection?.name === collectionName;
-        })
-        .map(({ itemID }) => itemID);
-
-      this.onAddItemsToCollection(itemIDs);
+      if (!syncOnModifyItems && event === 'add' && type === 'collection-item') {
+        return this.onAddItemsToCollection(ids);
+      }
+      if (syncOnModifyItems && event === 'modify' && type === 'item') {
+        return this.onModifyItems(ids);
+      }
     },
   };
 
@@ -85,9 +77,40 @@ class Notero {
     return Zotero.Prefs.get(`extensions.notero.${pref}`, true);
   }
 
-  private onAddItemsToCollection(itemIDs: number[]) {
-    const items = Zotero.Items.get(itemIDs).filter((item) =>
-      item.isRegularItem()
+  private onAddItemsToCollection(ids: string[]) {
+    const collectionName = this.getPref(NoteroPref.collectionName);
+    if (!collectionName) return;
+
+    const items = ids
+      .map((collectionItem: string) => {
+        const [collectionID, itemID] = collectionItem.split('-').map(Number);
+        return {
+          collection: Zotero.Collections.get(collectionID),
+          item: Zotero.Items.get(itemID),
+        };
+      })
+      .filter(
+        (
+          record
+        ): record is { collection: Zotero.Collection; item: Zotero.Item } =>
+          record.collection &&
+          record.collection.name === collectionName &&
+          record.item &&
+          record.item.isRegularItem()
+      )
+      .map(({ item }) => item);
+
+    void this.saveItemsToNotion(items);
+  }
+
+  private onModifyItems(ids: string[]) {
+    const collectionName = this.getPref(NoteroPref.collectionName);
+    if (typeof collectionName !== 'string' || !collectionName) return;
+
+    const items = Zotero.Items.get(ids.map(Number)).filter((item) =>
+      Zotero.Collections.get(item.getCollections())
+        .map(({ name }) => name)
+        .includes(collectionName)
     );
 
     void this.saveItemsToNotion(items);
@@ -114,6 +137,8 @@ class Notero {
 
   private async saveItemsToNotion(items: Zotero.Item[]) {
     const PERCENTAGE_MULTIPLIER = 100;
+
+    if (!items.length) return;
 
     try {
       const notion = this.getNotion();
@@ -145,16 +170,15 @@ class Notero {
   }
 
   private async saveItemToNotion(item: Zotero.Item, notion: Notion) {
-    const response = await notion.addItemToDatabase(new NoteroItem(item));
+    const noteroItem = new NoteroItem(item);
+    const response = await notion.saveItemToDatabase(noteroItem);
 
     item.addTag('notion');
-    await item.saveTx();
+    await item.saveTx({ skipNotifier: true });
 
-    await Zotero.Attachments.linkFromURL({
-      url: Notion.convertWebURLToLocal(response.url),
-      parentItemID: item.id,
-      title: 'Notion',
-    });
+    if ('url' in response) {
+      await noteroItem.saveNotionLinkAttachment(response.url);
+    }
   }
 }
 

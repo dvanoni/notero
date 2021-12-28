@@ -3,6 +3,7 @@ import {
   CreatePageParameters,
   CreatePageResponse,
   GetDatabaseResponse,
+  UpdatePageResponse,
 } from '@notionhq/client/build/src/api-endpoints';
 import 'core-js/stable/object/from-entries';
 import NoteroItem from './notero-item';
@@ -41,6 +42,10 @@ export default class Notion {
 
   static URL_PROTOCOL = 'notion:';
 
+  static PAGE_URL_REGEX = new RegExp(
+    `^${Notion.URL_PROTOCOL}.+([0-9a-f]{32})$`
+  );
+
   static logger: Logger = (level, message, extraInfo) => {
     Zotero.log(
       `${message} - ${JSON.stringify(extraInfo)}`,
@@ -60,6 +65,11 @@ export default class Notion {
 
   static convertWebURLToLocal(url: string): string {
     return url.replace(/^https:/, this.URL_PROTOCOL);
+  }
+
+  static getPageIDFromURL(url: string): string | undefined {
+    const matches = url.match(this.PAGE_URL_REGEX);
+    return matches ? matches[1] : undefined;
   }
 
   static truncateTextToMaxLength(str: string): string {
@@ -84,14 +94,24 @@ export default class Notion {
     return this._databaseProperties;
   }
 
-  public async addItemToDatabase(
+  public async saveItemToDatabase(
     item: NoteroItem
-  ): Promise<CreatePageResponse> {
+  ): Promise<CreatePageResponse & UpdatePageResponse> {
+    const pageID = item.getNotionPageID();
+    const properties = await this.buildItemProperties(item);
+
+    if (pageID) {
+      return this.client.pages.update({
+        page_id: pageID,
+        properties,
+      });
+    }
+
     return this.client.pages.create({
       parent: {
         database_id: this.databaseID,
       },
-      properties: await this.buildItemProperties(item),
+      properties,
     });
   }
 

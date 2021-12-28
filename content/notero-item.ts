@@ -102,6 +102,11 @@ export default class NoteroItem {
     );
   }
 
+  public getNotionPageID(): string | undefined {
+    const notionURL = this.getNotionLinkAttachments()[0]?.getField('url');
+    return notionURL && Notion.getPageIDFromURL(notionURL);
+  }
+
   public async saveNotionLinkAttachment(url: string): Promise<void> {
     const notionURL = Notion.convertWebURLToLocal(url);
     const attachments = this.getNotionLinkAttachments();

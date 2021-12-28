@@ -6,7 +6,7 @@ when added to a specific collection.
 
 ![Notero in action](docs/notero.gif)
 
-## Why use Notero?
+## Why Use Notero?
 
 - Allows you to integrate your reference manager, task list, reading notes,
   analytical tables, and drafts in one location.
@@ -18,6 +18,35 @@ when added to a specific collection.
   a reference.
 - Link references to entries in other databases, such as projects, tasks,
   manuscripts in your publication pipeline, publishing outlets, etc.
+
+## How Notero Works
+
+The Notero plugin watches for Zotero items being added to a collection that you
+specify in the Notero preferences. Whenever an item is added to the collection,
+Notero does a few things:
+
+- Save a page with the Zotero item's properties (title, authors, etc.) into the
+  Notion database specified in Notero preferences.
+- Add a `notion` tag to the Zotero item.
+- Add an attachment to the Zotero item that links to the page in Notion.
+
+In addition to providing a convenient way to open a Notion page from Zotero,
+the link attachment also serves as a reference for Notero so it can update
+existing pages instead of creating duplicate pages for a given Zotero item.
+
+### Syncing Items
+
+Because Zotero does not allow you to add an item to a collection that it's
+already in, there are a couple options for triggering a re-sync of an item:
+
+- Remove the item from the collection and add it again.
+- Enable the **Sync when items are modified** option in Notero preferences to
+  sync items in the collection whenever they're modified.
+
+⚠️ _**Note:** To prevent the "sync on modify" functionality from saving to Notion
+multiple times, Notero does not notify Zotero when the tag and link attachment
+are added to an item. This means they may not appear in Zotero immediately, and
+you may need to navigate to a different item and back to make them appear._
 
 ## Installation and Setup
 

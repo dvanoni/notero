@@ -171,12 +171,14 @@ class Notero {
 
   private async saveItemToNotion(item: Zotero.Item, notion: Notion) {
     const noteroItem = new NoteroItem(item);
-    const response = await notion.addItemToDatabase(noteroItem);
+    const response = await notion.saveItemToDatabase(noteroItem);
 
     item.addTag('notion');
     await item.saveTx({ skipNotifier: true });
 
-    await noteroItem.saveNotionLinkAttachment(response.url);
+    if ('url' in response) {
+      await noteroItem.saveNotionLinkAttachment(response.url);
+    }
   }
 }
 

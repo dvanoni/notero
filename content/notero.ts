@@ -107,10 +107,12 @@ class Notero {
     const collectionName = this.getPref(NoteroPref.collectionName);
     if (typeof collectionName !== 'string' || !collectionName) return;
 
-    const items = Zotero.Items.get(ids.map(Number)).filter((item) =>
-      Zotero.Collections.get(item.getCollections())
-        .map(({ name }) => name)
-        .includes(collectionName)
+    const items = Zotero.Items.get(ids.map(Number)).filter(
+      (item) =>
+        item.isRegularItem() &&
+        Zotero.Collections.get(item.getCollections())
+          .map(({ name }) => name)
+          .includes(collectionName)
     );
 
     void this.saveItemsToNotion(items);

@@ -18,6 +18,13 @@ declare namespace Zotero {
     }): Promise<Zotero.Item>;
   }
 
+  interface Creator {
+    firstName: string;
+    lastName: string;
+    fieldMode: number;
+    creatorTypeID: number;
+  }
+
   interface Collection extends DataObject {
     name: string;
   }
@@ -104,7 +111,7 @@ declare namespace Zotero {
 
     getCollections(): DataObjectID[];
 
-    getCreators(): { firstName: string; lastName: string }[];
+    getCreators(): Creator[];
 
     getDisplayTitle(includeAuthorAndDate?: boolean): string;
 

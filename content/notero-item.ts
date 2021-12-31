@@ -5,6 +5,10 @@ const APA_STYLE = 'bibliography=http://www.zotero.org/styles/apa';
 export default class NoteroItem {
   static NOTION_TAG_NAME = 'notion';
 
+  private static formatCreatorName({ firstName, lastName }: Zotero.Creator) {
+    return [lastName, firstName].filter((name) => name).join(', ');
+  }
+
   private static getQuickCopyFormat(): string {
     const format = Zotero.Prefs.get('export.quickCopy.setting');
 
@@ -25,7 +29,7 @@ export default class NoteroItem {
   public getAuthors(): string[] {
     return this.zoteroItem
       .getCreators()
-      .map(({ firstName, lastName }) => `${lastName}, ${firstName}`);
+      .map(NoteroItem.formatCreatorName);
   }
 
   public getDOI(): string | null {

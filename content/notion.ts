@@ -144,7 +144,7 @@ export default class Notion {
     const itemProperties: DatabasePageProperties = {
       title: {
         title: Notion.buildRichText(
-          (await item.getInTextCitation()) || item.title
+          (await item.getInTextCitation()) || item.getTitle()
         ),
       },
     };
@@ -153,51 +153,55 @@ export default class Notion {
       {
         name: 'Authors',
         type: 'rich_text',
-        buildRequest: () => Notion.buildRichText(item.authors.join('\n')),
+        buildRequest: () => Notion.buildRichText(item.getAuthors().join('\n')),
       },
       {
         name: 'DOI',
         type: 'url',
-        buildRequest: () => item.doi && `https://doi.org/${item.doi}`,
+        buildRequest: () => item.getDOI(),
       },
       {
         name: 'Full Citation',
         type: 'rich_text',
         buildRequest: async () =>
-          Notion.buildRichText((await item.getFullCitation()) || item.title),
+          Notion.buildRichText(
+            (await item.getFullCitation()) || item.getTitle()
+          ),
       },
       {
         name: 'In-Text Citation',
         type: 'rich_text',
         buildRequest: async () =>
-          Notion.buildRichText((await item.getInTextCitation()) || item.title),
+          Notion.buildRichText(
+            (await item.getInTextCitation()) || item.getTitle()
+          ),
       },
       {
         name: 'Item Type',
         type: 'select',
         buildRequest: () => ({
-          name: item.itemType,
+          name: item.getItemType(),
         }),
       },
       {
         name: 'Title',
         type: 'rich_text',
-        buildRequest: () => Notion.buildRichText(item.title),
+        buildRequest: () => Notion.buildRichText(item.getTitle()),
       },
       {
         name: 'URL',
         type: 'url',
-        buildRequest: () => item.url,
+        buildRequest: () => item.getURL(),
       },
       {
         name: 'Year',
         type: 'number',
-        buildRequest: () => item.year,
+        buildRequest: () => item.getYear(),
       },
       {
         name: 'Zotero URI',
         type: 'url',
-        buildRequest: () => item.zoteroURI,
+        buildRequest: () => item.getZoteroURI(),
       },
     ];
 

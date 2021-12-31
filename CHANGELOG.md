@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.2.1](https://github.com/dvanoni/notero/compare/v0.2.0...v0.2.1) (2021-12-31)
+
+
+### Features
+
+* Sync editors separately from authors ([f3d9bf3](https://github.com/dvanoni/notero/commit/f3d9bf34157c5ef203190a9a70af5d441f82a2f1))
+* Sync file path of best attachment to Notion ([8e15d25](https://github.com/dvanoni/notero/commit/8e15d25883b234c092988cd5b657127f3a0dc80f))
+* Sync Zotero tags to Notion ([3c9b72d](https://github.com/dvanoni/notero/commit/3c9b72d89f5bad3f45157bd3599de3f93de3eb84))
+
+
+### Bug Fixes
+
+* Correctly format author names that don't have separate first/last ([c6722ae](https://github.com/dvanoni/notero/commit/c6722ae2a07cedfe19e830a9404ad9dc78612402))
+* Create new Notion page if previous page is not found ([0028d88](https://github.com/dvanoni/notero/commit/0028d884326b9c065aba2d3a3c13dcb8f4fbe9f1))
+* Ensure item is regular item before syncing ([7c4f703](https://github.com/dvanoni/notero/commit/7c4f7038677980fe465ee51c76e4ccc419175af0))
+
 ## [0.2.0](https://github.com/dvanoni/notero/compare/v0.1.3...v0.2.0) (2021-12-28)
 
 

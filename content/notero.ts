@@ -173,8 +173,7 @@ class Notero {
     const noteroItem = new NoteroItem(item);
     const response = await notion.saveItemToDatabase(noteroItem);
 
-    item.addTag('notion');
-    await item.saveTx({ skipNotifier: true });
+    await noteroItem.saveNotionTag();
 
     if ('url' in response) {
       await noteroItem.saveNotionLinkAttachment(response.url);

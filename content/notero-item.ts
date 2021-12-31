@@ -3,6 +3,8 @@ import Notion from './notion';
 const APA_STYLE = 'bibliography=http://www.zotero.org/styles/apa';
 
 export default class NoteroItem {
+  static NOTION_TAG_NAME = 'notion';
+
   private static getQuickCopyFormat(): string {
     const format = Zotero.Prefs.get('export.quickCopy.setting');
 
@@ -20,14 +22,15 @@ export default class NoteroItem {
     this.zoteroItem = zoteroItem;
   }
 
-  public get authors(): string[] {
+  public getAuthors(): string[] {
     return this.zoteroItem
       .getCreators()
       .map(({ firstName, lastName }) => `${lastName}, ${firstName}`);
   }
 
-  public get doi(): string | null {
-    return this.zoteroItem.getField('DOI') || null;
+  public getDOI(): string | null {
+    const doi = this.zoteroItem.getField('DOI');
+    return doi ? `https://doi.org/${doi}` : null;
   }
 
   private getCitation(
@@ -69,24 +72,31 @@ export default class NoteroItem {
     return this._inTextCitation;
   }
 
-  public get itemType(): string {
+  public getItemType(): string {
     return Zotero.ItemTypes.getLocalizedString(this.zoteroItem.itemTypeID);
   }
 
-  public get title(): string {
+  public getTags(): string[] {
+    return this.zoteroItem
+      .getTags()
+      .map(({ tag }) => tag)
+      .filter((tag) => tag !== NoteroItem.NOTION_TAG_NAME);
+  }
+
+  public getTitle(): string {
     return this.zoteroItem.getDisplayTitle();
   }
 
-  public get url(): string | null {
+  public getURL(): string | null {
     return this.zoteroItem.getField('url') || null;
   }
 
-  public get year(): number | null {
+  public getYear(): number | null {
     const year = Number.parseInt(this.zoteroItem.getField('year') || '');
     return Number.isNaN(year) ? null : year;
   }
 
-  public get zoteroURI(): string {
+  public getZoteroURI(): string {
     return Zotero.URI.getItemURI(this.zoteroItem);
   }
 
@@ -129,5 +139,10 @@ export default class NoteroItem {
         },
       });
     }
+  }
+
+  public async saveNotionTag(): Promise<void> {
+    this.zoteroItem.addTag(NoteroItem.NOTION_TAG_NAME);
+    await this.zoteroItem.saveTx({ skipNotifier: true });
   }
 }

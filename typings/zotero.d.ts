@@ -114,6 +114,8 @@ declare namespace Zotero {
       includeBaseMapped?: boolean
     ): string | undefined;
 
+    getTags(): { tag: string; type: number }[];
+
     isRegularItem(): boolean;
 
     setField(field: number | string, value: any, loadIn?: boolean): boolean;

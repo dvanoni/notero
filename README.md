@@ -105,6 +105,7 @@ the other properties must be configured exactly as specified here.
 | `Name`             | Title         | Yes      |
 | `Authors`          | Text          | No       |
 | `DOI`              | URL           | No       |
+| `Editors`          | Text          | No       |
 | `Full Citation`    | Text          | No       |
 | `In-Text Citation` | Text          | No       |
 | `Item Type`        | Select        | No       |

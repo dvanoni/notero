@@ -161,6 +161,11 @@ export default class Notion {
         buildRequest: () => item.getDOI(),
       },
       {
+        name: 'Editors',
+        type: 'rich_text',
+        buildRequest: () => Notion.buildRichText(item.getEditors().join('\n')),
+      },
+      {
         name: 'Full Citation',
         type: 'rich_text',
         buildRequest: async () =>

@@ -5,6 +5,10 @@ const APA_STYLE = 'bibliography=http://www.zotero.org/styles/apa';
 export default class NoteroItem {
   static NOTION_TAG_NAME = 'notion';
 
+  private static formatCreatorName({ firstName, lastName }: Zotero.Creator) {
+    return [lastName, firstName].filter((name) => name).join(', ');
+  }
+
   private static getQuickCopyFormat(): string {
     const format = Zotero.Prefs.get('export.quickCopy.setting');
 
@@ -23,14 +27,29 @@ export default class NoteroItem {
   }
 
   public getAuthors(): string[] {
+    const primaryCreatorTypeID = Zotero.CreatorTypes.getPrimaryIDForType(
+      this.zoteroItem.itemTypeID
+    );
+
     return this.zoteroItem
       .getCreators()
-      .map(({ firstName, lastName }) => `${lastName}, ${firstName}`);
+      .filter(({ creatorTypeID }) => creatorTypeID === primaryCreatorTypeID)
+      .map(NoteroItem.formatCreatorName);
   }
 
   public getDOI(): string | null {
     const doi = this.zoteroItem.getField('DOI');
     return doi ? `https://doi.org/${doi}` : null;
+  }
+
+  public getEditors(): string[] {
+    return this.zoteroItem
+      .getCreators()
+      .filter(
+        ({ creatorTypeID }) =>
+          Zotero.CreatorTypes.getName(creatorTypeID) === 'editor'
+      )
+      .map(NoteroItem.formatCreatorName);
   }
 
   private getCitation(

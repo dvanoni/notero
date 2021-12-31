@@ -1,4 +1,10 @@
-import { Client, Logger, LogLevel } from '@notionhq/client';
+import {
+  APIErrorCode,
+  APIResponseError,
+  Client,
+  Logger,
+  LogLevel,
+} from '@notionhq/client';
 import {
   CreatePageParameters,
   CreatePageResponse,
@@ -101,16 +107,20 @@ export default class Notion {
     const properties = await this.buildItemProperties(item);
 
     if (pageID) {
-      return this.client.pages.update({
-        page_id: pageID,
-        properties,
-      });
+      try {
+        return await this.client.pages.update({ page_id: pageID, properties });
+      } catch (error) {
+        if (
+          !APIResponseError.isAPIResponseError(error) ||
+          error.code !== APIErrorCode.ObjectNotFound
+        ) {
+          throw error;
+        }
+      }
     }
 
     return this.client.pages.create({
-      parent: {
-        database_id: this.databaseID,
-      },
+      parent: { database_id: this.databaseID },
       properties,
     });
   }

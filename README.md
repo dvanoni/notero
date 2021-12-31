@@ -52,6 +52,7 @@ you may need to navigate to a different item and back to make them appear._
 
 The [latest release](https://github.com/dvanoni/notero/releases/latest) of the
 plugin is available on GitHub.
+See the [changelog](CHANGELOG.md) for release notes.
 
 Detailed setup instructions are below.
 
@@ -128,14 +129,14 @@ the other properties must be configured exactly as specified here.
 ## Example Notion Databases
 
 We provide some example Notion databases that have been configured with all the
-properties required by Notero.
+properties synced by Notero.
 
 Once you've opened one of the examples, click the **Duplicate** button in the
 top-right corner of the page to duplicate it into your Notion workspace.
 
 ### [Basic Example](https://dvanoni.notion.site/5ba9956716ac4218be77d2b4655911f5)
 
-An empty database that contains only the required properties.
+An empty database that contains only the properties synced by Notero.
 Useful if you want to start from scratch and customize it yourself.
 
 ### [Advanced Example](https://dvanoni.notion.site/79b17005bc374209b0f373b1a3cde0ae)

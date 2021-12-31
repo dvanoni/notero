@@ -184,6 +184,11 @@ export default class Notion {
         }),
       },
       {
+        name: 'Tags',
+        type: 'multi_select',
+        buildRequest: () => item.getTags().map((name) => ({ name })),
+      },
+      {
         name: 'Title',
         type: 'rich_text',
         buildRequest: () => Notion.buildRichText(item.getTitle()),

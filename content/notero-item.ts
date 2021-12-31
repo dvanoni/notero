@@ -76,6 +76,13 @@ export default class NoteroItem {
     return Zotero.ItemTypes.getLocalizedString(this.zoteroItem.itemTypeID);
   }
 
+  public getTags(): string[] {
+    return this.zoteroItem
+      .getTags()
+      .map(({ tag }) => tag)
+      .filter((tag) => tag !== NoteroItem.NOTION_TAG_NAME);
+  }
+
   public getTitle(): string {
     return this.zoteroItem.getDisplayTitle();
   }

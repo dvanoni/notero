@@ -103,15 +103,16 @@ the other properties must be configured exactly as specified here.
 | Property Name      | Property Type | Required |
 | ------------------ | ------------- | -------- |
 | `Name`             | Title         | Yes      |
-| `Item Type`        | Select        | No       |
-| `Title`            | Text          | No       |
 | `Authors`          | Text          | No       |
-| `Year`             | Number        | No       |
 | `DOI`              | URL           | No       |
-| `URL`              | URL           | No       |
-| `Zotero URI`       | URL           | No       |
 | `Full Citation`    | Text          | No       |
 | `In-Text Citation` | Text          | No       |
+| `Item Type`        | Select        | No       |
+| `Tags`             | Multi-select  | No       |
+| `Title`            | Text          | No       |
+| `URL`              | URL           | No       |
+| `Year`             | Number        | No       |
+| `Zotero URI`       | URL           | No       |
 
 ### Install and Configure Notero Plugin
 

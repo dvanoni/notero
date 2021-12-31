@@ -27,14 +27,29 @@ export default class NoteroItem {
   }
 
   public getAuthors(): string[] {
+    const primaryCreatorTypeID = Zotero.CreatorTypes.getPrimaryIDForType(
+      this.zoteroItem.itemTypeID
+    );
+
     return this.zoteroItem
       .getCreators()
+      .filter(({ creatorTypeID }) => creatorTypeID === primaryCreatorTypeID)
       .map(NoteroItem.formatCreatorName);
   }
 
   public getDOI(): string | null {
     const doi = this.zoteroItem.getField('DOI');
     return doi ? `https://doi.org/${doi}` : null;
+  }
+
+  public getEditors(): string[] {
+    return this.zoteroItem
+      .getCreators()
+      .filter(
+        ({ creatorTypeID }) =>
+          Zotero.CreatorTypes.getName(creatorTypeID) === 'editor'
+      )
+      .map(NoteroItem.formatCreatorName);
   }
 
   private getCitation(

@@ -18,11 +18,19 @@ declare namespace Zotero {
     }): Promise<Zotero.Item>;
   }
 
+  interface CachedTypes {
+    getName(idOrName: number | string): string;
+  }
+
   interface Creator {
     firstName: string;
     lastName: string;
     fieldMode: number;
     creatorTypeID: number;
+  }
+
+  interface CreatorTypes extends CachedTypes {
+    getPrimaryIDForType(itemTypeID: number): number | false;
   }
 
   interface Collection extends DataObject {
@@ -244,6 +252,7 @@ declare namespace Zotero {
 // eslint-disable-next-line no-redeclare
 declare const Zotero: {
   Attachments: Zotero.Attachments;
+  CreatorTypes: Zotero.CreatorTypes;
   Collections: Zotero.Collections;
   Items: Zotero.Items;
   ItemTypes: Zotero.ItemTypes;

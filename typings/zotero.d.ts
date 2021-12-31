@@ -15,7 +15,7 @@ declare namespace Zotero {
       title?: string;
       collections?: (DataObjectID | DataObjectKey)[];
       saveOptions?: DataObject.SaveOptions;
-    }): Promise<Zotero.Item>;
+    }): Promise<Item>;
   }
 
   interface CachedTypes {
@@ -117,6 +117,8 @@ declare namespace Zotero {
 
     getAttachments(includeTrashed: boolean): DataObjectID[];
 
+    getBestAttachment(): Promise<Item | false>;
+
     getCollections(): DataObjectID[];
 
     getCreators(): Creator[];
@@ -128,6 +130,8 @@ declare namespace Zotero {
       unformatted?: boolean,
       includeBaseMapped?: boolean
     ): string | undefined;
+
+    getFilePathAsync(): Promise<string | false>;
 
     getTags(): { tag: string; type: number }[];
 
@@ -270,7 +274,7 @@ declare const Zotero: {
   /** Log a message to the Mozilla JS error console */
   log(
     message: string,
-    type: 'error' | 'warning' | 'exception' | 'strict'
+    type?: 'error' | 'warning' | 'exception' | 'strict'
   ): void;
 
   getActiveZoteroPane(): Zotero.ZoteroPane | null;

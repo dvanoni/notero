@@ -3,6 +3,8 @@ import Notion from './notion';
 const APA_STYLE = 'bibliography=http://www.zotero.org/styles/apa';
 
 export default class NoteroItem {
+  static NOTION_TAG_NAME = 'notion';
+
   private static getQuickCopyFormat(): string {
     const format = Zotero.Prefs.get('export.quickCopy.setting');
 
@@ -130,5 +132,10 @@ export default class NoteroItem {
         },
       });
     }
+  }
+
+  public async saveNotionTag(): Promise<void> {
+    this.zoteroItem.addTag(NoteroItem.NOTION_TAG_NAME);
+    await this.zoteroItem.saveTx({ skipNotifier: true });
   }
 }

@@ -52,6 +52,13 @@ export default class NoteroItem {
       .map(NoteroItem.formatCreatorName);
   }
 
+  public async getFilePath(): Promise<string | null> {
+    const attachment = await this.zoteroItem.getBestAttachment();
+    if (!attachment) return null;
+
+    return (await attachment.getFilePathAsync()) || null;
+  }
+
   private getCitation(
     format: string,
     inTextCitation: boolean

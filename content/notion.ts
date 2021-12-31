@@ -59,7 +59,9 @@ export default class Notion {
     );
   };
 
-  static buildRichText(content: string): PropertyRequest<'rich_text'> {
+  static buildRichText(content: string | null): PropertyRequest<'rich_text'> {
+    if (!content) return [];
+
     return [
       {
         text: {
@@ -164,6 +166,12 @@ export default class Notion {
         name: 'Editors',
         type: 'rich_text',
         buildRequest: () => Notion.buildRichText(item.getEditors().join('\n')),
+      },
+      {
+        name: 'File Path',
+        type: 'rich_text',
+        buildRequest: async () =>
+          Notion.buildRichText(await item.getFilePath()),
       },
       {
         name: 'Full Citation',

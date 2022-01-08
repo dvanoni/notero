@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.2.2](https://github.com/dvanoni/notero/compare/v0.2.1...v0.2.2) (2022-01-08)
+
+
+### Features
+
+* Use less obtrusive progress window in bottom corner ([2c6810d](https://github.com/dvanoni/notero/commit/2c6810dd103f2a65856fc72f8ea104b510c950d0))
+
 ### [0.2.1](https://github.com/dvanoni/notero/compare/v0.2.0...v0.2.1) (2021-12-31)
 
 

@@ -17,7 +17,13 @@ function patch(
 }
 
 class Notero {
+  private static get tickIcon() {
+    return `chrome://zotero/skin/tick${Zotero.hiDPI ? '@2x' : ''}.png`;
+  }
+
   private globals!: Record<string, any>;
+
+  private progressWindow = new Zotero.ProgressWindow();
 
   private stringBundle = Services.strings.createBundle(
     'chrome://notero/locale/notero.properties'
@@ -142,32 +148,42 @@ class Notero {
 
     if (!items.length) return;
 
+    const itemsText = items.length === 1 ? 'item' : 'items';
+
+    this.progressWindow.changeHeadline(
+      `Saving ${items.length} ${itemsText} to Notion...`
+    );
+    this.progressWindow.show();
+    const itemProgress = new this.progressWindow.ItemProgress(
+      'chrome://notero/skin/notion-logo-32.png',
+      ''
+    );
+
     try {
       const notion = this.getNotion();
-
-      const itemsText = items.length === 1 ? 'item' : 'items';
-      Zotero.showZoteroPaneProgressMeter(
-        `Saving ${items.length} ${itemsText} to Notion...`
-      );
-
       let step = 0;
 
       for (const item of items) {
+        step++;
+        itemProgress.setText(`Item ${step} of ${items.length}`);
         await this.saveItemToNotion(item, notion);
-
-        Zotero.updateZoteroPaneProgressMeter(
-          (++step / items.length) * PERCENTAGE_MULTIPLIER
-        );
+        itemProgress.setProgress((step / items.length) * PERCENTAGE_MULTIPLIER);
       }
+      itemProgress.setIcon(Notero.tickIcon);
     } catch (error) {
+      itemProgress.setError();
       const errorMessage = String(error);
       Zotero.log(errorMessage, 'error');
       if (hasErrorStack(error)) {
         Zotero.log(error.stack, 'error');
       }
-      Zotero.alert(window, 'Failed to save item(s) to Notion', errorMessage);
+      Zotero.alert(
+        window,
+        `Failed to save ${itemsText} to Notion`,
+        errorMessage
+      );
     } finally {
-      Zotero.hideZoteroPaneOverlays();
+      this.progressWindow.startCloseTimer();
     }
   }
 

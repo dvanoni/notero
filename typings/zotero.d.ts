@@ -200,6 +200,41 @@ declare namespace Zotero {
     type Value = boolean | number | string | undefined;
   }
 
+  type ProgressWindow = {
+    new (options?: { closeOnClick?: boolean; window?: Window }): ProgressWindow;
+
+    show(): boolean;
+
+    changeHeadline(text: string, icon?: string, postText?: string): void;
+
+    addLines(
+      labels: string | Record<string, string>,
+      icons: string | Record<string, string>
+    ): void;
+
+    startCloseTimer(ms?: number, requireMouseOver?: boolean): void;
+
+    ItemProgress: ProgressWindow.ItemProgress;
+  };
+
+  namespace ProgressWindow {
+    type ItemProgress = {
+      new (
+        iconSrc: string,
+        text: string,
+        parentItemProgress?: ItemProgress
+      ): ItemProgress;
+
+      setError(): void;
+
+      setIcon(iconSrc: string): void;
+
+      setProgress(percent: number): void;
+
+      setText(text: string): void;
+    };
+  }
+
   interface QuickCopy {
     /**
      * Get text and (when applicable) HTML content from items
@@ -262,6 +297,7 @@ declare const Zotero: {
   ItemTypes: Zotero.ItemTypes;
   Notifier: Zotero.Notifier;
   Prefs: Zotero.Prefs;
+  ProgressWindow: Zotero.ProgressWindow;
   QuickCopy: Zotero.QuickCopy;
   URI: Zotero.URI;
 
@@ -278,6 +314,8 @@ declare const Zotero: {
   ): void;
 
   getActiveZoteroPane(): Zotero.ZoteroPane | null;
+
+  hiDPI: boolean;
 
   /**
    * Show Zotero pane overlay and progress bar in all windows

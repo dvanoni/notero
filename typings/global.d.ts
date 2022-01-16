@@ -2,6 +2,9 @@ export {};
 
 declare global {
   interface Window {
-    openDialog: typeof window.open;
+    arguments?: unknown[];
+    openDialog: typeof window.open extends (...args: infer A) => infer R
+      ? (...args: [...A, ...any]) => R
+      : never;
   }
 }

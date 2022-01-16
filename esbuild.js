@@ -16,6 +16,15 @@ async function build() {
     banner: { js: 'if (!Zotero.Notero) {\n' },
     footer: { js: '\n}' },
   });
+
+  await esbuild.build({
+    bundle: true,
+    format: 'iife',
+    globalName: 'notero',
+    target: ['firefox60'],
+    entryPoints: ['content/preferences.ts'],
+    outdir: 'build/content',
+  });
 }
 
 build().catch((err) => {

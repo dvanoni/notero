@@ -1,0 +1,48 @@
+#notero-prefpane {
+  width: 500px;
+}
+
+#notero-prefpane groupbox:last-of-type {
+  margin-bottom: 3em;
+}
+
+#notero-prefpane label.text-link {
+  margin: 0;
+}
+
+#notero-syncConfigsTree[disabled='true'] {
+  opacity: 0.5;
+}
+
+#notero-syncConfigsTree treechildren::-moz-tree-cell-text(syncDisabled) {
+  color: #666;
+}
+
+#notero-syncConfigsTree treechildren::-moz-tree-cell-text(focus, selected) {
+  color: #fff;
+}
+
+#notero-syncConfigsTree treechildren::-moz-tree-cell(checkable) {
+  cursor: pointer;
+}
+
+#notero-syncConfigsTree treechildren::-moz-tree-checkbox {
+  list-style-image: url('chrome://notero/skin/square-light.svg');
+}
+
+#notero-syncConfigsTree treechildren::-moz-tree-checkbox(hover) {
+  list-style-image: url('chrome://notero/skin/square-dark.svg');
+}
+
+#notero-syncConfigsTree treechildren::-moz-tree-checkbox(focus, selected) {
+  list-style-image: url('chrome://notero/skin/square-white.svg');
+}
+
+#notero-syncConfigsTree treechildren::-moz-tree-checkbox(checked) {
+  list-style-image: url('chrome://notero/skin/check-square-black.svg');
+}
+
+#notero-syncConfigsTree
+  treechildren::-moz-tree-checkbox(checked, focus, selected) {
+  list-style-image: url('chrome://notero/skin/check-square-white.svg');
+}

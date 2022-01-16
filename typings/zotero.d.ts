@@ -22,6 +22,14 @@ declare namespace Zotero {
     getName(idOrName: number | string): string;
   }
 
+  interface Collection extends DataObject {
+    name: string;
+    parentID: DataObjectID;
+    parentKey: DataObjectKey;
+  }
+
+  type Collections = DataObjects<Collection>;
+
   interface Creator {
     firstName: string;
     lastName: string;
@@ -32,12 +40,6 @@ declare namespace Zotero {
   interface CreatorTypes extends CachedTypes {
     getPrimaryIDForType(itemTypeID: number): number | false;
   }
-
-  interface Collection extends DataObject {
-    name: string;
-  }
-
-  type Collections = DataObjects<Collection>;
 
   type DataObjectID = number;
   type DataObjectKey = string;
@@ -99,6 +101,9 @@ declare namespace Zotero {
     get<I extends DataObjectID | DataObjectID[]>(
       ids: I
     ): I extends DataObjectID ? T | false : T[];
+
+    /** Get all loaded objects */
+    getLoaded(): T[];
   }
 
   interface Item extends DataObject {
@@ -333,6 +338,8 @@ declare const Zotero: {
 
   /** Hide Zotero pane overlay in all windows */
   hideZoteroPaneOverlays(): void;
+
+  uiReadyPromise: Promise<void>;
 };
 
 declare const Components: any;

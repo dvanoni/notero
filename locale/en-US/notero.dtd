@@ -1,15 +1,19 @@
 <!ENTITY notero "Sync Zotero items into a Notion database">
 
+<!-- Preferences Window -->
+
 <!ENTITY notero.preferences.title "Notero Preferences">
 <!ENTITY notero.preferences.menuitem "Notero Preferences...">
 
-<!ENTITY notero.preferences.syncGroupCaption "Sync Preferences">
-<!ENTITY notero.preferences.syncGroupDescription "Notero will monitor the specified collection for items. Items will sync to Notion when added to the collection, and you can also enable syncing whenever an item in the collection is modified.">
-<!ENTITY notero.preferences.collectionName "Collection Name">
-<!ENTITY notero.preferences.syncOnModifyItems "Sync when items are modified">
-
-<!ENTITY notero.preferences.notionGroupCaption "Notion Preferences">
-<!ENTITY notero.preferences.notionGroupDescription "To see how to obtain these values, view the ">
+<!ENTITY notero.preferences.notionGroupboxCaption "Notion Preferences">
+<!ENTITY notero.preferences.notionGroupboxDescription "For instructions on obtaining these values, view the ">
 <!ENTITY notero.preferences.readme "README">
 <!ENTITY notero.preferences.notionToken "Integration Token">
 <!ENTITY notero.preferences.notionDatabaseID "Database ID">
+
+<!ENTITY notero.preferences.syncGroupboxCaption "Sync Preferences">
+<!ENTITY notero.preferences.syncGroupboxDescription1 "Notero will monitor the collections enabled below.">
+<!ENTITY notero.preferences.syncGroupboxDescription2 "Items in the enabled collections will sync to Notion when added to that collection and whenever the items are modified.">
+<!ENTITY notero.preferences.collectionColumn "Collection">
+<!ENTITY notero.preferences.syncEnabledColumn "Sync Enabled">
+<!ENTITY notero.preferences.syncOnModifyItems "Sync when items are modified">

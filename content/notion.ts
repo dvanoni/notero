@@ -80,8 +80,12 @@ export default class Notion {
     return matches ? matches[1] : undefined;
   }
 
-  static truncateTextToMaxLength(str: string): string {
-    return str.substr(0, TEXT_CONTENT_MAX_LENGTH);
+  static sanitizeSelectOption(text: string): string {
+    return text.replace(/,/g, ';');
+  }
+
+  static truncateTextToMaxLength(text: string): string {
+    return text.substr(0, TEXT_CONTENT_MAX_LENGTH);
   }
 
   public constructor(authToken: string, databaseID: string) {
@@ -199,7 +203,10 @@ export default class Notion {
       {
         name: 'Tags',
         type: 'multi_select',
-        buildRequest: () => item.getTags().map((name) => ({ name })),
+        buildRequest: () =>
+          item.getTags().map((tag) => ({
+            name: Notion.sanitizeSelectOption(tag),
+          })),
       },
       {
         name: 'Title',

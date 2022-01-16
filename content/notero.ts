@@ -1,6 +1,10 @@
-import { loadSyncEnabledCollectionIDs } from './collection-sync-config';
+import {
+  loadSyncConfigs,
+  loadSyncEnabledCollectionIDs,
+  saveSyncConfigs,
+} from './collection-sync-config';
 import NoteroItem from './notero-item';
-import { getNoteroPref, NoteroPref } from './notero-pref';
+import { clearNoteroPref, getNoteroPref, NoteroPref } from './notero-pref';
 import Notion from './notion';
 import { hasErrorStack } from './utils';
 
@@ -34,6 +38,8 @@ class Notero {
   public async load(globals: Record<string, any>) {
     this.globals = globals;
 
+    await this.migratePreferences();
+
     const notifierID = Zotero.Notifier.registerObserver(
       this.notifierCallback,
       ['collection-item', 'item'],
@@ -66,6 +72,23 @@ class Notero {
       }
     },
   };
+
+  private async migratePreferences() {
+    const syncConfigs = loadSyncConfigs();
+    if (Object.keys(syncConfigs).length) return;
+
+    await Zotero.uiReadyPromise;
+
+    const collectionName = getNoteroPref(NoteroPref.collectionName);
+    const collection = Zotero.Collections.getLoaded().find(
+      ({ name }) => name === collectionName
+    );
+    if (!collection) return;
+
+    saveSyncConfigs({ [collection.id]: { syncEnabled: true } });
+    clearNoteroPref(NoteroPref.collectionName);
+    Zotero.log(`Migrated Notero preferences for collection: ${collectionName}`);
+  }
 
   public openPreferences() {
     window.openDialog(

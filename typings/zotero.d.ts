@@ -47,6 +47,7 @@ declare namespace Zotero {
   interface DataObject {
     id: DataObjectID;
     key: DataObjectKey;
+    deleted: boolean;
 
     /**
      * Delete object from database.

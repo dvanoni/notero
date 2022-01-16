@@ -136,6 +136,7 @@ class Notero {
 
     const items = Zotero.Items.get(ids.map(Number)).filter(
       (item) =>
+        !item.deleted &&
         item.isRegularItem() &&
         item
           .getCollections()

@@ -180,8 +180,14 @@ declare namespace Zotero {
   }
 
   interface Prefs {
+    /** Clear a preference */
+    clear(pref: string, global?: boolean): void;
+
     /** Retrieve a preference */
     get(pref: string, global?: boolean): Prefs.Value;
+
+    /** Set a preference */
+    set(pref: string, value: Prefs.Value, global?: boolean): void;
 
     /**
      * @param name Preference name; if not global, this is on the extensions.zotero branch

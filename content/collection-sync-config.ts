@@ -1,3 +1,5 @@
+import { getNoteroPref, NoteroPref, setNoteroPref } from './notero-pref';
+
 export type CollectionSyncConfig = {
   notionOptionID?: string;
   syncEnabled: boolean;
@@ -7,6 +9,23 @@ export type CollectionSyncConfigsRecord = Record<
   Zotero.Collection['id'],
   CollectionSyncConfig | undefined
 >;
+
+export function loadSyncEnabledCollectionIDs(): Set<Zotero.Collection['id']> {
+  const configs = loadSyncConfigs();
+  const collectionIDs = Object.entries(configs)
+    .filter(([id, config]) => Number(id) > 0 && config?.syncEnabled)
+    .map(([id]) => Number(id));
+  return new Set(collectionIDs);
+}
+
+export function loadSyncConfigs(): CollectionSyncConfigsRecord {
+  const json = getNoteroPref(NoteroPref.collectionSyncConfigs);
+  return parseSyncConfigs(json);
+}
+
+export function saveSyncConfigs(configs: CollectionSyncConfigsRecord): void {
+  setNoteroPref(NoteroPref.collectionSyncConfigs, JSON.stringify(configs));
+}
 
 export function parseSyncConfigs(json: unknown): CollectionSyncConfigsRecord {
   if (typeof json !== 'string') return {};

@@ -28,9 +28,9 @@ class Notero {
 
   private globals!: Record<string, any>;
 
-  private progressWindow = new Zotero.ProgressWindow();
+  private readonly progressWindow = new Zotero.ProgressWindow();
 
-  private stringBundle = Services.strings.createBundle(
+  private readonly stringBundle = Services.strings.createBundle(
     'chrome://notero/locale/notero.properties'
   );
 
@@ -170,11 +170,7 @@ class Notero {
 
     if (!items.length) return;
 
-    const itemsText = items.length === 1 ? 'item' : 'items';
-
-    this.progressWindow.changeHeadline(
-      `Saving ${items.length} ${itemsText} to Notion...`
-    );
+    this.progressWindow.changeHeadline('Saving items to Notion...');
     this.progressWindow.show();
     const itemProgress = new this.progressWindow.ItemProgress(
       'chrome://notero/skin/notion-logo-32.png',
@@ -192,20 +188,15 @@ class Notero {
         itemProgress.setProgress((step / items.length) * PERCENTAGE_MULTIPLIER);
       }
       itemProgress.setIcon(Notero.tickIcon);
+      this.progressWindow.startCloseTimer();
     } catch (error) {
-      itemProgress.setError();
       const errorMessage = String(error);
       Zotero.log(errorMessage, 'error');
       if (hasErrorStack(error)) {
         Zotero.log(error.stack, 'error');
       }
-      Zotero.alert(
-        window,
-        `Failed to save ${itemsText} to Notion`,
-        errorMessage
-      );
-    } finally {
-      this.progressWindow.startCloseTimer();
+      itemProgress.setError();
+      this.progressWindow.addDescription(errorMessage);
     }
   }
 

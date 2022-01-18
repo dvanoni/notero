@@ -215,14 +215,16 @@ declare namespace Zotero {
   type ProgressWindow = {
     new (options?: { closeOnClick?: boolean; window?: Window }): ProgressWindow;
 
-    show(): boolean;
-
-    changeHeadline(text: string, icon?: string, postText?: string): void;
+    addDescription(text: string): void;
 
     addLines(
       labels: string | Record<string, string>,
       icons: string | Record<string, string>
     ): void;
+
+    changeHeadline(text: string, icon?: string, postText?: string): void;
+
+    show(): boolean;
 
     startCloseTimer(ms?: number, requireMouseOver?: boolean): void;
 

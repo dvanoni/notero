@@ -21,6 +21,13 @@ function patch(
   object[method][monkey_patch_marker] = true;
 }
 
+const SYNC_DEBOUNCE_MS = 2000;
+
+type QueuedSync = {
+  readonly itemIDs: Set<Zotero.Item['id']>;
+  timeoutID?: ReturnType<typeof setTimeout>;
+};
+
 class Notero {
   private static get tickIcon() {
     return `chrome://zotero/skin/tick${Zotero.hiDPI ? '@2x' : ''}.png`;
@@ -30,9 +37,13 @@ class Notero {
 
   private readonly progressWindow = new Zotero.ProgressWindow();
 
+  private queuedSync?: QueuedSync;
+
   private readonly stringBundle = Services.strings.createBundle(
     'chrome://notero/locale/notero.properties'
   );
+
+  private syncInProgress = false;
 
   // eslint-disable-next-line @typescript-eslint/require-await
   public async load(globals: Record<string, any>) {
@@ -127,7 +138,7 @@ class Notero {
       )
       .map(({ item }) => item);
 
-    void this.saveItemsToNotion(items);
+    this.enqueueItemsToSync(items);
   }
 
   private onModifyItems(ids: string[]) {
@@ -143,7 +154,7 @@ class Notero {
           .some((collectionID) => collectionIDs.has(collectionID))
     );
 
-    void this.saveItemsToNotion(items);
+    this.enqueueItemsToSync(items);
   }
 
   private getNotion() {
@@ -165,9 +176,77 @@ class Notero {
     return new Notion(authToken, databaseID);
   }
 
-  private async saveItemsToNotion(items: Zotero.Item[]) {
+  /**
+   * Enqueue Zotero items to sync to Notion.
+   *
+   * Because Zotero items can be updated multiple times in short succession,
+   * any subsequent updates after the first can sometimes occur before the
+   * initial sync has finished and added the Notion link attachment. This has
+   * the potential to end up creating duplicate Notion pages.
+   *
+   * To address this, we use two strategies:
+   * - Debounce syncs so that they occur, at most, every `SYNC_DEBOUNCE_MS` ms
+   * - Prevent another sync from starting until the previous one has finished
+   *
+   * The algorithm works as follows:
+   * 1. When enqueueing items, check if there is an existing sync queued
+   *    - If not, create one with a set of the item IDs to sync and a timeout
+   *      of `SYNC_DEBOUNCE_MS`
+   *    - If so, add the item IDs to the existing set and restart the timeout
+   * 2. When a timeout ends, check if there is a sync in progress
+   *    - If not, perform the sync
+   *    - If so, delete the timeout ID (to indicate it has expired)
+   * 3. When a sync ends, check if there is another sync queued
+   *    - If there is one with an expired timeout, perform the sync
+   *    - If there is one with a remaining timeout, let it run when it times out
+   *    - Otherwise, do nothing
+   *
+   * @param items the Zotero items to sync to Notion
+   */
+  private enqueueItemsToSync(items: Zotero.Item[]) {
+    if (!items.length) return;
+
+    if (this.queuedSync?.timeoutID) {
+      clearTimeout(this.queuedSync.timeoutID);
+    }
+
+    const itemIDs = new Set([
+      ...(this.queuedSync?.itemIDs?.values() ?? []),
+      ...items.map(({ id }) => id),
+    ]);
+
+    const timeoutID = setTimeout(() => {
+      if (!this.queuedSync) return;
+
+      this.queuedSync.timeoutID = undefined;
+      if (!this.syncInProgress) {
+        void this.performSync();
+      }
+    }, SYNC_DEBOUNCE_MS);
+
+    this.queuedSync = { itemIDs, timeoutID };
+  }
+
+  private async performSync() {
+    if (!this.queuedSync) return;
+
+    const { itemIDs } = this.queuedSync;
+    this.queuedSync = undefined as QueuedSync | undefined;
+    this.syncInProgress = true;
+
+    await this.saveItemsToNotion(itemIDs);
+
+    if (this.queuedSync && !this.queuedSync.timeoutID) {
+      await this.performSync();
+    }
+
+    this.syncInProgress = false;
+  }
+
+  private async saveItemsToNotion(itemIDs: Set<Zotero.Item['id']>) {
     const PERCENTAGE_MULTIPLIER = 100;
 
+    const items = Zotero.Items.get(Array.from(itemIDs));
     if (!items.length) return;
 
     this.progressWindow.changeHeadline('Saving items to Notion...');

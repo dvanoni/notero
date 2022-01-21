@@ -1,6 +1,6 @@
 /* eslint-disable no-undef */
 
-pref('extensions.notero.collectionName', '');
+pref('extensions.notero.collectionSyncConfigs', '');
 pref('extensions.notero.notionToken', '');
 pref('extensions.notero.notionDatabaseID', '');
-pref('extensions.notero.syncOnModifyItems', false);
+pref('extensions.notero.syncOnModifyItems', true);

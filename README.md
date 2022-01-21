@@ -1,10 +1,12 @@
 # Notero
 
-A [Zotero plugin](https://www.zotero.org/support/plugins) that syncs items into
-a [Notion database](https://www.notion.so/Intro-to-databases-fd8cd2d212f74c50954c11086d85997e)
-when added to a specific collection.
+A [Zotero plugin](https://www.zotero.org/support/plugins) for syncing items into
+[Notion](https://www.notion.so/Intro-to-databases-fd8cd2d212f74c50954c11086d85997e)
 
 ![Notero in action](docs/notero.gif)
+
+Concept by [@arhoff](https://github.com/arhoff) 👩🏻‍🔬 |
+Built with ❤️ by [@dvanoni](https://github.com/dvanoni)
 
 ## Why Use Notero?
 
@@ -21,9 +23,9 @@ when added to a specific collection.
 
 ## How Notero Works
 
-The Notero plugin watches for Zotero items being added to a collection that you
-specify in the Notero preferences. Whenever an item is added to the collection,
-Notero does a few things:
+The Notero plugin watches for Zotero items being added to or modified within
+any collections that you specify in the Notero preferences. Whenever an item
+is added or modified, Notero does a few things:
 
 - Save a page with the Zotero item's properties (title, authors, etc.) into the
   Notion database specified in Notero preferences.
@@ -31,17 +33,18 @@ Notero does a few things:
 - Add an attachment to the Zotero item that links to the page in Notion.
 
 In addition to providing a convenient way to open a Notion page from Zotero,
-the link attachment also serves as a reference for Notero so it can update
+the link attachment also serves as a reference for Notero so that it can update
 existing pages instead of creating duplicate pages for a given Zotero item.
 
 ### Syncing Items
 
-Because Zotero does not allow you to add an item to a collection that it's
-already in, there are a couple options for triggering a re-sync of an item:
+By default, Notero will sync items in your monitored collections whenever they
+are modified. You can disable this functionality by unchecking the **Sync when
+items are modified** option in Notero preferences.
 
-- Remove the item from the collection and add it again.
-- Enable the **Sync when items are modified** option in Notero preferences to
-  sync items in the collection whenever they're modified.
+If you disable **Sync when items are modified** and would like to trigger a
+re-sync of an item, you can remove the item from the monitored collection and
+add it back in.
 
 ⚠️ _**Note:** To prevent the "sync on modify" functionality from saving to Notion
 multiple times, Notero does not notify Zotero when the tag and link attachment
@@ -94,7 +97,7 @@ Detailed setup instructions are below.
 
 Notero can sync data for the properties listed below. The only property required
 by Notero is one with the **Title** property type. The other properties are
-optional so you can use only the ones that suit your needs.
+optional, so you can use only the ones that suit your needs.
 
 The **Title** property can be named something other than `Name` as long as it
 does not conflict with any of the other property names. The name and type of

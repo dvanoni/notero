@@ -22,6 +22,14 @@ declare namespace Zotero {
     getName(idOrName: number | string): string;
   }
 
+  interface Collection extends DataObject {
+    name: string;
+    parentID: DataObjectID;
+    parentKey: DataObjectKey;
+  }
+
+  type Collections = DataObjects<Collection>;
+
   interface Creator {
     firstName: string;
     lastName: string;
@@ -33,18 +41,13 @@ declare namespace Zotero {
     getPrimaryIDForType(itemTypeID: number): number | false;
   }
 
-  interface Collection extends DataObject {
-    name: string;
-  }
-
-  type Collections = DataObjects<Collection>;
-
   type DataObjectID = number;
   type DataObjectKey = string;
 
   interface DataObject {
     id: DataObjectID;
     key: DataObjectKey;
+    deleted: boolean;
 
     /**
      * Delete object from database.
@@ -99,6 +102,9 @@ declare namespace Zotero {
     get<I extends DataObjectID | DataObjectID[]>(
       ids: I
     ): I extends DataObjectID ? T | false : T[];
+
+    /** Get all loaded objects */
+    getLoaded(): T[];
   }
 
   interface Item extends DataObject {
@@ -175,8 +181,14 @@ declare namespace Zotero {
   }
 
   interface Prefs {
+    /** Clear a preference */
+    clear(pref: string, global?: boolean): void;
+
     /** Retrieve a preference */
     get(pref: string, global?: boolean): Prefs.Value;
+
+    /** Set a preference */
+    set(pref: string, value: Prefs.Value, global?: boolean): void;
 
     /**
      * @param name Preference name; if not global, this is on the extensions.zotero branch
@@ -203,14 +215,16 @@ declare namespace Zotero {
   type ProgressWindow = {
     new (options?: { closeOnClick?: boolean; window?: Window }): ProgressWindow;
 
-    show(): boolean;
-
-    changeHeadline(text: string, icon?: string, postText?: string): void;
+    addDescription(text: string): void;
 
     addLines(
       labels: string | Record<string, string>,
       icons: string | Record<string, string>
     ): void;
+
+    changeHeadline(text: string, icon?: string, postText?: string): void;
+
+    show(): boolean;
 
     startCloseTimer(ms?: number, requireMouseOver?: boolean): void;
 
@@ -333,6 +347,8 @@ declare const Zotero: {
 
   /** Hide Zotero pane overlay in all windows */
   hideZoteroPaneOverlays(): void;
+
+  uiReadyPromise: Promise<void>;
 };
 
 declare const Components: any;

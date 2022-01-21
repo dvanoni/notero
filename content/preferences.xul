@@ -1,46 +1,80 @@
 <?xml version="1.0"?>
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
-<?xml-stylesheet href="chrome://zotero-platform/content/preferences.css"?>
+<?xml-stylesheet href="chrome://zotero-platform/content/preferences.css" type="text/css"?>
+<?xml-stylesheet href="chrome://notero/skin/preferences.css" type="text/css"?>
 <!DOCTYPE prefwindow SYSTEM "chrome://notero/locale/notero.dtd">
 
+<!-- The `notero` variable used below is defined in `esbuild.js` -->
 <prefwindow
-  id="notero-prefwindow"
-  title="&notero.preferences.title;"
-  xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+    id="notero-prefwindow"
+    title="&notero.preferences.title;"
+    xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
 >
-  <prefpane id="notero-prefpane" style="width: 500px;">
+  <prefpane id="notero-prefpane" onpaneload="notero.preferences.onPaneLoad();">
     <preferences>
-      <preference id="pref-collectionName" name="extensions.notero.collectionName" type="string" />
+      <preference id="pref-collectionSyncConfigs"
+                  name="extensions.notero.collectionSyncConfigs"
+                  type="string" />
       <preference id="pref-notionToken" name="extensions.notero.notionToken" type="string" />
-      <preference id="pref-notionDatabaseID" name="extensions.notero.notionDatabaseID" type="string" />
-      <preference id="pref-syncOnModifyItems" name="extensions.notero.syncOnModifyItems" type="bool" />
+      <preference id="pref-notionDatabaseID"
+                  name="extensions.notero.notionDatabaseID"
+                  type="string" />
+      <preference id="pref-syncOnModifyItems"
+                  name="extensions.notero.syncOnModifyItems"
+                  type="bool" />
     </preferences>
 
     <groupbox>
-      <caption label="&notero.preferences.syncGroupCaption;" />
-      <description>&notero.preferences.syncGroupDescription;</description>
+      <caption label="&notero.preferences.notionGroupboxCaption;" />
+      <description>
+        &notero.preferences.notionGroupboxDescription;
+        <label class="text-link"
+               onclick="notero.preferences.openReadme();"
+               value="&notero.preferences.readme;" />.
+      </description>
       <separator />
-      <label id="notero-collectionName-label" value="&notero.preferences.collectionName;" control="notero-collectionName" />
-      <textbox id="notero-collectionName" preference="pref-collectionName" />
+      <label id="notero-notionToken-label"
+             value="&notero.preferences.notionToken;"
+             control="notero-notionToken" />
+      <textbox id="notero-notionToken" preference="pref-notionToken" />
       <separator />
-      <checkbox id="notero-syncOnModifyItems" label="&notero.preferences.syncOnModifyItems;" preference="pref-syncOnModifyItems" />
+      <label id="notero-notionDatabaseID-label"
+             value="&notero.preferences.notionDatabaseID;"
+             control="notero-notionDatabaseID" />
+      <textbox id="notero-notionDatabaseID" preference="pref-notionDatabaseID" />
     </groupbox>
 
     <separator />
 
-    <groupbox style="margin-bottom: 4em;">
-      <caption label="&notero.preferences.notionGroupCaption;" />
-      <hbox>
-        <description style="margin-right: 0;" value="&notero.preferences.notionGroupDescription;" />
-        <description class="text-link" onclick="openReadme();" style="margin-left: 0; margin-right: 0;" value="&notero.preferences.readme;" />
-        <description style="margin-left: 0;" value="." />
-      </hbox>
+    <groupbox>
+      <caption label="&notero.preferences.syncGroupboxCaption;" />
+      <description>&notero.preferences.syncGroupboxDescription1;</description>
+      <description>&notero.preferences.syncGroupboxDescription2;</description>
       <separator />
-      <label id="notero-notionToken-label" value="&notero.preferences.notionToken;" control="notero-notionToken" />
-      <textbox id="notero-notionToken" preference="pref-notionToken" />
+      <tree id="notero-syncConfigsTree"
+            disabled="true"
+            editable="true"
+            flex="1"
+            hidecolumnpicker="true"
+            rows="9"
+            seltype="single">
+        <treecols>
+          <treecol id="notero-syncEnabledColumn"
+                   label="&notero.preferences.syncEnabledColumn;"
+                   editable="true"
+                   type="checkbox" />
+          <splitter class="tree-splitter" />
+          <treecol id="notero-collectionColumn"
+                   label="&notero.preferences.collectionColumn;"
+                   crop="center"
+                   flex="1" />
+        </treecols>
+        <treechildren />
+      </tree>
       <separator />
-      <label id="notero-notionDatabaseID-label" value="&notero.preferences.notionDatabaseID;" control="notero-notionDatabaseID" />
-      <textbox id="notero-notionDatabaseID" preference="pref-notionDatabaseID" />
+      <checkbox id="notero-syncOnModifyItems"
+                label="&notero.preferences.syncOnModifyItems;"
+                preference="pref-syncOnModifyItems" />
     </groupbox>
   </prefpane>
 

@@ -1,6 +1,11 @@
+import {
+  loadSyncConfigs,
+  loadSyncEnabledCollectionIDs,
+  saveSyncConfigs,
+} from './collection-sync-config';
 import NoteroItem from './notero-item';
+import { clearNoteroPref, getNoteroPref, NoteroPref } from './notero-pref';
 import Notion from './notion';
-import { NoteroPref } from './types';
 import { hasErrorStack } from './utils';
 
 const monkey_patch_marker = 'NoteroMonkeyPatched';
@@ -16,6 +21,13 @@ function patch(
   object[method][monkey_patch_marker] = true;
 }
 
+const SYNC_DEBOUNCE_MS = 2000;
+
+type QueuedSync = {
+  readonly itemIDs: Set<Zotero.Item['id']>;
+  timeoutID?: ReturnType<typeof setTimeout>;
+};
+
 class Notero {
   private static get tickIcon() {
     return `chrome://zotero/skin/tick${Zotero.hiDPI ? '@2x' : ''}.png`;
@@ -23,15 +35,21 @@ class Notero {
 
   private globals!: Record<string, any>;
 
-  private progressWindow = new Zotero.ProgressWindow();
+  private readonly progressWindow = new Zotero.ProgressWindow();
 
-  private stringBundle = Services.strings.createBundle(
+  private queuedSync?: QueuedSync;
+
+  private readonly stringBundle = Services.strings.createBundle(
     'chrome://notero/locale/notero.properties'
   );
+
+  private syncInProgress = false;
 
   // eslint-disable-next-line @typescript-eslint/require-await
   public async load(globals: Record<string, any>) {
     this.globals = globals;
+
+    await this.migratePreferences();
 
     const notifierID = Zotero.Notifier.registerObserver(
       this.notifierCallback,
@@ -55,8 +73,7 @@ class Notero {
       ids: string[],
       _: Record<string, unknown>
     ) => {
-      const syncOnModifyItems =
-        this.getPref(NoteroPref.syncOnModifyItems) === true;
+      const syncOnModifyItems = getNoteroPref(NoteroPref.syncOnModifyItems);
 
       if (!syncOnModifyItems && event === 'add' && type === 'collection-item') {
         return this.onAddItemsToCollection(ids);
@@ -66,6 +83,23 @@ class Notero {
       }
     },
   };
+
+  private async migratePreferences() {
+    const syncConfigs = loadSyncConfigs();
+    if (Object.keys(syncConfigs).length) return;
+
+    await Zotero.uiReadyPromise;
+
+    const collectionName = getNoteroPref(NoteroPref.collectionName);
+    const collection = Zotero.Collections.getLoaded().find(
+      ({ name }) => name === collectionName
+    );
+    if (!collection) return;
+
+    saveSyncConfigs({ [collection.id]: { syncEnabled: true } });
+    clearNoteroPref(NoteroPref.collectionName);
+    Zotero.log(`Migrated Notero preferences for collection: ${collectionName}`);
+  }
 
   public openPreferences() {
     window.openDialog(
@@ -79,62 +113,61 @@ class Notero {
     return this.stringBundle.GetStringFromName(fullName);
   }
 
-  private getPref(pref: NoteroPref) {
-    return Zotero.Prefs.get(`extensions.notero.${pref}`, true);
-  }
-
   private onAddItemsToCollection(ids: string[]) {
-    const collectionName = this.getPref(NoteroPref.collectionName);
-    if (!collectionName) return;
+    const collectionIDs = loadSyncEnabledCollectionIDs();
+    if (!collectionIDs.size) return;
 
     const items = ids
       .map((collectionItem: string) => {
         const [collectionID, itemID] = collectionItem.split('-').map(Number);
         return {
-          collection: Zotero.Collections.get(collectionID),
+          collectionID,
           item: Zotero.Items.get(itemID),
         };
       })
       .filter(
         (
           record
-        ): record is { collection: Zotero.Collection; item: Zotero.Item } =>
-          record.collection &&
-          record.collection.name === collectionName &&
+        ): record is {
+          collectionID: Zotero.Collection['id'];
+          item: Zotero.Item;
+        } =>
           record.item &&
-          record.item.isRegularItem()
+          record.item.isRegularItem() &&
+          collectionIDs.has(record.collectionID)
       )
       .map(({ item }) => item);
 
-    void this.saveItemsToNotion(items);
+    this.enqueueItemsToSync(items);
   }
 
   private onModifyItems(ids: string[]) {
-    const collectionName = this.getPref(NoteroPref.collectionName);
-    if (typeof collectionName !== 'string' || !collectionName) return;
+    const collectionIDs = loadSyncEnabledCollectionIDs();
+    if (!collectionIDs.size) return;
 
     const items = Zotero.Items.get(ids.map(Number)).filter(
       (item) =>
+        !item.deleted &&
         item.isRegularItem() &&
-        Zotero.Collections.get(item.getCollections())
-          .map(({ name }) => name)
-          .includes(collectionName)
+        item
+          .getCollections()
+          .some((collectionID) => collectionIDs.has(collectionID))
     );
 
-    void this.saveItemsToNotion(items);
+    this.enqueueItemsToSync(items);
   }
 
   private getNotion() {
-    const authToken = this.getPref(NoteroPref.notionToken);
-    const databaseID = this.getPref(NoteroPref.notionDatabaseID);
+    const authToken = getNoteroPref(NoteroPref.notionToken);
+    const databaseID = getNoteroPref(NoteroPref.notionDatabaseID);
 
-    if (typeof authToken !== 'string' || !authToken) {
+    if (!authToken) {
       throw new Error(
         `Missing ${this.getLocalizedString(NoteroPref.notionToken)}`
       );
     }
 
-    if (typeof databaseID !== 'string' || !databaseID) {
+    if (!databaseID) {
       throw new Error(
         `Missing ${this.getLocalizedString(NoteroPref.notionDatabaseID)}`
       );
@@ -143,16 +176,80 @@ class Notero {
     return new Notion(authToken, databaseID);
   }
 
-  private async saveItemsToNotion(items: Zotero.Item[]) {
-    const PERCENTAGE_MULTIPLIER = 100;
-
+  /**
+   * Enqueue Zotero items to sync to Notion.
+   *
+   * Because Zotero items can be updated multiple times in short succession,
+   * any subsequent updates after the first can sometimes occur before the
+   * initial sync has finished and added the Notion link attachment. This has
+   * the potential to end up creating duplicate Notion pages.
+   *
+   * To address this, we use two strategies:
+   * - Debounce syncs so that they occur, at most, every `SYNC_DEBOUNCE_MS` ms
+   * - Prevent another sync from starting until the previous one has finished
+   *
+   * The algorithm works as follows:
+   * 1. When enqueueing items, check if there is an existing sync queued
+   *    - If not, create one with a set of the item IDs to sync and a timeout
+   *      of `SYNC_DEBOUNCE_MS`
+   *    - If so, add the item IDs to the existing set and restart the timeout
+   * 2. When a timeout ends, check if there is a sync in progress
+   *    - If not, perform the sync
+   *    - If so, delete the timeout ID (to indicate it has expired)
+   * 3. When a sync ends, check if there is another sync queued
+   *    - If there is one with an expired timeout, perform the sync
+   *    - If there is one with a remaining timeout, let it run when it times out
+   *    - Otherwise, do nothing
+   *
+   * @param items the Zotero items to sync to Notion
+   */
+  private enqueueItemsToSync(items: Zotero.Item[]) {
     if (!items.length) return;
 
-    const itemsText = items.length === 1 ? 'item' : 'items';
+    if (this.queuedSync?.timeoutID) {
+      clearTimeout(this.queuedSync.timeoutID);
+    }
 
-    this.progressWindow.changeHeadline(
-      `Saving ${items.length} ${itemsText} to Notion...`
-    );
+    const itemIDs = new Set([
+      ...(this.queuedSync?.itemIDs?.values() ?? []),
+      ...items.map(({ id }) => id),
+    ]);
+
+    const timeoutID = setTimeout(() => {
+      if (!this.queuedSync) return;
+
+      this.queuedSync.timeoutID = undefined;
+      if (!this.syncInProgress) {
+        void this.performSync();
+      }
+    }, SYNC_DEBOUNCE_MS);
+
+    this.queuedSync = { itemIDs, timeoutID };
+  }
+
+  private async performSync() {
+    if (!this.queuedSync) return;
+
+    const { itemIDs } = this.queuedSync;
+    this.queuedSync = undefined as QueuedSync | undefined;
+    this.syncInProgress = true;
+
+    await this.saveItemsToNotion(itemIDs);
+
+    if (this.queuedSync && !this.queuedSync.timeoutID) {
+      await this.performSync();
+    }
+
+    this.syncInProgress = false;
+  }
+
+  private async saveItemsToNotion(itemIDs: Set<Zotero.Item['id']>) {
+    const PERCENTAGE_MULTIPLIER = 100;
+
+    const items = Zotero.Items.get(Array.from(itemIDs));
+    if (!items.length) return;
+
+    this.progressWindow.changeHeadline('Saving items to Notion...');
     this.progressWindow.show();
     const itemProgress = new this.progressWindow.ItemProgress(
       'chrome://notero/skin/notion-logo-32.png',
@@ -170,20 +267,15 @@ class Notero {
         itemProgress.setProgress((step / items.length) * PERCENTAGE_MULTIPLIER);
       }
       itemProgress.setIcon(Notero.tickIcon);
+      this.progressWindow.startCloseTimer();
     } catch (error) {
-      itemProgress.setError();
       const errorMessage = String(error);
       Zotero.log(errorMessage, 'error');
       if (hasErrorStack(error)) {
         Zotero.log(error.stack, 'error');
       }
-      Zotero.alert(
-        window,
-        `Failed to save ${itemsText} to Notion`,
-        errorMessage
-      );
-    } finally {
-      this.progressWindow.startCloseTimer();
+      itemProgress.setError();
+      this.progressWindow.addDescription(errorMessage);
     }
   }
 

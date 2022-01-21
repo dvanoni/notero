@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.3.0](https://github.com/dvanoni/notero/compare/v0.2.2...v0.3.0) (2022-01-21)
+
+
+### Features
+
+* Allow selection of multiple collections to sync in preferences ([ff847f8](https://github.com/dvanoni/notero/commit/ff847f81c701da929bdea9e78e8a722d5f1fd097))
+* Migrate preferences from single collection to multiple ([4b5f36e](https://github.com/dvanoni/notero/commit/4b5f36eda200f7db371f3db7f742522f927010fc))
+* Monitor and sync from multiple collections and subcollections ([5baf7ab](https://github.com/dvanoni/notero/commit/5baf7ab30513e84c493bbb6e81076bb5151f12dd))
+* Show error messages in progress window instead of alert ([6addf64](https://github.com/dvanoni/notero/commit/6addf6419ba633638e91f3b7a1621474f498fd8a))
+
+
+### Bug Fixes
+
+* Do not sync items when deleted ([fef2e5e](https://github.com/dvanoni/notero/commit/fef2e5ea387678e23e46544228f2c4c0b8c9da51))
+* Ensure Notion select options do not contain commas ([88d07a7](https://github.com/dvanoni/notero/commit/88d07a7f8ebf83ee1521583d65c0ac8a7770d722))
+* Prevent extra syncing and duplicates using a debounced queue ([8cb5730](https://github.com/dvanoni/notero/commit/8cb5730707c6932eb2c2af5e12c3f08fe8235091))
+
 ### [0.2.2](https://github.com/dvanoni/notero/compare/v0.2.1...v0.2.2) (2022-01-08)
 
 

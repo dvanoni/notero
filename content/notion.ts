@@ -233,11 +233,6 @@ export default class Notion {
         type: 'url',
         buildRequest: () => item.getZoteroURI(),
       },
-      {
-        name: 'Zotero URI',
-        type: 'url',
-        buildRequest: () => item.getZoteroURI(),
-      },
     ];
 
     const validPropertyDefinitions =

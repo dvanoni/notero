@@ -1,0 +1,13 @@
+diff --git a/node_modules/@notionhq/client/build/src/Client.js b/node_modules/@notionhq/client/build/src/Client.js
+index 65143a7..809d765 100644
+--- a/node_modules/@notionhq/client/build/src/Client.js
++++ b/node_modules/@notionhq/client/build/src/Client.js
+@@ -294,7 +294,7 @@ class Client {
+         }
+         try {
+             const response = await errors_1.RequestTimeoutError.rejectAfterTimeout(__classPrivateFieldGet(this, _Client_fetch, "f").call(this, url.toString(), {
+-                method,
++                method: method.toUpperCase(),
+                 headers,
+                 body: bodyAsJsonString,
+                 agent: __classPrivateFieldGet(this, _Client_agent, "f"),

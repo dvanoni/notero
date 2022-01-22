@@ -26,6 +26,10 @@ export default class NoteroItem {
     this.zoteroItem = zoteroItem;
   }
 
+  public getAbstract(): string | null {
+    return this.zoteroItem.getField('abstractNote') || null;
+  }
+
   public getAuthors(): string[] {
     const primaryCreatorTypeID = Zotero.CreatorTypes.getPrimaryIDForType(
       this.zoteroItem.itemTypeID

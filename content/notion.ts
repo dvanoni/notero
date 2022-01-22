@@ -157,6 +157,11 @@ export default class Notion {
 
     const propertyDefinitions: Definition[] = [
       {
+        name: 'Abstract',
+        type: 'rich_text',
+        buildRequest: () => Notion.buildRichText(item.getAbstract()),
+      },
+      {
         name: 'Authors',
         type: 'rich_text',
         buildRequest: () => Notion.buildRichText(item.getAuthors().join('\n')),

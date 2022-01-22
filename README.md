@@ -106,6 +106,7 @@ the other properties must be configured exactly as specified here.
 | Property Name      | Property Type | Required |
 | ------------------ | ------------- | -------- |
 | `Name`             | Title         | Yes      |
+| `Abstract`         | Text          | No       |
 | `Authors`          | Text          | No       |
 | `DOI`              | URL           | No       |
 | `Editors`          | Text          | No       |

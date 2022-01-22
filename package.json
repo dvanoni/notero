@@ -32,7 +32,7 @@
   "dependencies": {
     "@commitlint/cli": "^15.0.0",
     "@commitlint/config-conventional": "^15.0.0",
-    "@notionhq/client": "https://github.com/dvanoni/notion-sdk-js/releases/download/v0.4.12-dvanoni/notionhq-client-0.4.12-dvanoni.tgz",
+    "@notionhq/client": "^0.4.12",
     "@typescript-eslint/eslint-plugin": "^4.31.2",
     "@typescript-eslint/parser": "^4.31.2",
     "core-js": "^3.18.0",

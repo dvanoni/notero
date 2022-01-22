@@ -157,6 +157,11 @@ export default class Notion {
 
     const propertyDefinitions: Definition[] = [
       {
+        name: 'Abstract',
+        type: 'rich_text',
+        buildRequest: () => Notion.buildRichText(item.getAbstract()),
+      },
+      {
         name: 'Authors',
         type: 'rich_text',
         buildRequest: () => Notion.buildRichText(item.getAuthors().join('\n')),
@@ -222,6 +227,11 @@ export default class Notion {
         name: 'Year',
         type: 'number',
         buildRequest: () => item.getYear(),
+      },
+      {
+        name: 'Zotero URI',
+        type: 'url',
+        buildRequest: () => item.getZoteroURI(),
       },
       {
         name: 'Zotero URI',

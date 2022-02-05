@@ -133,6 +133,49 @@ the other properties must be configured exactly as specified here.
 1. Open the Notero preferences from the **Tools → Notero Preferences...** menu
    item, and enter the required preferences.
 
+## Frequently Asked Questions
+
+### How to sync from Notion back into Zotero
+
+While this would be nice, it's unfortunately beyond the scope of this plugin.
+Getting updates from Notion into Zotero would require setting up a hosted
+service that subscribes to webhooks from Notion and then uses the Zotero API to
+update items in Zotero. Notion has yet to release official webhook support, but
+there are some third-party tools that can be used for this. In theory, this is
+technically possible, but it would be a separate project.
+
+### How to bulk sync existing items
+
+To sync multiple items that are already in a monitored collection, you can
+trigger a sync by adding a temporary tag to them. Create a new tag, add it to
+all of the items by selecting them and dragging them onto the tag, then delete
+the tag.
+
+<details>
+  <summary>Video example of syncing multiple items</summary>
+  <video
+    controls 
+    src="https://user-images.githubusercontent.com/299357/152631566-11782b33-670d-455b-9eec-5d9ce87c810b.mp4" 
+    style="max-height:373px;"
+  />
+</details>
+
+### How to fix Notion API error
+
+If you receive the following error:
+
+> APIResponseError: Could not find database with ID: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+
+This most likely means you have not given Notero access to your Notion database.
+Ensure you follow all the steps from the [Configure Notion](#configure-notion)
+section. Clicking the **Share** button at the top-right corner of your database
+should show the Notero integration as follows:
+
+<details>
+  <summary>Example of share settings</summary>
+  <img alt="Share with Notero" src="docs/share-with-notero.png" style="max-height:253px;" />
+</details>
+
 ## Example Notion Databases
 
 We provide some example Notion databases that have been configured with all the

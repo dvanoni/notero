@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.3.2](https://github.com/dvanoni/notero/compare/v0.3.1...v0.3.2) (2022-02-07)
+
+
+### Features
+
+* Support installation in Zotero 6 ([#42](https://github.com/dvanoni/notero/issues/42)) ([ee5f937](https://github.com/dvanoni/notero/commit/ee5f937c71da0095ae1331bf0e6cc1dca0e068dd))
+
 ### [0.3.1](https://github.com/dvanoni/notero/compare/v0.3.0...v0.3.1) (2022-01-22)
 
 

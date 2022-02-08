@@ -124,6 +124,8 @@ the other properties must be configured exactly as specified here.
 
 1. Download the [latest version](https://github.com/dvanoni/notero/releases/latest)
    of the `.xpi` file.
+   - Note for Firefox users: You'll need to right-click the `.xpi` file link and
+     choose **Save Link As...** in order to properly download the file.
 1. Open the Zotero Add-ons Manager via the **Tools → Add-ons** menu item.
 1. Install the `.xpi` file by either:
    - dragging and dropping it into the Add-ons Manager window _or_

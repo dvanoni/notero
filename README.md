@@ -150,7 +150,7 @@ technically possible, but it would be a separate project.
 
 To sync multiple items that are already in a monitored collection, you can
 trigger a sync by adding a temporary tag to them. Create a new tag, add it to
-all of the items by selecting them and dragging them onto the tag, then delete
+all the items by selecting them and dragging them onto the tag, then delete
 the tag.
 
 <details>
@@ -162,21 +162,38 @@ the tag.
   />
 </details>
 
-### How to fix Notion API error
+### How to fix Notion API errors
+
+#### Could not find database
 
 If you receive the following error:
 
-> APIResponseError: Could not find database with ID: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+> APIResponseError: Could not find database with ID: _xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx_
 
 This most likely means you have not given Notero access to your Notion database.
 Ensure you follow all the steps from the [Configure Notion](#configure-notion)
-section. Clicking the **Share** button at the top-right corner of your database
+section. Clicking the **Share** button in the top-right corner of your database
 should show the Notero integration as follows:
 
 <details>
   <summary>Example of share settings</summary>
   <img alt="Share with Notero" src="docs/share-with-notero.png" style="max-height:253px;" />
 </details>
+
+#### Not a property that exists
+
+If you receive the following error:
+
+> APIResponseError: _property_ is not a property that exists
+
+This can happen if you previously synced items into one Notion database and then
+change your Notero preferences to specify a different database. Notero may be
+trying to update pages in the old database instead of creating pages in the new
+database, and this error can occur if different properties were configured in
+the different databases.
+
+To solve this, you should delete the old database in Notion and then permanently
+delete it from the Trash in Notion.
 
 ## Example Notion Databases
 

@@ -245,7 +245,7 @@ See below for descriptions of how you can use the different views.
 ## Development
 
 Notero was scaffolded with [generator-zotero-plugin](https://github.com/retorquere/generator-zotero-plugin)
-and is built with [zotero-plugin-webpack](https://github.com/retorquere/zotero-plugin-webpack).
+and is built with [zotero-plugin](https://github.com/retorquere/zotero-plugin).
 
 ### Local Setup
 
@@ -261,18 +261,10 @@ The steps below should allow you to build and run Notero yourself.
     [Zotero profile directory](https://www.zotero.org/support/kb/profile_directory)
     has a directory named `extensions`.
 
-    - **Note:** The `start` script does not currently support Windows.
-      If developing on Windows, you will need to follow all the configuration
-      steps in the Zotero docs.
-
-1.  Create a `profile.json` file by copying [`profile.json.example`](profile.json.example).
-    This file is used by the [`zotero-start`](https://github.com/retorquere/zotero-plugin-webpack/blob/bc5532000c8b395792ab82e381b5493a8ebd9cfd/bin/start.ts)
-    command to determine where to install the extension when running a
-    development build.
-
-    - `dir` is the absolute path to your [Zotero profile directory](https://www.zotero.org/support/kb/profile_directory)
-    - `log` is the name of the file that Zotero debug output will be written to
-    - `name` is the name of your Zotero profile (e.g. `default`)
+1.  Create a `zotero-plugin.ini` file as described in the
+    [zotero-plugin README](https://github.com/retorquere/zotero-plugin#readme).
+    This file is used by the [`zotero-start`][zotero-start] command to determine
+    where to install the extension when running a development build.
 
 1.  Install dependencies:
 
@@ -282,21 +274,17 @@ The steps below should allow you to build and run Notero yourself.
 
         npm start
 
-    The `start` script runs [`zotero-start`](https://github.com/retorquere/zotero-plugin-webpack/blob/bc5532000c8b395792ab82e381b5493a8ebd9cfd/bin/start.ts)
-    which performs a number of steps:
+    The `start` script runs [`zotero-start`][zotero-start] which performs a
+    number of steps:
 
     1.  Executes `npm run build` to build the plugin into the `build/` directory.
-    1.  Removes the `extensions.json` file and Notero `.xpi` file from your
-        Zotero profile directory.
     1.  Writes a new `.xpi` file containing the absolute path to the `build/` directory.
-    1.  Starts Zotero with the profile specified in `profile.json` and the
+    1.  Starts Zotero with the profile specified in `zotero-plugin.ini` and the
         following command line arguments:
 
-            -purgecaches -jsconsole -ZoteroDebugText
+            -purgecaches -jsconsole -ZoteroDebugText -datadir profile
 
-    If you would like to see the commands without executing them, you can run:
-
-        npm start -- --dryRun
+[zotero-start]: https://github.com/retorquere/zotero-plugin/blob/master/bin/start.py
 
 ### Releasing a New Version
 
@@ -313,6 +301,5 @@ The steps below should allow you to build and run Notero yourself.
 
 1.  GitHub Actions will run the [`release`](.github/workflows/release.yml)
     workflow upon any new commit. This workflow will build the `.xpi` file and
-    then use the [`zotero-plugin-release`](https://github.com/retorquere/zotero-plugin-webpack/blob/master/bin/release.ts)
-    command from `zotero-plugin-webpack` to create a GitHub release with the
-    `.xpi` file.
+    then use the [`zotero-plugin-release`](https://github.com/retorquere/zotero-plugin/blob/master/bin/release.ts)
+    command from `zotero-plugin` to create a GitHub release with the `.xpi` file.

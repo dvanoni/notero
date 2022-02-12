@@ -3,7 +3,7 @@ gen
 node_modules
 .env
 .eslintcache
-profile.json
+zotero-plugin.ini
 *~
 *.cache
 *.debug

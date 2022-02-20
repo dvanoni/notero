@@ -146,6 +146,21 @@ update items in Zotero. Notion has yet to release official webhook support, but
 there are some third-party tools that can be used for this. In theory, this is
 technically possible, but it would be a separate project.
 
+### How to sync attached files into Notion
+
+There currently isn't a good way to sync files or link to local files due to the
+following limitations with Notion:
+
+- The Notion API [does not currently support uploading files](https://developers.notion.com/reference/file-object#externally-hosted-files-vs-files-hosted-by-notion).
+- Notion only supports `http:` and `https:` URLs, so it's not possible to link
+  directly to the file using a `file:` URL.
+
+For now, the best workarounds are:
+
+- Use the `File Path` property to point you to the location of the local file.
+- If you sync your files into your Zotero account, you can open the Zotero web
+  interface from the `Zotero URI` property and then open the file from there.
+
 ### How to bulk sync existing items
 
 To sync multiple items that are already in a monitored collection, you can

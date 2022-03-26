@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.3.3](https://github.com/dvanoni/notero/compare/v0.3.2...v0.3.3) (2022-03-26)
+
+
+### Features
+
+* Add Simplified Chinese support ([#54](https://github.com/dvanoni/notero/issues/54)) ([efe1f3d](https://github.com/dvanoni/notero/commit/efe1f3de3d54caba46d31f6a8d71363084f144b6))
+
 ### [0.3.2](https://github.com/dvanoni/notero/compare/v0.3.1...v0.3.2) (2022-02-07)
 
 

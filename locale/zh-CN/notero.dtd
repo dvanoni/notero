@@ -1,0 +1,19 @@
+<!ENTITY notero "同步 Zotero 条目到 Notion 数据库">
+
+<!-- Preferences Window -->
+
+<!ENTITY notero.preferences.title "Notero 首选项">
+<!ENTITY notero.preferences.menuitem "Notero 首选项...">
+
+<!ENTITY notero.preferences.notionGroupboxCaption "Notion 首选项">
+<!ENTITY notero.preferences.notionGroupboxDescription "有关获取这些值的说明，请查看 ">
+<!ENTITY notero.preferences.readme "README">
+<!ENTITY notero.preferences.notionToken "内部集成令牌 ">
+<!ENTITY notero.preferences.notionDatabaseID "数据库 ID">
+
+<!ENTITY notero.preferences.syncGroupboxCaption "同步首选项">
+<!ENTITY notero.preferences.syncGroupboxDescription1 "Notero 将监控下面启用的集合。">
+<!ENTITY notero.preferences.syncGroupboxDescription2 "将条目添加到该启用的集合中以及当条目被修改时，都将同步到 Notion。">
+<!ENTITY notero.preferences.collectionColumn "集合">
+<!ENTITY notero.preferences.syncEnabledColumn "启用同步">
+<!ENTITY notero.preferences.syncOnModifyItems "当修改条目时同步">

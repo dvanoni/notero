@@ -4,8 +4,15 @@
 [![Total downloads](https://img.shields.io/github/downloads/dvanoni/notero/latest/total?sort=semver)](https://github.com/dvanoni/notero/releases/latest)
 <a href="https://www.buymeacoffee.com/dvanoni"><img alt="Buy me a coffee" height="20" src="https://img.buymeacoffee.com/button-api/?text=Buy me a coffee&emoji=&slug=dvanoni&button_colour=BD5FFF&font_colour=ffffff&font_family=Lato&outline_colour=000000&coffee_colour=FFDD00" /></a>
 
-A [Zotero plugin](https://www.zotero.org/support/plugins) for syncing items into
-[Notion](https://www.notion.so/Intro-to-databases-fd8cd2d212f74c50954c11086d85997e)
+Notero is a [Zotero plugin](https://www.zotero.org/support/plugins) for syncing
+items into [Notion](https://www.notion.so/Intro-to-databases-fd8cd2d212f74c50954c11086d85997e).
+To use it:
+
+1. 📔 [Configure](#configure-notion) your Notion database.
+1. 💾 [Install](#install-and-configure-notero-plugin) the Notero plugin into Zotero.
+1. 📁 Choose your Zotero collections to monitor.
+1. 📝 Add or update items in your collections.
+1. 🔄 Watch your items sync into Notion!
 
 ![Notero in action](docs/notero.gif)
 

@@ -121,22 +121,28 @@ The **Title** property can be named something other than `Name` as long as it
 does not conflict with any of the other property names. The name and type of
 the other properties must be configured exactly as specified here.
 
-| Property Name      | Property Type | Required |
-| ------------------ | ------------- | -------- |
-| `Name`             | Title         | Yes      |
-| `Abstract`         | Text          | No       |
-| `Authors`          | Text          | No       |
-| `DOI`              | URL           | No       |
-| `Editors`          | Text          | No       |
-| `File Path`        | Text          | No       |
-| `Full Citation`    | Text          | No       |
-| `In-Text Citation` | Text          | No       |
-| `Item Type`        | Select        | No       |
-| `Tags`             | Multi-select  | No       |
-| `Title`            | Text          | No       |
-| `URL`              | URL           | No       |
-| `Year`             | Number        | No       |
-| `Zotero URI`       | URL           | No       |
+| Property Name      | Property Type | Notes                                                                                               |
+| ------------------ | ------------- | --------------------------------------------------------------------------------------------------- |
+| `Name`             | Title         | Currently formatted as a citation, but see issue [#14](https://github.com/dvanoni/notero/issues/14) |
+| `Abstract`         | Text          |                                                                                                     |
+| `Authors`          | Text          |                                                                                                     |
+| `DOI`              | URL           |                                                                                                     |
+| `Editors`          | Text          |                                                                                                     |
+| `File Path`        | Text          |                                                                                                     |
+| `Full Citation`    | Text          | Format is based on the Zotero setting for **Export → Quick Copy → Item Format**                     |
+| `In-Text Citation` | Text          | Currently APA style, but see issue [#5](https://github.com/dvanoni/notero/issues/5)                 |
+| `Item Type`        | Select        |                                                                                                     |
+| `Tags`             | Multi-select  |                                                                                                     |
+| `Title`            | Text          |                                                                                                     |
+| `URL`              | URL           |                                                                                                     |
+| `Year`             | Number        |                                                                                                     |
+| `Zotero URI`       | URL           |                                                                                                     |
+
+Support for additional properties is planned for the future. See issues:
+[#30](https://github.com/dvanoni/notero/issues/30)
+[#49](https://github.com/dvanoni/notero/issues/49)
+[#52](https://github.com/dvanoni/notero/issues/52)
+[#65](https://github.com/dvanoni/notero/issues/65)
 
 ### Install and Configure Notero Plugin
 

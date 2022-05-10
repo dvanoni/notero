@@ -92,7 +92,14 @@ Detailed setup instructions are below.
       >     https://www.notion.so/{workspace_name}/{database_id}?v={view_id}
       >
       > Find the part that corresponds to `{database_id}` in the URL you pasted.
-      > It is a 36 character long string. This value is your database ID.
+      > It is a 32 character long string. This value is your database ID.
+      >
+      > Note that, if you have not set a workspace name, the `{workspace_name}`
+      > part of the URL will not be present.
+      >
+      > Also note that the ID is a UUIDv4, and it may include four hyphens.
+      > If it does, it will be 36 characters of the form
+      > `xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx`.
 
 1.  Configure the database properties as desired. See the
     [database properties](#notion-database-properties) section below for more details.

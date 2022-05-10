@@ -32,7 +32,7 @@ export function parseSyncConfigs(json: unknown): CollectionSyncConfigsRecord {
 
   try {
     const parsedValue = JSON.parse(json);
-    if (typeof parsedValue !== 'object' || parsedValue === 'null') return {};
+    if (!isObject(parsedValue)) return {};
 
     const configs: CollectionSyncConfigsRecord = {};
 
@@ -57,8 +57,12 @@ function convertKeyToNumber([key, value]: [string, unknown]): [
   return [Number(key), value];
 }
 
+function isObject(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null;
+}
+
 function isCollectionSyncConfig(value: unknown): value is CollectionSyncConfig {
-  return typeof value === 'object' && value !== null && 'syncEnabled' in value;
+  return isObject(value) && 'syncEnabled' in value;
 }
 
 function isCollectionSyncConfigEntry(

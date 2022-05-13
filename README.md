@@ -219,6 +219,23 @@ should show the Notero integration as follows:
   <img alt="Share with Notero" src="docs/share-with-notero.png" style="max-height:253px;" />
 </details>
 
+#### Can't update a page that is archived
+
+If you receive the following error:
+
+> APIResponseError: Can't update a page that is archived. You must unarchive the
+> page before updating.
+
+This can happen when Notero tries to sync an item that already had a Notion page
+created for it from a previous sync, but that page has since been deleted.
+(Note that deleting a Notion page moves it into the trash, and the Notion API
+refers to this as "archived.")
+
+As described in the [How Notero Works](#how-notero-works) section, Notero
+associates Zotero items with Notion pages through a link named `Notion` attached
+to the item. To resolve the issue, delete this link attachment on the offending
+item(s) and then perform the sync again.
+
 #### Not a property that exists
 
 If you receive the following error:

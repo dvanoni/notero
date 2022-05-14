@@ -126,6 +126,7 @@ the other properties must be configured exactly as specified here.
 | `Name`             | Title         | Currently formatted as a citation, but see issue [#14](https://github.com/dvanoni/notero/issues/14) |
 | `Abstract`         | Text          |                                                                                                     |
 | `Authors`          | Text          |                                                                                                     |
+| `Date`             | Text          |
 | `DOI`              | URL           |                                                                                                     |
 | `Editors`          | Text          |                                                                                                     |
 | `File Path`        | Text          |                                                                                                     |

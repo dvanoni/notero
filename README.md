@@ -119,7 +119,8 @@ optional, so you can use only the ones that suit your needs.
 
 The **Title** property can be named something other than `Name` as long as it
 does not conflict with any of the other property names. The name and type of
-the other properties must be configured exactly as specified here.
+the other properties must be configured exactly as specified here. Note that
+property names are case-sensitive, so the capitalization must match exactly.
 
 | Property Name      | Property Type | Notes                                                                                               |
 | ------------------ | ------------- | --------------------------------------------------------------------------------------------------- |

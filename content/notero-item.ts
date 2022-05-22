@@ -126,8 +126,8 @@ export default class NoteroItem {
     return Number.isNaN(year) ? null : year;
   }
 
-  public getDate(): string {
-    return this.zoteroItem.getField('date') || '';
+  public getDate(): string | null {
+    return this.zoteroItem.getField('date') || null;
   }
 
   public getZoteroURI(): string {

@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.3.5](https://github.com/dvanoni/notero/compare/v0.3.4...v0.3.5) (2022-05-22)
+
+
+### Features
+
+* Add support for Zotero's Date property ([#77](https://github.com/dvanoni/notero/issues/77)) ([ce404dd](https://github.com/dvanoni/notero/commit/ce404dd7020ef8a386e55c86e84782afb037ce5f))
+
 ### [0.3.4](https://github.com/dvanoni/notero/compare/v0.3.3...v0.3.4) (2022-05-10)
 
 ### [0.3.3](https://github.com/dvanoni/notero/compare/v0.3.2...v0.3.3) (2022-03-26)

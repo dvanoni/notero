@@ -127,6 +127,7 @@ property names are case-sensitive, so the capitalization must match exactly.
 | `Name`             | Title         | Currently formatted as a citation, but see issue [#14](https://github.com/dvanoni/notero/issues/14) |
 | `Abstract`         | Text          |                                                                                                     |
 | `Authors`          | Text          |                                                                                                     |
+| `Date`             | Text          |
 | `DOI`              | URL           |                                                                                                     |
 | `Editors`          | Text          |                                                                                                     |
 | `File Path`        | Text          |                                                                                                     |

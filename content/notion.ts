@@ -229,6 +229,11 @@ export default class Notion {
         buildRequest: () => item.getYear(),
       },
       {
+        name: 'Date',
+        type: 'rich_text',
+        buildRequest: () => Notion.buildRichText(item.getDate()),
+      },
+      {
         name: 'Zotero URI',
         type: 'url',
         buildRequest: () => item.getZoteroURI(),

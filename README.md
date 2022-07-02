@@ -19,6 +19,16 @@ To use it:
 Concept by [@arhoff](https://github.com/arhoff) 👩🏻‍🔬 |
 Built with ❤️ by [@dvanoni](https://github.com/dvanoni)
 
+## Table of Contents
+
+- [Why Use Notero?](#why-use-notero)
+- [How Notero Works](#how-notero-works)
+- [Installation and Setup](#installation-and-setup)
+- [Usage Guides](#usage-guides)
+- [Frequently Asked Questions](#frequently-asked-questions)
+- [Example Notion Databases](#example-notion-databases)
+- [Development](#development)
+
 ## Why Use Notero?
 
 - Allows you to integrate your reference manager, task list, reading notes,
@@ -160,6 +170,21 @@ Support for additional properties is planned for the future. See issues:
 1. Restart Zotero to activate the plugin.
 1. Open the Notero preferences from the **Tools → Notero Preferences...** menu
    item, and enter the required preferences.
+
+## Usage Guides
+
+For more visual guides of setting up and using Notero, see the following
+resources made by wonderful members of the community:
+
+- [Using Notion and Zotero to build a literature tracker](https://jeweljohnsonj.github.io/one-carat-blog/posts/notion_literature/)
+  (blog) by [Jewel Johnson](https://jeweljohnsonj.github.io/jewel_resume/)
+- [Smart notetaking by starting with integrating Zotero and Notion: A first step](https://youtu.be/4Z_5tskdNsY?t=1173)
+  (video) by [Dr. Jingjing Lin](https://jingjing-lin.com/)
+- [Sync Zotero to Notion to Level-Up Your Academic Research | AWESOME Notion Plug-In | Notion Tutorial](https://youtu.be/8IC8-mPbjCo)
+  (video) by [Holly Jane Woods](https://hollyjanewoods.com/)
+
+_If you'd like to share how you use Notero and want to be listed here, please
+feel free to submit a PR or [contact me](https://twitter.com/dvanoni)!_
 
 ## Frequently Asked Questions
 

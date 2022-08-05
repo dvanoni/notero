@@ -176,8 +176,8 @@ Support for additional properties is planned for the future. See issues:
 For more visual guides of setting up and using Notero, see the following
 resources made by wonderful members of the community:
 
-- [Using Notion and Zotero to build a literature tracker](https://jeweljohnsonj.github.io/one-carat-blog/posts/notion_literature/)
-  (blog) by [Jewel Johnson](https://jeweljohnsonj.github.io/jewel_resume/)
+- [Using Notion and Zotero to build a literature tracker](https://one-carat-blog.netlify.app/posts/notion_literature/)
+  (blog post) by [Jewel Johnson](https://jeweljohnsonj.github.io/jewel_resume/)
 - [Smart notetaking by starting with integrating Zotero and Notion: A first step](https://youtu.be/4Z_5tskdNsY?t=1173)
   (video) by [Dr. Jingjing Lin](https://jingjing-lin.com/)
 - [Sync Zotero to Notion to Level-Up Your Academic Research | AWESOME Notion Plug-In | Notion Tutorial](https://youtu.be/8IC8-mPbjCo)

@@ -30,13 +30,15 @@
   },
   "homepage": "https://github.com/dvanoni/notero",
   "dependencies": {
+    "@notionhq/client": "^1.0.4",
+    "core-js": "^3.24.1"
+  },
+  "devDependencies": {
     "@commitlint/cli": "^17.0.3",
     "@commitlint/config-conventional": "^17.0.3",
-    "@notionhq/client": "^1.0.4",
     "@typescript-eslint/eslint-plugin": "^5.33.0",
     "@typescript-eslint/parser": "^5.33.0",
-    "core-js": "^3.24.1",
-    "esbuild": "^0.14.54",
+    "esbuild": "~0.14.54",
     "eslint": "^8.21.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-import": "^2.26.0",

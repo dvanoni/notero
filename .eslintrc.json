@@ -19,7 +19,6 @@
   },
   "plugins": [
     "eslint-plugin-import",
-    "eslint-plugin-prefer-arrow",
     "@typescript-eslint",
     "@typescript-eslint/eslint-plugin"
   ],
@@ -210,12 +209,6 @@
     "no-var": "error",
     "object-shorthand": "error",
     "one-var": ["off", "never"],
-    "prefer-arrow/prefer-arrow-functions": [
-      "error",
-      {
-        "allowStandaloneDeclarations": true
-      }
-    ],
     "prefer-const": [
       "error",
       {

@@ -30,7 +30,7 @@
   },
   "homepage": "https://github.com/dvanoni/notero",
   "dependencies": {
-    "@notionhq/client": "^1.0.4",
+    "@notionhq/client": "^2.1.1",
     "core-js": "^3.24.1"
   },
   "devDependencies": {

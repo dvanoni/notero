@@ -14,7 +14,7 @@ const monkey_patch_marker = 'NoteroMonkeyPatched';
 function patch(
   object: { [x: string]: { [x: string]: boolean } },
   method: string,
-  patcher: (arg0: any) => any
+  patcher: (arg0: unknown) => never
 ) {
   if (object[method][monkey_patch_marker]) return;
   object[method] = patcher(object[method]);
@@ -33,7 +33,7 @@ class Notero {
     return `chrome://zotero/skin/tick${Zotero.hiDPI ? '@2x' : ''}.png`;
   }
 
-  private globals!: Record<string, any>;
+  private globals!: Record<string, unknown>;
 
   private readonly progressWindow = new Zotero.ProgressWindow();
 
@@ -45,8 +45,7 @@ class Notero {
 
   private syncInProgress = false;
 
-  // eslint-disable-next-line @typescript-eslint/require-await
-  public async load(globals: Record<string, any>) {
+  public async load(globals: Record<string, unknown>) {
     this.globals = globals;
 
     await this.migratePreferences();
@@ -91,6 +90,7 @@ class Notero {
     await Zotero.uiReadyPromise;
 
     const collectionName = getNoteroPref(NoteroPref.collectionName);
+    if (!collectionName) return;
     const collection = Zotero.Collections.getLoaded().find(
       ({ name }) => name === collectionName
     );
@@ -291,4 +291,5 @@ class Notero {
   }
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access
 (Zotero as any).Notero = new Notero();

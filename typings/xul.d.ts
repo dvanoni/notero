@@ -25,7 +25,7 @@ declare namespace XUL {
   }
 
   interface PreferenceElement extends XULElement {
-    value: any;
+    value: unknown;
   }
 
   interface TextboxElement extends XULElement {

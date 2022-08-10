@@ -36,7 +36,7 @@ type PropertyType = NonNullable<DatabasePageProperty['type']>;
 
 type PropertyRequest<T extends PropertyType> = Extract<
   DatabasePageProperty,
-  { [P in T]: any }
+  { [P in T]: unknown }
 >[T];
 
 const TEXT_CONTENT_MAX_LENGTH = 2000;

@@ -143,7 +143,7 @@ declare namespace Zotero {
 
     isRegularItem(): boolean;
 
-    setField(field: number | string, value: any, loadIn?: boolean): boolean;
+    setField(field: number | string, value: unknown, loadIn?: boolean): boolean;
   }
 
   type Items = DataObjects<Item>;
@@ -302,7 +302,6 @@ declare namespace Zotero {
   }
 }
 
-// eslint-disable-next-line no-redeclare
 declare const Zotero: {
   Attachments: Zotero.Attachments;
   CreatorTypes: Zotero.CreatorTypes;
@@ -351,7 +350,7 @@ declare const Zotero: {
   uiReadyPromise: Promise<void>;
 };
 
-declare const Components: any;
+declare const Components: unknown;
 
 declare const Services: {
   strings: {

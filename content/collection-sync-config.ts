@@ -31,7 +31,7 @@ export function parseSyncConfigs(json: unknown): CollectionSyncConfigsRecord {
   if (typeof json !== 'string') return {};
 
   try {
-    const parsedValue = JSON.parse(json);
+    const parsedValue: unknown = JSON.parse(json);
     if (!isObject(parsedValue)) return {};
 
     const configs: CollectionSyncConfigsRecord = {};
@@ -45,7 +45,10 @@ export function parseSyncConfigs(json: unknown): CollectionSyncConfigsRecord {
 
     return configs;
   } catch (error) {
-    Zotero.log(`Failed to parse Notero sync configs: ${error}`, 'error');
+    Zotero.log(
+      `Failed to parse Notero sync configs: ${String(error)}`,
+      'error'
+    );
     return {};
   }
 }

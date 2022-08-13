@@ -1,4 +1,5 @@
 import Notion from './notion';
+import NoteroPref from './notero-pref';
 
 const APA_STYLE = 'bibliography=http://www.zotero.org/styles/apa';
 
@@ -132,6 +133,20 @@ export default class NoteroItem {
 
   public getZoteroURI(): string {
     return Zotero.URI.getItemURI(this.zoteroItem);
+  }
+
+  public getPDFURL(): string | null {
+    const zoteroAPIKey = getNoteroPref(NoteroPref.zoteroAPIKey);
+
+    const attachment = await this.zoteroItem.getBestAttachment();
+    if (!attachment) return null;
+    if (attachment.attachmentContentType != 'application/pdf') return null;
+    
+    const zoteroURI = Zotero.URI.getItemURI(attachment);
+    const temp = zoteroURI.split('/').slice(2).join('/');
+    const prefix = 'https://api.';
+    const requestURL = prefix.concat(temp, '/file/view?key=', zoteroAPIKey);
+    return requestURL;
   }
 
   public getNotionLinkAttachments(): Zotero.Item[] {

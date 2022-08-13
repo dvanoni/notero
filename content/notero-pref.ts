@@ -4,6 +4,7 @@ export enum NoteroPref {
   notionDatabaseID = 'notionDatabaseID',
   notionToken = 'notionToken',
   syncOnModifyItems = 'syncOnModifyItems',
+  zoteroAPIKey = 'zoteroAPIKey',
 }
 
 type NoteroPrefValue = Partial<{
@@ -12,6 +13,7 @@ type NoteroPrefValue = Partial<{
   [NoteroPref.notionDatabaseID]: string;
   [NoteroPref.notionToken]: string;
   [NoteroPref.syncOnModifyItems]: boolean;
+  [NoteroPref.zoteroAPIKey]: string;
 }>;
 
 function buildFullPrefName(pref: NoteroPref): string {
@@ -36,6 +38,7 @@ export function getNoteroPref<P extends NoteroPref>(
     [NoteroPref.notionDatabaseID]: stringPref,
     [NoteroPref.notionToken]: stringPref,
     [NoteroPref.syncOnModifyItems]: booleanPref,
+    [NoteroPref.zoteroAPIKey]: stringPref,
   }[pref];
 }
 

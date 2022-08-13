@@ -6,7 +6,7 @@ import {
 import NoteroItem from './notero-item';
 import { clearNoteroPref, getNoteroPref, NoteroPref } from './notero-pref';
 import Notion from './notion';
-import { hasErrorStack } from './utils';
+import { getLocalizedString, hasErrorStack } from './utils';
 
 const monkey_patch_marker = 'NoteroMonkeyPatched';
 
@@ -38,10 +38,6 @@ class Notero {
   private readonly progressWindow = new Zotero.ProgressWindow();
 
   private queuedSync?: QueuedSync;
-
-  private readonly stringBundle = Services.strings.createBundle(
-    'chrome://notero/locale/notero.properties'
-  );
 
   private syncInProgress = false;
 
@@ -108,11 +104,6 @@ class Notero {
     );
   }
 
-  private getLocalizedString(name: NoteroPref | string): string {
-    const fullName = name in NoteroPref ? `notero.preferences.${name}` : name;
-    return this.stringBundle.GetStringFromName(fullName);
-  }
-
   private onAddItemsToCollection(ids: string[]) {
     const collectionIDs = loadSyncEnabledCollectionIDs();
     if (!collectionIDs.size) return;
@@ -162,14 +153,12 @@ class Notero {
     const databaseID = getNoteroPref(NoteroPref.notionDatabaseID);
 
     if (!authToken) {
-      throw new Error(
-        `Missing ${this.getLocalizedString(NoteroPref.notionToken)}`
-      );
+      throw new Error(`Missing ${getLocalizedString(NoteroPref.notionToken)}`);
     }
 
     if (!databaseID) {
       throw new Error(
-        `Missing ${this.getLocalizedString(NoteroPref.notionDatabaseID)}`
+        `Missing ${getLocalizedString(NoteroPref.notionDatabaseID)}`
       );
     }
 

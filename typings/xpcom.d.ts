@@ -2,6 +2,14 @@
  * @see https://udn.realityripple.com/docs/Mozilla/Tech/XPCOM/Reference/Interface
  */
 declare namespace XPCOM {
+  interface nsIStringBundle {
+    GetStringFromName(name: string): string;
+  }
+
+  interface nsIStringBundleService {
+    createBundle(url: string): nsIStringBundle;
+  }
+
   interface nsITreeBoxObject {
     invalidate(): void;
     invalidateRow(index: number): void;
@@ -63,3 +71,19 @@ declare namespace XPCOM {
     toggleOpenState?(index: number): void;
   }
 }
+
+/**
+ * @see https://udn.realityripple.com/docs/Mozilla/Tech/XPCOM/Language_Bindings
+ */
+declare const Components: {
+  utils: {
+    import(url: string, scope?: object): void;
+  };
+};
+
+/**
+ * @see https://udn.realityripple.com/docs/Mozilla/JavaScript_code_modules/Services.jsm
+ */
+declare const Services: {
+  strings: XPCOM.nsIStringBundleService;
+};

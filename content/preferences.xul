@@ -19,6 +19,9 @@
       <preference id="pref-notionDatabaseID"
                   name="extensions.notero.notionDatabaseID"
                   type="string" />
+      <preference id="pref-pageTitleFormat"
+                  name="extensions.notero.pageTitleFormat"
+                  type="string" />
       <preference id="pref-syncOnModifyItems"
                   name="extensions.notero.syncOnModifyItems"
                   type="bool" />
@@ -37,11 +40,25 @@
              value="&notero.preferences.notionToken;"
              control="notero-notionToken" />
       <textbox id="notero-notionToken" preference="pref-notionToken" />
-      <separator />
+      <separator class="thin" />
       <label id="notero-notionDatabaseID-label"
              value="&notero.preferences.notionDatabaseID;"
              control="notero-notionDatabaseID" />
       <textbox id="notero-notionDatabaseID" preference="pref-notionDatabaseID" />
+    </groupbox>
+
+    <separator />
+
+    <groupbox>
+      <caption label="&notero.preferences.propertiesGroupboxCaption;" />
+      <description>&notero.preferences.propertiesGroupboxDescription;</description>
+      <separator />
+      <label id="notero-pageTitleFormat-label"
+             value="&notero.preferences.pageTitleFormat;"
+             control="notero-pageTitleFormat" />
+      <menulist id="notero-pageTitleFormat"
+                disabled="true"
+                preference="pref-pageTitleFormat" />
     </groupbox>
 
     <separator />
@@ -71,7 +88,7 @@
         </treecols>
         <treechildren />
       </tree>
-      <separator />
+      <separator class="thin" />
       <checkbox id="notero-syncOnModifyItems"
                 label="&notero.preferences.syncOnModifyItems;"
                 preference="pref-syncOnModifyItems" />

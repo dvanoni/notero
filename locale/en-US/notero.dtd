@@ -11,6 +11,10 @@
 <!ENTITY notero.preferences.notionToken "Integration Token">
 <!ENTITY notero.preferences.notionDatabaseID "Database ID">
 
+<!ENTITY notero.preferences.propertiesGroupboxCaption "Property Preferences">
+<!ENTITY notero.preferences.propertiesGroupboxDescription "Customize how item properties sync to Notion.">
+<!ENTITY notero.preferences.pageTitleFormat "Notion Page Title">
+
 <!ENTITY notero.preferences.syncGroupboxCaption "Sync Preferences">
 <!ENTITY notero.preferences.syncGroupboxDescription1 "Notero will monitor the collections enabled below.">
 <!ENTITY notero.preferences.syncGroupboxDescription2 "Items in the enabled collections will sync to Notion when added to that collection and whenever the items are modified.">

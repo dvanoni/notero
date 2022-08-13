@@ -11,6 +11,10 @@
 <!ENTITY notero.preferences.notionToken "内部集成令牌 ">
 <!ENTITY notero.preferences.notionDatabaseID "数据库 ID">
 
+<!ENTITY notero.preferences.propertiesGroupboxCaption "Property Preferences">
+<!ENTITY notero.preferences.propertiesGroupboxDescription "Customize how item properties sync to Notion.">
+<!ENTITY notero.preferences.pageTitleFormat "Notion Page Title">
+
 <!ENTITY notero.preferences.syncGroupboxCaption "同步首选项">
 <!ENTITY notero.preferences.syncGroupboxDescription1 "Notero 将监控下面启用的集合。">
 <!ENTITY notero.preferences.syncGroupboxDescription2 "将条目添加到该启用的集合中以及当条目被修改时，都将同步到 Notion。">

@@ -41,6 +41,10 @@ export default class NoteroItem {
       .map(NoteroItem.formatCreatorName);
   }
 
+  public getDate(): string | null {
+    return this.zoteroItem.getField('date') || null;
+  }
+
   public getDOI(): string | null {
     const doi = this.zoteroItem.getField('DOI');
     return doi ? `https://doi.org/${doi}` : null;
@@ -106,6 +110,10 @@ export default class NoteroItem {
     return Zotero.ItemTypes.getLocalizedString(this.zoteroItem.itemTypeID);
   }
 
+  public getShortTitle(): string | null {
+    return this.zoteroItem.getField('shortTitle') || null;
+  }
+
   public getTags(): string[] {
     return this.zoteroItem
       .getTags()
@@ -124,10 +132,6 @@ export default class NoteroItem {
   public getYear(): number | null {
     const year = Number.parseInt(this.zoteroItem.getField('year') || '');
     return Number.isNaN(year) ? null : year;
-  }
-
-  public getDate(): string | null {
-    return this.zoteroItem.getField('date') || null;
   }
 
   public getZoteroURI(): string {

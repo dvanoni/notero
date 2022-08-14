@@ -42,6 +42,11 @@
              value="&notero.preferences.notionDatabaseID;"
              control="notero-notionDatabaseID" />
       <textbox id="notero-notionDatabaseID" preference="pref-notionDatabaseID" />
+      <separator />
+      <label id="notero-zoteroAPIKey-label"
+             value="&notero.preferences.zoteroAPIKey;"
+             control="notero-zoteroAPIKey" />
+      <textbox id="notero-zoteroAPIKey" preference="pref-zoteroAPIKey" />
     </groupbox>
 
     <separator />

@@ -10,6 +10,7 @@
 <!ENTITY notero.preferences.readme "README">
 <!ENTITY notero.preferences.notionToken "Integration Token">
 <!ENTITY notero.preferences.notionDatabaseID "Database ID">
+<!ENTITY notero.preferences.zoteroAPIKey "Zotero API Key">
 
 <!ENTITY notero.preferences.syncGroupboxCaption "Sync Preferences">
 <!ENTITY notero.preferences.syncGroupboxDescription1 "Notero will monitor the collections enabled below.">

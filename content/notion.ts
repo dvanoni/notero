@@ -125,9 +125,20 @@ export default class Notion {
       }
     }
 
+    const page_content = {
+      "children": [
+        {
+            "object": "block",
+            "type": "embed",
+            "embed": {"url": item.getPDFURL()}
+        },
+      ]
+    }
+
     return this.client.pages.create({
       parent: { database_id: this.databaseID },
       properties,
+      page_content,
     });
   }
 

@@ -10,6 +10,9 @@ import {
   CreatePageResponse,
   GetDatabaseResponse,
   UpdatePageResponse,
+  AppendBlockChildrenParameters,
+  AppendBlockChildrenResponse,
+  UpdateBlockResponse
 } from '@notionhq/client/build/src/api-endpoints';
 import 'core-js/stable/object/from-entries';
 import NoteroItem from './notero-item';
@@ -238,6 +241,11 @@ export default class Notion {
         type: 'url',
         buildRequest: () => item.getZoteroURI(),
       },
+      {
+        name: 'File URL',
+        type: 'url',
+        buildRequest: () => item.getPDFURL(),
+      },
     ];
 
     const validPropertyDefinitions =
@@ -254,4 +262,22 @@ export default class Notion {
 
     return itemProperties;
   }
+
+  public async addEmbedToPage(
+    item: NoteroItem,
+    pageID: string
+  ): Promise<AppendBlockChildrenResponse> {
+    const children = [
+        {
+            "object": "block",
+            "type": "embed",
+            "embed": {"url": item.getPDFURL()},
+        },
+      ];
+    
+    return await this.client.blocks.children.append({ block_id: pageID, children });
+  
+
+  }
+  
 }

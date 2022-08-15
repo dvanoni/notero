@@ -287,6 +287,8 @@ class Notero {
 
     if ('url' in response) {
       await noteroItem.saveNotionLinkAttachment(response.url);
+      const pageID = Notion.getPageIDFromURL(Notion.convertWebURLToLocal(response.url));
+      const response_block = await notion.addEmbedToPage(noteroItem, pageID);
     }
   }
 }

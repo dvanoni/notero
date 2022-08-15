@@ -1,5 +1,5 @@
 import Notion from './notion';
-import NoteroPref from './notero-pref';
+import { NoteroPref, getNoteroPref } from './notero-pref';
 
 const APA_STYLE = 'bibliography=http://www.zotero.org/styles/apa';
 
@@ -135,19 +135,25 @@ export default class NoteroItem {
     return Zotero.URI.getItemURI(this.zoteroItem);
   }
 
-  public getPDFURL(): string | null {
+  public getPDFURL(): string {
     const zoteroAPIKey = getNoteroPref(NoteroPref.zoteroAPIKey);
+    const zoteroUserID = getNoteroPref(NoteroPref.zoteroUserID);
+    const attachmentIDs = this.zoteroItem
+      .getAttachments(false)
+      .slice()
+      // Sort to get largest ID first
+      .sort((a, b) => b - a);
 
-    const attachment = await this.zoteroItem.getBestAttachment();
-    if (!attachment) return null;
-    if (attachment.attachmentContentType != 'application/pdf') return null;
-    
-    const zoteroURI = Zotero.URI.getItemURI(attachment);
-    const temp = zoteroURI.split('/').slice(2).join('/');
-    const prefix = 'https://api.';
-    const requestURL = prefix.concat(temp, '/file/view?key=', zoteroAPIKey);
-    return requestURL;
+    for (const id of attachmentIDs) {
+      const attachment = Zotero.Items.get(id);
+      if (attachment.attachmentContentType == 'application/pdf') {
+        const pdfItemID = Zotero.URI.getItemURI(attachment).split('/').pop();
+        return `https://api.zotero.org/users/${zoteroUserID}/items/${pdfItemID}/file/view?key=${zoteroAPIKey}`;
+      }
+    }
+    return 'https://zotero.org';
   }
+
 
   public getNotionLinkAttachments(): Zotero.Item[] {
     const attachmentIDs = this.zoteroItem

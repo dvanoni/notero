@@ -47,6 +47,11 @@
              value="&notero.preferences.zoteroAPIKey;"
              control="notero-zoteroAPIKey" />
       <textbox id="notero-zoteroAPIKey" preference="pref-zoteroAPIKey" />
+      <separator />
+      <label id="notero-zoteroUserID-label"
+             value="&notero.preferences.zoteroUserID;"
+             control="notero-zoteroUserID" />
+      <textbox id="notero-zoteroUserID" preference="pref-zoteroUserID" />
     </groupbox>
 
     <separator />

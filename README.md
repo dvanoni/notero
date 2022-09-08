@@ -238,12 +238,10 @@ If you receive the following error:
 
 This most likely means you have not given Notero access to your Notion database.
 Ensure you follow all the steps from the [Configure Notion](#configure-notion)
-section. Clicking the **Share** button in the top-right corner of your database
-should show the Notero integration as follows:
-
+section. Click on the ••• Page menu and use the search bar in the `Add connections` pop-out to find the integration you've created for Notero.
 <details>
-  <summary>Example of share settings</summary>
-  <img alt="Share with Notero" src="docs/share-with-notero.png" style="max-height:253px;" />
+  <summary>Example of share settings from the Notion documentation</summary>
+  <img alt="Share with Notero" src="https://files.readme.io/3e5cb5b-share-database-with-integration.gif" style="max-height:253px;" />
 </details>
 
 #### Can't update a page that is archived

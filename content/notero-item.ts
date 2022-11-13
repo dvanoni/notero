@@ -2,6 +2,8 @@ import Notion from './notion';
 
 const APA_STYLE = 'bibliography=http://www.zotero.org/styles/apa';
 
+const PARENS_REGEX = /^\((.+)\)$/;
+
 export default class NoteroItem {
   static NOTION_TAG_NAME = 'notion';
 
@@ -19,8 +21,7 @@ export default class NoteroItem {
   }
 
   private readonly zoteroItem: Zotero.Item;
-  private _fullCitation?: string | null;
-  private _inTextCitation?: string | null;
+  private cachedCitations: Record<string, string | null> = {};
 
   public constructor(zoteroItem: Zotero.Item) {
     this.zoteroItem = zoteroItem;
@@ -89,21 +90,32 @@ export default class NoteroItem {
     });
   }
 
-  public async getFullCitation(): Promise<string | null> {
-    if (this._fullCitation === undefined) {
-      this._fullCitation = await this.getCitation(
-        NoteroItem.getQuickCopyFormat(),
-        false
+  private async getCachedCitation(
+    format: string,
+    inTextCitation: boolean
+  ): Promise<string | null> {
+    const cacheKey = `${format}-${String(inTextCitation)}`;
+
+    if (this.cachedCitations[cacheKey] === undefined) {
+      this.cachedCitations[cacheKey] = await this.getCitation(
+        format,
+        inTextCitation
       );
     }
-    return this._fullCitation;
+    return this.cachedCitations[cacheKey];
   }
 
-  public async getInTextCitation(): Promise<string | null> {
-    if (this._inTextCitation === undefined) {
-      this._inTextCitation = await this.getCitation(APA_STYLE, true);
-    }
-    return this._inTextCitation;
+  public async getAuthorDateCitation(): Promise<string | null> {
+    const citation = await this.getCachedCitation(APA_STYLE, true);
+    return citation?.match(PARENS_REGEX)?.[1] || null;
+  }
+
+  public getFullCitation(): Promise<string | null> {
+    return this.getCachedCitation(NoteroItem.getQuickCopyFormat(), false);
+  }
+
+  public getInTextCitation(): Promise<string | null> {
+    return this.getCachedCitation(NoteroItem.getQuickCopyFormat(), true);
   }
 
   public getItemType(): string {

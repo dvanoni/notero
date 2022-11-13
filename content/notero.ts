@@ -175,6 +175,8 @@ class Notero {
       PageTitleFormat,
       (item: NoteroItem) => string | null | Promise<string | null>
     > = {
+      [PageTitleFormat.itemAuthorDateCitation]: (item) =>
+        item.getAuthorDateCitation(),
       [PageTitleFormat.itemFullCitation]: (item) => item.getFullCitation(),
       [PageTitleFormat.itemInTextCitation]: (item) => item.getInTextCitation(),
       [PageTitleFormat.itemShortTitle]: (item) => item.getShortTitle(),

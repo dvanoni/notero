@@ -8,6 +8,7 @@ export enum NoteroPref {
 }
 
 export enum PageTitleFormat {
+  itemAuthorDateCitation = 'itemAuthorDateCitation',
   itemFullCitation = 'itemFullCitation',
   itemInTextCitation = 'itemInTextCitation',
   itemShortTitle = 'itemShortTitle',

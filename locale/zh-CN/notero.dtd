@@ -8,12 +8,12 @@
 <!ENTITY notero.preferences.notionGroupboxCaption "Notion 首选项">
 <!ENTITY notero.preferences.notionGroupboxDescription "有关获取这些值的说明，请查看 ">
 <!ENTITY notero.preferences.readme "README">
-<!ENTITY notero.preferences.notionToken "内部集成令牌 ">
+<!ENTITY notero.preferences.notionToken "内部集成令牌">
 <!ENTITY notero.preferences.notionDatabaseID "数据库 ID">
 
-<!ENTITY notero.preferences.propertiesGroupboxCaption "Property Preferences">
-<!ENTITY notero.preferences.propertiesGroupboxDescription "Customize how item properties sync to Notion.">
-<!ENTITY notero.preferences.pageTitleFormat "Notion Page Title">
+<!ENTITY notero.preferences.propertiesGroupboxCaption "属性偏好">
+<!ENTITY notero.preferences.propertiesGroupboxDescription "自定义项目属性如何同步到 Notion。">
+<!ENTITY notero.preferences.pageTitleFormat "概念页面标题">
 
 <!ENTITY notero.preferences.syncGroupboxCaption "同步首选项">
 <!ENTITY notero.preferences.syncGroupboxDescription1 "Notero 将监控下面启用的集合。">

@@ -82,41 +82,48 @@ Detailed setup instructions are below.
 
 ### Configure Notion
 
-1.  Obtain a Notion internal integration token from https://www.notion.com/my-integrations.
-
-    - See [Notion developer docs](https://developers.notion.com/docs/getting-started#step-1-create-an-integration)
-      for detailed instructions.
-
-2.  Create the database that you would like to sync Zotero items into.
+1.  Create the database that you would like to sync Zotero items into.
 
     - See [examples](#example-notion-databases) below that you can duplicate
       into your Notion workspace.
 
-3.  Share the database with the integration you created in step 1.
+2.  Obtain a Notion internal integration token from https://www.notion.com/my-integrations.
 
-    - See [Notion developer docs](https://developers.notion.com/docs/getting-started#step-2-share-a-database-with-your-integration)
+    - See [Notion developer docs](https://developers.notion.com/docs/create-a-notion-integration#step-1-create-an-integration)
       for detailed instructions.
+
+3.  Share the database with the integration you created.
+
+    From the [Notion developer docs](https://developers.notion.com/docs/create-a-notion-integration#step-2-share-a-database-with-your-integration):
+
+    > 1. Go to the database page in your workspace.
+    > 2. Click the **•••** on the top right corner of the page.
+    > 3. At the bottom of the pop-up, click **Add connections**.
+    > 4. Search for and select your integration in the
+    >    **Search for connections...** menu.
+
+      <details>
+        <summary>Example of share settings from the Notion documentation</summary>
+        <img
+          alt="Share database with integration"
+          src="https://files.readme.io/3e5cb5b-share-database-with-integration.gif"
+        />
+      </details>
 
 4.  Take note of the database ID.
 
-    - From the [Notion developer docs](https://developers.notion.com/docs/working-with-databases#adding-pages-to-a-database),
-      here's a quick procedure to find the database ID:
+    From the [Notion developer docs](https://developers.notion.com/docs/create-a-notion-integration#step-3-save-the-database-id):
 
-      > Open the database as a full page in Notion. Use the **Share** menu to
-      > **Copy link**. Now paste the link in your text editor so you can take a
-      > closer look. The URL uses the following format:
-      >
-      >     https://www.notion.so/{workspace_name}/{database_id}?v={view_id}
-      >
-      > Find the part that corresponds to `{database_id}` in the URL you pasted.
-      > It is a 32 character long string. This value is your database ID.
-      >
-      > Note that, if you have not set a workspace name, the `{workspace_name}`
-      > part of the URL will not be present.
-      >
-      > Also note that the ID is a UUIDv4, and it may include four hyphens.
-      > If it does, it will be 36 characters of the form
-      > `xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx`.
+    > To get the database ID, copy the URL of your Notion database. If you're
+    > using an inline database, then make sure you're viewing the database as a
+    > full page. If you're using the Notion desktop app, then click **Share**
+    > and select **Copy link** to find the database URL.
+    >
+    > The database ID is the string of characters in the database URL that is
+    > between the slash following your workspace name (if you named it) and the
+    > question mark. The ID is 32 characters long, containing numbers and letters.
+    >
+    > ![Notion database ID](https://files.readme.io/62e5027-notion_database_id.png)
 
 5.  Configure the database properties as desired. See the
     [database properties](#notion-database-properties) section below for more details.
@@ -238,12 +245,12 @@ If you receive the following error:
 
 This most likely means you have not given Notero access to your Notion database.
 Ensure you follow all the steps from the [Configure Notion](#configure-notion)
-section. Clicking the **Share** button in the top-right corner of your database
-should show the Notero integration as follows:
+section. Clicking the **•••** button in the top-right corner of your database
+should show a connection for the integration you've created for Notero.
 
 <details>
-  <summary>Example of share settings</summary>
-  <img alt="Share with Notero" src="docs/share-with-notero.png" style="max-height:253px;" />
+  <summary>Example of connection settings</summary>
+  <img alt="Share with Notero" src="docs/share-with-notero.png" style="max-height:636px;" />
 </details>
 
 #### Can't update a page that is archived

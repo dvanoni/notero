@@ -144,13 +144,14 @@ property names are case-sensitive, so the capitalization must match exactly.
 | `Name`             | Title         | Currently formatted as a citation, but see issue [#14](https://github.com/dvanoni/notero/issues/14) |
 | `Abstract`         | Text          |                                                                                                     |
 | `Authors`          | Text          |                                                                                                     |
-| `Date`             | Text          |
+| `Date`             | Text          |                                                                                                     |
 | `DOI`              | URL           |                                                                                                     |
 | `Editors`          | Text          |                                                                                                     |
 | `File Path`        | Text          |                                                                                                     |
 | `Full Citation`    | Text          | Format is based on the Zotero setting for **Export → Quick Copy → Item Format**                     |
 | `In-Text Citation` | Text          | Currently APA style, but see issue [#5](https://github.com/dvanoni/notero/issues/5)                 |
 | `Item Type`        | Select        |                                                                                                     |
+| `Short Title`      | Text          |                                                                                                     |
 | `Tags`             | Multi-select  |                                                                                                     |
 | `Title`            | Text          |                                                                                                     |
 | `URL`              | URL           |                                                                                                     |

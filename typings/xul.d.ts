@@ -19,6 +19,7 @@ declare namespace XUL {
       value?: string,
       description?: string
     ): MenuItemElement;
+    disabled: boolean;
     selectedIndex: number;
     selectedItem: MenuItemElement | null;
     value: string;

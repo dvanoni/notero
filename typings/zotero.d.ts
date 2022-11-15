@@ -349,13 +349,3 @@ declare const Zotero: {
 
   uiReadyPromise: Promise<void>;
 };
-
-declare const Components: unknown;
-
-declare const Services: {
-  strings: {
-    createBundle(name: string): {
-      GetStringFromName(name: string): string;
-    };
-  };
-};

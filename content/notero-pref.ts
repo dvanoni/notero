@@ -3,7 +3,16 @@ export enum NoteroPref {
   collectionSyncConfigs = 'collectionSyncConfigs',
   notionDatabaseID = 'notionDatabaseID',
   notionToken = 'notionToken',
+  pageTitleFormat = 'pageTitleFormat',
   syncOnModifyItems = 'syncOnModifyItems',
+}
+
+export enum PageTitleFormat {
+  itemAuthorDateCitation = 'itemAuthorDateCitation',
+  itemFullCitation = 'itemFullCitation',
+  itemInTextCitation = 'itemInTextCitation',
+  itemShortTitle = 'itemShortTitle',
+  itemTitle = 'itemTitle',
 }
 
 type NoteroPrefValue = Partial<{
@@ -11,11 +20,35 @@ type NoteroPrefValue = Partial<{
   [NoteroPref.collectionSyncConfigs]: string;
   [NoteroPref.notionDatabaseID]: string;
   [NoteroPref.notionToken]: string;
+  [NoteroPref.pageTitleFormat]: PageTitleFormat;
   [NoteroPref.syncOnModifyItems]: boolean;
 }>;
 
 function buildFullPrefName(pref: NoteroPref): string {
   return `extensions.notero.${pref}`;
+}
+
+function getBooleanPref(value: Zotero.Prefs.Value): boolean | undefined {
+  return typeof value === 'boolean' ? value : undefined;
+}
+
+function getStringPref(value: Zotero.Prefs.Value): string | undefined {
+  return typeof value === 'string' && value ? value : undefined;
+}
+
+function isPageTitleFormat(
+  value: Zotero.Prefs.Value
+): value is PageTitleFormat {
+  return (
+    typeof value === 'string' &&
+    Object.values<string>(PageTitleFormat).includes(value)
+  );
+}
+
+function getPageTitleFormatPref(
+  value: Zotero.Prefs.Value
+): PageTitleFormat | undefined {
+  return isPageTitleFormat(value) ? value : undefined;
 }
 
 export function clearNoteroPref(pref: NoteroPref): void {
@@ -27,14 +60,19 @@ export function getNoteroPref<P extends NoteroPref>(
 ): NoteroPrefValue[P] {
   const value = Zotero.Prefs.get(buildFullPrefName(pref), true);
 
-  const booleanPref = typeof value === 'boolean' ? value : undefined;
-  const stringPref = typeof value === 'string' && value ? value : undefined;
+  const booleanPref = getBooleanPref(value);
+  const stringPref = getStringPref(value);
+
+  const pageTitleFormatPref =
+    (pref === NoteroPref.pageTitleFormat && getPageTitleFormatPref(value)) ||
+    undefined;
 
   return {
     [NoteroPref.collectionName]: stringPref,
     [NoteroPref.collectionSyncConfigs]: stringPref,
     [NoteroPref.notionDatabaseID]: stringPref,
     [NoteroPref.notionToken]: stringPref,
+    [NoteroPref.pageTitleFormat]: pageTitleFormatPref,
     [NoteroPref.syncOnModifyItems]: booleanPref,
   }[pref];
 }

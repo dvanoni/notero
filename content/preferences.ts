@@ -3,7 +3,14 @@ import {
   CollectionSyncConfigsRecord,
   parseSyncConfigs,
 } from './collection-sync-config';
-import { buildCollectionFullName, getXULElementById } from './utils';
+import { PageTitleFormat } from './notero-pref';
+import {
+  buildCollectionFullName,
+  getLocalizedString,
+  getXULElementById,
+} from './utils';
+
+Components.utils.import('resource://gre/modules/Services.jsm');
 
 const COLUMN_IDS = {
   COLLECTION: 'notero-collectionColumn',
@@ -11,11 +18,13 @@ const COLUMN_IDS = {
 };
 
 class Preferences {
+  private pageTitleFormatMenu!: XUL.MenuListElement;
   private syncConfigsPreference!: XUL.PreferenceElement;
   private syncConfigsTree!: XUL.TreeElement;
   private syncConfigsTreeView?: SyncConfigsTreeView;
 
   public async onPaneLoad(): Promise<void> {
+    this.pageTitleFormatMenu = getXULElementById('notero-pageTitleFormat');
     this.syncConfigsPreference = getXULElementById(
       'pref-collectionSyncConfigs'
     );
@@ -23,10 +32,22 @@ class Preferences {
 
     await Zotero.uiReadyPromise;
 
-    this.initTree();
+    this.initPageTitleFormatMenu();
+    this.initSyncConfigsTree();
   }
 
-  private initTree(): void {
+  private initPageTitleFormatMenu(): void {
+    Object.values(PageTitleFormat).forEach((format) => {
+      const label = getLocalizedString(`notero.pageTitleFormat.${format}`);
+      const item = this.pageTitleFormatMenu.appendItem(label, format);
+      if (format === this.pageTitleFormatMenu.value) {
+        this.pageTitleFormatMenu.selectedItem = item;
+      }
+    });
+    this.pageTitleFormatMenu.disabled = false;
+  }
+
+  private initSyncConfigsTree(): void {
     this.syncConfigsTreeView = new SyncConfigsTreeView(
       () => this.syncConfigsPreference.value,
       (value) => {

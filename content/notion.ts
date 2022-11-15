@@ -39,6 +39,8 @@ type PropertyRequest<T extends PropertyType> = Extract<
   { [P in T]: unknown }
 >[T];
 
+export type TitleBuilder = (item: NoteroItem) => string | Promise<string>;
+
 const TEXT_CONTENT_MAX_LENGTH = 2000;
 
 export default class Notion {
@@ -107,10 +109,11 @@ export default class Notion {
   }
 
   public async saveItemToDatabase(
-    item: NoteroItem
+    item: NoteroItem,
+    buildTitle: TitleBuilder
   ): Promise<CreatePageResponse & UpdatePageResponse> {
     const pageID = item.getNotionPageID();
-    const properties = await this.buildItemProperties(item);
+    const properties = await this.buildItemProperties(item, buildTitle);
 
     if (pageID) {
       try {
@@ -132,7 +135,8 @@ export default class Notion {
   }
 
   private async buildItemProperties(
-    item: NoteroItem
+    item: NoteroItem,
+    buildTitle: TitleBuilder
   ): Promise<DatabasePageProperties> {
     type Definition<T extends PropertyType = PropertyType> = {
       [P in T]: {
@@ -149,9 +153,7 @@ export default class Notion {
 
     const itemProperties: DatabasePageProperties = {
       title: {
-        title: Notion.buildRichText(
-          (await item.getInTextCitation()) || item.getTitle()
-        ),
+        title: Notion.buildRichText(await buildTitle(item)),
       },
     };
 

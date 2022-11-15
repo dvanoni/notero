@@ -9,10 +9,10 @@ items into [Notion](https://www.notion.so/Intro-to-databases-fd8cd2d212f74c50954
 To use it:
 
 1. 📔 [Configure](#configure-notion) your Notion database.
-1. 💾 [Install](#install-and-configure-notero-plugin) the Notero plugin into Zotero.
-1. 📁 Choose your Zotero collections to monitor.
-1. 📝 Add or update items in your collections.
-1. 🔄 Watch your items sync into Notion!
+2. 💾 [Install](#install-and-configure-notero-plugin) the Notero plugin into Zotero.
+3. 📁 Choose your Zotero collections to monitor.
+4. 📝 Add or update items in your collections.
+5. 🔄 Watch your items sync into Notion!
 
 ![Notero in action](docs/notero.gif)
 
@@ -87,17 +87,17 @@ Detailed setup instructions are below.
     - See [Notion developer docs](https://developers.notion.com/docs/getting-started#step-1-create-an-integration)
       for detailed instructions.
 
-1.  Create the database that you would like to sync Zotero items into.
+2.  Create the database that you would like to sync Zotero items into.
 
     - See [examples](#example-notion-databases) below that you can duplicate
       into your Notion workspace.
 
-1.  Share the database with the integration you created in step 1.
+3.  Share the database with the integration you created in step 1.
 
     - See [Notion developer docs](https://developers.notion.com/docs/getting-started#step-2-share-a-database-with-your-integration)
       for detailed instructions.
 
-1.  Take note of the database ID.
+4.  Take note of the database ID.
 
     - From the [Notion developer docs](https://developers.notion.com/docs/working-with-databases#adding-pages-to-a-database),
       here's a quick procedure to find the database ID:
@@ -118,7 +118,7 @@ Detailed setup instructions are below.
       > If it does, it will be 36 characters of the form
       > `xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx`.
 
-1.  Configure the database properties as desired. See the
+5.  Configure the database properties as desired. See the
     [database properties](#notion-database-properties) section below for more details.
 
 #### Notion Database Properties
@@ -162,13 +162,13 @@ Support for additional properties is planned for the future. See issues:
    of the `.xpi` file.
    - Note for Firefox users: You'll need to right-click the `.xpi` file link and
      choose **Save Link As...** in order to properly download the file.
-1. Open the Zotero Add-ons Manager via the **Tools → Add-ons** menu item.
-1. Install the `.xpi` file by either:
+2. Open the Zotero Add-ons Manager via the **Tools → Add-ons** menu item.
+3. Install the `.xpi` file by either:
    - dragging and dropping it into the Add-ons Manager window _or_
    - selecting it using the **Install Add-on From File...** option in the
      gear menu in the top-right corner of the window
-1. Restart Zotero to activate the plugin.
-1. Open the Notero preferences from the **Tools → Notero Preferences...** menu
+4. Restart Zotero to activate the plugin.
+5. Open the Notero preferences from the **Tools → Notero Preferences...** menu
    item, and enter the required preferences.
 
 ## Usage Guides
@@ -338,22 +338,22 @@ The steps below should allow you to build and run Notero yourself.
     [create a new profile](https://www.zotero.org/support/kb/multiple_profiles)
     for development purposes.
 
-1.  [Configure Zotero](https://www.zotero.org/support/dev/client_coding/plugin_development)
+2.  [Configure Zotero](https://www.zotero.org/support/dev/client_coding/plugin_development)
     to run the plugin directly from source. Because the `start` script already
     handles most of the steps, you only need to ensure your
     [Zotero profile directory](https://www.zotero.org/support/kb/profile_directory)
     has a directory named `extensions`.
 
-1.  Create a `zotero-plugin.ini` file as described in the
+3.  Create a `zotero-plugin.ini` file as described in the
     [zotero-plugin README](https://github.com/retorquere/zotero-plugin#readme).
     This file is used by the [`zotero-start`][zotero-start] command to determine
     where to install the extension when running a development build.
 
-1.  Install dependencies:
+4.  Install dependencies:
 
         npm ci
 
-1.  Build the plugin and start Zotero with it installed:
+5.  Build the plugin and start Zotero with it installed:
 
         npm start
 
@@ -361,8 +361,8 @@ The steps below should allow you to build and run Notero yourself.
     number of steps:
 
     1.  Executes `npm run build` to build the plugin into the `build/` directory.
-    1.  Writes a new `.xpi` file containing the absolute path to the `build/` directory.
-    1.  Starts Zotero with the profile specified in `zotero-plugin.ini` and the
+    2.  Writes a new `.xpi` file containing the absolute path to the `build/` directory.
+    3.  Starts Zotero with the profile specified in `zotero-plugin.ini` and the
         following command line arguments:
 
             -purgecaches -jsconsole -ZoteroDebugText -datadir profile
@@ -378,11 +378,11 @@ The steps below should allow you to build and run Notero yourself.
 
         npm run version
 
-1.  Push the new version to GitHub:
+2.  Push the new version to GitHub:
 
         git push --follow-tags
 
-1.  GitHub Actions will run the [`release`](.github/workflows/release.yml)
+3.  GitHub Actions will run the [`release`](.github/workflows/release.yml)
     workflow upon any new commit. This workflow will build the `.xpi` file and
     then use the [`zotero-plugin-release`](https://github.com/retorquere/zotero-plugin/blob/master/bin/release.ts)
     command from `zotero-plugin` to create a GitHub release with the `.xpi` file.

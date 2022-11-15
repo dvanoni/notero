@@ -4,9 +4,14 @@ import {
   saveSyncConfigs,
 } from './collection-sync-config';
 import NoteroItem from './notero-item';
-import { clearNoteroPref, getNoteroPref, NoteroPref } from './notero-pref';
-import Notion from './notion';
-import { hasErrorStack } from './utils';
+import {
+  clearNoteroPref,
+  getNoteroPref,
+  NoteroPref,
+  PageTitleFormat,
+} from './notero-pref';
+import Notion, { TitleBuilder } from './notion';
+import { getLocalizedString, hasErrorStack } from './utils';
 
 const monkey_patch_marker = 'NoteroMonkeyPatched';
 
@@ -38,10 +43,6 @@ class Notero {
   private readonly progressWindow = new Zotero.ProgressWindow();
 
   private queuedSync?: QueuedSync;
-
-  private readonly stringBundle = Services.strings.createBundle(
-    'chrome://notero/locale/notero.properties'
-  );
 
   private syncInProgress = false;
 
@@ -108,11 +109,6 @@ class Notero {
     );
   }
 
-  private getLocalizedString(name: NoteroPref | string): string {
-    const fullName = name in NoteroPref ? `notero.preferences.${name}` : name;
-    return this.stringBundle.GetStringFromName(fullName);
-  }
-
   private onAddItemsToCollection(ids: string[]) {
     const collectionIDs = loadSyncEnabledCollectionIDs();
     if (!collectionIDs.size) return;
@@ -162,18 +158,36 @@ class Notero {
     const databaseID = getNoteroPref(NoteroPref.notionDatabaseID);
 
     if (!authToken) {
-      throw new Error(
-        `Missing ${this.getLocalizedString(NoteroPref.notionToken)}`
-      );
+      throw new Error(`Missing ${getLocalizedString(NoteroPref.notionToken)}`);
     }
 
     if (!databaseID) {
       throw new Error(
-        `Missing ${this.getLocalizedString(NoteroPref.notionDatabaseID)}`
+        `Missing ${getLocalizedString(NoteroPref.notionDatabaseID)}`
       );
     }
 
     return new Notion(authToken, databaseID);
+  }
+
+  private getTitleBuilder(): TitleBuilder {
+    const titleBuilders: Record<
+      PageTitleFormat,
+      (item: NoteroItem) => string | null | Promise<string | null>
+    > = {
+      [PageTitleFormat.itemAuthorDateCitation]: (item) =>
+        item.getAuthorDateCitation(),
+      [PageTitleFormat.itemFullCitation]: (item) => item.getFullCitation(),
+      [PageTitleFormat.itemInTextCitation]: (item) => item.getInTextCitation(),
+      [PageTitleFormat.itemShortTitle]: (item) => item.getShortTitle(),
+      [PageTitleFormat.itemTitle]: (item) => item.getTitle(),
+    };
+
+    const format =
+      getNoteroPref(NoteroPref.pageTitleFormat) || PageTitleFormat.itemTitle;
+    const buildTitle = titleBuilders[format];
+
+    return async (item) => (await buildTitle(item)) || item.getTitle();
   }
 
   /**
@@ -258,12 +272,13 @@ class Notero {
 
     try {
       const notion = this.getNotion();
+      const buildTitle = this.getTitleBuilder();
       let step = 0;
 
       for (const item of items) {
         step++;
         itemProgress.setText(`Item ${step} of ${items.length}`);
-        await this.saveItemToNotion(item, notion);
+        await this.saveItemToNotion(item, notion, buildTitle);
         itemProgress.setProgress((step / items.length) * PERCENTAGE_MULTIPLIER);
       }
       itemProgress.setIcon(Notero.tickIcon);
@@ -279,9 +294,13 @@ class Notero {
     }
   }
 
-  private async saveItemToNotion(item: Zotero.Item, notion: Notion) {
+  private async saveItemToNotion(
+    item: Zotero.Item,
+    notion: Notion,
+    buildTitle: TitleBuilder
+  ) {
     const noteroItem = new NoteroItem(item);
-    const response = await notion.saveItemToDatabase(noteroItem);
+    const response = await notion.saveItemToDatabase(noteroItem, buildTitle);
 
     await noteroItem.saveNotionTag();
 

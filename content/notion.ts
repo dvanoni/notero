@@ -169,6 +169,11 @@ export default class Notion {
         buildRequest: () => Notion.buildRichText(item.getAuthors().join('\n')),
       },
       {
+        name: 'Date',
+        type: 'rich_text',
+        buildRequest: () => Notion.buildRichText(item.getDate()),
+      },
+      {
         name: 'DOI',
         type: 'url',
         buildRequest: () => item.getDOI(),
@@ -208,6 +213,11 @@ export default class Notion {
         }),
       },
       {
+        name: 'Short Title',
+        type: 'rich_text',
+        buildRequest: () => Notion.buildRichText(item.getShortTitle()),
+      },
+      {
         name: 'Tags',
         type: 'multi_select',
         buildRequest: () =>
@@ -229,11 +239,6 @@ export default class Notion {
         name: 'Year',
         type: 'number',
         buildRequest: () => item.getYear(),
-      },
-      {
-        name: 'Date',
-        type: 'rich_text',
-        buildRequest: () => Notion.buildRichText(item.getDate()),
       },
       {
         name: 'Zotero URI',

@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.4.0](https://github.com/dvanoni/notero/compare/v0.3.5...v0.4.0) (2022-11-16)
+
+
+### ⚠ BREAKING CHANGES
+
+* Previously, Notion page titles were generated using an APA in-text
+citation which includes parentheses around the author and date. The
+new default title format is similar except it omits the parentheses.
+
+### Features
+
+* Add support for Zotero's Short Title field ([#170](https://github.com/dvanoni/notero/issues/170)) ([2736280](https://github.com/dvanoni/notero/commit/2736280e549d10866af7ae3ff00debebefdbed7c))
+* Enable customization of field to use as Notion page title ([#101](https://github.com/dvanoni/notero/issues/101)) ([b34119f](https://github.com/dvanoni/notero/commit/b34119fe1dbbefd2056ac49f04d04a8c8b853f11))
+
 ### [0.3.5](https://github.com/dvanoni/notero/compare/v0.3.4...v0.3.5) (2022-05-22)
 
 

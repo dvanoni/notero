@@ -11,7 +11,7 @@ async function build() {
     bundle: true,
     format: 'iife',
     target: ['firefox60'],
-    entryPoints: ['content/notero.ts'],
+    entryPoints: ['src/content/notero.ts'],
     outdir: 'build/content',
     banner: { js: 'if (!Zotero.Notero) {\n' },
     footer: { js: '\n}' },
@@ -22,7 +22,7 @@ async function build() {
     format: 'iife',
     globalName: 'notero',
     target: ['firefox60'],
-    entryPoints: ['content/preferences.ts'],
+    entryPoints: ['src/content/preferences.ts'],
     outdir: 'build/content',
   });
 }

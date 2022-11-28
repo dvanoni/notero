@@ -2,9 +2,9 @@ const path = require('path');
 const fs = require('fs');
 const esbuild = require('esbuild');
 
-require('zotero-plugin/copy-assets');
-require('zotero-plugin/rdf');
-require('zotero-plugin/version');
+require('@dvanoni/zotero-plugin/copy-assets');
+require('@dvanoni/zotero-plugin/generate-install-manifest');
+require('@dvanoni/zotero-plugin/version');
 
 async function build() {
   await esbuild.build({

@@ -1,0 +1,49 @@
+name: Build
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    # The branches below must be a subset of the branches above.
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      packages: read
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version-file: '.node-version'
+          cache: 'npm'
+          registry-url: 'https://npm.pkg.github.com'
+      # Skip post-install scripts here, as a malicious script could steal NODE_AUTH_TOKEN.
+      - run: npm ci --ignore-scripts
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - run: npm run verify
+      - run: npm run build
+      - id: artifact-name
+        name: Generate xpi artifact name
+        uses: actions/github-script@v6
+        with:
+          result-encoding: string
+          script: return `notero-${require('./gen/version')}`
+      - name: Upload xpi artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ steps.artifact-name.outputs.result }}
+          path: build/
+      - name: Comment PR build
+        if: github.event_name == 'pull_request'
+        uses: mshick/add-pr-comment@v2
+        with:
+          message: |
+            ## 🤖 Build Bot
+
+            **✅ Successful build**
+
+            ⬇️ Download: [${{ steps.artifact-name.outputs.result }}](https://nightly.link/${{ github.repository }}/actions/runs/${{ github.run_id }}/${{ steps.artifact-name.outputs.result }}.zip)

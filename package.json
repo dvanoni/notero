@@ -35,7 +35,7 @@
     "core-js": "^3.26.1"
   },
   "devDependencies": {
-    "@commitlint/cli": "^17.2.0",
+    "@commitlint/cli": "^17.3.0",
     "@commitlint/config-conventional": "^17.2.0",
     "@dvanoni/zotero-plugin": "^1.5.1",
     "@typescript-eslint/eslint-plugin": "^5.43.0",

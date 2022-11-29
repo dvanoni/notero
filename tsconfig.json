@@ -13,12 +13,6 @@
     "lib": ["es2017", "dom"],
     "typeRoots": ["./typings", "./node_modules/@types"]
   },
-  "include": [
-    "content/**/*",
-    "defaults/**/*",
-    "resource/**/*",
-    "typings/**/*",
-    "*.ts"
-  ],
+  "include": ["src/**/*", "typings/**/*", "*.ts"],
   "exclude": ["node_modules", "**/*.spec.ts"]
 }

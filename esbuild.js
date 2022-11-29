@@ -2,16 +2,16 @@ const path = require('path');
 const fs = require('fs');
 const esbuild = require('esbuild');
 
-require('zotero-plugin/copy-assets');
-require('zotero-plugin/rdf');
-require('zotero-plugin/version');
+require('@dvanoni/zotero-plugin/copy-assets');
+require('@dvanoni/zotero-plugin/generate-install-manifest');
+require('@dvanoni/zotero-plugin/version');
 
 async function build() {
   await esbuild.build({
     bundle: true,
     format: 'iife',
     target: ['firefox60'],
-    entryPoints: ['content/notero.ts'],
+    entryPoints: ['src/content/notero.ts'],
     outdir: 'build/content',
     banner: { js: 'if (!Zotero.Notero) {\n' },
     footer: { js: '\n}' },
@@ -22,7 +22,7 @@ async function build() {
     format: 'iife',
     globalName: 'notero',
     target: ['firefox60'],
-    entryPoints: ['content/preferences.ts'],
+    entryPoints: ['src/content/preferences.ts'],
     outdir: 'build/content',
   });
 }

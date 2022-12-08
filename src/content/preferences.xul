@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
 <?xml-stylesheet href="chrome://zotero-platform/content/preferences.css" type="text/css"?>
-<?xml-stylesheet href="chrome://notero/skin/preferences.css" type="text/css"?>
+<?xml-stylesheet href="chrome://notero/content/style/preferences.css" type="text/css"?>
 <!DOCTYPE prefwindow SYSTEM "chrome://notero/locale/notero.dtd">
 
 <!-- The `notero` variable used below is defined in `esbuild.js` -->

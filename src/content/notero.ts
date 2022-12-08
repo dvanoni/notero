@@ -266,7 +266,7 @@ class Notero {
     this.progressWindow.changeHeadline('Saving items to Notion...');
     this.progressWindow.show();
     const itemProgress = new this.progressWindow.ItemProgress(
-      'chrome://notero/skin/notion-logo-32.png',
+      'chrome://notero/content/style/notion-logo-32.png',
       ''
     );
 

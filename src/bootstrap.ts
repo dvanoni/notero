@@ -1,5 +1,7 @@
 import type { Notero } from './content/notero';
 
+const LOG_PREFIX = 'Notero: ';
+
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 if (typeof Zotero === 'undefined') {
@@ -8,8 +10,8 @@ if (typeof Zotero === 'undefined') {
 }
 
 function log(msg: string) {
-  Zotero.debug(`Notero: ${msg}`);
-  Zotero.log(`Notero: ${msg}`);
+  Zotero.debug(`${LOG_PREFIX}${msg}`);
+  Zotero.log(`${LOG_PREFIX}${msg}`);
 }
 
 // In Zotero 6, bootstrap methods are called before Zotero is initialized, and
@@ -18,7 +20,7 @@ function log(msg: string) {
 // object from there.
 //
 // In Zotero 7, bootstrap methods are not called until Zotero is initialized,
-// and the 'Zotero' is automatically made available.
+// and the `Zotero` is automatically made available.
 async function waitForZotero() {
   if (typeof Zotero !== 'undefined') {
     return await Zotero.initializationPromise;
@@ -101,7 +103,7 @@ async function startup(
 
   log('Starting');
 
-  // 'Services' may not be available in Zotero 6
+  // `Services` may not be available in Zotero 6
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   if (typeof Services === 'undefined') {
@@ -137,5 +139,11 @@ function shutdown(_data: BootstrapData, _reason: Zotero.Plugins.REASONS) {
  */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 function uninstall(_data: BootstrapData, _reason: Zotero.Plugins.REASONS) {
+  // `Zotero` object isn't available in `uninstall()` in Zotero 6, so log manually
+  if (typeof Zotero === 'undefined') {
+    dump(`${LOG_PREFIX}Uninstalled\n\n`);
+    return;
+  }
+
   log('Uninstalled');
 }

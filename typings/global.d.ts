@@ -1,6 +1,7 @@
 export {};
 
 declare global {
+  function dump(message: string): void;
   function pref(name: string, value: boolean | number | string): void;
 
   interface Window {

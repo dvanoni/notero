@@ -21,6 +21,7 @@ jobs:
       - run: npm ci --ignore-scripts
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - run: npx patch-package
       - run: npm run verify
       - run: npm run build
       - id: release-xpi

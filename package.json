@@ -38,7 +38,7 @@
   "devDependencies": {
     "@commitlint/cli": "^17.3.0",
     "@commitlint/config-conventional": "^17.3.0",
-    "@dvanoni/zotero-plugin": "^1.5.1",
+    "@dvanoni/zotero-plugin": "^1.5.3",
     "@typescript-eslint/eslint-plugin": "^5.45.0",
     "@typescript-eslint/parser": "^5.45.0",
     "esbuild": "~0.15.16",

@@ -348,6 +348,8 @@ declare interface Zotero {
 
   initializationPromise: Promise<void>;
 
+  launchURL(url: string): void;
+
   platformMajorVersion: number;
 
   /**

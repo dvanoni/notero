@@ -221,7 +221,7 @@ class Notero {
     if (!items.length) return;
 
     if (this.queuedSync?.timeoutID) {
-      clearTimeout(this.queuedSync.timeoutID);
+      Zotero.clearTimeout(this.queuedSync.timeoutID);
     }
 
     const itemIDs = new Set([
@@ -229,7 +229,7 @@ class Notero {
       ...items.map(({ id }) => id),
     ]);
 
-    const timeoutID = setTimeout(() => {
+    const timeoutID = Zotero.setTimeout(() => {
       if (!this.queuedSync) return;
 
       this.queuedSync.timeoutID = undefined;

@@ -2,59 +2,65 @@ import { loadSyncEnabledCollectionIDs } from './collection-sync-config';
 import NoteroItem from './notero-item';
 import { getNoteroPref, NoteroPref, PageTitleFormat } from './notero-pref';
 import Notion, { TitleBuilder } from './notion';
+import { Service, UIManager } from './services';
 import { getLocalizedString, hasErrorStack, log } from './utils';
 
-const monkey_patch_marker = 'NoteroMonkeyPatched';
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-function patch(
-  object: { [x: string]: { [x: string]: boolean } },
-  method: string,
-  patcher: (arg0: unknown) => never
-) {
-  if (object[method][monkey_patch_marker]) return;
-  object[method] = patcher(object[method]);
-  object[method][monkey_patch_marker] = true;
-}
+const IS_ZOTERO_7 = Zotero.platformMajorVersion >= 102;
 
 const SYNC_DEBOUNCE_MS = 2000;
 
 type QueuedSync = {
   readonly itemIDs: Set<Zotero.Item['id']>;
-  timeoutID?: ReturnType<typeof setTimeout>;
+  timeoutID?: ReturnType<Zotero['setTimeout']>;
 };
 
-class Notero {
+if (!IS_ZOTERO_7) {
+  Cu.importGlobalProperties(['URL']);
+}
+
+export class Notero {
   private static get tickIcon() {
     return `chrome://zotero/skin/tick${Zotero.hiDPI ? '@2x' : ''}.png`;
   }
 
-  private globals!: Record<string, unknown>;
-
   private readonly progressWindow = new Zotero.ProgressWindow();
+
+  private notifierID?: ReturnType<Zotero.Notifier['registerObserver']>;
 
   private queuedSync?: QueuedSync;
 
   private syncInProgress = false;
 
-  public async load(globals: Record<string, unknown>) {
-    this.globals = globals;
+  private readonly services: Service[] = [new UIManager()];
 
+  public async startup(pluginID: string, rootURI: string) {
     await Zotero.uiReadyPromise;
 
-    const notifierID = Zotero.Notifier.registerObserver(
+    this.services.forEach((service) => service.startup({ pluginID, rootURI }));
+
+    this.notifierID = Zotero.Notifier.registerObserver(
       this.notifierCallback,
       ['collection-item', 'item'],
       'notero'
     );
 
-    window.addEventListener(
+    Zotero.getMainWindow().addEventListener(
       'unload',
       () => {
-        Zotero.Notifier.unregisterObserver(notifierID);
+        if (this.notifierID) {
+          Zotero.Notifier.unregisterObserver(this.notifierID);
+        }
       },
       false
     );
+  }
+
+  public shutdown() {
+    if (this.notifierID) {
+      Zotero.Notifier.unregisterObserver(this.notifierID);
+    }
+
+    this.services.forEach((service) => service.shutdown?.());
   }
 
   private notifierCallback = {
@@ -74,13 +80,6 @@ class Notero {
       }
     },
   };
-
-  public openPreferences() {
-    window.openDialog(
-      'chrome://notero/content/preferences.xul',
-      'notero-preferences'
-    );
-  }
 
   private onAddItemsToCollection(ids: string[]) {
     const collectionIDs = loadSyncEnabledCollectionIDs();
@@ -285,5 +284,4 @@ class Notero {
   }
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access
-(Zotero as any).Notero = new Notero();
+(Zotero as Zotero & { Notero: Notero }).Notero = new Notero();

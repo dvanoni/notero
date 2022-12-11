@@ -55,7 +55,7 @@
   },
   "xpi": {
     "name": "Notero",
-    "updateLink": "https://github.com/dvanoni/notero/releases/download/v{version}/notero-{version}.xpi",
+    "bootstrapped": true,
     "releaseURL": "https://github.com/dvanoni/notero/releases/download/release/"
   }
 }

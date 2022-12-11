@@ -3,7 +3,6 @@
 <!-- Preferences Window -->
 
 <!ENTITY notero.preferences.title "Notero 首选项">
-<!ENTITY notero.preferences.menuitem "Notero 首选项...">
 
 <!ENTITY notero.preferences.notionGroupboxCaption "Notion 首选项">
 <!ENTITY notero.preferences.notionGroupboxDescription "有关获取这些值的说明，请查看 ">

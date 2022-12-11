@@ -1,15 +1,6 @@
-import {
-  loadSyncConfigs,
-  loadSyncEnabledCollectionIDs,
-  saveSyncConfigs,
-} from './collection-sync-config';
+import { loadSyncEnabledCollectionIDs } from './collection-sync-config';
 import NoteroItem from './notero-item';
-import {
-  clearNoteroPref,
-  getNoteroPref,
-  NoteroPref,
-  PageTitleFormat,
-} from './notero-pref';
+import { getNoteroPref, NoteroPref, PageTitleFormat } from './notero-pref';
 import Notion, { TitleBuilder } from './notion';
 import { getLocalizedString, hasErrorStack, log } from './utils';
 
@@ -49,7 +40,7 @@ class Notero {
   public async load(globals: Record<string, unknown>) {
     this.globals = globals;
 
-    await this.migratePreferences();
+    await Zotero.uiReadyPromise;
 
     const notifierID = Zotero.Notifier.registerObserver(
       this.notifierCallback,
@@ -83,24 +74,6 @@ class Notero {
       }
     },
   };
-
-  private async migratePreferences() {
-    const syncConfigs = loadSyncConfigs();
-    if (Object.keys(syncConfigs).length) return;
-
-    await Zotero.uiReadyPromise;
-
-    const collectionName = getNoteroPref(NoteroPref.collectionName);
-    if (!collectionName) return;
-    const collection = Zotero.Collections.getLoaded().find(
-      ({ name }) => name === collectionName
-    );
-    if (!collection) return;
-
-    saveSyncConfigs({ [collection.id]: { syncEnabled: true } });
-    clearNoteroPref(NoteroPref.collectionName);
-    log(`Migrated preferences for collection: ${collectionName}`);
-  }
 
   public openPreferences() {
     window.openDialog(

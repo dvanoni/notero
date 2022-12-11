@@ -13,6 +13,7 @@ import {
 } from '@notionhq/client/build/src/api-endpoints';
 import 'core-js/stable/object/from-entries';
 import NoteroItem from './notero-item';
+import { log } from './utils';
 
 type CreateDatabasePageParameters = Extract<
   CreatePageParameters,
@@ -55,7 +56,7 @@ export default class Notion {
   );
 
   static logger: Logger = (level, message, extraInfo) => {
-    Zotero.log(
+    log(
       `${message} - ${JSON.stringify(extraInfo)}`,
       level === LogLevel.ERROR ? 'error' : 'warning'
     );

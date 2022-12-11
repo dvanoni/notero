@@ -11,7 +11,7 @@ import {
   PageTitleFormat,
 } from './notero-pref';
 import Notion, { TitleBuilder } from './notion';
-import { getLocalizedString, hasErrorStack } from './utils';
+import { getLocalizedString, hasErrorStack, log } from './utils';
 
 const monkey_patch_marker = 'NoteroMonkeyPatched';
 
@@ -99,7 +99,7 @@ class Notero {
 
     saveSyncConfigs({ [collection.id]: { syncEnabled: true } });
     clearNoteroPref(NoteroPref.collectionName);
-    Zotero.log(`Migrated Notero preferences for collection: ${collectionName}`);
+    log(`Migrated preferences for collection: ${collectionName}`);
   }
 
   public openPreferences() {
@@ -277,7 +277,9 @@ class Notero {
 
       for (const item of items) {
         step++;
-        itemProgress.setText(`Item ${step} of ${items.length}`);
+        const progressMessage = `Item ${step} of ${items.length}`;
+        log(`Saving ${progressMessage}`);
+        itemProgress.setText(progressMessage);
         await this.saveItemToNotion(item, notion, buildTitle);
         itemProgress.setProgress((step / items.length) * PERCENTAGE_MULTIPLIER);
       }
@@ -285,9 +287,9 @@ class Notero {
       this.progressWindow.startCloseTimer();
     } catch (error) {
       const errorMessage = String(error);
-      Zotero.log(errorMessage, 'error');
+      log(errorMessage, 'error');
       if (hasErrorStack(error)) {
-        Zotero.log(error.stack, 'error');
+        log(error.stack, 'error');
       }
       itemProgress.setError();
       this.progressWindow.addDescription(errorMessage);

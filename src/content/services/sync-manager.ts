@@ -25,12 +25,17 @@ export default class SyncManager implements Service {
 
   private syncInProgress = false;
 
+  constructor() {
+    this.unregisterObserver = this.unregisterObserver.bind(this);
+  }
+
   public startup() {
     this.registerObserver();
 
     Zotero.getMainWindow().addEventListener(
       'unload',
-      this.unregisterObserver.bind(this),
+      // eslint-disable-next-line @typescript-eslint/unbound-method
+      this.unregisterObserver,
       false
     );
   }
@@ -40,7 +45,8 @@ export default class SyncManager implements Service {
 
     Zotero.getMainWindow().removeEventListener(
       'unload',
-      this.unregisterObserver.bind(this),
+      // eslint-disable-next-line @typescript-eslint/unbound-method
+      this.unregisterObserver,
       false
     );
   }

@@ -73,6 +73,8 @@ export default class SyncManager implements Service {
       ids: string[],
       _: Record<string, unknown>
     ) => {
+      log(`Notified of ${event} ${type}`);
+
       const syncOnModifyItems = getNoteroPref(NoteroPref.syncOnModifyItems);
 
       if (!syncOnModifyItems && event === 'add' && type === 'collection-item') {
@@ -193,6 +195,8 @@ export default class SyncManager implements Service {
    * @param items the Zotero items to sync to Notion
    */
   private enqueueItemsToSync(items: Zotero.Item[]) {
+    log(`Enqueue ${items.length} item(s) to sync`);
+
     if (!items.length) return;
 
     if (this.queuedSync?.timeoutID) {

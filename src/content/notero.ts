@@ -1,4 +1,5 @@
 import { Service, SyncManager, UIManager } from './services';
+import { log } from './utils';
 
 const IS_ZOTERO_7 = Zotero.platformMajorVersion >= 102;
 
@@ -12,11 +13,17 @@ export class Notero {
   public async startup(pluginID: string, rootURI: string) {
     await Zotero.uiReadyPromise;
 
-    this.services.forEach((service) => service.startup({ pluginID, rootURI }));
+    this.services.forEach((service) => {
+      log(`Starting ${service.constructor.name}`);
+      service.startup({ pluginID, rootURI });
+    });
   }
 
   public shutdown() {
-    this.services.forEach((service) => service.shutdown?.());
+    this.services.forEach((service) => {
+      log(`Shutting down ${service.constructor.name}`);
+      service.shutdown?.();
+    });
   }
 }
 

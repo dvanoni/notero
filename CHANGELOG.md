@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.4.1](https://github.com/dvanoni/notero/compare/v0.4.0...v0.4.1) (2022-12-13)
+
+
+### Features
+
+* Update to a bootstrapped plugin ([#187](https://github.com/dvanoni/notero/issues/187)) ([ad58fd0](https://github.com/dvanoni/notero/commit/ad58fd0c226e8b5cd67c5cc63fb34bd06f7d850c))
+
 ## [0.4.0](https://github.com/dvanoni/notero/compare/v0.3.5...v0.4.0) (2022-11-16)
 
 

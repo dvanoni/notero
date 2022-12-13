@@ -27,22 +27,22 @@
 }
 
 #notero-syncConfigsTree treechildren::-moz-tree-checkbox {
-  list-style-image: url('chrome://notero/skin/square-light.svg');
+  list-style-image: url('chrome://notero/content/style/square-light.svg');
 }
 
 #notero-syncConfigsTree treechildren::-moz-tree-checkbox(hover) {
-  list-style-image: url('chrome://notero/skin/square-dark.svg');
+  list-style-image: url('chrome://notero/content/style/square-dark.svg');
 }
 
 #notero-syncConfigsTree treechildren::-moz-tree-checkbox(focus, selected) {
-  list-style-image: url('chrome://notero/skin/square-white.svg');
+  list-style-image: url('chrome://notero/content/style/square-white.svg');
 }
 
 #notero-syncConfigsTree treechildren::-moz-tree-checkbox(checked) {
-  list-style-image: url('chrome://notero/skin/check-square-black.svg');
+  list-style-image: url('chrome://notero/content/style/check-square-black.svg');
 }
 
 #notero-syncConfigsTree
   treechildren::-moz-tree-checkbox(checked, focus, selected) {
-  list-style-image: url('chrome://notero/skin/check-square-white.svg');
+  list-style-image: url('chrome://notero/content/style/check-square-white.svg');
 }

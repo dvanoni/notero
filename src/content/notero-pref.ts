@@ -1,5 +1,4 @@
 export enum NoteroPref {
-  collectionName = 'collectionName',
   collectionSyncConfigs = 'collectionSyncConfigs',
   notionDatabaseID = 'notionDatabaseID',
   notionToken = 'notionToken',
@@ -16,7 +15,6 @@ export enum PageTitleFormat {
 }
 
 type NoteroPrefValue = Partial<{
-  [NoteroPref.collectionName]: string;
   [NoteroPref.collectionSyncConfigs]: string;
   [NoteroPref.notionDatabaseID]: string;
   [NoteroPref.notionToken]: string;
@@ -68,7 +66,6 @@ export function getNoteroPref<P extends NoteroPref>(
     undefined;
 
   return {
-    [NoteroPref.collectionName]: stringPref,
     [NoteroPref.collectionSyncConfigs]: stringPref,
     [NoteroPref.notionDatabaseID]: stringPref,
     [NoteroPref.notionToken]: stringPref,

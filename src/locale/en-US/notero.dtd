@@ -3,7 +3,6 @@
 <!-- Preferences Window -->
 
 <!ENTITY notero.preferences.title "Notero Preferences">
-<!ENTITY notero.preferences.menuitem "Notero Preferences...">
 
 <!ENTITY notero.preferences.notionGroupboxCaption "Notion Preferences">
 <!ENTITY notero.preferences.notionGroupboxDescription "For instructions on obtaining these values, view the ">

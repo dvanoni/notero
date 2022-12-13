@@ -180,6 +180,19 @@ declare namespace Zotero {
     unregisterObserver(id: string): void;
   }
 
+  namespace Plugins {
+    type REASONS = {
+      APP_STARTUP: 1;
+      APP_SHUTDOWN: 2;
+      ADDON_ENABLE: 3;
+      ADDON_DISABLE: 4;
+      ADDON_INSTALL: 5;
+      ADDON_UNINSTALL: 6;
+      ADDON_UPGRADE: 7;
+      ADDON_DOWNGRADE: 8;
+    };
+  }
+
   interface Prefs {
     /** Clear a preference */
     clear(pref: string, global?: boolean): void;
@@ -298,11 +311,12 @@ declare namespace Zotero {
   }
 
   interface ZoteroPane {
+    document: Document;
     loadURI(uris: string | string[]): void;
   }
 }
 
-declare const Zotero: {
+declare interface Zotero {
   Attachments: Zotero.Attachments;
   CreatorTypes: Zotero.CreatorTypes;
   Collections: Zotero.Collections;
@@ -328,7 +342,15 @@ declare const Zotero: {
 
   getActiveZoteroPane(): Zotero.ZoteroPane | null;
 
+  getMainWindow(): ReturnType<XPCOM.nsIWindowMediator['getMostRecentWindow']>;
+
   hiDPI: boolean;
+
+  initializationPromise: Promise<void>;
+
+  launchURL(url: string): void;
+
+  platformMajorVersion: number;
 
   /**
    * Show Zotero pane overlay and progress bar in all windows
@@ -348,4 +370,24 @@ declare const Zotero: {
   hideZoteroPaneOverlays(): void;
 
   uiReadyPromise: Promise<void>;
+
+  /**
+   * @see https://groups.google.com/g/zotero-dev/c/O1TGIpfAdT0/m/Z7S8ONANAgAJ
+   */
+  setTimeout(func: () => unknown, ms: number): number;
+  clearTimeout(id: ReturnType<this['setTimeout']>): void;
+}
+
+declare const Zotero: Zotero;
+
+/**
+ * Bootstrap data provided by Zotero
+ * @see https://www.zotero.org/support/dev/zotero_7_for_developers#xul_overlays_bootstrapjs
+ * @see http://www.devdoc.net/web/developer.mozilla.org/en-US/docs/Mozilla/Add-ons/Bootstrapped_Extensions.html#Bootstrap_data
+ */
+declare type BootstrapData = {
+  id: string;
+  version: string;
+  resourceURI: XPCOM.nsIURI;
+  rootURI?: string;
 };

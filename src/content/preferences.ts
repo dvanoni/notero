@@ -59,9 +59,7 @@ class Preferences {
   }
 
   public openReadme(): void {
-    Zotero.getActiveZoteroPane()?.loadURI(
-      'https://github.com/dvanoni/notero#readme'
-    );
+    Zotero.launchURL('https://github.com/dvanoni/notero#readme');
   }
 }
 

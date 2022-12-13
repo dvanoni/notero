@@ -1,4 +1,5 @@
 import { getNoteroPref, NoteroPref, setNoteroPref } from './notero-pref';
+import { log } from './utils';
 
 export type CollectionSyncConfig = {
   notionOptionID?: string;
@@ -45,10 +46,7 @@ export function parseSyncConfigs(json: unknown): CollectionSyncConfigsRecord {
 
     return configs;
   } catch (error) {
-    Zotero.log(
-      `Failed to parse Notero sync configs: ${String(error)}`,
-      'error'
-    );
+    log(`Failed to parse Notero sync configs: ${String(error)}`, 'error');
     return {};
   }
 }

@@ -9,6 +9,7 @@
     "lint": "eslint . --cache --cache-location .eslintcache/",
     "lint:fix": "eslint . --fix",
     "postbuild": "zotero-plugin-zipup build notero",
+    "postinstall": "patch-package",
     "prepare": "husky install",
     "prettier": "prettier --check .",
     "prettier:fix": "prettier --write .",
@@ -37,23 +38,24 @@
   "devDependencies": {
     "@commitlint/cli": "^17.3.0",
     "@commitlint/config-conventional": "^17.3.0",
-    "@dvanoni/zotero-plugin": "^1.5.1",
-    "@typescript-eslint/eslint-plugin": "^5.45.0",
-    "@typescript-eslint/parser": "^5.45.0",
-    "esbuild": "~0.15.16",
-    "eslint": "^8.28.0",
+    "@dvanoni/zotero-plugin": "^1.6.0",
+    "@typescript-eslint/eslint-plugin": "^5.46.1",
+    "@typescript-eslint/parser": "^5.46.1",
+    "esbuild": "~0.16.4",
+    "eslint": "^8.29.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-import-resolver-typescript": "^3.5.2",
     "eslint-plugin-import": "^2.26.0",
     "husky": "^8.0.2",
     "npm-run-all": "^4.1.5",
-    "prettier": "2.8.0",
+    "patch-package": "^6.5.0",
+    "prettier": "2.8.1",
     "standard-version": "^9.5.0",
-    "typescript": "^4.9.3"
+    "typescript": "^4.9.4"
   },
   "xpi": {
     "name": "Notero",
-    "updateLink": "https://github.com/dvanoni/notero/releases/download/v{version}/notero-{version}.xpi",
+    "bootstrapped": true,
     "releaseURL": "https://github.com/dvanoni/notero/releases/download/release/"
   }
 }

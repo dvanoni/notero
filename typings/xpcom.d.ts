@@ -2,12 +2,54 @@
  * @see https://udn.realityripple.com/docs/Mozilla/Tech/XPCOM/Reference/Interface
  */
 declare namespace XPCOM {
+  type Interfaces = {
+    amIAddonManagerStartup: amIAddonManagerStartup;
+    nsIDOMWindow: nsIDOMWindow;
+    nsIDOMWindowInternal: nsIDOMWindow;
+    nsIInterfaceRequestor: nsIInterfaceRequestor;
+  };
+
+  interface amIAddonManagerStartup {
+    registerChrome(manifestURI: nsIURI, entries: string[][]): nsIJSRAIIHelper;
+  }
+
+  interface mozIJSSubScriptLoader {
+    loadSubScript(url: string, targetObj?: unknown, charset?: string): void;
+  }
+
+  interface nsIDOMWindow extends nsISupports, Window {}
+
+  interface nsIInterfaceRequestor {
+    getInterface<I extends Interfaces[keyof Interfaces]>(uuid: I): I;
+  }
+
+  interface nsIIOService {
+    newURI(spec: string, originCharset?: string, baseURI?: nsIURI): nsIURI;
+  }
+
+  interface nsIJSCID {
+    getService<I extends Interfaces[keyof Interfaces]>(uuid: I): I;
+  }
+
+  interface nsIJSRAIIHelper {
+    destruct(): void;
+  }
+
+  interface nsISimpleEnumerator {
+    getNext(): nsISupports;
+    hasMoreElements(): boolean;
+  }
+
   interface nsIStringBundle {
     GetStringFromName(name: string): string;
   }
 
   interface nsIStringBundleService {
     createBundle(url: string): nsIStringBundle;
+  }
+
+  interface nsISupports extends Record<string, unknown> {
+    QueryInterface<I extends Interfaces[keyof Interfaces]>(uuid: I): I;
   }
 
   interface nsITreeBoxObject {
@@ -70,20 +112,52 @@ declare namespace XPCOM {
     setTree?(tree: nsITreeBoxObject): void;
     toggleOpenState?(index: number): void;
   }
+
+  interface nsIURI {
+    spec: string;
+  }
+
+  interface nsIWindowMediator {
+    addListener(listener: nsIWindowMediatorListener): void;
+    getEnumerator(windowType: string): nsISimpleEnumerator;
+    getMostRecentWindow(windowType: string): nsIDOMWindow;
+    removeListener(listener: nsIWindowMediatorListener): void;
+  }
+
+  interface nsIWindowMediatorListener {
+    onOpenWindow?(xulWindow: nsIXULWindow): void;
+    onCloseWindow?(xulWindow: nsIXULWindow): void;
+  }
+
+  type nsIXULWindow = nsISupports;
 }
 
 /**
  * @see https://udn.realityripple.com/docs/Mozilla/Tech/XPCOM/Language_Bindings
  */
 declare const Components: {
+  classes: Record<string, XPCOM.nsIJSCID>;
+  interfaces: XPCOM.Interfaces;
   utils: {
-    import(url: string, scope?: object): void;
+    import(url: string, scope?: object): unknown;
+    importGlobalProperties(properties: string[]): void;
   };
 };
+
+declare const Cc: typeof Components.classes;
+declare const Ci: typeof Components.interfaces;
+declare const Cu: typeof Components.utils;
+
+declare const ChromeUtils: typeof Components.utils;
 
 /**
  * @see https://udn.realityripple.com/docs/Mozilla/JavaScript_code_modules/Services.jsm
  */
-declare const Services: {
+declare interface Services {
+  io: XPCOM.nsIIOService;
+  scriptloader: XPCOM.mozIJSSubScriptLoader;
   strings: XPCOM.nsIStringBundleService;
-};
+  wm: XPCOM.nsIWindowMediator;
+}
+
+declare const Services: Services;

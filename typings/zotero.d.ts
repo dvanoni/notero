@@ -144,6 +144,8 @@ declare namespace Zotero {
     isRegularItem(): boolean;
 
     setField(field: number | string, value: unknown, loadIn?: boolean): boolean;
+
+    setNote(text: string): boolean;
   }
 
   type Items = DataObjects<Item>;

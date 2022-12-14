@@ -49,10 +49,10 @@ export default class Notion {
   private readonly databaseID: string;
   private _databaseProperties?: DatabaseProperties;
 
-  static URL_PROTOCOL = 'notion:';
+  static APP_URL_PROTOCOL = 'notion:';
 
   static PAGE_URL_REGEX = new RegExp(
-    `^${Notion.URL_PROTOCOL}.+([0-9a-f]{32})$`
+    `^${Notion.APP_URL_PROTOCOL}.+([0-9a-f]{32})$`
   );
 
   static logger: Logger = (level, message, extraInfo) => {
@@ -74,8 +74,8 @@ export default class Notion {
     ];
   }
 
-  static convertWebURLToLocal(url: string): string {
-    return url.replace(/^https:/, this.URL_PROTOCOL);
+  static convertWebURLToAppURL(url: string): string {
+    return url.replace(/^https:/, this.APP_URL_PROTOCOL);
   }
 
   static getPageIDFromURL(url: string): string | undefined {

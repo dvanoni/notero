@@ -4,6 +4,13 @@ const APA_STYLE = 'bibliography=http://www.zotero.org/styles/apa';
 
 const PARENS_REGEX = /^\((.+)\)$/;
 
+const NOTION_LINK_NOTE = `
+<h2 style="background-color: #ff666680;">Do not delete!</h2>
+<p>This link attachment serves as a reference for
+<a href="https://github.com/dvanoni/notero">Notero</a>
+so that it can properly update the Notion page for this item.</p>
+`;
+
 export default class NoteroItem {
   static NOTION_TAG_NAME = 'notion';
 
@@ -158,7 +165,7 @@ export default class NoteroItem {
       .sort((a, b) => b - a);
 
     return Zotero.Items.get(attachmentIDs).filter((attachment) =>
-      attachment.getField('url')?.startsWith(Notion.URL_PROTOCOL)
+      attachment.getField('url')?.startsWith(Notion.APP_URL_PROTOCOL)
     );
   }
 
@@ -167,8 +174,8 @@ export default class NoteroItem {
     return notionURL && Notion.getPageIDFromURL(notionURL);
   }
 
-  public async saveNotionLinkAttachment(url: string): Promise<void> {
-    const notionURL = Notion.convertWebURLToLocal(url);
+  public async saveNotionLinkAttachment(webURL: string): Promise<void> {
+    const appURL = Notion.convertWebURLToAppURL(webURL);
     const attachments = this.getNotionLinkAttachments();
 
     if (attachments.length > 1) {
@@ -176,19 +183,24 @@ export default class NoteroItem {
       await Zotero.Items.erase(attachmentIDs);
     }
 
-    if (attachments.length > 0) {
-      attachments[0].setField('url', notionURL);
-      await attachments[0].saveTx();
+    let attachment = attachments.length ? attachments[0] : null;
+
+    if (attachment) {
+      attachment.setField('url', appURL);
     } else {
-      await Zotero.Attachments.linkFromURL({
+      attachment = await Zotero.Attachments.linkFromURL({
         parentItemID: this.zoteroItem.id,
         title: 'Notion',
-        url: notionURL,
+        url: appURL,
         saveOptions: {
           skipNotifier: true,
         },
       });
     }
+
+    attachment.setNote(NOTION_LINK_NOTE);
+
+    await attachment.saveTx();
   }
 
   public async saveNotionTag(): Promise<void> {

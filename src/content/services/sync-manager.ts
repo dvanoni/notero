@@ -17,7 +17,7 @@ type QueuedSync = {
 
 export default class SyncManager implements Service {
   private static get tickIcon() {
-    return `chrome://zotero/skin/tick${Zotero.hiDPI ? '@2x' : ''}.png`;
+    return `chrome://zotero/skin/tick${Zotero.hiDPISuffix}.png`;
   }
 
   private observerID?: ReturnType<Zotero.Notifier['registerObserver']>;

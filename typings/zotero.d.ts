@@ -347,6 +347,7 @@ declare interface Zotero {
   getMainWindow(): ReturnType<XPCOM.nsIWindowMediator['getMostRecentWindow']>;
 
   hiDPI: boolean;
+  hiDPISuffix: '@2x' | '';
 
   initializationPromise: Promise<void>;
 

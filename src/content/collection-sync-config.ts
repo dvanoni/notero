@@ -11,23 +11,60 @@ export type CollectionSyncConfigsRecord = Record<
   CollectionSyncConfig | undefined
 >;
 
-export function loadSyncEnabledCollectionIDs(): Set<Zotero.Collection['id']> {
-  const configs = loadSyncConfigs();
-  const collectionIDs = Object.entries(configs)
-    .filter(([id, config]) => Number(id) > 0 && config?.syncEnabled)
-    .map(([id]) => Number(id));
-  return new Set(collectionIDs);
-}
-
+/**
+ * Load collection sync configs from preferences.
+ * @returns An object of sync configs keyed by collection ID.
+ */
 export function loadSyncConfigs(): CollectionSyncConfigsRecord {
   const json = getNoteroPref(NoteroPref.collectionSyncConfigs);
   return parseSyncConfigs(json);
 }
 
+/**
+ * Load collection sync configs from preferences and return those that have sync
+ * enabled.
+ * @returns An object of sync configs that have sync enabled, keyed by
+ * collection ID.
+ */
+export function loadSyncEnabledConfigs(): CollectionSyncConfigsRecord {
+  const allConfigs = loadSyncConfigs();
+
+  return Object.entries(allConfigs).reduce(
+    (syncEnabledConfigs: CollectionSyncConfigsRecord, [key, config]) => {
+      const collectionID = Number(key);
+      if (collectionID > 0 && config?.syncEnabled) {
+        syncEnabledConfigs[collectionID] = config;
+      }
+      return syncEnabledConfigs;
+    },
+    {}
+  );
+}
+
+/**
+ * Load collection sync configs from preferences and return the collection IDs
+ * that have sync enabled.
+ * @returns A set of collection IDs that have sync enabled.
+ */
+export function loadSyncEnabledCollectionIDs(): Set<Zotero.Collection['id']> {
+  const syncEnabledConfigs = loadSyncEnabledConfigs();
+  const collectionIDs = Object.keys(syncEnabledConfigs).map(Number);
+  return new Set(collectionIDs);
+}
+
+/**
+ * Save collection sync configs to preferences as a JSON string.
+ * @param configs An object of sync configs.
+ */
 export function saveSyncConfigs(configs: CollectionSyncConfigsRecord): void {
   setNoteroPref(NoteroPref.collectionSyncConfigs, JSON.stringify(configs));
 }
 
+/**
+ * Parse collection sync configs from a JSON string.
+ * @param json A JSON string representing sync configs.
+ * @returns An object of sync configs, or an empty object if parsing fails.
+ */
 export function parseSyncConfigs(json: unknown): CollectionSyncConfigsRecord {
   if (typeof json !== 'string') return {};
 
@@ -35,21 +72,23 @@ export function parseSyncConfigs(json: unknown): CollectionSyncConfigsRecord {
     const parsedValue: unknown = JSON.parse(json);
     if (!isObject(parsedValue)) return {};
 
-    const configs: CollectionSyncConfigsRecord = {};
-
-    Object.entries(parsedValue)
+    return Object.entries(parsedValue)
       .map(convertKeyToNumber)
       .filter(isCollectionSyncConfigEntry)
-      .forEach(([collectionID, config]) => {
-        configs[collectionID] = config;
-      });
-
-    return configs;
+      .reduce(
+        (configs: CollectionSyncConfigsRecord, [collectionID, config]) => {
+          configs[collectionID] = config;
+          return configs;
+        },
+        {}
+      );
   } catch (error) {
-    log(`Failed to parse Notero sync configs: ${String(error)}`, 'error');
+    log(`Failed to parse sync configs: ${String(error)}`, 'error');
     return {};
   }
 }
+
+// Helper functions
 
 function convertKeyToNumber([key, value]: [string, unknown]): [
   number,

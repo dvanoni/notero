@@ -166,12 +166,12 @@ declare namespace Zotero {
       ref: {
         notify(
           event: string,
-          type: string,
+          type: Notifier.Type,
           ids: (number | string)[],
           extraData: Record<string, unknown>
         ): void;
       },
-      types?: string[],
+      types?: Notifier.Type[],
       id?: string,
       priority?: number
     ): string;
@@ -180,6 +180,29 @@ declare namespace Zotero {
      * @param id observer id
      */
     unregisterObserver(id: string): void;
+  }
+
+  namespace Notifier {
+    type Type =
+      | 'api-key'
+      | 'bucket'
+      | 'collection'
+      | 'collection-item'
+      | 'feed'
+      | 'feedItem'
+      | 'file'
+      | 'group'
+      | 'item'
+      | 'item-tag'
+      | 'relation'
+      | 'search'
+      | 'setting'
+      | 'share'
+      | 'share-items'
+      | 'sync'
+      | 'tab'
+      | 'tag'
+      | 'trash';
   }
 
   namespace Plugins {

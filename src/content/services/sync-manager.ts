@@ -72,7 +72,7 @@ export default class SyncManager implements Service {
   private observer = {
     notify: (
       event: string,
-      type: string,
+      type: Zotero.Notifier.Type,
       ids: string[],
       _: Record<string, unknown>
     ) => {

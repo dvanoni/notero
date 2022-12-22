@@ -73,23 +73,23 @@ export default class SyncManager implements Service {
     notify: (
       event: string,
       type: Zotero.Notifier.Type,
-      ids: string[],
+      ids: (number | string)[],
       _: Record<string, unknown>
     ) => {
-      log(`Notified of ${event} ${type}`);
+      log(`Notified of ${event} ${type} for IDs ${JSON.stringify(ids)}`);
 
       const syncOnModifyItems = getNoteroPref(NoteroPref.syncOnModifyItems);
 
       if (!syncOnModifyItems && event === 'add' && type === 'collection-item') {
-        return this.onAddItemsToCollection(ids);
+        return this.handleAddItemsToCollection(ids as string[]);
       }
       if (syncOnModifyItems && event === 'modify' && type === 'item') {
-        return this.onModifyItems(ids);
+        return this.handleModifyItems(ids as number[]);
       }
     },
   };
 
-  private onAddItemsToCollection(ids: string[]) {
+  private handleAddItemsToCollection(ids: string[]) {
     const collectionIDs = loadSyncEnabledCollectionIDs();
     if (!collectionIDs.size) return;
 
@@ -117,11 +117,11 @@ export default class SyncManager implements Service {
     this.enqueueItemsToSync(items);
   }
 
-  private onModifyItems(ids: string[]) {
+  private handleModifyItems(ids: number[]) {
     const collectionIDs = loadSyncEnabledCollectionIDs();
     if (!collectionIDs.size) return;
 
-    const items = Zotero.Items.get(ids.map(Number)).filter(
+    const items = Zotero.Items.get(ids).filter(
       (item) =>
         !item.deleted &&
         item.isRegularItem() &&

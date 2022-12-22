@@ -153,6 +153,7 @@ property names are case-sensitive, so the capitalization must match exactly.
 | `Name`             | Title         | Format configurable via the **Notion Page Title** option in Notero preferences      |
 | `Abstract`         | Text          |                                                                                     |
 | `Authors`          | Text          |                                                                                     |
+| `Collections`      | Multi-select  |                                                                                     |
 | `Date`             | Text          |                                                                                     |
 | `DOI`              | URL           |                                                                                     |
 | `Editors`          | Text          |                                                                                     |

@@ -1,4 +1,5 @@
 import Notion from './notion';
+import { buildCollectionFullName } from './utils';
 
 const APA_STYLE = 'bibliography=http://www.zotero.org/styles/apa';
 
@@ -47,6 +48,12 @@ export default class NoteroItem {
       .getCreators()
       .filter(({ creatorTypeID }) => creatorTypeID === primaryCreatorTypeID)
       .map(NoteroItem.formatCreatorName);
+  }
+
+  public getCollections(): string[] {
+    return Zotero.Collections.get(this.zoteroItem.getCollections()).map(
+      buildCollectionFullName
+    );
   }
 
   public getDate(): string | null {

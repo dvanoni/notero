@@ -40,7 +40,7 @@
     "@commitlint/config-conventional": "^17.3.0",
     "@dvanoni/zotero-plugin": "^1.6.0",
     "@typescript-eslint/eslint-plugin": "^5.46.1",
-    "@typescript-eslint/parser": "^5.46.1",
+    "@typescript-eslint/parser": "^5.47.0",
     "esbuild": "~0.16.5",
     "eslint": "^8.29.0",
     "eslint-config-prettier": "^8.5.0",

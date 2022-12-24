@@ -355,7 +355,18 @@ The steps below should allow you to build and run Notero yourself.
 3.  Create a `zotero-plugin.ini` file as described in the
     [zotero-plugin][zotero-plugin] README.
     This file is used by the [`zotero-start`][zotero-start] command to determine
-    where to install the extension when running a development build.
+    where to install the plugin when running a development build.
+
+    **Example**
+
+    ```ini
+    [profile]
+    name = dev
+    path = /Users/dvanoni/Library/Application Support/Zotero/Profiles/sekg0jb3.dev
+
+    [plugin]
+    source = build
+    ```
 
 4.  In order to install the forked `zotero-plugin` package, you must
     [log in to the GitHub Packages npm registry][github-npm-auth] using a GitHub

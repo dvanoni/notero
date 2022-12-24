@@ -12,6 +12,7 @@ import {
   UpdatePageResponse,
 } from '@notionhq/client/build/src/api-endpoints';
 import 'core-js/stable/object/from-entries';
+
 import NoteroItem from './notero-item';
 import { log } from './utils';
 

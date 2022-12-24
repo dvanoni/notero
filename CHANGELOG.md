@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.4.2](https://github.com/dvanoni/notero/compare/v0.4.1...v0.4.2) (2022-12-24)
+
+
+### Features
+
+* Add note to Notion link attachment ([#190](https://github.com/dvanoni/notero/issues/190)) ([8737dde](https://github.com/dvanoni/notero/commit/8737ddea6d019656ddfe9bb8434d345ee5382295))
+
+
+### Bug Fixes
+
+* Show error when "read content" capability is missing ([#197](https://github.com/dvanoni/notero/issues/197)) ([6c4d5aa](https://github.com/dvanoni/notero/commit/6c4d5aab8c646fb3646fac0eedc43899eb49aac7))
+
 ### [0.4.1](https://github.com/dvanoni/notero/compare/v0.4.0...v0.4.1) (2022-12-13)
 
 

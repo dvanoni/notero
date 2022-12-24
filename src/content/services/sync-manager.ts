@@ -1,3 +1,5 @@
+import { isFullPage } from '@notionhq/client';
+
 import { loadSyncEnabledCollectionIDs } from '../collection-sync-config';
 import NoteroItem from '../notero-item';
 import { getNoteroPref, NoteroPref, PageTitleFormat } from '../notero-pref';
@@ -286,8 +288,15 @@ export default class SyncManager implements Service {
 
     await noteroItem.saveNotionTag();
 
-    if ('url' in response) {
+    if (isFullPage(response)) {
       await noteroItem.saveNotionLinkAttachment(response.url);
+    } else {
+      throw new Error(
+        'Failed to create Notion link attachment. ' +
+          'This will result in duplicate Notion pages. ' +
+          'Please ensure that the "read content" capability is enabled ' +
+          'for the Notero integration at www.notion.so/my-integrations.'
+      );
     }
   }
 }

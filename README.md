@@ -335,8 +335,8 @@ See below for descriptions of how you can use the different views.
 
 ## Development
 
-Notero was scaffolded with [generator-zotero-plugin](https://github.com/retorquere/generator-zotero-plugin)
-and is built with [zotero-plugin](https://github.com/retorquere/zotero-plugin).
+Notero was scaffolded with [generator-zotero-plugin][generator-zotero-plugin]
+and is built with a fork of [zotero-plugin][zotero-plugin].
 
 ### Local Setup
 
@@ -353,29 +353,55 @@ The steps below should allow you to build and run Notero yourself.
     has a directory named `extensions`.
 
 3.  Create a `zotero-plugin.ini` file as described in the
-    [zotero-plugin README](https://github.com/retorquere/zotero-plugin#readme).
+    [zotero-plugin][zotero-plugin] README.
     This file is used by the [`zotero-start`][zotero-start] command to determine
-    where to install the extension when running a development build.
+    where to install the plugin when running a development build.
 
-4.  Install dependencies:
+    **Example**
+
+    ```ini
+    [profile]
+    name = dev
+    path = /Users/dvanoni/Library/Application Support/Zotero/Profiles/sekg0jb3.dev
+
+    [plugin]
+    source = build
+    ```
+
+4.  In order to install the forked `zotero-plugin` package, you must
+    [log in to the GitHub Packages npm registry][github-npm-auth] using a GitHub
+    token with the `read:packages` scope (generate one [here][read-packages-token]):
+
+        npm login --scope=@dvanoni --registry=https://npm.pkg.github.com
+
+5.  Install dependencies:
 
         npm ci
 
-5.  Build the plugin and start Zotero with it installed:
+6.  Perform an initial build of the plugin to create the `build` directory:
+
+        npm run build
+
+7.  Start Zotero with the plugin installed:
 
         npm start
 
     The `start` script runs [`zotero-start`][zotero-start] which performs a
     number of steps:
 
-    1.  Executes `npm run build` to build the plugin into the `build/` directory.
-    2.  Writes a new `.xpi` file containing the absolute path to the `build/` directory.
+    1.  Executes `npm run build` to build the plugin into the `build` directory.
+    2.  Writes a file containing the absolute path to the `build` directory into
+        the `extensions` directory in the Zotero profile directory.
     3.  Starts Zotero with the profile specified in `zotero-plugin.ini` and the
         following command line arguments:
 
-            -purgecaches -jsconsole -ZoteroDebugText -datadir profile
+            -purgecaches -jsconsole -ZoteroDebugText -debugger -datadir profile
 
-[zotero-start]: https://github.com/retorquere/zotero-plugin/blob/master/bin/start.py
+[generator-zotero-plugin]: https://github.com/retorquere/generator-zotero-plugin
+[github-npm-auth]: https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-npm-registry#authenticating-with-a-personal-access-token
+[read-packages-token]: https://github.com/settings/tokens/new?scopes=read:packages
+[zotero-plugin]: https://github.com/dvanoni/zotero-plugin
+[zotero-start]: https://github.com/dvanoni/zotero-plugin/blob/master/bin/start.py
 
 ### Releasing a New Version
 
@@ -391,6 +417,5 @@ The steps below should allow you to build and run Notero yourself.
         git push --follow-tags
 
 3.  GitHub Actions will run the [`release`](.github/workflows/release.yml)
-    workflow upon any new commit. This workflow will build the `.xpi` file and
-    then use the [`zotero-plugin-release`](https://github.com/retorquere/zotero-plugin/blob/master/bin/release.ts)
-    command from `zotero-plugin` to create a GitHub release with the `.xpi` file.
+    workflow upon push of a version tag. This workflow will build the `.xpi`
+    file and then create a GitHub release with the `.xpi` file.

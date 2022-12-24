@@ -358,7 +358,8 @@ The steps below should allow you to build and run Notero yourself.
     where to install the extension when running a development build.
 
 4.  In order to install the forked `zotero-plugin` package, you must
-    [log in to the GitHub Packages npm registry][github-npm-auth]:
+    [log in to the GitHub Packages npm registry][github-npm-auth] using a GitHub
+    token with the `read:packages` scope (generate one [here][read-packages-token]):
 
         npm login --scope=@dvanoni --registry=https://npm.pkg.github.com
 
@@ -387,6 +388,7 @@ The steps below should allow you to build and run Notero yourself.
 
 [generator-zotero-plugin]: https://github.com/retorquere/generator-zotero-plugin
 [github-npm-auth]: https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-npm-registry#authenticating-with-a-personal-access-token
+[read-packages-token]: https://github.com/settings/tokens/new?scopes=read:packages
 [zotero-plugin]: https://github.com/dvanoni/zotero-plugin
 [zotero-start]: https://github.com/dvanoni/zotero-plugin/blob/master/bin/start.py
 

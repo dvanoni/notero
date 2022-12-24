@@ -1,4 +1,5 @@
 import { createXULElement, getLocalizedString } from '../utils';
+
 import type { Service } from './service';
 
 export default class UIManager implements Service {

@@ -3,6 +3,7 @@ import NoteroItem from '../notero-item';
 import { getNoteroPref, NoteroPref, PageTitleFormat } from '../notero-pref';
 import Notion, { TitleBuilder } from '../notion';
 import { getLocalizedString, hasErrorStack, log } from '../utils';
+
 import type { Service } from './service';
 
 const SYNC_DEBOUNCE_MS = 2000;

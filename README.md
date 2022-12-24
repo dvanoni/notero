@@ -82,17 +82,26 @@ Detailed setup instructions are below.
 
 ### Configure Notion
 
-1.  Create the database that you would like to sync Zotero items into.
+1.  Create the Notion database that you would like to sync Zotero items into.
 
-    - See [examples](#example-notion-databases) below that you can duplicate
-      into your Notion workspace.
+    See [examples](#example-notion-databases) below that you can duplicate into
+    your Notion workspace.
 
-2.  Obtain a Notion internal integration token from https://www.notion.com/my-integrations.
+2.  Create a Notion [internal integration](https://developers.notion.com/docs/create-a-notion-integration#step-1-create-an-integration)
+    at https://www.notion.com/my-integrations and enable _all_ of the
+    "content capabilities."
 
-    - See [Notion developer docs](https://developers.notion.com/docs/create-a-notion-integration#step-1-create-an-integration)
-      for detailed instructions.
+    <details>
+      <summary>Example of integration capabilities settings</summary>
+      <img
+        alt="Notion integration capabilities settings" 
+        src="docs/notion-capabilities.png"
+      />
+    </details>
 
-3.  Share the database with the integration you created.
+3.  Take note of the **internal integration token** from the previous step.
+
+4.  Share the database with the integration you created.
 
     From the [Notion developer docs](https://developers.notion.com/docs/create-a-notion-integration#step-2-share-a-database-with-your-integration):
 
@@ -110,7 +119,7 @@ Detailed setup instructions are below.
         />
       </details>
 
-4.  Take note of the database ID.
+5.  Take note of the database ID.
 
     From the [Notion developer docs](https://developers.notion.com/docs/create-a-notion-integration#step-3-save-the-database-id):
 
@@ -125,7 +134,7 @@ Detailed setup instructions are below.
     >
     > ![Notion database ID](https://files.readme.io/62e5027-notion_database_id.png)
 
-5.  Configure the database properties as desired. See the
+6.  Configure the database properties as desired. See the
     [database properties](#notion-database-properties) section below for more details.
 
 #### Notion Database Properties

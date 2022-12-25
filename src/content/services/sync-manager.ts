@@ -4,11 +4,20 @@ import { loadSyncEnabledCollectionIDs } from '../collection-sync-config';
 import NoteroItem from '../notero-item';
 import { getNoteroPref, NoteroPref, PageTitleFormat } from '../notero-pref';
 import Notion, { TitleBuilder } from '../notion';
-import { getLocalizedString, hasErrorStack, log } from '../utils';
+import {
+  getAllCollectionItems,
+  getLocalizedString,
+  hasErrorStack,
+  log,
+} from '../utils';
 
 import type { Service } from './service';
 
 const SYNC_DEBOUNCE_MS = 2000;
+
+type NotifierIDs = readonly (number | string)[];
+
+type NotifierEventHandler = (ids: NotifierIDs) => Zotero.Item[];
 
 type QueuedSync = {
   readonly itemIDs: Set<Zotero.Item['id']>;
@@ -57,7 +66,7 @@ export default class SyncManager implements Service {
   private registerObserver() {
     this.observerID = Zotero.Notifier.registerObserver(
       this.observer,
-      ['collection-item', 'item'],
+      ['collection', 'collection-item', 'item', 'item-tag'],
       'notero'
     );
   }
@@ -73,55 +82,59 @@ export default class SyncManager implements Service {
     notify: (
       event: string,
       type: Zotero.Notifier.Type,
-      ids: (number | string)[],
-      _: Record<string, unknown>
+      ids: NotifierIDs,
+      _extraData: Record<string, unknown>
     ) => {
       log(`Notified of ${event} ${type} for IDs ${JSON.stringify(ids)}`);
 
-      const syncOnModifyItems = getNoteroPref(NoteroPref.syncOnModifyItems);
+      const items = this.getItemsForEvent(event, type, ids);
 
-      if (!syncOnModifyItems && event === 'add' && type === 'collection-item') {
-        return this.handleAddItemsToCollection(ids as string[]);
-      }
-      if (syncOnModifyItems && event === 'modify' && type === 'item') {
-        return this.handleModifyItems(ids as number[]);
+      if (items.length) {
+        this.enqueueItemsToSync(items);
       }
     },
   };
 
-  private handleAddItemsToCollection(ids: string[]) {
+  /**
+   * Return the Zotero items (if any) that should be synced for the given
+   * notifier event.
+   * @returns An array of Zotero items.
+   */
+  private getItemsForEvent(
+    event: string,
+    type: Zotero.Notifier.Type,
+    ids: NotifierIDs
+  ): Zotero.Item[] {
     const collectionIDs = loadSyncEnabledCollectionIDs();
-    if (!collectionIDs.size) return;
+    if (!collectionIDs.size) return [];
 
-    const items = ids
-      .map((collectionItem: string) => {
-        const [collectionID, itemID] = collectionItem.split('-').map(Number);
-        return {
-          collectionID,
-          item: Zotero.Items.get(itemID),
+    const syncOnModifyItems = getNoteroPref(NoteroPref.syncOnModifyItems);
+
+    const eventHandlers: Partial<
+      Record<Zotero.Notifier.Type, Record<typeof event, NotifierEventHandler>>
+    > = syncOnModifyItems
+      ? {
+          collection: {
+            delete: this.getItemsFromCollectionIDs,
+            modify: this.getItemsFromCollectionIDs,
+          },
+          item: {
+            modify: this.getItemsFromItemIDs,
+          },
+          'item-tag': {
+            modify: this.withIndexedIDs(0, this.getItemsFromItemIDs),
+            remove: this.withIndexedIDs(0, this.getItemsFromItemIDs),
+          },
+        }
+      : {
+          'collection-item': {
+            add: this.withIndexedIDs(1, this.getItemsFromItemIDs),
+          },
         };
-      })
-      .filter(
-        (
-          record
-        ): record is {
-          collectionID: Zotero.Collection['id'];
-          item: Zotero.Item;
-        } =>
-          record.item &&
-          record.item.isRegularItem() &&
-          collectionIDs.has(record.collectionID)
-      )
-      .map(({ item }) => item);
 
-    this.enqueueItemsToSync(items);
-  }
+    const items = eventHandlers[type]?.[event]?.(ids) ?? [];
 
-  private handleModifyItems(ids: number[]) {
-    const collectionIDs = loadSyncEnabledCollectionIDs();
-    if (!collectionIDs.size) return;
-
-    const items = Zotero.Items.get(ids).filter(
+    return items.filter(
       (item) =>
         !item.deleted &&
         item.isRegularItem() &&
@@ -129,8 +142,41 @@ export default class SyncManager implements Service {
           .getCollections()
           .some((collectionID) => collectionIDs.has(collectionID))
     );
+  }
 
-    this.enqueueItemsToSync(items);
+  private getItemsFromItemIDs(this: void, ids: NotifierIDs) {
+    return Zotero.Items.get(ids as number[]);
+  }
+
+  private getItemsFromCollectionIDs(this: void, ids: NotifierIDs) {
+    const items = Zotero.Collections.get(ids as number[]).reduce(
+      (items: Zotero.Item[], collection) =>
+        items.concat(getAllCollectionItems(collection)),
+      []
+    );
+
+    // Deduplicate items in multiple collections
+    return Array.from(new Set(items));
+  }
+
+  /**
+   * Return a wrapped event handler that is passed IDs extracted from compound
+   * IDs (e.g. `'${id0}-${id1}'`) at the given index.
+   * @param index The index of the IDs to extract from compound IDs.
+   * @param handler The event handler to wrap.
+   * @returns A wrapped event handler.
+   */
+  private withIndexedIDs(
+    this: void,
+    index: number,
+    handler: NotifierEventHandler
+  ): NotifierEventHandler {
+    return (ids: NotifierIDs) => {
+      const itemIDs = (ids as string[]).map((compoundID) =>
+        Number(compoundID.split('-')[index])
+      );
+      return handler(itemIDs);
+    };
   }
 
   private getNotion() {
@@ -197,7 +243,7 @@ export default class SyncManager implements Service {
    *
    * @param items the Zotero items to sync to Notion
    */
-  private enqueueItemsToSync(items: Zotero.Item[]) {
+  private enqueueItemsToSync(items: readonly Zotero.Item[]) {
     log(`Enqueue ${items.length} item(s) to sync`);
 
     if (!items.length) return;
@@ -260,7 +306,7 @@ export default class SyncManager implements Service {
       for (const item of items) {
         step++;
         const progressMessage = `Item ${step} of ${items.length}`;
-        log(`Saving ${progressMessage}`);
+        log(`Saving ${progressMessage} with ID ${item.id}`);
         itemProgress.setText(progressMessage);
         await this.saveItemToNotion(item, notion, buildTitle);
         itemProgress.setProgress((step / items.length) * PERCENTAGE_MULTIPLIER);

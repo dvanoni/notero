@@ -26,6 +26,28 @@ declare namespace Zotero {
     name: string;
     parentID: DataObjectID;
     parentKey: DataObjectKey;
+
+    /**
+     * Returns subcollections of this collection
+     *
+     * @param asIDs Return as collectionIDs
+     * @return Array of Zotero.Collection instances or collectionIDs
+     */
+    getChildCollections<A extends boolean>(
+      asIDs: A
+    ): A extends true ? number[] : Collection[];
+
+    /**
+     * Returns child items of this collection
+     *
+     * @param	asIDs Return as itemIDs
+     * @param	includeDeleted	Include items in Trash (default false)
+     * @return Array of Zotero.Item instances or itemIDs
+     */
+    getChildItems<A extends boolean>(
+      asIDs: A,
+      includeDeleted?: boolean
+    ): A extends true ? number[] : Item[];
   }
 
   type Collections = DataObjects<Collection>;
@@ -171,7 +193,7 @@ declare namespace Zotero {
           extraData: Record<string, unknown>
         ): void;
       },
-      types?: Notifier.Type[],
+      types?: readonly Notifier.Type[],
       id?: string,
       priority?: number
     ): string;

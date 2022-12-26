@@ -5,13 +5,6 @@ const APA_STYLE = 'bibliography=http://www.zotero.org/styles/apa';
 
 const PARENS_REGEX = /^\((.+)\)$/;
 
-const NOTION_LINK_NOTE = `
-<h2 style="background-color: #ff666680;">Do not delete!</h2>
-<p>This link attachment serves as a reference for
-<a href="https://github.com/dvanoni/notero">Notero</a>
-so that it can properly update the Notion page for this item.</p>
-`;
-
 export default class NoteroItem {
   static NOTION_TAG_NAME = 'notion';
 
@@ -205,7 +198,13 @@ export default class NoteroItem {
       });
     }
 
-    attachment.setNote(NOTION_LINK_NOTE);
+    attachment.setNote(`
+<h2 style="background-color: #ff666680;">Do not delete!</h2>
+<p>This link attachment serves as a reference for
+<a href="https://github.com/dvanoni/notero">Notero</a>
+so that it can properly update the Notion page for this item.</p>
+<p>Last synced: ${new Date().toLocaleString()}</p>
+`);
 
     await attachment.saveTx();
   }

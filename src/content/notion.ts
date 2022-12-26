@@ -171,6 +171,14 @@ export default class Notion {
         buildRequest: () => Notion.buildRichText(item.getAuthors().join('\n')),
       },
       {
+        name: 'Collections',
+        type: 'multi_select',
+        buildRequest: () =>
+          item.getCollections().map((collection) => ({
+            name: Notion.sanitizeSelectOption(collection),
+          })),
+      },
+      {
         name: 'Date',
         type: 'rich_text',
         buildRequest: () => Notion.buildRichText(item.getDate()),

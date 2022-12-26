@@ -21,8 +21,10 @@ export class Notero {
 
   public shutdown() {
     this.services.forEach((service) => {
-      log(`Shutting down ${service.constructor.name}`);
-      service.shutdown?.();
+      if (service.shutdown) {
+        log(`Shutting down ${service.constructor.name}`);
+        service.shutdown();
+      }
     });
   }
 }

@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.4.3](https://github.com/dvanoni/notero/compare/v0.4.2...v0.4.3) (2022-12-26)
+
+
+### Features
+
+* Sync `Collections` property to Notion ([#194](https://github.com/dvanoni/notero/issues/194)) ([d85bd5f](https://github.com/dvanoni/notero/commit/d85bd5fc1d3686867b4694e49cd17ff873a40faf))
+* Sync items when collections or tags are modified ([#204](https://github.com/dvanoni/notero/issues/204)) ([a6cd503](https://github.com/dvanoni/notero/commit/a6cd503b7fa81380fedadc9803232f9040beac79))
+
 ### [0.4.2](https://github.com/dvanoni/notero/compare/v0.4.1...v0.4.2) (2022-12-24)
 
 

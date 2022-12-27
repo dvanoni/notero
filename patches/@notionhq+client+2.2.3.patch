@@ -1,5 +1,5 @@
 diff --git a/node_modules/@notionhq/client/build/src/errors.js b/node_modules/@notionhq/client/build/src/errors.js
-index e8092b2..0bf7d1f 100644
+index e8092b2..76f3cfe 100644
 --- a/node_modules/@notionhq/client/build/src/errors.js
 +++ b/node_modules/@notionhq/client/build/src/errors.js
 @@ -65,13 +65,13 @@ class RequestTimeoutError extends NotionClientErrorBase {

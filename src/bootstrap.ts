@@ -51,14 +51,13 @@ async function waitForZotero() {
             .QueryInterface(Ci.nsIInterfaceRequestor)
             .getInterface(Ci.nsIDOMWindow);
           const windowListener = () => {
-            domWindow.removeEventListener('load', windowListener, false);
             if (domWindow.Zotero) {
               Services.wm.removeListener(windowMediatorListener);
               Zotero = domWindow.Zotero as typeof Zotero;
               resolve();
             }
           };
-          domWindow.addEventListener('load', windowListener, false);
+          domWindow.addEventListener('load', windowListener, { once: true });
         },
       };
       Services.wm.addListener(windowMediatorListener);

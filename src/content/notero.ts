@@ -1,7 +1,6 @@
+import { IS_ZOTERO_7 } from './constants';
 import { Service, SyncManager, UIManager } from './services';
 import { log } from './utils';
-
-const IS_ZOTERO_7 = Zotero.platformMajorVersion >= 102;
 
 if (!IS_ZOTERO_7) {
   Cu.importGlobalProperties(['URL']);

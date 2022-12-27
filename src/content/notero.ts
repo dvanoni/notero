@@ -1,5 +1,6 @@
 import { IS_ZOTERO_7 } from './constants';
 import {
+  ChromeManager,
   DefaultPreferencesLoader,
   EventManager,
   Service,
@@ -14,7 +15,7 @@ if (!IS_ZOTERO_7) {
 
 export class Notero {
   private readonly services: Service[] = [
-    ...(IS_ZOTERO_7 ? [] : [new DefaultPreferencesLoader()]),
+    ...(IS_ZOTERO_7 ? [new ChromeManager()] : [new DefaultPreferencesLoader()]),
     new EventManager(),
     new SyncManager(),
     new UIManager(),

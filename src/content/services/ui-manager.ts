@@ -1,3 +1,4 @@
+import { IS_ZOTERO_7 } from '../constants';
 import { createXULElement, getLocalizedString } from '../utils';
 
 import type { Service } from './service';
@@ -14,6 +15,8 @@ export default class UIManager implements Service {
   private managedNodes = new Set<Node>();
 
   public startup() {
+    if (IS_ZOTERO_7) return;
+
     const menuItem = createXULElement(this.document, 'menuitem');
     menuItem.setAttribute(
       'label',

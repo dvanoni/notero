@@ -359,6 +359,15 @@ declare namespace Zotero {
 
   interface ZoteroPane {
     document: Document;
+
+    getSelectedCollection<A extends boolean>(
+      asID: A
+    ): (A extends true ? number : Collection) | undefined;
+
+    getSelectedItems<A extends boolean>(
+      asIDs: A
+    ): A extends true ? number[] : Item[];
+
     loadURI(uris: string | string[]): void;
   }
 }

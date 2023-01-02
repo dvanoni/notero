@@ -33,6 +33,8 @@ export type NotifierEventParams = Parameters<NotifierEventListener>;
 
 type EventTypes = {
   'notifier-event': NotifierEventListener;
+  'request-sync-collection': (collection: Zotero.Collection) => void;
+  'request-sync-items': (items: Zotero.Item[]) => void;
 };
 
 const emitter = new EventEmitter<EventTypes>();
@@ -40,6 +42,7 @@ const emitter = new EventEmitter<EventTypes>();
 export default class EventManager implements Service {
   static readonly emit = emitter.emit.bind(emitter);
   static readonly addListener = emitter.addListener.bind(emitter);
+  static readonly removeListener = emitter.removeListener.bind(emitter);
 
   private observerID?: ReturnType<Zotero.Notifier['registerObserver']>;
 

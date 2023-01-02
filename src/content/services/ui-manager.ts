@@ -1,6 +1,7 @@
 import { IS_ZOTERO_7 } from '../constants';
 import { createXULElement, getLocalizedString, log } from '../utils';
 
+import EventManager from './event-manager';
 import type { Service } from './service';
 
 export default class UIManager implements Service {
@@ -32,7 +33,9 @@ export default class UIManager implements Service {
       onCommand: () => {
         const collection =
           Zotero.getActiveZoteroPane()?.getSelectedCollection(false);
-        log(JSON.stringify(collection));
+        if (collection) {
+          EventManager.emit('request-sync-collection', collection);
+        }
       },
     });
   }
@@ -43,7 +46,9 @@ export default class UIManager implements Service {
       parentId: 'zotero-itemmenu',
       onCommand: () => {
         const items = Zotero.getActiveZoteroPane()?.getSelectedItems(false);
-        log(JSON.stringify(items));
+        if (items) {
+          EventManager.emit('request-sync-items', items);
+        }
       },
     });
   }

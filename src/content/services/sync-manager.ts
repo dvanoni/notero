@@ -34,23 +34,49 @@ export default class SyncManager implements Service {
 
   public startup() {
     EventManager.addListener('notifier-event', this.handleNotifierEvent);
+    EventManager.addListener(
+      'request-sync-collection',
+      this.handleSyncCollection
+    );
+    EventManager.addListener('request-sync-items', this.handleSyncItems);
+  }
+
+  public shutdown() {
+    EventManager.removeListener('notifier-event', this.handleNotifierEvent);
+    EventManager.removeListener(
+      'request-sync-collection',
+      this.handleSyncCollection
+    );
+    EventManager.removeListener('request-sync-items', this.handleSyncItems);
   }
 
   private handleNotifierEvent = (...params: NotifierEventParams) => {
-    this.handleEventItems(this.getItemsForNotifierEvent(...params));
+    this.handleEventItems(this.getItemsForNotifierEvent(...params), true);
   };
 
-  private handleEventItems(items: Zotero.Item[]) {
+  private handleSyncCollection = (collection: Zotero.Collection) => {
+    this.handleEventItems(collection.getChildItems(false), false);
+  };
+
+  private handleSyncItems = (items: Zotero.Item[]) => {
+    this.handleEventItems(items, false);
+  };
+
+  private handleEventItems(
+    items: Zotero.Item[],
+    requireSyncedCollections: boolean
+  ) {
     const collectionIDs = loadSyncEnabledCollectionIDs();
-    if (!collectionIDs.size) return;
+    if (requireSyncedCollections && !collectionIDs.size) return;
 
     const validItems = items.filter(
       (item) =>
         !item.deleted &&
         item.isRegularItem() &&
-        item
-          .getCollections()
-          .some((collectionID) => collectionIDs.has(collectionID))
+        (!requireSyncedCollections ||
+          item
+            .getCollections()
+            .some((collectionID) => collectionIDs.has(collectionID)))
     );
 
     if (validItems.length) {

@@ -5,8 +5,7 @@
 <a href="https://www.buymeacoffee.com/dvanoni"><img alt="Buy me a coffee" height="20" src="https://img.buymeacoffee.com/button-api/?text=Buy me a coffee&emoji=&slug=dvanoni&button_colour=BD5FFF&font_colour=ffffff&font_family=Lato&outline_colour=000000&coffee_colour=FFDD00" /></a>
 
 Notero is a [Zotero plugin](https://www.zotero.org/support/plugins) for syncing
-items into [Notion](https://www.notion.so/Intro-to-databases-fd8cd2d212f74c50954c11086d85997e).
-To use it:
+items into [Notion](https://www.notion.so/product). To use it:
 
 1. 📔 [Configure](#configure-notion) your Notion database.
 2. 💾 [Install](#install-and-configure-notero-plugin) the Notero plugin into Zotero.
@@ -63,9 +62,12 @@ By default, Notero will sync items in your monitored collections whenever they
 are modified. You can disable this functionality by unchecking the **Sync when
 items are modified** option in Notero preferences.
 
-If you disable **Sync when items are modified** and would like to trigger a
-re-sync of an item, you can remove the item from the monitored collection and
-add it back in.
+You can also sync items from the collection or item context menus (right-click):
+
+- To sync all items in a collection, open the context menu for the collection
+  and select **Sync Items to Notion**.
+- To sync one item or multiple items, select the item(s) in the main pane, open
+  the context menu, and select **Sync to Notion**.
 
 ⚠️ _**Note:** To prevent the "sync on modify" functionality from saving to Notion
 multiple times, Notero does not notify Zotero when the tag and link attachment
@@ -232,19 +234,9 @@ For now, the best workarounds are:
 
 ### How to bulk sync existing items
 
-To sync multiple items that are already in a monitored collection, you can
-trigger a sync by adding a temporary tag to them. Create a new tag, add it to
-all the items by selecting them and dragging them onto the tag, then delete
-the tag.
-
-<details>
-  <summary>Video example of syncing multiple items</summary>
-  <video
-    controls 
-    src="https://user-images.githubusercontent.com/299357/152631566-11782b33-670d-455b-9eec-5d9ce87c810b.mp4" 
-    style="max-height:373px;"
-  />
-</details>
+To sync multiple items that are already in a monitored collection, you can do so
+from the collection or item context menus.
+See the [Syncing Items](#syncing-items) section above.
 
 ### How to fix Notion API errors
 

@@ -33,7 +33,8 @@
   "homepage": "https://github.com/dvanoni/notero",
   "dependencies": {
     "@notionhq/client": "^2.2.3",
-    "core-js": "^3.27.1"
+    "core-js": "^3.27.1",
+    "eventemitter3": "^5.0.0"
   },
   "devDependencies": {
     "@commitlint/cli": "^17.3.0",

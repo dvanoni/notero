@@ -1,14 +1,17 @@
-import { Service, SyncManager, UIManager } from './services';
+import { IS_ZOTERO_7 } from './constants';
+import { EventManager, Service, SyncManager, UIManager } from './services';
 import { log } from './utils';
-
-const IS_ZOTERO_7 = Zotero.platformMajorVersion >= 102;
 
 if (!IS_ZOTERO_7) {
   Cu.importGlobalProperties(['URL']);
 }
 
 export class Notero {
-  private readonly services: Service[] = [new SyncManager(), new UIManager()];
+  private readonly services: Service[] = [
+    new EventManager(),
+    new SyncManager(),
+    new UIManager(),
+  ];
 
   public async startup(pluginID: string, rootURI: string) {
     await Zotero.uiReadyPromise;

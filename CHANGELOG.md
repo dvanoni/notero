@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.4.4](https://github.com/dvanoni/notero/compare/v0.4.3...v0.4.4) (2023-01-02)
+
+
+### Features
+
+* Add sync button to context menus ([#210](https://github.com/dvanoni/notero/issues/210)) ([5b7625b](https://github.com/dvanoni/notero/commit/5b7625ba269abe4db64d19b964fd0b1a3aad9c8b))
+
 ### [0.4.3](https://github.com/dvanoni/notero/compare/v0.4.2...v0.4.3) (2022-12-26)
 
 

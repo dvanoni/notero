@@ -11,13 +11,10 @@ import {
   log,
 } from '../utils';
 
+import EventManager, { NotifierEventParams } from './event-manager';
 import type { Service } from './service';
 
 const SYNC_DEBOUNCE_MS = 2000;
-
-type NotifierIDs = readonly (number | string)[];
-
-type NotifierEventHandler = (ids: NotifierIDs) => Zotero.Item[];
 
 type QueuedSync = {
   readonly itemIDs: Set<Zotero.Item['id']>;
@@ -29,110 +26,25 @@ export default class SyncManager implements Service {
     return `chrome://zotero/skin/tick${Zotero.hiDPISuffix}.png`;
   }
 
-  private observerID?: ReturnType<Zotero.Notifier['registerObserver']>;
-
   private readonly progressWindow = new Zotero.ProgressWindow();
 
   private queuedSync?: QueuedSync;
 
   private syncInProgress = false;
 
-  constructor() {
-    this.unregisterObserver = this.unregisterObserver.bind(this);
-  }
-
   public startup() {
-    this.registerObserver();
-
-    Zotero.getMainWindow().addEventListener(
-      'unload',
-      // eslint-disable-next-line @typescript-eslint/unbound-method
-      this.unregisterObserver
-    );
+    EventManager.addListener('notifier-event', this.handleNotifierEvent);
   }
 
-  public shutdown() {
-    this.unregisterObserver();
-
-    Zotero.getMainWindow().removeEventListener(
-      'unload',
-      // eslint-disable-next-line @typescript-eslint/unbound-method
-      this.unregisterObserver
-    );
-  }
-
-  private registerObserver() {
-    this.observerID = Zotero.Notifier.registerObserver(
-      this.observer,
-      ['collection', 'collection-item', 'item', 'item-tag'],
-      'notero'
-    );
-  }
-
-  private unregisterObserver() {
-    if (this.observerID) {
-      Zotero.Notifier.unregisterObserver(this.observerID);
-      delete this.observerID;
-    }
-  }
-
-  private observer = {
-    notify: (
-      event: string,
-      type: Zotero.Notifier.Type,
-      ids: NotifierIDs,
-      _extraData: Record<string, unknown>
-    ) => {
-      log(`Notified of ${event} ${type} for IDs ${JSON.stringify(ids)}`);
-
-      const items = this.getItemsForEvent(event, type, ids);
-
-      if (items.length) {
-        this.enqueueItemsToSync(items);
-      }
-    },
+  private handleNotifierEvent = (...params: NotifierEventParams) => {
+    this.handleEventItems(this.getItemsForNotifierEvent(...params));
   };
 
-  /**
-   * Return the Zotero items (if any) that should be synced for the given
-   * notifier event.
-   * @returns An array of Zotero items.
-   */
-  private getItemsForEvent(
-    event: string,
-    type: Zotero.Notifier.Type,
-    ids: NotifierIDs
-  ): Zotero.Item[] {
+  private handleEventItems(items: Zotero.Item[]) {
     const collectionIDs = loadSyncEnabledCollectionIDs();
-    if (!collectionIDs.size) return [];
+    if (!collectionIDs.size) return;
 
-    const syncOnModifyItems = getNoteroPref(NoteroPref.syncOnModifyItems);
-
-    const eventHandlers: Partial<
-      Record<Zotero.Notifier.Type, Record<typeof event, NotifierEventHandler>>
-    > = syncOnModifyItems
-      ? {
-          collection: {
-            delete: this.getItemsFromCollectionIDs,
-            modify: this.getItemsFromCollectionIDs,
-          },
-          item: {
-            modify: this.getItemsFromItemIDs,
-          },
-          'item-tag': {
-            modify: this.withIndexedIDs(0, this.getItemsFromItemIDs),
-            remove: this.withIndexedIDs(0, this.getItemsFromItemIDs),
-          },
-        }
-      : {
-          'collection-item': {
-            add: this.withIndexedIDs(1, this.getItemsFromItemIDs),
-          },
-        };
-
-    const items = eventHandlers[type]?.[event]?.(ids) ?? [];
-
-    return items.filter(
+    const validItems = items.filter(
       (item) =>
         !item.deleted &&
         item.isRegularItem() &&
@@ -140,14 +52,55 @@ export default class SyncManager implements Service {
           .getCollections()
           .some((collectionID) => collectionIDs.has(collectionID))
     );
+
+    if (validItems.length) {
+      this.enqueueItemsToSync(validItems);
+    }
   }
 
-  private getItemsFromItemIDs(this: void, ids: NotifierIDs) {
-    return Zotero.Items.get(ids as number[]);
+  /**
+   * Return the Zotero items (if any) that should be synced for the given
+   * notifier event.
+   * @returns An array of Zotero items.
+   */
+  private getItemsForNotifierEvent(
+    ...[event, ids]: NotifierEventParams
+  ): Zotero.Item[] {
+    const syncOnModifyItems = getNoteroPref(NoteroPref.syncOnModifyItems);
+
+    if (!syncOnModifyItems) {
+      if (event === 'collection-item.add') {
+        return Zotero.Items.get(this.getIndexedIDs(1, ids));
+      }
+      return [];
+    }
+
+    switch (event) {
+      case 'collection.delete':
+      case 'collection.modify':
+        return this.getItemsFromCollectionIDs(ids);
+      case 'item.modify':
+        return Zotero.Items.get(ids);
+      case 'item-tag.modify':
+      case 'item-tag.remove':
+        return Zotero.Items.get(this.getIndexedIDs(0, ids));
+      default:
+        return [];
+    }
   }
 
-  private getItemsFromCollectionIDs(this: void, ids: NotifierIDs) {
-    const items = Zotero.Collections.get(ids as number[]).reduce(
+  /**
+   * Extract IDs from compound IDs (e.g. `'${id0}-${id1}'`) at the given index.
+   * @param index The index of the IDs to extract from compound IDs.
+   * @param ids An array of compound IDs.
+   * @returns An array of extracted IDs.
+   */
+  private getIndexedIDs(this: void, index: number, ids: number[][]) {
+    return ids.map((compoundID) => compoundID[index]);
+  }
+
+  private getItemsFromCollectionIDs(this: void, ids: number[]) {
+    const items = Zotero.Collections.get(ids).reduce(
       (items: Zotero.Item[], collection) =>
         items.concat(getAllCollectionItems(collection)),
       []
@@ -155,26 +108,6 @@ export default class SyncManager implements Service {
 
     // Deduplicate items in multiple collections
     return Array.from(new Set(items));
-  }
-
-  /**
-   * Return a wrapped event handler that is passed IDs extracted from compound
-   * IDs (e.g. `'${id0}-${id1}'`) at the given index.
-   * @param index The index of the IDs to extract from compound IDs.
-   * @param handler The event handler to wrap.
-   * @returns A wrapped event handler.
-   */
-  private withIndexedIDs(
-    this: void,
-    index: number,
-    handler: NotifierEventHandler
-  ): NotifierEventHandler {
-    return (ids: NotifierIDs) => {
-      const itemIDs = (ids as string[]).map((compoundID) =>
-        Number(compoundID.split('-')[index])
-      );
-      return handler(itemIDs);
-    };
   }
 
   private getNotion() {

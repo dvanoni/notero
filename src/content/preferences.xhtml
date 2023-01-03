@@ -1,0 +1,88 @@
+<vbox onload="Zotero_Preferences.notero.preferences.onPaneLoad();">
+  <vbox class="main-section">
+    <html:h1>&notero.preferences.notionGroupboxCaption;</html:h1>
+    <description>
+      &notero.preferences.notionGroupboxDescription;
+      <label
+        is="zotero-text-link"
+        href="https://github.com/dvanoni/notero#readme"
+        value="&notero.preferences.readme;"
+      />.
+    </description>
+    <groupbox>
+      <label control="notero-notionToken">
+        <html:h2>&notero.preferences.notionToken;</html:h2>
+      </label>
+      <html:input
+        id="notero-notionToken"
+        preference="extensions.notero.notionToken"
+        type="text"
+      />
+      <label control="notero-notionDatabaseID">
+        <html:h2>&notero.preferences.notionDatabaseID;</html:h2>
+      </label>
+      <html:input
+        id="notero-notionDatabaseID"
+        preference="extensions.notero.notionDatabaseID"
+        type="text"
+      />
+    </groupbox>
+  </vbox>
+
+  <vbox class="main-section">
+    <html:h1>&notero.preferences.propertiesGroupboxCaption;</html:h1>
+    <description>
+      &notero.preferences.propertiesGroupboxDescription;
+    </description>
+    <groupbox>
+      <label control="notero-pageTitleFormat">
+        <html:h2>&notero.preferences.pageTitleFormat;</html:h2>
+      </label>
+      <menulist
+        id="notero-pageTitleFormat"
+        disabled="true"
+        native="true"
+        preference="extensions.notero.pageTitleFormat"
+      />
+    </groupbox>
+  </vbox>
+
+  <vbox class="main-section">
+    <html:h1>&notero.preferences.syncGroupboxCaption;</html:h1>
+    <description>&notero.preferences.syncGroupboxDescription1;</description>
+    <description>&notero.preferences.syncGroupboxDescription2;</description>
+    <tree
+      id="notero-syncConfigsTree"
+      disabled="true"
+      editable="true"
+      flex="1"
+      hidecolumnpicker="true"
+      rows="9"
+      seltype="single"
+    >
+      <treecols>
+        <treecol
+          id="notero-syncEnabledColumn"
+          label="&notero.preferences.syncEnabledColumn;"
+          editable="true"
+          type="checkbox"
+        />
+        <splitter class="tree-splitter" />
+        <treecol
+          id="notero-collectionColumn"
+          label="&notero.preferences.collectionColumn;"
+          crop="center"
+          flex="1"
+        />
+      </treecols>
+      <treechildren />
+    </tree>
+    <separator class="thin" />
+    <checkbox
+      id="notero-syncOnModifyItems"
+      label="&notero.preferences.syncOnModifyItems;"
+      native="true"
+      preference="extensions.notero.syncOnModifyItems"
+    />
+  </vbox>
+</vbox>

@@ -3,7 +3,12 @@ import {
   CollectionSyncConfigsRecord,
   parseSyncConfigs,
 } from './collection-sync-config';
-import { PageTitleFormat } from './notero-pref';
+import {
+  getNoteroPref,
+  NoteroPref,
+  PageTitleFormat,
+  setNoteroPref,
+} from './notero-pref';
 import {
   buildCollectionFullName,
   getLocalizedString,
@@ -19,15 +24,11 @@ const COLUMN_IDS = {
 
 class Preferences {
   private pageTitleFormatMenu!: XUL.MenuListElement;
-  private syncConfigsPreference!: XUL.PreferenceElement;
   private syncConfigsTree!: XUL.TreeElement;
   private syncConfigsTreeView?: SyncConfigsTreeView;
 
   public async onPaneLoad(): Promise<void> {
     this.pageTitleFormatMenu = getXULElementById('notero-pageTitleFormat');
-    this.syncConfigsPreference = getXULElementById(
-      'pref-collectionSyncConfigs'
-    );
     this.syncConfigsTree = getXULElementById('notero-syncConfigsTree');
 
     await Zotero.uiReadyPromise;
@@ -49,10 +50,8 @@ class Preferences {
 
   private initSyncConfigsTree(): void {
     this.syncConfigsTreeView = new SyncConfigsTreeView(
-      () => this.syncConfigsPreference.value,
-      (value) => {
-        this.syncConfigsPreference.value = value;
-      }
+      () => getNoteroPref(NoteroPref.collectionSyncConfigs),
+      (value) => setNoteroPref(NoteroPref.collectionSyncConfigs, value)
     );
     this.syncConfigsTree.view = this.syncConfigsTreeView;
     this.syncConfigsTree.disabled = false;

@@ -25,7 +25,8 @@ const builds = [
     format: 'iife',
     globalName: 'notero',
     target: ['firefox60'],
-    entryPoints: ['src/content/preferences.ts'],
+    entryPoints: ['src/content/preferences.tsx'],
+    external: ['components/*', 'react', 'react-dom', 'react-intl'],
     outdir: 'build/content',
   },
 ].map((buildOptions) => esbuild.build(buildOptions));

@@ -1,8 +1,13 @@
+import React from 'react';
+// eslint-disable-next-line import/no-unresolved
+import ReactDOM from 'react-dom';
+
 import {
   CollectionSyncConfig,
   CollectionSyncConfigsRecord,
   parseSyncConfigs,
 } from './collection-sync-config';
+import SyncConfigsTable from './components/SyncConfigsTable';
 import {
   getNoteroPref,
   NoteroPref,
@@ -29,12 +34,17 @@ class Preferences {
 
   public async onPaneLoad(): Promise<void> {
     this.pageTitleFormatMenu = getXULElementById('notero-pageTitleFormat');
-    this.syncConfigsTree = getXULElementById('notero-syncConfigsTree');
+    // this.syncConfigsTree = getXULElementById('notero-syncConfigsTree');
 
     await Zotero.uiReadyPromise;
 
     this.initPageTitleFormatMenu();
-    this.initSyncConfigsTree();
+    // this.initSyncConfigsTree();
+
+    ReactDOM.render(
+      <SyncConfigsTable />,
+      document.getElementById('notero-syncConfigsTable-container')
+    );
   }
 
   private initPageTitleFormatMenu(): void {

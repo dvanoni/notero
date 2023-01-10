@@ -51,32 +51,9 @@
     <html:h1>&notero.preferences.syncGroupboxCaption;</html:h1>
     <description>&notero.preferences.syncGroupboxDescription1;</description>
     <description>&notero.preferences.syncGroupboxDescription2;</description>
-    <tree
-      id="notero-syncConfigsTree"
-      disabled="true"
-      editable="true"
-      flex="1"
-      hidecolumnpicker="true"
-      rows="9"
-      seltype="single"
-    >
-      <treecols>
-        <treecol
-          id="notero-syncEnabledColumn"
-          label="&notero.preferences.syncEnabledColumn;"
-          editable="true"
-          type="checkbox"
-        />
-        <splitter class="tree-splitter" />
-        <treecol
-          id="notero-collectionColumn"
-          label="&notero.preferences.collectionColumn;"
-          crop="center"
-          flex="1"
-        />
-      </treecols>
-      <treechildren />
-    </tree>
+    <hbox class="virtualized-table-container" flex="1" height="250px">
+      <html:div id="notero-syncConfigsTable-container" />
+    </hbox>
     <separator class="thin" />
     <checkbox
       id="notero-syncOnModifyItems"

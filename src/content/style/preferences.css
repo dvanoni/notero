@@ -10,6 +10,10 @@
   margin: 0;
 }
 
+#notero-syncConfigsTable-container {
+  height: 250px;
+}
+
 #notero-syncConfigsTree[disabled='true'] {
   opacity: 0.5;
 }

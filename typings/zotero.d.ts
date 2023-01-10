@@ -443,6 +443,8 @@ declare interface Zotero {
 
   launchURL(url: string): void;
 
+  locale: string;
+
   platformMajorVersion: number;
 
   /**

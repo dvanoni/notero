@@ -3,6 +3,7 @@ import {
   ChromeManager,
   DefaultPreferencesLoader,
   EventManager,
+  PreferencePaneManager,
   Service,
   SyncManager,
   UIManager,
@@ -15,7 +16,9 @@ if (!IS_ZOTERO_7) {
 
 export class Notero {
   private readonly services: Service[] = [
-    ...(IS_ZOTERO_7 ? [new ChromeManager()] : [new DefaultPreferencesLoader()]),
+    ...(IS_ZOTERO_7
+      ? [new ChromeManager(), new PreferencePaneManager()]
+      : [new DefaultPreferencesLoader()]),
     new EventManager(),
     new SyncManager(),
     new UIManager(),

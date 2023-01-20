@@ -1,7 +1,7 @@
 declare module 'components/virtualized-table' {
-  type Column = {
+  type Column<DataKey extends string> = {
     /** Required, see use in ItemTree#_getRowData() */
-    dataKey: string;
+    dataKey: DataKey;
     /** Default: 1. -1 for descending sort */
     defaultSort?: number;
     hidden?: boolean;
@@ -24,14 +24,14 @@ declare module 'components/virtualized-table' {
     zoteroPersist?: Set<string>;
   };
 
-  type RenderItem = (
+  type RenderItem<DataKey extends string> = (
     index: number,
     selection: TreeSelection,
-    oldElem: Element,
-    columns: Column[]
+    oldElem: Element | null,
+    columns: Column<DataKey>[]
   ) => Element;
 
-  export interface TreeSelection {
+  export class TreeSelection {
     /** The selection "pivot". This is the first item the user selected as part of a ranged select (i.e. shift-select). */
     pivot: number;
     /** The currently selected/focused item. */
@@ -63,10 +63,10 @@ declare module 'components/virtualized-table' {
     select(index: number, shouldDebounce: boolean): boolean;
   }
 
-  interface VirtualizedTableProps {
+  export type VirtualizedTableProps<DataKey extends string> = {
     id: string;
     getRowCount: () => number;
-    renderItem: RenderItem;
+    renderItem: RenderItem<DataKey>;
     /** Row height specified as lines of text per row. Defaults to 1 */
     linesPerRow?: number;
     /** Do not adjust for Zotero-defined font scaling */
@@ -78,12 +78,14 @@ declare module 'components/virtualized-table' {
     role?: string;
     showHeader?: boolean;
     /** Array of column objects like the ones in itemTreeColumns.js */
-    columns: Column[];
+    columns: readonly Column<DataKey>[];
     onColumnPickerMenu?: (event: Event) => void;
     onColumnSort?: (index: number, sortDirection: number) => void;
-    getColumnPrefs?: () => { [dataKey: string]: unknown };
-    storeColumnPrefs?: (prefs: { [dataKey: string]: unknown }) => void;
-    getDefaultColumnOrder?: () => { [dataKey: string]: number };
+    getColumnPrefs?: () => { [dataKey in DataKey]: unknown };
+    storeColumnPrefs?: (prefs: {
+      [dataKey in DataKey]: unknown;
+    }) => void;
+    getDefaultColumnOrder?: () => { [dataKey in DataKey]: number };
     /** Makes columns unmovable, unsortable, etc */
     staticColumns?: boolean;
     /** Used for initial column widths calculation */
@@ -121,9 +123,11 @@ declare module 'components/virtualized-table' {
       x: number,
       y: number
     ) => void;
-  }
+  };
 
-  class VirtualizedTable extends React.Component<VirtualizedTableProps> {
+  class VirtualizedTable<DataKey extends string> extends React.Component<
+    VirtualizedTableProps<DataKey>
+  > {
     /** Invalidates the underlying windowed-list */
     invalidate(): void;
     /** Rerender a row in the underlying windowed-list */
@@ -131,21 +135,21 @@ declare module 'components/virtualized-table' {
     readonly selection: TreeSelection;
   }
 
-  export function renderCell(
+  export function renderCell<DataKey extends string>(
     index: number,
     data: unknown,
-    column: Column
+    column: Column<DataKey>
   ): HTMLSpanElement;
 
-  export function renderCheckboxCell(
+  export function renderCheckboxCell<DataKey extends string>(
     index: number,
     data: unknown,
-    column: Column
+    column: Column<DataKey>
   ): HTMLSpanElement;
 
-  export function makeRowRenderer(
+  export function makeRowRenderer<DataKey extends string>(
     getRowData: (index: number) => { [dataKey: string]: unknown }
-  ): RenderItem;
+  ): RenderItem<DataKey>;
 
   export default VirtualizedTable;
 

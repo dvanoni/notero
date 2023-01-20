@@ -1,5 +1,7 @@
 import VirtualizedTable, {
-  makeRowRenderer,
+  renderCell,
+  renderCheckboxCell,
+  VirtualizedTableProps,
   // eslint-disable-next-line import/no-unresolved
 } from 'components/virtualized-table';
 import React from 'react';
@@ -9,7 +11,12 @@ import {
   CollectionSyncConfig,
   loadSyncConfigs,
 } from '../collection-sync-config';
-import { buildCollectionFullName, getLocalizedString, log } from '../utils';
+import {
+  buildCollectionFullName,
+  createHTMLElement,
+  getLocalizedString,
+  log,
+} from '../utils';
 
 const columns = [
   {
@@ -23,7 +30,9 @@ const columns = [
     dataKey: 'collectionFullName',
     label: getLocalizedString('notero.preferences.collectionColumn'),
   },
-];
+] as const;
+
+type DataKey = typeof columns[number]['dataKey'];
 
 const syncConfigs = loadSyncConfigs();
 
@@ -59,6 +68,40 @@ export default class SyncConfigsTable extends React.Component {
     return this._rows;
   }
 
+  renderItem: VirtualizedTableProps<DataKey>['renderItem'] = (
+    index,
+    selection,
+    oldDiv,
+    columns
+  ) => {
+    let div;
+    if (oldDiv) {
+      div = oldDiv;
+      div.innerHTML = '';
+    } else {
+      div = createHTMLElement(document, 'div');
+      div.className = 'row';
+    }
+
+    div.classList.toggle('selected', selection.isSelected(index));
+    div.classList.toggle('focused', selection.focused == index);
+    const rowData = this.rows[index];
+
+    for (const column of columns) {
+      if (column.hidden) continue;
+
+      if (column.type === 'checkbox') {
+        div.appendChild(
+          renderCheckboxCell(index, rowData[column.dataKey], column)
+        );
+      } else {
+        div.appendChild(renderCell(index, rowData[column.dataKey], column));
+      }
+    }
+
+    return div;
+  };
+
   render() {
     return (
       <IntlProvider locale={Zotero.locale}>
@@ -67,7 +110,8 @@ export default class SyncConfigsTable extends React.Component {
           columns={columns}
           getRowCount={() => this.rows.length}
           getRowString={(index) => this.rows[index].collectionFullName}
-          renderItem={makeRowRenderer((index) => this.rows[index])}
+          // renderItem={makeRowRenderer((index) => this.rows[index])}
+          renderItem={this.renderItem}
           multiSelect
           showHeader
           onActivate={(event, indices) => {

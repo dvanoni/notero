@@ -1,5 +1,11 @@
 import { IS_ZOTERO_7 } from './constants';
-import { EventManager, Service, SyncManager, UIManager } from './services';
+import {
+  DefaultPreferencesLoader,
+  EventManager,
+  Service,
+  SyncManager,
+  UIManager,
+} from './services';
 import { log } from './utils';
 
 if (!IS_ZOTERO_7) {
@@ -8,6 +14,7 @@ if (!IS_ZOTERO_7) {
 
 export class Notero {
   private readonly services: Service[] = [
+    ...(IS_ZOTERO_7 ? [] : [new DefaultPreferencesLoader()]),
     new EventManager(),
     new SyncManager(),
     new UIManager(),

@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.4.5](https://github.com/dvanoni/notero/compare/v0.4.4...v0.4.5) (2023-01-20)
+
+
+### Bug Fixes
+
+* Load default preferences upon plugin install or enable ([#215](https://github.com/dvanoni/notero/issues/215)) ([812b019](https://github.com/dvanoni/notero/commit/812b0199d36ec5c9b134030b9887bf1b26c83dba))
+
 ### [0.4.4](https://github.com/dvanoni/notero/compare/v0.4.3...v0.4.4) (2023-01-02)
 
 

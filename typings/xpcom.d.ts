@@ -35,6 +35,16 @@ declare namespace XPCOM {
     destruct(): void;
   }
 
+  interface nsIPrefBranch {
+    setBoolPref(prefName: string, value: boolean): void;
+    setIntPref(prefName: string, value: number): void;
+    setStringPref(prefName: string, value: string): void;
+  }
+
+  interface nsIPrefService {
+    getDefaultBranch(prefRoot: string): nsIPrefBranch;
+  }
+
   interface nsISimpleEnumerator {
     getNext(): nsISupports;
     hasMoreElements(): boolean;
@@ -155,6 +165,7 @@ declare const ChromeUtils: typeof Components.utils;
  */
 declare interface Services {
   io: XPCOM.nsIIOService;
+  prefs: XPCOM.nsIPrefService;
   scriptloader: XPCOM.mozIJSSubScriptLoader;
   strings: XPCOM.nsIStringBundleService;
   wm: XPCOM.nsIWindowMediator;

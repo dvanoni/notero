@@ -40,4 +40,14 @@ declare namespace XUL {
   }
 
   type XULElement = Element;
+
+  type XULElementTagNameMap = {
+    button: ButtonElement;
+    checkbox: CheckboxElement;
+    menuitem: MenuItemElement;
+    menulist: MenuListElement;
+    preference: PreferenceElement;
+    textbox: TextboxElement;
+    tree: TreeElement;
+  };
 }

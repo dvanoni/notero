@@ -28,7 +28,7 @@ declare module 'components/virtualized-table' {
     index: number,
     selection: TreeSelection,
     oldElem: Element | null,
-    columns: Column<DataKey>[]
+    columns: (Column<DataKey> & { className: string })[]
   ) => Element;
 
   export class TreeSelection {

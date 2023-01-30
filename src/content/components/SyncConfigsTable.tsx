@@ -1,7 +1,5 @@
 import VirtualizedTable, {
-  renderCell,
-  renderCheckboxCell,
-  VirtualizedTableProps,
+  makeRowRenderer,
   // eslint-disable-next-line import/no-unresolved
 } from 'components/virtualized-table';
 import React from 'react';
@@ -9,16 +7,13 @@ import { IntlProvider } from 'react-intl';
 
 import {
   CollectionSyncConfig,
+  CollectionSyncConfigsRecord,
   loadSyncConfigs,
+  saveSyncConfigs,
 } from '../collection-sync-config';
-import {
-  buildCollectionFullName,
-  createHTMLElement,
-  getLocalizedString,
-  log,
-} from '../utils';
+import { buildCollectionFullName, getLocalizedString } from '../utils';
 
-const columns = [
+const COLUMNS = [
   {
     dataKey: 'syncEnabled',
     label: getLocalizedString('notero.preferences.syncEnabledColumn'),
@@ -32,96 +27,123 @@ const columns = [
   },
 ] as const;
 
-type DataKey = typeof columns[number]['dataKey'];
-
-const syncConfigs = loadSyncConfigs();
+type DataKey = typeof COLUMNS[number]['dataKey'];
 
 type SyncConfigsTableRow = CollectionSyncConfig & {
   collection: Zotero.Collection;
   collectionFullName: string;
 };
 
-const collator = new Intl.Collator(Zotero.locale, {
+type RowSortCompareFn = (
+  a: SyncConfigsTableRow,
+  b: SyncConfigsTableRow,
+  sortDirection: number
+) => number;
+
+const COLLATOR = new Intl.Collator(Zotero.locale, {
   numeric: true,
   sensitivity: 'base',
 });
 
+const COMPARATORS: Record<DataKey, RowSortCompareFn> = {
+  collectionFullName: (a, b, sortDirection) =>
+    sortDirection *
+    COLLATOR.compare(a.collectionFullName, b.collectionFullName),
+  syncEnabled: (a, b, sortDirection) => {
+    const result = Number(a.syncEnabled) - Number(b.syncEnabled);
+    if (result !== 0) return result * sortDirection;
+    return COLLATOR.compare(a.collectionFullName, b.collectionFullName);
+  },
+};
+
 export default class SyncConfigsTable extends React.Component {
   private _rows?: SyncConfigsTableRow[];
-  private sortDescending = false;
+  private _syncConfigs?: CollectionSyncConfigsRecord;
+
+  private sortDirection = 1;
+  private sortKey: DataKey = 'collectionFullName';
+  private table: VirtualizedTable<DataKey> | null = null;
+
+  private buildRows(): SyncConfigsTableRow[] {
+    return Zotero.Collections.getLoaded()
+      .map((collection) => ({
+        collection,
+        collectionFullName: buildCollectionFullName(collection),
+        ...(this.syncConfigs[collection.id] || { syncEnabled: false }),
+      }))
+      .sort((a, b) => COMPARATORS[this.sortKey](a, b, this.sortDirection));
+  }
 
   private get rows(): SyncConfigsTableRow[] {
     if (!this._rows) {
-      this._rows = Zotero.Collections.getLoaded()
-        .map((collection) => ({
-          collection,
-          collectionFullName: buildCollectionFullName(collection),
-          ...(syncConfigs[collection.id] || { syncEnabled: false }),
-        }))
-        .sort((a, b) =>
-          collator.compare(a.collectionFullName, b.collectionFullName)
-        );
-      if (this.sortDescending) {
-        this._rows.reverse();
-      }
+      this._rows = this.buildRows();
     }
     return this._rows;
   }
 
-  renderItem: VirtualizedTableProps<DataKey>['renderItem'] = (
-    index,
-    selection,
-    oldDiv,
-    columns
-  ) => {
-    let div;
-    if (oldDiv) {
-      div = oldDiv;
-      div.innerHTML = '';
-    } else {
-      div = createHTMLElement(document, 'div');
-      div.className = 'row';
+  private invalidateRows(): void {
+    this._rows = undefined;
+  }
+
+  private get syncConfigs(): CollectionSyncConfigsRecord {
+    if (!this._syncConfigs) {
+      this._syncConfigs = loadSyncConfigs();
     }
+    return this._syncConfigs;
+  }
 
-    div.classList.toggle('selected', selection.isSelected(index));
-    div.classList.toggle('focused', selection.focused == index);
-    const rowData = this.rows[index];
+  private set syncConfigs(updatedSyncConfigs: CollectionSyncConfigsRecord) {
+    this._syncConfigs = updatedSyncConfigs;
+    saveSyncConfigs(updatedSyncConfigs);
+  }
 
-    for (const column of columns) {
-      if (column.hidden) continue;
+  private toggleEnabled(indices: number[]) {
+    const enable = !indices.every((index) => this.rows[index].syncEnabled);
 
-      if (column.type === 'checkbox') {
-        div.appendChild(
-          renderCheckboxCell(index, rowData[column.dataKey], column)
-        );
-      } else {
-        div.appendChild(renderCell(index, rowData[column.dataKey], column));
-      }
-    }
+    this.syncConfigs = indices.reduce((configs, index) => {
+      const { collection } = this.rows[index];
+      return {
+        ...configs,
+        [collection.id]: {
+          syncEnabled: enable,
+        },
+      };
+    }, this.syncConfigs);
+  }
 
-    return div;
+  getRowCount = () => this.rows.length;
+
+  getRowString = (index: number) => this.rows[index].collectionFullName;
+
+  handleActivate = (_event: KeyboardEvent | MouseEvent, indices: number[]) => {
+    this.toggleEnabled(indices);
+    this.invalidateRows();
+    this.table?.invalidate();
   };
+
+  handleColumnSort = (columnIndex: number, sortDirection: number) => {
+    this.sortDirection = sortDirection;
+    this.sortKey = COLUMNS[columnIndex]['dataKey'];
+    this.invalidateRows();
+    this.table?.invalidate();
+  };
+
+  renderItem = makeRowRenderer((index) => this.rows[index]);
 
   render() {
     return (
       <IntlProvider locale={Zotero.locale}>
         <VirtualizedTable
           id="notero-syncConfigsTable"
-          columns={columns}
-          getRowCount={() => this.rows.length}
-          getRowString={(index) => this.rows[index].collectionFullName}
-          // renderItem={makeRowRenderer((index) => this.rows[index])}
+          columns={COLUMNS}
+          getRowCount={this.getRowCount}
+          getRowString={this.getRowString}
+          ref={(ref) => (this.table = ref)}
           renderItem={this.renderItem}
           multiSelect
           showHeader
-          onActivate={(event, indices) => {
-            log(`activate: ${JSON.stringify(indices)}`);
-          }}
-          onColumnSort={(columnIndex, sortDirection) => {
-            if (columnIndex !== 1) return;
-            this.sortDescending = sortDirection === -1;
-            this._rows = undefined;
-          }}
+          onActivate={this.handleActivate}
+          onColumnSort={this.handleColumnSort}
         />
       </IntlProvider>
     );

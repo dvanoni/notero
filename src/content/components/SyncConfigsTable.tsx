@@ -27,7 +27,7 @@ const COLUMNS = [
   },
 ] as const;
 
-type DataKey = typeof COLUMNS[number]['dataKey'];
+type DataKey = (typeof COLUMNS)[number]['dataKey'];
 
 type SyncConfigsTableRow = CollectionSyncConfig & {
   collection: Zotero.Collection;

@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.4.6](https://github.com/dvanoni/notero/compare/v0.4.5...v0.4.6) (2023-02-02)
+
+
+### Features
+
+* Use `VirtualizedTable` for collection sync preferences ([#223](https://github.com/dvanoni/notero/issues/223)) ([acb58f9](https://github.com/dvanoni/notero/commit/acb58f90d03692f3fceb7b56e70baa4646a5191e))
+
 ### [0.4.5](https://github.com/dvanoni/notero/compare/v0.4.4...v0.4.5) (2023-01-20)
 
 

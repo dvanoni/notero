@@ -1,5 +1,7 @@
 import { NoteroPref } from '../notero-pref';
 
+Components.utils.import('resource://gre/modules/Services.jsm');
+
 const STRING_BUNDLE_URL = 'chrome://notero/locale/notero.properties';
 
 let stringBundle: XPCOM.nsIStringBundle;

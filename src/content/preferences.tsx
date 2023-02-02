@@ -20,8 +20,6 @@ import {
   getXULElementById,
 } from './utils';
 
-Components.utils.import('resource://gre/modules/Services.jsm');
-
 const COLUMN_IDS = {
   COLLECTION: 'notero-collectionColumn',
   SYNC_ENABLED: 'notero-syncEnabledColumn',

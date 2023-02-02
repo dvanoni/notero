@@ -1,5 +1,9 @@
 #notero-prefpane {
-  width: 500px;
+  width: 580px;
+}
+
+#notero-prefpane description {
+  font-size: 12px;
 }
 
 #notero-prefpane groupbox:last-of-type {
@@ -8,41 +12,4 @@
 
 #notero-prefpane label.text-link {
   margin: 0;
-}
-
-#notero-syncConfigsTree[disabled='true'] {
-  opacity: 0.5;
-}
-
-#notero-syncConfigsTree treechildren::-moz-tree-cell-text(syncDisabled) {
-  color: #666;
-}
-
-#notero-syncConfigsTree treechildren::-moz-tree-cell-text(focus, selected) {
-  color: #fff;
-}
-
-#notero-syncConfigsTree treechildren::-moz-tree-cell(checkable) {
-  cursor: pointer;
-}
-
-#notero-syncConfigsTree treechildren::-moz-tree-checkbox {
-  list-style-image: url('chrome://notero/content/style/square-light.svg');
-}
-
-#notero-syncConfigsTree treechildren::-moz-tree-checkbox(hover) {
-  list-style-image: url('chrome://notero/content/style/square-dark.svg');
-}
-
-#notero-syncConfigsTree treechildren::-moz-tree-checkbox(focus, selected) {
-  list-style-image: url('chrome://notero/content/style/square-white.svg');
-}
-
-#notero-syncConfigsTree treechildren::-moz-tree-checkbox(checked) {
-  list-style-image: url('chrome://notero/content/style/check-square-black.svg');
-}
-
-#notero-syncConfigsTree
-  treechildren::-moz-tree-checkbox(checked, focus, selected) {
-  list-style-image: url('chrome://notero/content/style/check-square-white.svg');
 }

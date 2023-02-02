@@ -240,6 +240,41 @@ declare namespace Zotero {
     };
   }
 
+  interface PreferencePanes {
+    /**
+     * Register a pane to be displayed in the preferences. The pane XHTML
+     * (`src`) is loaded as a fragment, not a full document, with XUL as the
+     * default namespace and (X)HTML tags available under `html:`.
+     *
+     * The pane will be unregistered automatically when the registering plugin
+     * shuts down.
+     *
+     * @return Resolves to the ID of the pane if successfully added
+     */
+    register(options: {
+      /** ID of the plugin registering the pane */
+      pluginID: string;
+      /** URI of an XHTML fragment */
+      src: string;
+      /** Represents the pane and must be unique. Automatically generated if not provided */
+      id?: string;
+      /** ID of parent pane (if provided, pane is hidden from the sidebar) */
+      parent?: string;
+      /** Displayed as the pane's label in the sidebar. If not provided, the plugin's name is used */
+      label?: string;
+      /** URI of an icon to be displayed in the navigation sidebar. If not provided, the plugin's icon (from manifest.json) is used */
+      image?: string;
+      /** Array of URIs of DTD files to use for parsing the XHTML fragment */
+      extraDTD?: string[];
+      /** Array of URIs of scripts to load along with the pane */
+      scripts?: string[];
+      /** Array of URIs of CSS stylesheets to load along with the pane */
+      stylesheets?: string[];
+      /** If provided, a help button will be displayed under the pane and the provided URL will open when it is clicked */
+      helpURL?: string;
+    }): Promise<string>;
+  }
+
   interface Prefs {
     /** Clear a preference */
     clear(pref: string, global?: boolean): void;
@@ -374,11 +409,12 @@ declare namespace Zotero {
 
 declare interface Zotero {
   Attachments: Zotero.Attachments;
-  CreatorTypes: Zotero.CreatorTypes;
   Collections: Zotero.Collections;
+  CreatorTypes: Zotero.CreatorTypes;
   Items: Zotero.Items;
   ItemTypes: Zotero.ItemTypes;
   Notifier: Zotero.Notifier;
+  PreferencePanes: Zotero.PreferencePanes;
   Prefs: Zotero.Prefs;
   ProgressWindow: Zotero.ProgressWindow;
   QuickCopy: Zotero.QuickCopy;
@@ -406,6 +442,8 @@ declare interface Zotero {
   initializationPromise: Promise<void>;
 
   launchURL(url: string): void;
+
+  locale: string;
 
   platformMajorVersion: number;
 

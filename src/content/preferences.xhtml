@@ -1,0 +1,66 @@
+<vbox onload="notero.preferences.init();">
+  <vbox class="main-section">
+    <html:h1>&notero.preferences.notionGroupboxCaption;</html:h1>
+    <description>
+      &notero.preferences.notionGroupboxDescription;
+      <label
+        is="zotero-text-link"
+        href="https://github.com/dvanoni/notero#readme"
+        value="&notero.preferences.readme;"
+      />.
+    </description>
+    <groupbox>
+      <label control="notero-notionToken">
+        <html:h2>&notero.preferences.notionToken;</html:h2>
+      </label>
+      <html:input
+        id="notero-notionToken"
+        preference="extensions.notero.notionToken"
+        type="text"
+      />
+      <label control="notero-notionDatabaseID">
+        <html:h2>&notero.preferences.notionDatabaseID;</html:h2>
+      </label>
+      <html:input
+        id="notero-notionDatabaseID"
+        preference="extensions.notero.notionDatabaseID"
+        type="text"
+      />
+    </groupbox>
+  </vbox>
+
+  <vbox class="main-section">
+    <html:h1>&notero.preferences.propertiesGroupboxCaption;</html:h1>
+    <description>
+      &notero.preferences.propertiesGroupboxDescription;
+    </description>
+    <groupbox>
+      <label control="notero-pageTitleFormat">
+        <html:h2>&notero.preferences.pageTitleFormat;</html:h2>
+      </label>
+      <menulist
+        id="notero-pageTitleFormat"
+        disabled="true"
+        native="true"
+        preference="extensions.notero.pageTitleFormat"
+      />
+    </groupbox>
+  </vbox>
+
+  <vbox class="main-section">
+    <html:h1>&notero.preferences.syncGroupboxCaption;</html:h1>
+    <description>&notero.preferences.syncGroupboxDescription1;</description>
+    <description>&notero.preferences.syncGroupboxDescription2;</description>
+    <separator class="thin" />
+    <hbox class="virtualized-table-container" flex="1" height="220px">
+      <html:div id="notero-syncConfigsTable-container" />
+    </hbox>
+    <separator class="thin" />
+    <checkbox
+      id="notero-syncOnModifyItems"
+      label="&notero.preferences.syncOnModifyItems;"
+      native="true"
+      preference="extensions.notero.syncOnModifyItems"
+    />
+  </vbox>
+</vbox>

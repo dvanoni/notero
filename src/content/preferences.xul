@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
 <?xml-stylesheet href="chrome://zotero-platform/content/preferences.css" type="text/css"?>
+<?xml-stylesheet href="chrome://zotero-platform/content/zotero-react-client.css" type="text/css"?>
 <?xml-stylesheet href="chrome://notero/content/style/preferences.css" type="text/css"?>
 <!DOCTYPE prefwindow SYSTEM "chrome://notero/locale/notero.dtd">
 
@@ -9,8 +10,9 @@
     id="notero-prefwindow"
     title="&notero.preferences.title;"
     xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+    xmlns:html="http://www.w3.org/1999/xhtml"
 >
-  <prefpane id="notero-prefpane" onpaneload="notero.preferences.onPaneLoad();">
+  <prefpane id="notero-prefpane" onpaneload="notero.preferences.init();">
     <preferences>
       <preference id="pref-collectionSyncConfigs"
                   name="extensions.notero.collectionSyncConfigs"
@@ -35,7 +37,7 @@
                onclick="notero.preferences.openReadme();"
                value="&notero.preferences.readme;" />.
       </description>
-      <separator />
+      <separator class="thin" />
       <label id="notero-notionToken-label"
              value="&notero.preferences.notionToken;"
              control="notero-notionToken" />
@@ -47,12 +49,12 @@
       <textbox id="notero-notionDatabaseID" preference="pref-notionDatabaseID" />
     </groupbox>
 
-    <separator />
+    <separator class="thin" />
 
     <groupbox>
       <caption label="&notero.preferences.propertiesGroupboxCaption;" />
       <description>&notero.preferences.propertiesGroupboxDescription;</description>
-      <separator />
+      <separator class="thin" />
       <label id="notero-pageTitleFormat-label"
              value="&notero.preferences.pageTitleFormat;"
              control="notero-pageTitleFormat" />
@@ -61,33 +63,16 @@
                 preference="pref-pageTitleFormat" />
     </groupbox>
 
-    <separator />
+    <separator class="thin" />
 
     <groupbox>
       <caption label="&notero.preferences.syncGroupboxCaption;" />
       <description>&notero.preferences.syncGroupboxDescription1;</description>
       <description>&notero.preferences.syncGroupboxDescription2;</description>
-      <separator />
-      <tree id="notero-syncConfigsTree"
-            disabled="true"
-            editable="true"
-            flex="1"
-            hidecolumnpicker="true"
-            rows="9"
-            seltype="single">
-        <treecols>
-          <treecol id="notero-syncEnabledColumn"
-                   label="&notero.preferences.syncEnabledColumn;"
-                   editable="true"
-                   type="checkbox" />
-          <splitter class="tree-splitter" />
-          <treecol id="notero-collectionColumn"
-                   label="&notero.preferences.collectionColumn;"
-                   crop="center"
-                   flex="1" />
-        </treecols>
-        <treechildren />
-      </tree>
+      <separator class="thin" />
+      <hbox class="virtualized-table-container" flex="1" height="220px">
+        <html:div id="notero-syncConfigsTable-container" />
+      </hbox>
       <separator class="thin" />
       <checkbox id="notero-syncOnModifyItems"
                 label="&notero.preferences.syncOnModifyItems;"

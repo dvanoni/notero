@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "jsx": "react",
     "importHelpers": true,
     "target": "es2017",
     "disableSizeLimit": true,

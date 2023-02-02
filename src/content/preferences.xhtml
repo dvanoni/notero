@@ -1,4 +1,4 @@
-<vbox onload="notero.preferences.onPaneLoad();">
+<vbox onload="notero.preferences.init();">
   <vbox class="main-section">
     <html:h1>&notero.preferences.notionGroupboxCaption;</html:h1>
     <description>
@@ -52,7 +52,7 @@
     <description>&notero.preferences.syncGroupboxDescription1;</description>
     <description>&notero.preferences.syncGroupboxDescription2;</description>
     <separator class="thin" />
-    <hbox class="virtualized-table-container" flex="1" height="250px">
+    <hbox class="virtualized-table-container" flex="1" height="220px">
       <html:div id="notero-syncConfigsTable-container" />
     </hbox>
     <separator class="thin" />

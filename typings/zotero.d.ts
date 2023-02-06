@@ -26,14 +26,13 @@ declare namespace Zotero {
     name: string;
 
     /**
-     * Returns subcollections of this collection
+     * Returns sub-collections of this collection
      *
      * @param asIDs Return as collectionIDs
      * @return Array of Zotero.Collection instances or collectionIDs
      */
-    getChildCollections<A extends boolean>(
-      asIDs: A
-    ): A extends true ? number[] : Collection[];
+    getChildCollections(asIDs: true): number[];
+    getChildCollections(asIDs: false): Collection[];
 
     /**
      * Returns child items of this collection
@@ -42,10 +41,8 @@ declare namespace Zotero {
      * @param	includeDeleted	Include items in Trash (default false)
      * @return Array of Zotero.Item instances or itemIDs
      */
-    getChildItems<A extends boolean>(
-      asIDs: A,
-      includeDeleted?: boolean
-    ): A extends true ? number[] : Item[];
+    getChildItems(asIDs: true, includeDeleted?: boolean): number[];
+    getChildItems(asIDs: false, includeDeleted?: boolean): Item[];
   }
 
   type Collections = DataObjects<Collection>;
@@ -124,9 +121,8 @@ declare namespace Zotero {
      * @return A Zotero.DataObject, if a scalar id was passed;
      *         otherwise, an array of Zotero.DataObject
      */
-    get<I extends DataObjectID | DataObjectID[]>(
-      ids: I
-    ): I extends DataObjectID ? T | false : T[];
+    get(ids: DataObjectID[]): T[];
+    get(ids: DataObjectID): T | false;
 
     /** Get all loaded objects */
     getLoaded(): T[];
@@ -425,13 +421,11 @@ declare namespace Zotero {
   interface ZoteroPane {
     document: Document;
 
-    getSelectedCollection<A extends boolean>(
-      asID: A
-    ): (A extends true ? number : Collection) | undefined;
+    getSelectedCollection(asId: true): number | undefined;
+    getSelectedCollection(asId: false): Collection | undefined;
 
-    getSelectedItems<A extends boolean>(
-      asIDs: A
-    ): A extends true ? number[] : Item[];
+    getSelectedItems(asIds: true): number[];
+    getSelectedItems(asIds: false): Item[];
 
     loadURI(uris: string | string[]): void;
   }

@@ -24,8 +24,6 @@ declare namespace Zotero {
 
   interface Collection extends DataObject {
     name: string;
-    parentID: DataObjectID;
-    parentKey: DataObjectKey;
 
     /**
      * Returns subcollections of this collection
@@ -67,8 +65,13 @@ declare namespace Zotero {
   type DataObjectKey = string;
 
   interface DataObject {
-    id: DataObjectID;
-    key: DataObjectKey;
+    readonly objectType: string;
+    readonly id: DataObjectID;
+    readonly key: DataObjectKey;
+    readonly libraryID: number;
+    readonly libraryKey: string;
+    parentID: DataObjectID | false | undefined;
+    parentKey: DataObjectKey | false | undefined;
     deleted: boolean;
 
     /**
@@ -130,8 +133,19 @@ declare namespace Zotero {
   }
 
   interface Item extends DataObject {
-    itemTypeID: number;
-    itemType: string;
+    readonly itemTypeID: number;
+    readonly itemType: string;
+    parentItemID: DataObject['parentID'];
+    parentItemKey: DataObject['parentKey'];
+    parentItem: Item | undefined;
+    topLevelItem: Item;
+
+    dateAdded: string;
+    dateModified: string;
+    version: number;
+    synced: boolean;
+    createdByUserID: number | null;
+    lastModifiedByUserID: number | null;
 
     /**
      * Add a single tag to the item. If type is 1 and an automatic tag with the
@@ -160,6 +174,10 @@ declare namespace Zotero {
     ): string | undefined;
 
     getFilePathAsync(): Promise<string | false>;
+
+    getNote(): string;
+
+    getNotes(includeTrashed: boolean): DataObjectID[];
 
     getTags(): { tag: string; type: number }[];
 

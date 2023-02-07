@@ -1,5 +1,6 @@
+import { log } from '../utils';
+
 import { getNoteroPref, NoteroPref, setNoteroPref } from './notero-pref';
-import { log } from './utils';
 
 export type CollectionSyncConfig = {
   notionOptionID?: string;

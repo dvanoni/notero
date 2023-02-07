@@ -1,9 +1,13 @@
 import { isFullPage } from '@notionhq/client';
 
-import { loadSyncEnabledCollectionIDs } from '../collection-sync-config';
 import NoteroItem from '../notero-item';
-import { getNoteroPref, NoteroPref, PageTitleFormat } from '../notero-pref';
 import Notion, { TitleBuilder } from '../notion';
+import { loadSyncEnabledCollectionIDs } from '../prefs/collection-sync-config';
+import {
+  getNoteroPref,
+  NoteroPref,
+  PageTitleFormat,
+} from '../prefs/notero-pref';
 import {
   getAllCollectionItems,
   getLocalizedString,

@@ -15,6 +15,8 @@
     "prettier:fix": "prettier --write .",
     "release": "zotero-plugin-release",
     "start": "zotero-start",
+    "test": "jest",
+    "test:watch": "npm test -- --watch",
     "typecheck": "tsc --noEmit",
     "verify": "run-p lint prettier typecheck",
     "version": "standard-version --sign"
@@ -40,6 +42,7 @@
     "@commitlint/cli": "^17.4.2",
     "@commitlint/config-conventional": "^17.4.2",
     "@dvanoni/zotero-plugin": "^1.7.0",
+    "@types/jest": "^29.4.0",
     "@types/react": "^17.0.53",
     "@types/react-dom": "^17.0.18",
     "@typescript-eslint/eslint-plugin": "^5.50.0",
@@ -50,11 +53,14 @@
     "eslint-import-resolver-typescript": "^3.5.3",
     "eslint-plugin-import": "^2.27.5",
     "husky": "^8.0.3",
+    "jest": "^29.4.3",
+    "jest-mock-extended": "^3.0.1",
     "npm-run-all": "^4.1.5",
     "patch-package": "^6.5.1",
     "prettier": "2.8.3",
     "react-intl": "^3.12.1",
     "standard-version": "^9.5.0",
+    "ts-jest": "^29.0.5",
     "typescript": "^4.9.5"
   },
   "xpi": {

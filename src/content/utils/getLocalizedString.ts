@@ -1,4 +1,4 @@
-import { NoteroPref } from '../notero-pref';
+import { NoteroPref } from '../prefs/notero-pref';
 
 Components.utils.import('resource://gre/modules/Services.jsm');
 

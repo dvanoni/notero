@@ -5,13 +5,14 @@ import VirtualizedTable, {
 import React from 'react';
 import { IntlProvider } from 'react-intl';
 
+import { buildCollectionFullName, getLocalizedString } from '../utils';
+
 import {
   CollectionSyncConfig,
   CollectionSyncConfigsRecord,
   loadSyncConfigs,
   saveSyncConfigs,
-} from '../collection-sync-config';
-import { buildCollectionFullName, getLocalizedString } from '../utils';
+} from './collection-sync-config';
 
 const COLUMNS = [
   {

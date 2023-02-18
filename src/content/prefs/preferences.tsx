@@ -2,9 +2,10 @@ import React from 'react';
 // eslint-disable-next-line import/no-unresolved
 import ReactDOM from 'react-dom';
 
-import SyncConfigsTable from './components/SyncConfigsTable';
+import { getLocalizedString, getXULElementById } from '../utils';
+
 import { PageTitleFormat } from './notero-pref';
-import { getLocalizedString, getXULElementById } from './utils';
+import SyncConfigsTable from './sync-configs-table';
 
 class Preferences {
   private pageTitleFormatMenu!: XUL.MenuListElement;

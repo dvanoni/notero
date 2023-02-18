@@ -18,7 +18,7 @@
     "test": "jest",
     "test:watch": "npm test -- --watch",
     "typecheck": "tsc --noEmit",
-    "verify": "run-p lint prettier typecheck",
+    "verify": "run-p lint prettier typecheck test",
     "version": "standard-version --sign"
   },
   "repository": {

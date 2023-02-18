@@ -170,7 +170,10 @@ declare namespace Zotero {
     setNote(text: string): boolean;
   }
 
-  type Items = DataObjects<Item>;
+  interface Items extends DataObjects<Item> {
+    /** Get the top-level items of all passed items */
+    getTopLevel(items: Item[]): Item[];
+  }
 
   interface ItemTypes {
     getLocalizedString(idOrName: number | string): string;

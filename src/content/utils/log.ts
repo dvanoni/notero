@@ -1,6 +1,6 @@
 const LOG_PREFIX = 'Notero: ';
 
-export default function log(
+export function log(
   message: string | unknown,
   type?: Parameters<Zotero['log']>[1]
 ) {

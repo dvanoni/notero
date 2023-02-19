@@ -15,7 +15,7 @@ function getStringBundle(): XPCOM.nsIStringBundle {
   return stringBundle;
 }
 
-export default function getLocalizedString(name: NoteroPref | string): string {
+export function getLocalizedString(name: NoteroPref | string): string {
   const fullName = name in NoteroPref ? `notero.preferences.${name}` : name;
   try {
     return getStringBundle().GetStringFromName(fullName);

@@ -1,7 +1,7 @@
 import { isFullPage } from '@notionhq/client';
 
-import NoteroItem from '../notero-item';
-import Notion, { TitleBuilder } from '../notion';
+import { NoteroItem } from '../notero-item';
+import { Notion, TitleBuilder } from '../notion';
 import { loadSyncEnabledCollectionIDs } from '../prefs/collection-sync-config';
 import {
   getNoteroPref,
@@ -15,7 +15,7 @@ import {
   log,
 } from '../utils';
 
-import EventManager, { NotifierEventParams } from './event-manager';
+import { EventManager, NotifierEventParams } from './event-manager';
 import type { Service } from './service';
 
 const SYNC_DEBOUNCE_MS = 2000;
@@ -25,7 +25,7 @@ type QueuedSync = {
   timeoutID?: ReturnType<typeof setTimeout>;
 };
 
-export default class SyncManager implements Service {
+export class SyncManager implements Service {
   private static get tickIcon() {
     return `chrome://zotero/skin/tick${Zotero.hiDPISuffix}.png`;
   }

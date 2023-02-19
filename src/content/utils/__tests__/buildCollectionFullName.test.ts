@@ -1,7 +1,7 @@
 import { mock, MockProxy } from 'jest-mock-extended';
 
 import { mockZotero } from '../../../../test/utils/mockZotero';
-import buildCollectionFullName from '../buildCollectionFullName';
+import { buildCollectionFullName } from '../buildCollectionFullName';
 
 const zoteroMock = mockZotero();
 

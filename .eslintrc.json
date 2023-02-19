@@ -33,6 +33,7 @@
       }
     ],
     "@typescript-eslint/unbound-method": ["error", { "ignoreStatic": true }],
+    "import/no-default-export": "error",
     "import/order": [
       "error",
       {

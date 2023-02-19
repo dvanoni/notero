@@ -1,6 +1,6 @@
 import type { PluginInfo, Service } from './service';
 
-export default class ChromeManager implements Service {
+export class ChromeManager implements Service {
   private chromeHandle?: XPCOM.nsIJSRAIIHelper;
 
   public startup({ rootURI }: PluginInfo) {

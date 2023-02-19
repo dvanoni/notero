@@ -151,6 +151,7 @@ declare module 'components/virtualized-table' {
     getRowData: (index: number) => { [dataKey: string]: unknown }
   ): RenderItem<DataKey>;
 
+  // eslint-disable-next-line import/no-default-export
   export default VirtualizedTable;
 
   class WindowedList {}

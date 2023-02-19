@@ -13,7 +13,7 @@ import {
 } from '@notionhq/client/build/src/api-endpoints';
 import 'core-js/stable/object/from-entries';
 
-import NoteroItem from './notero-item';
+import { NoteroItem } from './notero-item';
 import { log } from './utils';
 
 type CreateDatabasePageParameters = Extract<
@@ -45,7 +45,7 @@ export type TitleBuilder = (item: NoteroItem) => string | Promise<string>;
 
 const TEXT_CONTENT_MAX_LENGTH = 2000;
 
-export default class Notion {
+export class Notion {
   private readonly client: Client;
   private readonly databaseID: string;
   private _databaseProperties?: DatabaseProperties;

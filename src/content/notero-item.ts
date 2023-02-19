@@ -1,11 +1,11 @@
-import Notion from './notion';
+import { Notion } from './notion';
 import { buildCollectionFullName } from './utils';
 
 const APA_STYLE = 'bibliography=http://www.zotero.org/styles/apa';
 
 const PARENS_REGEX = /^\((.+)\)$/;
 
-export default class NoteroItem {
+export class NoteroItem {
   static NOTION_TAG_NAME = 'notion';
 
   private static formatCreatorName({ firstName, lastName }: Zotero.Creator) {

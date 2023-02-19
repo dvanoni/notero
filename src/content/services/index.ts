@@ -1,8 +1,8 @@
 export type { Service } from './service';
 
-export { default as ChromeManager } from './chrome-manager';
-export { default as DefaultPreferencesLoader } from './default-preferences-loader';
-export { default as EventManager } from './event-manager';
-export { default as PreferencePaneManager } from './preference-pane-manager';
-export { default as SyncManager } from './sync-manager';
-export { default as UIManager } from './ui-manager';
+export { ChromeManager } from './chrome-manager';
+export { DefaultPreferencesLoader } from './default-preferences-loader';
+export { EventManager } from './event-manager';
+export { PreferencePaneManager } from './preference-pane-manager';
+export { SyncManager } from './sync-manager';
+export { UIManager } from './ui-manager';

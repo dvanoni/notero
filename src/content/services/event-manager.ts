@@ -39,7 +39,7 @@ type EventTypes = {
 
 const emitter = new EventEmitter<EventTypes>();
 
-export default class EventManager implements Service {
+export class EventManager implements Service {
   static readonly emit = emitter.emit.bind(emitter);
   static readonly addListener = emitter.addListener.bind(emitter);
   static readonly removeListener = emitter.removeListener.bind(emitter);

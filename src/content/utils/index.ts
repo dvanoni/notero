@@ -1,9 +1,9 @@
-export { default as buildCollectionFullName } from './buildCollectionFullName';
-export { default as createHTMLElement } from './createHTMLElement';
-export { default as createXULElement } from './createXULElement';
-export { default as getAllCollectionItems } from './getAllCollectionItems';
-export { default as getDOMParser } from './getDOMParser';
-export { default as getLocalizedString } from './getLocalizedString';
-export { default as getXULElementById } from './getXULElementById';
-export { default as hasErrorStack } from './hasErrorStack';
-export { default as log } from './log';
+export { buildCollectionFullName } from './buildCollectionFullName';
+export { createHTMLElement } from './createHTMLElement';
+export { createXULElement } from './createXULElement';
+export { getAllCollectionItems } from './getAllCollectionItems';
+export { getDOMParser } from './getDOMParser';
+export { getLocalizedString } from './getLocalizedString';
+export { getXULElementById } from './getXULElementById';
+export { hasErrorStack } from './hasErrorStack';
+export { log } from './log';

@@ -1,4 +1,4 @@
-export default function getDOMParser() {
+export function getDOMParser() {
   try {
     return new DOMParser();
   } catch {

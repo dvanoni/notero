@@ -12,8 +12,8 @@
     "sourceMap": false,
     "downlevelIteration": true,
     "lib": ["es2017", "dom"],
-    "typeRoots": ["./typings", "./node_modules/@types"]
+    "typeRoots": ["./types", "./node_modules/@types"]
   },
-  "include": ["src/**/*", "test/**/*", "typings/**/*", "*.ts"],
+  "include": ["src/**/*", "test/**/*", "types/**/*", "*.ts"],
   "exclude": ["node_modules"]
 }

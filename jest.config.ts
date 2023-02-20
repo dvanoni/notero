@@ -9,7 +9,7 @@ const config: Config = {
   clearMocks: true,
   errorOnDeprecated: true,
   preset: 'ts-jest',
-  rootDir: 'src',
+  setupFilesAfterEnv: ['<rootDir>/test/setup-tests.ts'],
   testEnvironment: 'jsdom',
 };
 

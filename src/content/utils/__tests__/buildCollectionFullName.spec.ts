@@ -1,9 +1,7 @@
 import { mock, MockProxy } from 'jest-mock-extended';
 
-import { mockZotero } from '../../../../test/utils/mockZotero';
+import { zoteroMock } from '../../../../test/utils/zotero-mock';
 import { buildCollectionFullName } from '../buildCollectionFullName';
-
-const zoteroMock = mockZotero();
 
 let collection: MockProxy<Zotero.Collection>;
 let parent: MockProxy<Zotero.Collection>;
@@ -21,19 +19,15 @@ beforeEach(() => {
 });
 
 describe('buildCollectionFullName', () => {
-  describe('when collection has no parent', () => {
-    it('returns collection name', () => {
-      expect(buildCollectionFullName(collection)).toBe('Collection Name');
-    });
+  it('returns collection name when collection has no parent', () => {
+    expect(buildCollectionFullName(collection)).toBe('Collection Name');
   });
 
-  describe('when collection has a parent', () => {
-    it('returns parent name prepended to collection name', () => {
-      collection.parentID = PARENT_ID;
+  it('returns parent name prepended to collection name when collection has a parent', () => {
+    collection.parentID = PARENT_ID;
 
-      expect(buildCollectionFullName(collection)).toBe(
-        'Parent Name ▸ Collection Name'
-      );
-    });
+    expect(buildCollectionFullName(collection)).toBe(
+      'Parent Name ▸ Collection Name'
+    );
   });
 });

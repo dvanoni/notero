@@ -10,7 +10,7 @@ const config: Config = {
   errorOnDeprecated: true,
   preset: 'ts-jest',
   rootDir: 'src',
-  testEnvironment: 'node',
+  testEnvironment: 'jsdom',
 };
 
 // eslint-disable-next-line import/no-default-export

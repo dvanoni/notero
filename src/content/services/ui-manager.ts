@@ -52,6 +52,22 @@ export class UIManager implements Service {
         }
       },
     });
+
+    this.createMenuItem({
+      labelName: 'notero.itemMenu.getNotes',
+      parentId: 'zotero-itemmenu',
+      onCommand: () => {
+        const items = Zotero.getActiveZoteroPane()?.getSelectedItems(false);
+        if (items) {
+          // const topLevelItems = Zotero.Items.getTopLevel(items);
+          // const item = topLevelItems[0];
+          const item = items[0];
+          if (item) {
+            EventManager.emit('build-item-notes', item);
+          }
+        }
+      },
+    });
   }
 
   private initToolsMenuItem() {

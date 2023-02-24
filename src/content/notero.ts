@@ -8,6 +8,7 @@ import {
   SyncManager,
   UIManager,
 } from './services';
+import { NotesService } from './sync/notes-service';
 import { log } from './utils';
 
 if (!IS_ZOTERO_7) {
@@ -22,6 +23,7 @@ export class Notero {
     new EventManager(),
     new SyncManager(),
     new UIManager(),
+    new NotesService(),
   ];
 
   public async startup(pluginID: string, rootURI: string) {

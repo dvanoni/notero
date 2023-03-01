@@ -40,7 +40,7 @@
   },
   "devDependencies": {
     "@commitlint/cli": "^17.4.2",
-    "@commitlint/config-conventional": "^17.4.2",
+    "@commitlint/config-conventional": "^17.4.4",
     "@dvanoni/zotero-plugin": "^1.8.0",
     "@types/jest": "^29.4.0",
     "@types/react": "^17.0.53",

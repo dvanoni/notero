@@ -27,7 +27,7 @@ import { getNotionClient } from './notion-client';
 
 ## From WHATWG spec
 
-- The descendant text content of a node node is the concatenation of the data
+- The **descendant text content** of a node is the concatenation of the data
   of all the Text node descendants of node, in tree order.
 - In tree order is preorder, depth-first traversal of a tree.
 

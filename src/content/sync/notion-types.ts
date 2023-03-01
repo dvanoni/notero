@@ -19,4 +19,8 @@ export type Color = ParagraphBlock['paragraph']['color'];
 
 export type RichText = ParagraphBlock['paragraph']['rich_text'];
 
-export type Annotations = RichText[number]['annotations'];
+export type RichTextText = Extract<RichText[number], { type?: 'text' }>;
+
+export type Annotations = RichTextText['annotations'];
+
+export type TextLink = RichTextText['text']['link'];

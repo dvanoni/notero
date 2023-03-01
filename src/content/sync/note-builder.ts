@@ -7,6 +7,8 @@ import type {
   Color,
   ParagraphBlock,
   RichText,
+  RichTextText,
+  TextLink,
 } from './notion-types';
 
 type HTMLElementTagName = Uppercase<keyof HTMLElementTagNameMap>;
@@ -53,26 +55,38 @@ function canAnnotateTag(
 
 // https://www.zotero.org/support/note_templates#variables
 const ZOTERO_COLORS: Record<string, Color> = {
-  '#ffd400': 'yellow_background',
-  '#ff6666': 'red_background',
-  '#5fb236': 'green_background',
-  '#2ea8e5': 'blue_background',
-  '#a28ae5': 'purple_background',
-  '255, 212, 0': 'yellow_background',
-  '255, 102, 102': 'red_background',
-  '95, 178, 54': 'green_background',
-  '46, 168, 229': 'blue_background',
-  '162, 138, 229': 'purple_background',
+  '255, 32, 32': 'red', // #ff2020
+  '255, 119, 0': 'orange', // #ff7700
+  '255, 203, 0': 'yellow', // #ffcb00
+  '78, 179, 28': 'green', // #4eb31c
+  '5, 162, 239': 'blue', // #05a2ef
+  '121, 83, 227': 'purple', // #7953e3
+  '235, 82, 247': 'pink', // #eb52f7
+  '126, 131, 134': 'gray', // #7e8386
+  '255, 102, 102': 'red_background', // #ff6666
+  '241, 152, 55': 'orange_background', // #f19837
+  '255, 212, 0': 'yellow_background', // #ffd400
+  '95, 178, 54': 'green_background', // #5fb236
+  '46, 168, 229': 'blue_background', // #2ea8e5
+  '162, 138, 229': 'purple_background', // #a28ae5
+  '229, 110, 238': 'pink_background', // #e56eee
+  '170, 170, 170': 'gray_background', // #aaaaaa
 };
 
-function getNotionColor(element: HTMLElement): Color {
-  const { backgroundColor } = element.style;
-  if (!backgroundColor) return undefined;
+function getNotionColorFromString(color: string): Color {
+  if (!color) return;
 
-  const matches = backgroundColor.match(/^rgba?\((\d+,\s*\d+,\s*\d+)/);
+  const matches = color.match(/^rgba?\((\d+,\s*\d+,\s*\d+)/);
   const rgb = matches?.[1];
 
   return (rgb && ZOTERO_COLORS[rgb]) || undefined;
+}
+
+function getNotionColor(element: HTMLElement): Color {
+  return (
+    getNotionColorFromString(element.style.backgroundColor) ||
+    getNotionColorFromString(element.style.color)
+  );
 }
 
 function getAnnotations(element: HTMLElement): Annotations {
@@ -122,6 +136,10 @@ function isHTMLElement(node: Node): node is HTMLElement {
 
 function isHTMLAnchorElement(node: Node): node is HTMLAnchorElement {
   return node.nodeName === 'A';
+}
+
+function isHTMLBRElement(node: Node): node is HTMLBRElement {
+  return node.nodeName === 'BR';
 }
 
 function getMathExpression(element: Element): string | undefined {
@@ -209,22 +227,61 @@ function buildParagraphBlock(element: HTMLElement): ParagraphBlock {
   };
 }
 
-function buildRichText(node: ChildNode): RichText {
-  if (!node.textContent?.length) return [];
+function buildRichText(
+  node: ChildNode,
+  inheritedAnnotations: Annotations = undefined,
+  inheritedLink: TextLink = undefined
+): RichTextText[] {
+  if (isTextNode(node)) {
+    return buildChunkedRichText(
+      node.textContent,
+      inheritedAnnotations,
+      inheritedLink
+    );
+  }
 
-  if (!node.textContent.trim().length) return [{ text: { content: ' ' } }];
+  if (!isHTMLElement(node) || !node.hasChildNodes()) return [];
 
-  const annotations = isHTMLElement(node) ? getAnnotations(node) : undefined;
-  const link = isHTMLAnchorElement(node) ? { url: node.href } : undefined;
+  if (isHTMLBRElement(node)) {
+    return buildChunkedRichText('\n', inheritedAnnotations, inheritedLink);
+  }
 
-  return chunkString(node.textContent, TEXT_CONTENT_MAX_LENGTH).map(
-    (content) => {
-      const richText: RichText[number] = { text: { content } };
-      if (link) richText.text.link = link;
-      if (annotations) richText.annotations = annotations;
-      return richText;
-    }
+  const currentAnnotations = getAnnotations(node);
+
+  const annotations =
+    currentAnnotations || inheritedAnnotations
+      ? { ...currentAnnotations, ...inheritedAnnotations }
+      : undefined;
+
+  const link = isHTMLAnchorElement(node) ? { url: node.href } : inheritedLink;
+
+  const richText = Array.from(node.childNodes).reduce<RichTextText[]>(
+    (combinedRichText, childNode) =>
+      combinedRichText.concat(buildRichText(childNode, annotations, link)),
+    []
   );
+
+  const plainText = richText.reduce(
+    (allText, { text }) => allText + text.content,
+    ''
+  );
+
+  return plainText.trim().length ? richText : [];
+}
+
+function buildChunkedRichText(
+  textContent: string | null,
+  annotations: Annotations = undefined,
+  link: TextLink = undefined
+): RichTextText[] {
+  if (!textContent?.length) return [];
+
+  return chunkString(textContent, TEXT_CONTENT_MAX_LENGTH).map((content) => {
+    const richText: RichText[number] = { text: { content } };
+    if (annotations) richText.annotations = annotations;
+    if (link) richText.text.link = link;
+    return richText;
+  });
 }
 
 export function buildNoteBlocks(htmlString: string): ChildBlock[] {

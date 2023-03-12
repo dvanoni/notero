@@ -183,7 +183,7 @@ function buildBlock(element: Element): ChildBlock {
     if (isBlockElement(child)) {
       childBlocks.push(buildChildBlock(child));
     } else if (isHTMLElement(child) || isTextNode(child)) {
-      richText = richText.concat(buildRichText(child));
+      richText = richText.concat(buildRichText(child, true));
     }
   });
 
@@ -195,12 +195,18 @@ function buildBlock(element: Element): ChildBlock {
 }
 
 function buildChildBlock(element: BlockElement): SupportedBlock {
-  const blockType = TAG_BLOCK_TYPES[element.tagName];
-  const rich_text = buildRichText(element);
-
   const expression = getMathExpression(element);
 
   if (expression) return { equation: { expression } };
+
+  const blockType = TAG_BLOCK_TYPES[element.tagName];
+  const collapseText = blockType !== 'code';
+
+  let rich_text = buildRichText(element, collapseText);
+
+  if (collapseText) {
+    rich_text = trimRichText(rich_text);
+  }
 
   switch (blockType) {
     case 'code':
@@ -218,10 +224,44 @@ function buildChildBlock(element: BlockElement): SupportedBlock {
   }
 }
 
+function trimRichText(richText: RichTextText[]): RichTextText[] {
+  if (richText.length === 0) return richText;
+
+  if (richText.length === 1) {
+    return updateTextContent(richText[0], (content) => content.trim());
+  }
+
+  const first = updateTextContent(richText[0], (content) =>
+    content.trimStart()
+  );
+  const middle = richText.slice(1, -1);
+  const last = updateTextContent(richText[richText.length - 1], (content) =>
+    content.trimEnd()
+  );
+
+  return [...first, ...middle, ...last];
+}
+
+function updateTextContent(
+  richText: RichTextText,
+  updater: (content: string) => string
+): RichTextText[] {
+  const content = updater(richText.text.content);
+
+  if (!content) return [];
+
+  return [
+    {
+      ...richText,
+      text: { ...richText.text, content },
+    },
+  ];
+}
+
 function buildParagraphBlock(element: HTMLElement): ParagraphBlock {
   return {
     paragraph: {
-      rich_text: buildRichText(element),
+      rich_text: buildRichText(element, true),
       color: getNotionColor(element),
     },
   };
@@ -229,12 +269,14 @@ function buildParagraphBlock(element: HTMLElement): ParagraphBlock {
 
 function buildRichText(
   node: ChildNode,
+  collapse: boolean,
   inheritedAnnotations: Annotations = undefined,
   inheritedLink: TextLink = undefined
 ): RichTextText[] {
   if (isTextNode(node)) {
     return buildChunkedRichText(
       node.textContent,
+      collapse,
       inheritedAnnotations,
       inheritedLink
     );
@@ -243,7 +285,12 @@ function buildRichText(
   if (!isHTMLElement(node) || !node.hasChildNodes()) return [];
 
   if (isHTMLBRElement(node)) {
-    return buildChunkedRichText('\n', inheritedAnnotations, inheritedLink);
+    return buildChunkedRichText(
+      '\n',
+      collapse,
+      inheritedAnnotations,
+      inheritedLink
+    );
   }
 
   const currentAnnotations = getAnnotations(node);
@@ -255,33 +302,35 @@ function buildRichText(
 
   const link = isHTMLAnchorElement(node) ? { url: node.href } : inheritedLink;
 
-  const richText = Array.from(node.childNodes).reduce<RichTextText[]>(
+  return Array.from(node.childNodes).reduce<RichTextText[]>(
     (combinedRichText, childNode) =>
-      combinedRichText.concat(buildRichText(childNode, annotations, link)),
+      combinedRichText.concat(
+        buildRichText(childNode, collapse, annotations, link)
+      ),
     []
   );
-
-  const plainText = richText.reduce(
-    (allText, { text }) => allText + text.content,
-    ''
-  );
-
-  return plainText.trim().length ? richText : [];
 }
 
 function buildChunkedRichText(
   textContent: string | null,
-  annotations: Annotations = undefined,
-  link: TextLink = undefined
+  collapse: boolean,
+  annotations: Annotations,
+  link: TextLink
 ): RichTextText[] {
   if (!textContent?.length) return [];
 
-  return chunkString(textContent, TEXT_CONTENT_MAX_LENGTH).map((content) => {
-    const richText: RichText[number] = { text: { content } };
+  const text = collapse ? collapseWhitespace(textContent) : textContent;
+
+  return chunkString(text, TEXT_CONTENT_MAX_LENGTH).map((content) => {
+    const richText: RichTextText = { text: { content } };
     if (annotations) richText.annotations = annotations;
     if (link) richText.text.link = link;
     return richText;
   });
+}
+
+function collapseWhitespace(text: string): string {
+  return text.replace(/[\s\n]+/g, ' ');
 }
 
 export function buildNoteBlocks(htmlString: string): ChildBlock[] {

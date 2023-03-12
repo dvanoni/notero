@@ -27,9 +27,16 @@ export const expected: ChildBlock[] = [
         { text: { content: ' ' } },
         {
           text: {
-            content: 'Link to Notion',
+            content: 'Link to ',
             link: { url: 'https://notion.so/' },
           },
+        },
+        {
+          text: {
+            content: 'Notion',
+            link: { url: 'https://notion.so/' },
+          },
+          annotations: { bold: true },
         },
         { text: { content: ' ' } },
         { text: { content: 'super' } },
@@ -91,12 +98,12 @@ export const expected: ChildBlock[] = [
   },
   {
     paragraph: {
-      rich_text: [{ text: { content: '' } }],
+      rich_text: [],
     },
   },
   {
     paragraph: {
-      rich_text: [{ text: { content: '' } }],
+      rich_text: [],
     },
   },
   {

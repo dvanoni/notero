@@ -1,3 +1,6 @@
+import 'core-js/stable/string/trim-end';
+import 'core-js/stable/string/trim-start';
+
 import { chunkString, getDOMParser } from '../utils';
 
 import type {

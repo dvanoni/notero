@@ -11,6 +11,7 @@ const config: Config = {
   preset: 'ts-jest',
   setupFilesAfterEnv: ['<rootDir>/test/setup-tests.ts'],
   testEnvironment: 'jsdom',
+  testMatch: ['**/?(*.)+(spec|test).[jt]s?(x)'],
 };
 
 // eslint-disable-next-line import/no-default-export

@@ -3,7 +3,7 @@ import { BlockObjectRequest } from '@notionhq/client/build/src/api-endpoints';
 import { EventManager, Service } from '../services';
 import { log } from '../utils';
 
-import { buildNoteBlocks } from './note-builder';
+import { convertHtmlToBlocks } from './html-to-notion';
 import { getNotionClient } from './notion-client';
 
 /*
@@ -96,7 +96,7 @@ export class NotesService implements Service {
 
     log(note);
 
-    const blocks = buildNoteBlocks(note);
+    const blocks = convertHtmlToBlocks(note);
 
     void replacePageContent(blocks);
   };

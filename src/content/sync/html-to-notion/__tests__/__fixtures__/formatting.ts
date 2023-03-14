@@ -1,4 +1,4 @@
-import type { ChildBlock } from '../../notion-types';
+import type { ChildBlock } from '../../../notion-types';
 
 export const expected: ChildBlock[] = [
   {
@@ -88,6 +88,18 @@ export const expected: ChildBlock[] = [
         { text: { content: 'monospace ' } },
         { text: { content: 'bold' }, annotations: { bold: true } },
         { text: { content: '?\n\nfinal line' } },
+      ],
+    },
+  },
+  {
+    quote: {
+      rich_text: [{ text: { content: 'quotation start' } }],
+      children: [
+        {
+          paragraph: {
+            rich_text: [{ text: { content: 'quotation end' } }],
+          },
+        },
       ],
     },
   },

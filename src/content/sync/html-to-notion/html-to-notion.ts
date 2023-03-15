@@ -127,37 +127,31 @@ function buildChildBlock(element: BlockElement): SupportedBlock {
 }
 
 function trimRichText(richText: RichTextText[]): RichTextText[] {
+  function updateContent(index: number, updater: () => string): RichTextText[] {
+    const richTextPart = richText[index];
+    const content = updater.call(richTextPart.text.content);
+
+    if (!content) return [];
+
+    return [
+      {
+        ...richTextPart,
+        text: { ...richTextPart.text, content },
+      },
+    ];
+  }
+
   if (richText.length === 0) return richText;
 
   if (richText.length === 1) {
-    return updateTextContent(richText[0], (content) => content.trim());
+    return updateContent(0, String.prototype.trim);
   }
 
-  const first = updateTextContent(richText[0], (content) =>
-    content.trimStart()
-  );
+  const first = updateContent(0, String.prototype.trimStart);
   const middle = richText.slice(1, -1);
-  const last = updateTextContent(richText[richText.length - 1], (content) =>
-    content.trimEnd()
-  );
+  const last = updateContent(richText.length - 1, String.prototype.trimEnd);
 
   return [...first, ...middle, ...last];
-}
-
-function updateTextContent(
-  richText: RichTextText,
-  updater: (content: string) => string
-): RichTextText[] {
-  const content = updater(richText.text.content);
-
-  if (!content) return [];
-
-  return [
-    {
-      ...richText,
-      text: { ...richText.text, content },
-    },
-  ];
 }
 
 function buildParagraphBlock(element: HTMLElement): ParagraphBlock {

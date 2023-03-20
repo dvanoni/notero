@@ -7,4 +7,5 @@ export { getDOMParser } from './getDOMParser';
 export { getLocalizedString } from './getLocalizedString';
 export { getXULElementById } from './getXULElementById';
 export { hasErrorStack } from './hasErrorStack';
+export { keyValue } from './keyValue';
 export { log } from './log';

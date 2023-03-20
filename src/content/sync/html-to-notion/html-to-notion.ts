@@ -1,7 +1,7 @@
 import 'core-js/stable/string/trim-end';
 import 'core-js/stable/string/trim-start';
 
-import { chunkString } from '../../utils';
+import { chunkString, keyValue } from '../../utils';
 
 import type {
   Annotations,
@@ -112,17 +112,13 @@ function buildChildBlock(element: BlockElement): SupportedBlock {
 
   switch (blockType) {
     case 'code':
-      return { [blockType]: { rich_text, language: 'plain text' } };
+      return keyValue(blockType, { rich_text, language: 'plain text' });
     case 'heading_1':
-      return { [blockType]: { rich_text } };
     case 'heading_2':
-      return { [blockType]: { rich_text } };
     case 'heading_3':
-      return { [blockType]: { rich_text } };
     case 'paragraph':
-      return { [blockType]: { rich_text } };
     case 'quote':
-      return { [blockType]: { rich_text } };
+      return keyValue(blockType, { rich_text });
   }
 }
 

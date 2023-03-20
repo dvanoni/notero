@@ -117,8 +117,13 @@ function buildChildBlock(element: BlockElement): SupportedBlock {
     case 'heading_2':
     case 'heading_3':
     case 'paragraph':
-    case 'quote':
-      return keyValue(blockType, { rich_text });
+    case 'quote': {
+      const color = getNotionColor(element);
+      return keyValue(blockType, {
+        rich_text,
+        ...(color ? { color } : undefined),
+      });
+    }
   }
 }
 

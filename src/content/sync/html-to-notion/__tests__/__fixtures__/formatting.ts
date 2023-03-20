@@ -110,6 +110,7 @@ export const expected: ChildBlock[] = [
   },
   {
     paragraph: {
+      color: 'yellow_background',
       rich_text: [{ text: { content: '()' } }],
     },
   },

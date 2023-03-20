@@ -96,6 +96,11 @@ export const expected: ChildBlock[] = [
       rich_text: [{ text: { content: 'quotation start' } }],
       children: [
         {
+          quote: {
+            rich_text: [{ text: { content: 'quotation middle' } }],
+          },
+        },
+        {
           paragraph: {
             rich_text: [{ text: { content: 'quotation end' } }],
           },

@@ -96,7 +96,7 @@ Detailed setup instructions are below.
     <details>
       <summary>Example of integration capabilities settings</summary>
       <img
-        alt="Notion integration capabilities settings" 
+        alt="Notion integration capabilities settings"
         src="docs/notion-capabilities.png"
       />
     </details>
@@ -168,10 +168,9 @@ property names are case-sensitive, so the capitalization must match exactly.
 | `Title`            | Text          |                                                                                     |
 | `URL`              | URL           |                                                                                     |
 | `Year`             | Number        |                                                                                     |
-| `Zotero URI`       | URL           |                                                                                     |
+| `Zotero URI`       | URL           | Links do not work; see issue [#172](https://github.com/dvanoni/notero/issues/172)   |
 
 Support for additional properties is planned for the future. See issues:
-[#30](https://github.com/dvanoni/notero/issues/30)
 [#49](https://github.com/dvanoni/notero/issues/49)
 [#52](https://github.com/dvanoni/notero/issues/52)
 [#65](https://github.com/dvanoni/notero/issues/65)

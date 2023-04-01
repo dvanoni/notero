@@ -232,7 +232,7 @@ function collapseWhitespace(text: string): string {
 
 export function convertHtmlToBlocks(htmlString: string): ChildBlock[] {
   const root = getRootElement(htmlString);
-  if (!root) throw new Error('Failed to load note content');
+  if (!root) throw new Error('Failed to load HTML content');
 
   return Array.from(root.children).map((child) => buildBlock(child));
 }

@@ -128,12 +128,15 @@ function buildChildBlock(element: BlockElement): SupportedBlock {
 }
 
 function trimRichText(richText: RichText): RichText {
-  function updateContent(index: number, updater: () => string): RichText {
+  function updateContent(
+    index: number,
+    updater: (content: string) => string
+  ): RichText {
     const richTextPart = richText[index];
 
     if (!('text' in richTextPart)) return [richTextPart];
 
-    const content = updater.call(richTextPart.text.content);
+    const content = updater(richTextPart.text.content);
 
     if (!content) return [];
 
@@ -148,12 +151,14 @@ function trimRichText(richText: RichText): RichText {
   if (richText.length === 0) return richText;
 
   if (richText.length === 1) {
-    return updateContent(0, String.prototype.trim);
+    return updateContent(0, (content) => content.trim());
   }
 
-  const first = updateContent(0, String.prototype.trimStart);
+  const first = updateContent(0, (content) => content.trimStart());
   const middle = richText.slice(1, -1);
-  const last = updateContent(richText.length - 1, String.prototype.trimEnd);
+  const last = updateContent(richText.length - 1, (content) =>
+    content.trimEnd()
+  );
 
   return [...first, ...middle, ...last];
 }

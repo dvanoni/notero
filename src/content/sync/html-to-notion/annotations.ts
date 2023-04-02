@@ -1,4 +1,5 @@
 import { Annotations, Color } from '../notion-types';
+
 import { HTMLElementTagName } from './dom-utils';
 
 const TAG_ANNOTATIONS = {

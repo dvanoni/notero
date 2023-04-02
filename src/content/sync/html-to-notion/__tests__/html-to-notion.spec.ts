@@ -1,5 +1,6 @@
-import { htmlTestCases } from './__fixtures__';
 import { convertHtmlToBlocks } from '../html-to-notion';
+
+import { htmlTestCases } from './__fixtures__';
 
 describe('convertHtmlToBlocks', () => {
   it('throws error if HTML content does not match expected format', () => {

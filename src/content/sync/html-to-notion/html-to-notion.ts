@@ -104,7 +104,7 @@ function buildChildBlock(element: BlockElement): SupportedBlock {
   const blockType = TAG_BLOCK_TYPES[element.tagName];
   const collapseText = blockType !== 'code';
 
-  let rich_text = buildRichText(element, collapseText);
+  let rich_text: RichText = buildRichText(element, collapseText);
 
   if (collapseText) {
     rich_text = trimRichText(rich_text);
@@ -127,9 +127,12 @@ function buildChildBlock(element: BlockElement): SupportedBlock {
   }
 }
 
-function trimRichText(richText: RichTextText[]): RichTextText[] {
-  function updateContent(index: number, updater: () => string): RichTextText[] {
+function trimRichText(richText: RichText): RichText {
+  function updateContent(index: number, updater: () => string): RichText {
     const richTextPart = richText[index];
+
+    if (!('text' in richTextPart)) return [richTextPart];
+
     const content = updater.call(richTextPart.text.content);
 
     if (!content) return [];

@@ -3,6 +3,7 @@ import path from 'path';
 
 import type { ChildBlock } from '../../../notion-types';
 
+import * as blockquote from './blockquote';
 import * as formatting from './formatting';
 import * as simple from './simple';
 
@@ -14,6 +15,7 @@ type NoteTestCase = {
 
 const cases: Record<string, Pick<NoteTestCase, 'expected'>> = {
   simple,
+  blockquote,
   formatting,
 };
 

@@ -6,7 +6,7 @@
     "build": "node esbuild.js",
     "clean": "rm -r build gen xpi",
     "generateUpdateManifest": "zotero-plugin-generate-update",
-    "lint": "eslint . --cache --cache-location .eslintcache/",
+    "lint": "eslint . --cache",
     "lint:fix": "eslint . --fix",
     "postbuild": "zotero-plugin-zipup build notero",
     "postinstall": "patch-package",
@@ -16,7 +16,7 @@
     "release": "zotero-plugin-release",
     "start": "zotero-start",
     "test": "jest",
-    "test:watch": "npm test -- --watch",
+    "test:watch": "jest --watch",
     "typecheck": "tsc --noEmit",
     "verify": "run-p lint prettier typecheck test",
     "version": "standard-version --sign"

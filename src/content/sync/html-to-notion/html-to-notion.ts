@@ -47,6 +47,8 @@ type SupportedBlock = Extract<ChildBlock, { type?: SupportedBlockType }>;
 
 type BlockElement = HTMLElement & { tagName: SupportedTagName };
 
+type MathElement = HTMLElement & { tagName: 'PRE'; textContent: string };
+
 type RichTextOptions = {
   annotations?: Annotations;
   link?: TextLink;
@@ -55,6 +57,13 @@ type RichTextOptions = {
 
 function isBlockElement(node: Node): node is BlockElement {
   return node.nodeName in TAG_BLOCK_TYPES;
+}
+
+function isMathElement(element: Element): element is MathElement {
+  const { classList, tagName, textContent } = element;
+  return (
+    tagName === 'PRE' && Boolean(textContent) && classList.contains('math')
+  );
 }
 
 const TAGS_SUPPORTING_CHILDREN = new Set([
@@ -74,11 +83,9 @@ const TAGS_WITHOUT_CHILDREN = new Set<HTMLElementTagName>([
 ]);
 
 function getMathExpression(element: Element): string | undefined {
-  const { classList, tagName, textContent } = element;
+  if (!isMathElement(element)) return;
 
-  if (!(tagName === 'PRE' && textContent && classList.contains('math'))) return;
-
-  const matches = /^\$\$((?:.|\n)+)\$\$$/.exec(textContent);
+  const matches = /^\$\$((?:.|\n)+)\$\$$/.exec(element.textContent);
 
   return matches?.[1] || undefined;
 }

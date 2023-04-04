@@ -47,6 +47,12 @@ type SupportedBlock = Extract<ChildBlock, { type?: SupportedBlockType }>;
 
 type BlockElement = HTMLElement & { tagName: SupportedTagName };
 
+type RichTextOptions = {
+  annotations?: Annotations;
+  link?: TextLink;
+  preserveWhitespace?: boolean;
+};
+
 function isBlockElement(node: Node): node is BlockElement {
   return node.nodeName in TAG_BLOCK_TYPES;
 }
@@ -96,7 +102,7 @@ function buildBlockWithChildren(element: HTMLElement): ChildBlock {
   const childResults = Array.from(element.childNodes)
     .map<ChildBlock | RichText | null>((node) => {
       if (isBlockElement(node)) return buildBlock(node);
-      return trimRichText(buildRichText(node, true));
+      return trimRichText(buildRichText(node));
     })
     .filter((result): result is ChildBlock | RichText => {
       if (!result) return false;
@@ -162,11 +168,11 @@ function buildBlockWithoutChildren(element: BlockElement): SupportedBlock {
   if (expression) return { equation: { expression } };
 
   const blockType = TAG_BLOCK_TYPES[element.tagName];
-  const collapseText = blockType !== 'code';
+  const preserveWhitespace = blockType === 'code';
 
-  let rich_text: RichText = buildRichText(element, collapseText);
+  let rich_text: RichText = buildRichText(element, { preserveWhitespace });
 
-  if (collapseText) {
+  if (!preserveWhitespace) {
     rich_text = trimRichText(rich_text);
   }
 
@@ -226,7 +232,7 @@ function trimRichText(richText: RichText): RichText {
 function buildParagraphBlock(element: HTMLElement): ParagraphBlock {
   return {
     paragraph: {
-      rich_text: buildRichText(element, true),
+      rich_text: buildRichText(element),
       color: getNotionColor(element),
     },
   };
@@ -234,57 +240,46 @@ function buildParagraphBlock(element: HTMLElement): ParagraphBlock {
 
 function buildRichText(
   node: ChildNode,
-  collapse: boolean,
-  inheritedAnnotations: Annotations = undefined,
-  inheritedLink: TextLink = undefined
+  options: RichTextOptions = {}
 ): RichTextText[] {
   if (isTextNode(node)) {
-    return buildChunkedRichText(
-      node.textContent,
-      collapse,
-      inheritedAnnotations,
-      inheritedLink
-    );
+    return buildChunkedRichText(node.textContent, options);
   }
 
   if (!isHTMLElement(node) || !node.hasChildNodes()) return [];
 
   if (isHTMLBRElement(node)) {
-    return buildChunkedRichText(
-      '\n',
-      collapse,
-      inheritedAnnotations,
-      inheritedLink
-    );
+    return buildChunkedRichText('\n', options);
   }
 
-  const currentAnnotations = getAnnotations(node);
+  const updatedOptions = { ...options };
 
-  const annotations =
-    currentAnnotations || inheritedAnnotations
-      ? { ...currentAnnotations, ...inheritedAnnotations }
-      : undefined;
+  const annotations = getAnnotations(node);
 
-  const link = isHTMLAnchorElement(node) ? { url: node.href } : inheritedLink;
+  if (annotations) {
+    updatedOptions.annotations = { ...options.annotations, ...annotations };
+  }
+
+  if (isHTMLAnchorElement(node)) {
+    updatedOptions.link = { url: node.href };
+  }
 
   return Array.from(node.childNodes).reduce<RichTextText[]>(
     (combinedRichText, childNode) =>
-      combinedRichText.concat(
-        buildRichText(childNode, collapse, annotations, link)
-      ),
+      combinedRichText.concat(buildRichText(childNode, updatedOptions)),
     []
   );
 }
 
 function buildChunkedRichText(
   textContent: string | null,
-  collapse: boolean,
-  annotations: Annotations,
-  link: TextLink
+  { annotations, link, preserveWhitespace }: RichTextOptions
 ): RichTextText[] {
   if (!textContent?.length) return [];
 
-  const text = collapse ? collapseWhitespace(textContent) : textContent;
+  const text = preserveWhitespace
+    ? textContent
+    : collapseWhitespace(textContent);
 
   return chunkString(text, TEXT_CONTENT_MAX_LENGTH).map((content) => {
     const richText: RichTextText = { text: { content } };

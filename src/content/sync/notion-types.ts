@@ -24,3 +24,10 @@ export type RichTextText = Extract<RichText[number], { type?: 'text' }>;
 export type Annotations = RichTextText['annotations'];
 
 export type TextLink = RichTextText['text']['link'];
+
+export function isBlockType<T extends BlockType>(
+  type: T,
+  value: object
+): value is Block<T> {
+  return type in value;
+}

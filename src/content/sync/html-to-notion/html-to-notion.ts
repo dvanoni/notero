@@ -2,16 +2,17 @@ import 'core-js/stable/string/trim-end';
 import 'core-js/stable/string/trim-start';
 
 import { chunkString, keyValue } from '../../utils';
-
-import type {
+import {
   Annotations,
   ChildBlock,
   ChildBlockType,
+  isBlockType,
   ParagraphBlock,
   RichText,
   RichTextText,
   TextLink,
 } from '../notion-types';
+
 import { getAnnotations, getNotionColor } from './annotations';
 import {
   getRootElement,
@@ -50,6 +51,22 @@ function isBlockElement(node: Node): node is BlockElement {
   return node.nodeName in TAG_BLOCK_TYPES;
 }
 
+const TAGS_SUPPORTING_CHILDREN = new Set([
+  'BLOCKQUOTE',
+  'DIV',
+  'P',
+]) satisfies Set<HTMLElementTagName> as Set<string>;
+
+const TAGS_WITHOUT_CHILDREN = new Set<HTMLElementTagName>([
+  'H1',
+  'H2',
+  'H3',
+  'H4',
+  'H5',
+  'H6',
+  'PRE',
+]);
+
 function getMathExpression(element: Element): string | undefined {
   const { classList, tagName, textContent } = element;
 
@@ -64,39 +81,82 @@ function getMathExpression(element: Element): string | undefined {
 const TEXT_CONTENT_MAX_LENGTH = 2000;
 
 function buildBlock(element: Element): ChildBlock {
-  // if (!element.hasChildNodes()) {
-  if (isBlockElement(element)) return buildChildBlock(element);
+  if (TAGS_SUPPORTING_CHILDREN.has(element.nodeName)) {
+    return buildBlockWithChildren(element as HTMLElement);
+  }
+
+  if (isBlockElement(element)) {
+    return buildBlockWithoutChildren(element);
+  }
+
   return buildParagraphBlock(element as HTMLElement);
-  // }
+}
 
-  let richText: RichText = [];
-  const childBlocks: ChildBlock[] = [];
+function buildBlockWithChildren(element: HTMLElement): ChildBlock {
+  const childResults = Array.from(element.childNodes)
+    .map<ChildBlock | RichText | null>((node) => {
+      if (isBlockElement(node)) return buildBlock(node);
+      return trimRichText(buildRichText(node, true));
+    })
+    .filter((result): result is ChildBlock | RichText => {
+      if (!result) return false;
 
-  // Array.from(element.children).forEach((child) => {
-  //   if (['DIV', 'P'].includes(child.tagName)) {
-  //     childBlocks.push(this.buildParagraphBlock(child as HTMLElement));
-  //   } else {
-  //     richText = richText.concat(this.buildRichText(child as HTMLElement));
-  //   }
-  // });
+      if (Array.isArray(result)) return result.length > 0;
 
-  // element.childNodes.forEach((child) => this.buildBlock(child));
-  element.childNodes.forEach((child) => {
-    if (isBlockElement(child)) {
-      childBlocks.push(buildChildBlock(child));
-    } else if (isHTMLElement(child) || isTextNode(child)) {
-      richText = richText.concat(buildRichText(child, true));
+      return true;
+    });
+
+  let rich_text: RichText = [];
+  let children: ChildBlock[] | undefined = undefined;
+
+  if (childResults.length) {
+    const firstChild = childResults[0];
+
+    if (isBlockType('paragraph', firstChild)) {
+      rich_text = firstChild.paragraph.rich_text;
+    } else if (Array.isArray(firstChild)) {
+      rich_text = firstChild;
     }
-  });
 
-  const block: ParagraphBlock = { paragraph: { rich_text: richText } };
+    if (childResults.length > 1) {
+      const remainingChildResults = childResults.slice(1);
+      if (remainingChildResults.every((child) => Array.isArray(child))) {
+        rich_text = (remainingChildResults as RichText).reduce(
+          (combinedRichText, child) => combinedRichText.concat(child),
+          rich_text
+        );
+      } else {
+        children = remainingChildResults.map((child) => {
+          if (Array.isArray(child)) {
+            return { paragraph: { rich_text: child } };
+          } else {
+            return child;
+          }
+        });
+      }
+    }
+  }
 
-  if (childBlocks.length) block.paragraph.children = childBlocks;
+  // rich_text = trimRichText(rich_text);
+
+  const color = getNotionColor(element);
+
+  let block: ChildBlock;
+
+  if (element.tagName === 'BLOCKQUOTE') {
+    block = { quote: { rich_text } };
+    if (children) block.quote.children = children;
+    if (color) block.quote.color = color;
+  } else {
+    block = { paragraph: { rich_text } };
+    if (children) block.paragraph.children = children;
+    if (color) block.paragraph.color = color;
+  }
 
   return block;
 }
 
-function buildChildBlock(element: BlockElement): SupportedBlock {
+function buildBlockWithoutChildren(element: BlockElement): SupportedBlock {
   const expression = getMathExpression(element);
 
   if (expression) return { equation: { expression } };

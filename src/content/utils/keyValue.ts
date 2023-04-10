@@ -3,7 +3,7 @@
  * Workaround for TypeScript issue #13948.
  * @see https://github.com/Microsoft/TypeScript/issues/13948#issuecomment-1333159066
  */
-export function keyValue<K extends PropertyKey, V>(
+export function keyValue<K extends PropertyKey, const V>(
   key: K,
   value: V
 ): { [P in K]: { [Q in P]: V } }[K] {

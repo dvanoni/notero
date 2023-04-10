@@ -7,7 +7,27 @@ export const expected: ChildBlock[] = [
       children: [
         {
           quote: {
-            rich_text: [{ text: { content: 'quotation middle' } }],
+            rich_text: [
+              {
+                text: { content: 'quotation ' },
+                annotations: { strikethrough: true },
+              },
+              {
+                text: { content: 'middle' },
+                annotations: { bold: true, strikethrough: true },
+              },
+            ],
+          },
+        },
+        {
+          paragraph: {
+            rich_text: [
+              { text: { content: 'plain text ' } },
+              {
+                text: { content: 'underline' },
+                annotations: { underline: true },
+              },
+            ],
           },
         },
         {

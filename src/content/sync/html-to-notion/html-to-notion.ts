@@ -7,7 +7,6 @@ import {
   ChildBlock,
   ChildBlockType,
   isBlockType,
-  ParagraphBlock,
   RichText,
   RichTextText,
   TextLink,
@@ -55,6 +54,34 @@ type RichTextOptions = {
   preserveWhitespace?: boolean;
 };
 
+type BlockResult = {
+  type: 'block';
+  block: ChildBlock;
+};
+
+type RichTextResult = {
+  type: 'richText';
+  richText: RichText;
+};
+
+type ContentResult = BlockResult | RichTextResult;
+
+function blockResult(block: ChildBlock): BlockResult {
+  return { block, type: 'block' };
+}
+
+function richTextResult(richText: RichText): RichTextResult {
+  return { richText, type: 'richText' };
+}
+
+function isBlockResult(result: ContentResult): result is BlockResult {
+  return result.type === 'block';
+}
+
+function isRichTextResult(result: ContentResult): result is RichTextResult {
+  return result.type === 'richText';
+}
+
 function isBlockElement(node: Node): node is BlockElement {
   return node.nodeName in TAG_BLOCK_TYPES;
 }
@@ -70,9 +97,9 @@ const TAGS_SUPPORTING_CHILDREN = new Set([
   'BLOCKQUOTE',
   'DIV',
   'P',
-]) satisfies Set<HTMLElementTagName> as Set<string>;
+]) satisfies Set<HTMLElementTagName>;
 
-const TAGS_WITHOUT_CHILDREN = new Set<HTMLElementTagName>([
+const TAGS_WITHOUT_CHILDREN = new Set([
   'H1',
   'H2',
   'H3',
@@ -80,7 +107,11 @@ const TAGS_WITHOUT_CHILDREN = new Set<HTMLElementTagName>([
   'H5',
   'H6',
   'PRE',
-]);
+]) satisfies Set<HTMLElementTagName>;
+
+function isNodeSupportingChildren(node: Node): node is HTMLElement {
+  return TAGS_SUPPORTING_CHILDREN.has(node.nodeName);
+}
 
 function getMathExpression(element: Element): string | undefined {
   if (!isMathElement(element)) return;
@@ -94,85 +125,118 @@ function getMathExpression(element: Element): string | undefined {
 const TEXT_CONTENT_MAX_LENGTH = 2000;
 
 function buildBlock(element: Element): ChildBlock {
-  if (TAGS_SUPPORTING_CHILDREN.has(element.nodeName)) {
-    return buildBlockWithChildren(element as HTMLElement);
-  }
+  const result = buildResult(element);
 
-  if (isBlockElement(element)) {
-    return buildBlockWithoutChildren(element);
-  }
+  if (isBlockResult(result)) return result.block;
 
-  return buildParagraphBlock(element as HTMLElement);
+  return {
+    paragraph: { rich_text: result.richText },
+  };
 }
 
-function buildBlockWithChildren(element: HTMLElement): ChildBlock {
+function buildResult(node: Node, options: RichTextOptions = {}): ContentResult {
+  if (isNodeSupportingChildren(node)) {
+    return buildBlockWithChildren(node, options);
+  }
+
+  if (isBlockElement(node)) {
+    return buildBlockWithoutChildren(node);
+  }
+
+  return richTextResult(buildRichText(node, options));
+}
+
+function buildBlockWithChildren(
+  element: HTMLElement,
+  options: RichTextOptions
+): BlockResult {
+  const { color, ...annotations } = getAnnotations(element);
+
+  const updatedOptions = {
+    ...options,
+    annotations: { ...options.annotations, ...annotations },
+  };
+
+  // This needs to run a similar algorithm to buildRichText
   const childResults = Array.from(element.childNodes)
-    .map<ChildBlock | RichText | null>((node) => {
-      if (isBlockElement(node)) return buildBlock(node);
-      return trimRichText(buildRichText(node));
-    })
-    .filter((result): result is ChildBlock | RichText => {
-      if (!result) return false;
+    .reduce<ContentResult[]>((results, node) => {
+      const result = buildResult(node, updatedOptions);
 
-      if (Array.isArray(result)) return result.length > 0;
+      if (isBlockResult(result)) return [...results, result];
 
-      return true;
-    });
+      const prevResult = results[results.length - 1];
+
+      if (prevResult && isRichTextResult(prevResult)) {
+        const concatResult = richTextResult([
+          ...prevResult.richText,
+          ...result.richText,
+        ]);
+        return [...results.slice(0, -1), concatResult];
+      }
+
+      return [...results, result];
+    }, [])
+    .reduce<ContentResult[]>((results, result) => {
+      if (isBlockResult(result)) return [...results, result];
+
+      const richText = trimRichText(result.richText);
+
+      if (!richText.length) return results;
+
+      return [...results, richTextResult(richText)];
+    }, []);
 
   let rich_text: RichText = [];
   let children: ChildBlock[] | undefined = undefined;
 
-  if (childResults.length) {
+  if (childResults.length > 0) {
     const firstChild = childResults[0];
 
-    if (isBlockType('paragraph', firstChild)) {
-      rich_text = firstChild.paragraph.rich_text;
-    } else if (Array.isArray(firstChild)) {
-      rich_text = firstChild;
+    if (isRichTextResult(firstChild)) {
+      rich_text = firstChild.richText;
+    } else if (isBlockType('paragraph', firstChild.block)) {
+      rich_text = firstChild.block.paragraph.rich_text;
+      children = firstChild.block.paragraph.children;
+    } else {
+      children = [firstChild.block];
     }
 
-    if (childResults.length > 1) {
-      const remainingChildResults = childResults.slice(1);
-      if (remainingChildResults.every((child) => Array.isArray(child))) {
-        rich_text = (remainingChildResults as RichText).reduce(
-          (combinedRichText, child) => combinedRichText.concat(child),
-          rich_text
-        );
-      } else {
-        children = remainingChildResults.map((child) => {
-          if (Array.isArray(child)) {
-            return { paragraph: { rich_text: child } };
-          } else {
-            return child;
-          }
-        });
+    let hasBlockResult = false;
+    const remainingChildResults = childResults.slice(1);
+
+    remainingChildResults.forEach((result) => {
+      if (!hasBlockResult && isRichTextResult(result)) {
+        rich_text = [...rich_text, ...result.richText];
+        return;
       }
-    }
+
+      const newChild = isBlockResult(result)
+        ? result.block
+        : { paragraph: { rich_text: result.richText } };
+
+      children = [...(children || []), newChild];
+      hasBlockResult = true;
+    });
   }
 
-  // rich_text = trimRichText(rich_text);
+  const blockType =
+    element.tagName === 'BLOCKQUOTE'
+      ? 'quote'
+      : ('paragraph' satisfies ChildBlockType);
 
-  const color = getNotionColor(element);
-
-  let block: ChildBlock;
-
-  if (element.tagName === 'BLOCKQUOTE') {
-    block = { quote: { rich_text } };
-    if (children) block.quote.children = children;
-    if (color) block.quote.color = color;
-  } else {
-    block = { paragraph: { rich_text } };
-    if (children) block.paragraph.children = children;
-    if (color) block.paragraph.color = color;
-  }
-
-  return block;
+  return blockResult(
+    keyValue(blockType, {
+      rich_text,
+      ...(children && { children }),
+      ...(color && { color }),
+    })
+  );
 }
 
-function buildBlockWithoutChildren(element: BlockElement): SupportedBlock {
+function buildBlockWithoutChildren(element: BlockElement): BlockResult {
   const expression = getMathExpression(element);
 
-  if (expression) return { equation: { expression } };
+  if (expression) return blockResult({ equation: { expression } });
 
   const blockType = TAG_BLOCK_TYPES[element.tagName];
   const preserveWhitespace = blockType === 'code';
@@ -183,21 +247,20 @@ function buildBlockWithoutChildren(element: BlockElement): SupportedBlock {
     rich_text = trimRichText(rich_text);
   }
 
-  switch (blockType) {
-    case 'code':
-      return keyValue(blockType, { rich_text, language: 'plain text' });
-    case 'heading_1':
-    case 'heading_2':
-    case 'heading_3':
-    case 'paragraph':
-    case 'quote': {
-      const color = getNotionColor(element);
-      return keyValue(blockType, {
-        rich_text,
-        ...(color ? { color } : undefined),
-      });
-    }
+  if (blockType === 'code') {
+    return blockResult(
+      keyValue(blockType, { rich_text, language: 'plain text' })
+    );
   }
+
+  const color = getNotionColor(element);
+
+  return blockResult(
+    keyValue(blockType, {
+      rich_text,
+      ...(color && { color }),
+    })
+  );
 }
 
 function trimRichText(richText: RichText): RichText {
@@ -236,19 +299,7 @@ function trimRichText(richText: RichText): RichText {
   return [...first, ...middle, ...last];
 }
 
-function buildParagraphBlock(element: HTMLElement): ParagraphBlock {
-  return {
-    paragraph: {
-      rich_text: buildRichText(element),
-      color: getNotionColor(element),
-    },
-  };
-}
-
-function buildRichText(
-  node: ChildNode,
-  options: RichTextOptions = {}
-): RichTextText[] {
+function buildRichText(node: Node, options: RichTextOptions): RichTextText[] {
   if (isTextNode(node)) {
     return buildChunkedRichText(node.textContent, options);
   }
@@ -259,13 +310,13 @@ function buildRichText(
     return buildChunkedRichText('\n', options);
   }
 
-  const updatedOptions = { ...options };
-
-  const annotations = getAnnotations(node);
-
-  if (annotations) {
-    updatedOptions.annotations = { ...options.annotations, ...annotations };
-  }
+  const updatedOptions = {
+    ...options,
+    annotations: {
+      ...options.annotations,
+      ...getAnnotations(node),
+    },
+  };
 
   if (isHTMLAnchorElement(node)) {
     updatedOptions.link = { url: node.href };
@@ -288,9 +339,13 @@ function buildChunkedRichText(
     ? textContent
     : collapseWhitespace(textContent);
 
+  const hasAnnotations = Boolean(
+    annotations && Object.keys(annotations).length
+  );
+
   return chunkString(text, TEXT_CONTENT_MAX_LENGTH).map((content) => {
     const richText: RichTextText = { text: { content } };
-    if (annotations) richText.annotations = annotations;
+    if (hasAnnotations) richText.annotations = annotations;
     if (link) richText.text.link = link;
     return richText;
   });

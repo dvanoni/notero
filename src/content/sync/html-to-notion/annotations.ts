@@ -54,7 +54,7 @@ export function getNotionColor(element: HTMLElement): Color {
   );
 }
 
-export function getAnnotations(element: HTMLElement): Annotations {
+export function getAnnotations(element: HTMLElement): NonNullable<Annotations> {
   const annotations: Annotations = {};
 
   const color = getNotionColor(element);
@@ -71,5 +71,5 @@ export function getAnnotations(element: HTMLElement): Annotations {
     Object.assign(annotations, TAG_ANNOTATIONS[element.tagName]);
   }
 
-  return Object.keys(annotations).length ? annotations : undefined;
+  return annotations;
 }

@@ -15,7 +15,7 @@ enum NodeType {
   DOCUMENT_FRAGMENT_NODE = 11,
 }
 
-export function isTextNode(node: Node): boolean {
+export function isTextNode(node: Node): node is Text {
   return node.nodeType === NodeType.TEXT_NODE;
 }
 
@@ -29,6 +29,12 @@ export function isHTMLAnchorElement(node: Node): node is HTMLAnchorElement {
 
 export function isHTMLBRElement(node: Node): node is HTMLBRElement {
   return node.nodeName === 'BR';
+}
+
+export function isHTMLListElement(
+  node: Node
+): node is HTMLOListElement | HTMLUListElement {
+  return node.nodeName === 'OL' || node.nodeName === 'UL';
 }
 
 export function getRootElement(htmlString: string): Element | null {

@@ -19,6 +19,7 @@ import {
   isHTMLAnchorElement,
   isHTMLBRElement,
   isHTMLElement,
+  isHTMLListElement,
   isTextNode,
 } from './dom-utils';
 
@@ -64,7 +65,12 @@ type RichTextResult = {
   richText: RichText;
 };
 
-type ContentResult = BlockResult | RichTextResult;
+type ListResult = {
+  type: 'list';
+  results: BlockResult[];
+};
+
+type ContentResult = BlockResult | RichTextResult | ListResult;
 
 function blockResult(block: ChildBlock): BlockResult {
   return { block, type: 'block' };
@@ -74,12 +80,20 @@ function richTextResult(richText: RichText): RichTextResult {
   return { richText, type: 'richText' };
 }
 
+function listResult(results: BlockResult[]): ListResult {
+  return { results, type: 'list' };
+}
+
 function isBlockResult(result: ContentResult): result is BlockResult {
   return result.type === 'block';
 }
 
 function isRichTextResult(result: ContentResult): result is RichTextResult {
   return result.type === 'richText';
+}
+
+function isListResult(result: ContentResult): result is ListResult {
+  return result.type === 'list';
 }
 
 function isBlockElement(node: Node): node is BlockElement {
@@ -96,6 +110,7 @@ function isMathElement(element: Element): element is MathElement {
 const TAGS_SUPPORTING_CHILDREN = new Set([
   'BLOCKQUOTE',
   'DIV',
+  'LI',
   'P',
 ]) satisfies Set<HTMLElementTagName>;
 
@@ -124,19 +139,16 @@ function getMathExpression(element: Element): string | undefined {
 // https://developers.notion.com/reference/request-limits#limits-for-property-values
 const TEXT_CONTENT_MAX_LENGTH = 2000;
 
-function buildBlock(element: Element): ChildBlock {
-  const result = buildResult(element);
-
-  if (isBlockResult(result)) return result.block;
-
-  return {
-    paragraph: { rich_text: result.richText },
-  };
-}
-
 function buildResult(node: Node, options: RichTextOptions = {}): ContentResult {
   if (isNodeSupportingChildren(node)) {
     return buildBlockWithChildren(node, options);
+  }
+
+  if (isHTMLListElement(node)) {
+    const childResults = Array.from(node.children).map((element) =>
+      buildBlockWithChildren(element as HTMLElement, options)
+    );
+    return listResult(childResults);
   }
 
   if (isBlockElement(node)) {
@@ -159,10 +171,12 @@ function buildBlockWithChildren(
 
   // This needs to run a similar algorithm to buildRichText
   const childResults = Array.from(element.childNodes)
-    .reduce<ContentResult[]>((results, node) => {
+    .reduce<(BlockResult | RichTextResult)[]>((results, node) => {
       const result = buildResult(node, updatedOptions);
 
       if (isBlockResult(result)) return [...results, result];
+
+      if (isListResult(result)) return [...results, ...result.results];
 
       const prevResult = results[results.length - 1];
 
@@ -176,7 +190,7 @@ function buildBlockWithChildren(
 
       return [...results, result];
     }, [])
-    .reduce<ContentResult[]>((results, result) => {
+    .reduce<(BlockResult | RichTextResult)[]>((results, result) => {
       if (isBlockResult(result)) return [...results, result];
 
       const richText = trimRichText(result.richText);
@@ -219,10 +233,16 @@ function buildBlockWithChildren(
     });
   }
 
-  const blockType =
-    element.tagName === 'BLOCKQUOTE'
-      ? 'quote'
-      : ('paragraph' satisfies ChildBlockType);
+  let blockType: ChildBlockType = 'paragraph';
+
+  if (element.tagName === 'BLOCKQUOTE') {
+    blockType = 'quote';
+  } else if (element.tagName === 'LI') {
+    const parentTagName = element.parentElement?.tagName;
+
+    if (parentTagName === 'OL') blockType = 'numbered_list_item';
+    if (parentTagName === 'UL') blockType = 'bulleted_list_item';
+  }
 
   return blockResult(
     keyValue(blockType, {
@@ -304,11 +324,11 @@ function buildRichText(node: Node, options: RichTextOptions): RichTextText[] {
     return buildChunkedRichText(node.textContent, options);
   }
 
-  if (!isHTMLElement(node) || !node.hasChildNodes()) return [];
-
   if (isHTMLBRElement(node)) {
-    return buildChunkedRichText('\n', options);
+    return buildChunkedRichText('\n', { ...options, preserveWhitespace: true });
   }
+
+  if (!isHTMLElement(node) || !node.hasChildNodes()) return [];
 
   const updatedOptions = {
     ...options,
@@ -359,5 +379,14 @@ export function convertHtmlToBlocks(htmlString: string): ChildBlock[] {
   const root = getRootElement(htmlString);
   if (!root) throw new Error('Failed to load HTML content');
 
-  return Array.from(root.children).map((child) => buildBlock(child));
+  return Array.from(root.children)
+    .map((child) => buildResult(child))
+    .reduce<ChildBlock[]>((blocks, result) => {
+      if (isBlockResult(result)) return [...blocks, result.block];
+
+      if (isListResult(result))
+        return [...blocks, ...result.results.map(({ block }) => block)];
+
+      return [...blocks, { paragraph: { rich_text: result.richText } }];
+    }, []);
 }

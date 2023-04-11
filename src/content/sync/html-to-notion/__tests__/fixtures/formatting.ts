@@ -137,6 +137,8 @@ export const expected: ChildBlock[] = [
       rich_text: [
         { text: { content: 'orange' }, annotations: { color: 'orange' } },
         { text: { content: ' two' } },
+        { text: { content: '\n' } },
+        { text: { content: 'additional line' } },
       ],
     },
   },
@@ -146,37 +148,45 @@ export const expected: ChildBlock[] = [
         { text: { content: 'yellow' }, annotations: { color: 'yellow' } },
         { text: { content: ' three' } },
       ],
-    },
-  },
-  {
-    bulleted_list_item: {
-      rich_text: [
-        { text: { content: 'green' }, annotations: { color: 'green' } },
-        { text: { content: ' four' } },
-      ],
-    },
-  },
-  {
-    bulleted_list_item: {
-      rich_text: [
-        { text: { content: 'blue' }, annotations: { color: 'blue' } },
-        { text: { content: ' five' } },
-      ],
-    },
-  },
-  {
-    bulleted_list_item: {
-      rich_text: [
-        { text: { content: 'purple' }, annotations: { color: 'purple' } },
-        { text: { content: ' six' } },
-      ],
-    },
-  },
-  {
-    bulleted_list_item: {
-      rich_text: [
-        { text: { content: 'pink' }, annotations: { color: 'pink' } },
-        { text: { content: ' seven' } },
+      children: [
+        {
+          bulleted_list_item: {
+            rich_text: [
+              { text: { content: 'green' }, annotations: { color: 'green' } },
+              { text: { content: ' four' } },
+            ],
+          },
+        },
+        {
+          bulleted_list_item: {
+            rich_text: [
+              { text: { content: 'blue' }, annotations: { color: 'blue' } },
+              { text: { content: ' five' } },
+            ],
+            // @ts-expect-error nested deeper than Notion allows
+            children: [
+              {
+                bulleted_list_item: {
+                  rich_text: [
+                    {
+                      text: { content: 'pink' },
+                      annotations: { color: 'pink' },
+                    },
+                    { text: { content: ' six' } },
+                  ],
+                },
+              },
+            ],
+          },
+        },
+        {
+          bulleted_list_item: {
+            rich_text: [
+              { text: { content: 'purple' }, annotations: { color: 'purple' } },
+              { text: { content: ' seven' } },
+            ],
+          },
+        },
       ],
     },
   },

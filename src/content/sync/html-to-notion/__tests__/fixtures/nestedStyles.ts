@@ -1,6 +1,6 @@
-import type { ChildBlock } from '../../../notion-types';
+import { BlockObjectRequest } from '@notionhq/client/build/src/api-endpoints';
 
-export const expected: ChildBlock[] = [
+export const expected: BlockObjectRequest[] = [
   {
     paragraph: {
       rich_text: [

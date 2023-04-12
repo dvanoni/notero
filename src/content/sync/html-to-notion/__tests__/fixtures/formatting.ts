@@ -1,6 +1,6 @@
-import type { ChildBlock } from '../../../notion-types';
+import { BlockObjectRequest } from '@notionhq/client/build/src/api-endpoints';
 
-export const expected: ChildBlock[] = [
+export const expected: BlockObjectRequest[] = [
   {
     paragraph: {
       rich_text: [
@@ -163,7 +163,6 @@ export const expected: ChildBlock[] = [
               { text: { content: 'blue' }, annotations: { color: 'blue' } },
               { text: { content: ' five' } },
             ],
-            // @ts-expect-error nested deeper than Notion allows
             children: [
               {
                 bulleted_list_item: {

@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 
-import type { ChildBlock } from '../../../notion-types';
+import { BlockObjectRequest } from '@notionhq/client/build/src/api-endpoints';
 
 import * as blockquote from './blockquote';
 import * as formatting from './formatting';
@@ -11,7 +11,7 @@ import * as simple from './simple';
 type NoteTestCase = {
   name: string;
   html: string;
-  expected: ChildBlock[];
+  expected: BlockObjectRequest[];
 };
 
 const cases: Record<string, Pick<NoteTestCase, 'expected'>> = {

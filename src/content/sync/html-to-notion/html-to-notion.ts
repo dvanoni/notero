@@ -205,11 +205,46 @@ function convertChildNodes(
 
       if (!result) return results;
 
-      if (isBlockResult(result)) return [...results, result];
+      const prevResult = results[results.length - 1];
+
+      if (isBlockResult(result)) {
+        if (result.indent) {
+          if (isBlockResult(prevResult)) {
+            if (!prevResult.indent || result.indent > prevResult.indent) {
+              const updatedResult: BlockResult = {
+                ...prevResult,
+                block: {
+                  ...prevResult.block,
+                  /* eslint-disable */
+                  // @ts-expect-error WIP
+                  paragraph: {
+                    // @ts-expect-error WIP
+                    ...prevResult.block.paragraph,
+                    children: [
+                      // @ts-expect-error WIP
+                      ...prevResult.block.paragraph.children,
+                      result.block,
+                    ],
+                  },
+                  /* eslint-enable */
+                },
+              };
+              return [...results.slice(0, -1), updatedResult];
+            }
+          } else {
+            const nestedResult = blockResult(
+              {
+                paragraph: { rich_text: [], children: [result.block] },
+              },
+              result.indent,
+            );
+            return [...results, nestedResult];
+          }
+        }
+        return [...results, result];
+      }
 
       if (isListResult(result)) return [...results, ...result.results];
-
-      const prevResult = results[results.length - 1];
 
       if (prevResult && isRichTextResult(prevResult)) {
         const concatResult = richTextResult([

@@ -6,6 +6,7 @@ import { BlockObjectRequest } from '@notionhq/client/build/src/api-endpoints';
 import * as annotations from './annotations';
 import * as blockquote from './blockquote';
 import * as formatting from './formatting';
+import * as indentation from './indentation';
 import * as nestedStyles from './nestedStyles';
 import * as simple from './simple';
 
@@ -21,6 +22,7 @@ const cases: Record<string, Pick<NoteTestCase, 'expected'>> = {
   nestedStyles,
   annotations,
   formatting,
+  indentation,
 };
 
 export const htmlTestCases: NoteTestCase[] = Object.entries(cases).map(

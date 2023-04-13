@@ -5,6 +5,7 @@ export type ContentResult = BlockResult | ListResult | RichTextResult;
 export type BlockResult = {
   type: 'block';
   block: ChildBlock;
+  indent: string | undefined;
 };
 
 export type ListResult = {
@@ -17,8 +18,8 @@ export type RichTextResult = {
   richText: RichText;
 };
 
-export function blockResult(block: ChildBlock): BlockResult {
-  return { block, type: 'block' };
+export function blockResult(block: ChildBlock, indent?: string): BlockResult {
+  return { block, type: 'block', indent };
 }
 
 export function listResult(results: BlockResult[]): ListResult {

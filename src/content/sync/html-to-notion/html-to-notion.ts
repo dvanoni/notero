@@ -6,16 +6,27 @@ import {
   Annotations,
   ChildBlock,
   ChildBlockType,
-  isBlockType,
   RichText,
   RichTextText,
   TextLink,
+  isBlockType,
 } from '../notion-types';
 
 import { getAnnotations, getNotionColor } from './annotations';
 import {
-  getRootElement,
+  BlockResult,
+  ContentResult,
+  RichTextResult,
+  blockResult,
+  isBlockResult,
+  isListResult,
+  isRichTextResult,
+  listResult,
+  richTextResult,
+} from './content-result';
+import {
   HTMLElementTagName,
+  getRootElement,
   isHTMLAnchorElement,
   isHTMLBRElement,
   isHTMLElement,
@@ -54,47 +65,6 @@ type RichTextOptions = {
   link?: TextLink;
   preserveWhitespace?: boolean;
 };
-
-type BlockResult = {
-  type: 'block';
-  block: ChildBlock;
-};
-
-type RichTextResult = {
-  type: 'richText';
-  richText: RichText;
-};
-
-type ListResult = {
-  type: 'list';
-  results: BlockResult[];
-};
-
-type ContentResult = BlockResult | RichTextResult | ListResult;
-
-function blockResult(block: ChildBlock): BlockResult {
-  return { block, type: 'block' };
-}
-
-function richTextResult(richText: RichText): RichTextResult {
-  return { richText, type: 'richText' };
-}
-
-function listResult(results: BlockResult[]): ListResult {
-  return { results, type: 'list' };
-}
-
-function isBlockResult(result: ContentResult): result is BlockResult {
-  return result.type === 'block';
-}
-
-function isRichTextResult(result: ContentResult): result is RichTextResult {
-  return result.type === 'richText';
-}
-
-function isListResult(result: ContentResult): result is ListResult {
-  return result.type === 'list';
-}
 
 function isBlockElement(node: Node): node is BlockElement {
   return node.nodeName in TAG_BLOCK_TYPES;

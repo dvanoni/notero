@@ -171,37 +171,29 @@ function buildBlockWithChildren(
     }, []);
 
   let rich_text: RichText = [];
-  let children: ChildBlock[] | undefined = undefined;
+  let children: ChildBlock[] | undefined;
 
-  if (childResults.length > 0) {
-    const firstChild = childResults[0];
+  childResults.forEach((result, index) => {
+    let childBlock: ChildBlock;
 
-    if (isRichTextResult(firstChild)) {
-      rich_text = firstChild.richText;
-    } else if (isBlockType('paragraph', firstChild.block)) {
-      rich_text = firstChild.block.paragraph.rich_text;
-      children = firstChild.block.paragraph.children;
-    } else {
-      children = [firstChild.block];
-    }
-
-    let hasBlockResult = false;
-    const remainingChildResults = childResults.slice(1);
-
-    remainingChildResults.forEach((result) => {
-      if (!hasBlockResult && isRichTextResult(result)) {
+    if (isRichTextResult(result)) {
+      if (!children) {
         rich_text = [...rich_text, ...result.richText];
         return;
       }
+      childBlock = { paragraph: { rich_text: result.richText } };
+    } else {
+      childBlock = result.block;
+    }
 
-      const newChild = isBlockResult(result)
-        ? result.block
-        : { paragraph: { rich_text: result.richText } };
+    if (index === 0 && isBlockType('paragraph', childBlock)) {
+      rich_text = childBlock.paragraph.rich_text;
+      children = childBlock.paragraph.children;
+      return;
+    }
 
-      children = [...(children || []), newChild];
-      hasBlockResult = true;
-    });
-  }
+    children = [...(children || []), childBlock];
+  });
 
   let blockType: ChildBlockType = 'paragraph';
 

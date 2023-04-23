@@ -13,8 +13,24 @@ export const expected: BlockObjectRequest[] = [
                 annotations: { strikethrough: true },
               },
               {
-                text: { content: 'middle' },
+                text: { content: 'middle first' },
                 annotations: { bold: true, strikethrough: true },
+              },
+            ],
+            children: [
+              {
+                paragraph: {
+                  rich_text: [
+                    {
+                      text: { content: 'quotation ' },
+                      annotations: { strikethrough: true },
+                    },
+                    {
+                      text: { content: 'middle last' },
+                      annotations: { bold: true, strikethrough: true },
+                    },
+                  ],
+                },
               },
             ],
           },

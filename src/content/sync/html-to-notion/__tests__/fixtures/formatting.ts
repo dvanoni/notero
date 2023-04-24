@@ -85,7 +85,7 @@ export const expected: BlockObjectRequest[] = [
     code: {
       language: 'plain text',
       rich_text: [
-        { text: { content: 'monospace ' } },
+        { text: { content: '\n\nmonospace ' } },
         { text: { content: 'bold' }, annotations: { bold: true } },
         { text: { content: '?\n\nfinal line' } },
       ],

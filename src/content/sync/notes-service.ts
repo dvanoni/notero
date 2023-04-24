@@ -6,26 +6,6 @@ import { log } from '../utils';
 import { convertHtmlToBlocks } from './html-to-notion';
 import { getNotionClient } from './notion-client';
 
-/*
-
-- each annotation goes under the heading "annotation"
-- each note's content goes under the heading {note name} in the body of the page
-
-- It would be nice if the color of the annotation was also preserved in the Notion page
-
-- If a block ID is _not_ saved in Zotero, assume we haven't synced annotations into Notion yet
-   - Create a new block on the page and save its ID into Zotero
-   - Add all the annotations content as _children_ of the new block
-- If a block ID _is_ saved in Zotero, assume we've previously synced annotations
-   - Delete all the children of the block (because I imagine it would be too challenging to update annotations in place)
-   - Add all the annotations content as children of the block
-
-- Option to enable syncing of notes
-
-- Handle `data-indent="1"` on paragraphs?
-
-*/
-
 async function replacePageContent(children: BlockObjectRequest[]) {
   const notionClient = getNotionClient();
 

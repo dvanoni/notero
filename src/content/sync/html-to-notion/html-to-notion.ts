@@ -145,53 +145,52 @@ function buildBlockWithChildren(
   };
 
   // This needs to run a similar algorithm to buildRichText
-  const childResults = Array.from(element.childNodes)
-    .reduce<(BlockResult | RichTextResult)[]>((results, node) => {
-      const result = buildResult(node, updatedOptions);
+  const childResults = Array.from(element.childNodes).reduce<
+    (BlockResult | RichTextResult)[]
+  >((results, node) => {
+    const result = buildResult(node, updatedOptions);
 
-      if (isBlockResult(result)) return [...results, result];
+    if (isBlockResult(result)) return [...results, result];
 
-      if (isListResult(result)) return [...results, ...result.results];
+    if (isListResult(result)) return [...results, ...result.results];
 
-      const prevResult = results[results.length - 1];
+    const prevResult = results[results.length - 1];
 
-      if (prevResult && isRichTextResult(prevResult)) {
-        const concatResult = richTextResult([
-          ...prevResult.richText,
-          ...result.richText,
-        ]);
-        return [...results.slice(0, -1), concatResult];
-      }
+    if (prevResult && isRichTextResult(prevResult)) {
+      const concatResult = richTextResult([
+        ...prevResult.richText,
+        ...result.richText,
+      ]);
+      return [...results.slice(0, -1), concatResult];
+    }
 
-      return [...results, result];
-    }, [])
-    .reduce<(BlockResult | RichTextResult)[]>((results, result) => {
-      if (isBlockResult(result)) return [...results, result];
-
-      const richText = trimRichText(result.richText);
-
-      if (!richText.length) return results;
-
-      return [...results, richTextResult(richText)];
-    }, []);
+    return [...results, result];
+  }, []);
 
   let rich_text: RichText = [];
   let children: ChildBlock[] | undefined;
 
-  childResults.forEach((result, index) => {
+  childResults.forEach((result) => {
     let childBlock: ChildBlock;
 
     if (isRichTextResult(result)) {
+      const trimmedRichText = trimRichText(result.richText);
+      if (!trimmedRichText.length) return;
+
       if (!children) {
-        rich_text = [...rich_text, ...result.richText];
+        rich_text = [...rich_text, ...trimmedRichText];
         return;
       }
-      childBlock = paragraphBlock(result.richText);
+      childBlock = paragraphBlock(trimmedRichText);
     } else {
       childBlock = result.block;
     }
 
-    if (index === 0 && isBlockType('paragraph', childBlock)) {
+    if (
+      !children &&
+      !rich_text.length &&
+      isBlockType('paragraph', childBlock)
+    ) {
       rich_text = childBlock.paragraph.rich_text;
       children = childBlock.paragraph.children;
       return;

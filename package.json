@@ -5,6 +5,7 @@
   "scripts": {
     "build": "node esbuild.js",
     "clean": "rm -r build gen xpi",
+    "dev": "pkill zotero; truncate -s0 zotero.log; zotero-start && sleep 1 && open -a 'Zotero 7'",
     "generateUpdateManifest": "zotero-plugin-generate-update",
     "lint": "eslint . --cache",
     "lint:fix": "eslint . --fix",

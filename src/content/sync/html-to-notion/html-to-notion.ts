@@ -6,6 +6,7 @@ import {
   Annotations,
   ChildBlock,
   ChildBlockType,
+  ParagraphBlock,
   RichText,
   RichTextText,
   TextLink,
@@ -65,6 +66,10 @@ type RichTextOptions = {
   link?: TextLink;
   preserveWhitespace?: boolean;
 };
+
+function paragraphBlock(richText: RichText): ParagraphBlock {
+  return { paragraph: { rich_text: richText } };
+}
 
 function isBlockElement(node: Node): node is BlockElement {
   return node.nodeName in TAG_BLOCK_TYPES;
@@ -181,7 +186,7 @@ function buildBlockWithChildren(
         rich_text = [...rich_text, ...result.richText];
         return;
       }
-      childBlock = { paragraph: { rich_text: result.richText } };
+      childBlock = paragraphBlock(result.richText);
     } else {
       childBlock = result.block;
     }
@@ -341,14 +346,16 @@ export function convertHtmlToBlocks(htmlString: string): ChildBlock[] {
   const root = getRootElement(htmlString);
   if (!root) throw new Error('Failed to load HTML content');
 
-  return Array.from(root.children)
-    .map((child) => buildResult(child))
-    .reduce<ChildBlock[]>((blocks, result) => {
-      if (isBlockResult(result)) return [...blocks, result.block];
+  const result = buildResult(root);
 
-      if (isListResult(result))
-        return [...blocks, ...result.results.map(({ block }) => block)];
+  if (!isBlockResult(result) || !isBlockType('paragraph', result.block)) {
+    throw new Error('Unexpected HTML content');
+  }
 
-      return [...blocks, { paragraph: { rich_text: result.richText } }];
-    }, []);
+  const { children, rich_text } = result.block.paragraph;
+
+  return [
+    ...(rich_text.length ? [paragraphBlock(rich_text)] : []),
+    ...(children || []),
+  ];
 }

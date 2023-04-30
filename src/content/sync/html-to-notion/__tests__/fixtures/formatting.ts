@@ -75,9 +75,11 @@ export const expected: BlockObjectRequest[] = [
   },
   {
     heading_1: {
+      color: 'yellow_background',
       rich_text: [
         { text: { content: 'Heading ' } },
         { text: { content: '1' }, annotations: { color: 'purple' } },
+        { text: { content: ' with additional text after the styling' } },
       ],
     },
   },

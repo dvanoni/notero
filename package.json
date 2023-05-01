@@ -39,7 +39,7 @@
     "eventemitter3": "^5.0.0"
   },
   "devDependencies": {
-    "@commitlint/cli": "^17.5.1",
+    "@commitlint/cli": "^17.6.1",
     "@commitlint/config-conventional": "^17.4.4",
     "@dvanoni/zotero-plugin": "^1.8.0",
     "@types/jest": "^29.5.0",

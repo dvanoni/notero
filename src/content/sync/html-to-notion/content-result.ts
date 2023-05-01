@@ -13,7 +13,7 @@ export type ListResult = {
 };
 
 export type RichTextResult = {
-  type: 'richText';
+  type: 'rich_text';
   richText: RichText;
 };
 
@@ -26,7 +26,7 @@ export function listResult(results: BlockResult[]): ListResult {
 }
 
 export function richTextResult(richText: RichText): RichTextResult {
-  return { richText, type: 'richText' };
+  return { richText, type: 'rich_text' };
 }
 
 export function isBlockResult(result: ContentResult): result is BlockResult {
@@ -40,5 +40,5 @@ export function isListResult(result: ContentResult): result is ListResult {
 export function isRichTextResult(
   result: ContentResult
 ): result is RichTextResult {
-  return result.type === 'richText';
+  return result.type === 'rich_text';
 }

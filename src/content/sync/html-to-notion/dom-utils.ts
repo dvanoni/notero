@@ -23,20 +23,6 @@ export function isHTMLElement(node: Node): node is HTMLElement {
   return node.nodeType === NodeType.ELEMENT_NODE;
 }
 
-export function isHTMLAnchorElement(node: Node): node is HTMLAnchorElement {
-  return node.nodeName === 'A';
-}
-
-export function isHTMLBRElement(node: Node): node is HTMLBRElement {
-  return node.nodeName === 'BR';
-}
-
-export function isHTMLListElement(
-  node: Node
-): node is HTMLOListElement | HTMLUListElement {
-  return node.nodeName === 'OL' || node.nodeName === 'UL';
-}
-
 export function getRootElement(htmlString: string): Element | null {
   const domParser = getDOMParser();
   const doc = domParser.parseFromString(htmlString, 'text/html');

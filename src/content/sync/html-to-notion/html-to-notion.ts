@@ -5,7 +5,6 @@ import { chunkString, keyValue } from '../../utils';
 import {
   Annotations,
   ChildBlock,
-  ChildBlockType,
   ParagraphBlock,
   RichText,
   RichTextText,
@@ -13,10 +12,10 @@ import {
   isBlockType,
 } from '../notion-types';
 
-import { getAnnotations, getNotionColor } from './annotations';
 import {
   BlockResult,
   ContentResult,
+  ListResult,
   RichTextResult,
   blockResult,
   isBlockResult,
@@ -25,41 +24,14 @@ import {
   listResult,
   richTextResult,
 } from './content-result';
+import { getRootElement } from './dom-utils';
 import {
-  HTMLElementTagName,
-  getRootElement,
-  isHTMLAnchorElement,
-  isHTMLBRElement,
-  isHTMLElement,
-  isHTMLListElement,
-  isTextNode,
-} from './dom-utils';
-
-// https://developer.mozilla.org/en-US/docs/Web/HTML/Block-level_elements#elements
-const TAG_BLOCK_TYPES = {
-  BLOCKQUOTE: 'quote',
-  DIV: 'paragraph',
-  H1: 'heading_1',
-  H2: 'heading_2',
-  H3: 'heading_3',
-  H4: 'heading_3',
-  H5: 'heading_3',
-  H6: 'heading_3',
-  P: 'paragraph',
-  PRE: 'code',
-} as const satisfies Partial<Record<HTMLElementTagName, ChildBlockType>>;
-
-type SupportedTagName = keyof typeof TAG_BLOCK_TYPES;
-
-type SupportedBlockType =
-  | (typeof TAG_BLOCK_TYPES)[SupportedTagName]
-  | 'equation';
-
-type SupportedBlock = Extract<ChildBlock, { type?: SupportedBlockType }>;
-
-type BlockElement = HTMLElement & { tagName: SupportedTagName };
-
-type MathElement = HTMLElement & { tagName: 'PRE'; textContent: string };
+  BlockElement,
+  ListElement,
+  ParentElement,
+  ParsedNode,
+  parseNode,
+} from './parse-node';
 
 type RichTextOptions = {
   annotations?: Annotations;
@@ -67,110 +39,69 @@ type RichTextOptions = {
   preserveWhitespace?: boolean;
 };
 
-function paragraphBlock(richText: RichText): ParagraphBlock {
-  return { paragraph: { rich_text: richText } };
-}
-
-function isBlockElement(node: Node): node is BlockElement {
-  return node.nodeName in TAG_BLOCK_TYPES;
-}
-
-function isMathElement(element: Element): element is MathElement {
-  const { classList, tagName, textContent } = element;
-  return (
-    tagName === 'PRE' && Boolean(textContent) && classList.contains('math')
-  );
-}
-
-const TAGS_SUPPORTING_CHILDREN = new Set([
-  'BLOCKQUOTE',
-  'DIV',
-  'LI',
-  'P',
-]) satisfies Set<HTMLElementTagName>;
-
-const TAGS_WITHOUT_CHILDREN = new Set([
-  'H1',
-  'H2',
-  'H3',
-  'H4',
-  'H5',
-  'H6',
-  'PRE',
-]) satisfies Set<HTMLElementTagName>;
-
-function isNodeSupportingChildren(node: Node): node is HTMLElement {
-  return TAGS_SUPPORTING_CHILDREN.has(node.nodeName);
-}
-
-function getMathExpression(element: Element): string | undefined {
-  if (!isMathElement(element)) return;
-
-  const matches = /^\$\$((?:.|\n)+)\$\$$/.exec(element.textContent);
-
-  return matches?.[1] || undefined;
-}
-
 // https://developers.notion.com/reference/request-limits#limits-for-property-values
 const TEXT_CONTENT_MAX_LENGTH = 2000;
 
-function buildResult(node: Node, options: RichTextOptions = {}): ContentResult {
-  if (isNodeSupportingChildren(node)) {
-    return buildBlockWithChildren(node, options);
+export function convertHtmlToBlocks(htmlString: string): ChildBlock[] {
+  const root = getRootElement(htmlString);
+  if (!root) throw new Error('Failed to load HTML content');
+
+  const result = convertNode(root);
+
+  if (
+    !result ||
+    !isBlockResult(result) ||
+    !isBlockType('paragraph', result.block)
+  ) {
+    throw new Error('Unexpected HTML content');
   }
 
-  if (isHTMLListElement(node)) {
-    const childResults = Array.from(node.children).map((element) =>
-      buildBlockWithChildren(element as HTMLElement, options)
-    );
-    return listResult(childResults);
-  }
+  const { children, rich_text } = result.block.paragraph;
 
-  if (isBlockElement(node)) {
-    return buildBlockWithoutChildren(node);
-  }
-
-  return richTextResult(buildRichText(node, options));
+  return [
+    ...(rich_text.length ? [paragraphBlock(rich_text)] : []),
+    ...(children || []),
+  ];
 }
 
-function buildBlockWithChildren(
-  element: HTMLElement,
+function convertNode(
+  node: Node,
+  options: RichTextOptions = {}
+): ContentResult | undefined {
+  const parsedNode = parseNode(node);
+
+  if (!parsedNode) return;
+
+  switch (parsedNode.type) {
+    case 'block':
+      return parsedNode.supportsChildren
+        ? convertParentElement(parsedNode, options)
+        : convertBlockElement(parsedNode, options);
+    case 'list':
+      return convertListElement(parsedNode, options);
+    case 'math':
+      return blockResult({ equation: { expression: parsedNode.expression } });
+    default:
+      return richTextResult(convertRichTextNode(parsedNode, options));
+  }
+}
+
+function convertParentElement(
+  { annotations, blockType, color, element }: ParentElement,
   options: RichTextOptions
 ): BlockResult {
-  const { color, ...annotations } = getAnnotations(element);
-
   const updatedOptions = {
     ...options,
-    annotations: { ...options.annotations, ...annotations },
+    annotations: {
+      ...options.annotations,
+      ...annotations,
+    },
   };
-
-  // This needs to run a similar algorithm to buildRichText
-  const childResults = Array.from(element.childNodes).reduce<
-    (BlockResult | RichTextResult)[]
-  >((results, node) => {
-    const result = buildResult(node, updatedOptions);
-
-    if (isBlockResult(result)) return [...results, result];
-
-    if (isListResult(result)) return [...results, ...result.results];
-
-    const prevResult = results[results.length - 1];
-
-    if (prevResult && isRichTextResult(prevResult)) {
-      const concatResult = richTextResult([
-        ...prevResult.richText,
-        ...result.richText,
-      ]);
-      return [...results.slice(0, -1), concatResult];
-    }
-
-    return [...results, result];
-  }, []);
 
   let rich_text: RichText = [];
   let children: ChildBlock[] | undefined;
 
-  childResults.forEach((result) => {
+  convertChildNodes(element, updatedOptions).forEach((result) => {
     let childBlock: ChildBlock;
 
     if (isRichTextResult(result)) {
@@ -199,17 +130,6 @@ function buildBlockWithChildren(
     children = [...(children || []), childBlock];
   });
 
-  let blockType: ChildBlockType = 'paragraph';
-
-  if (element.tagName === 'BLOCKQUOTE') {
-    blockType = 'quote';
-  } else if (element.tagName === 'LI') {
-    const parentTagName = element.parentElement?.tagName;
-
-    if (parentTagName === 'OL') blockType = 'numbered_list_item';
-    if (parentTagName === 'UL') blockType = 'bulleted_list_item';
-  }
-
   return blockResult(
     keyValue(blockType, {
       rich_text,
@@ -219,15 +139,22 @@ function buildBlockWithChildren(
   );
 }
 
-function buildBlockWithoutChildren(element: BlockElement): BlockResult {
-  const expression = getMathExpression(element);
-
-  if (expression) return blockResult({ equation: { expression } });
-
-  const blockType = TAG_BLOCK_TYPES[element.tagName];
+function convertBlockElement(
+  { annotations, blockType, color, element }: BlockElement,
+  options: RichTextOptions
+): BlockResult {
   const preserveWhitespace = blockType === 'code';
 
-  let rich_text: RichText = buildRichText(element, { preserveWhitespace });
+  const updatedOptions = {
+    ...options,
+    annotations: {
+      ...options.annotations,
+      ...annotations,
+    },
+    preserveWhitespace,
+  };
+
+  let rich_text = convertRichTextChildNodes(element, updatedOptions);
 
   if (!preserveWhitespace) {
     rich_text = trimRichText(rich_text);
@@ -239,14 +166,136 @@ function buildBlockWithoutChildren(element: BlockElement): BlockResult {
     );
   }
 
-  const color = getNotionColor(element);
-
   return blockResult(
     keyValue(blockType, {
       rich_text,
       ...(color && { color }),
     })
   );
+}
+
+function convertListElement(
+  node: ListElement,
+  options: RichTextOptions
+): ListResult {
+  return listResult(
+    Array.from(node.element.children)
+      .map((element) => {
+        const parsedChild = parseNode(element);
+
+        if (
+          parsedChild?.type === 'block' &&
+          parsedChild.supportsChildren &&
+          parsedChild.blockType.endsWith('list_item')
+        ) {
+          return convertParentElement(parsedChild, options);
+        }
+      })
+      .filter(Boolean)
+  );
+}
+
+function convertChildNodes(
+  node: Node,
+  options: RichTextOptions
+): (BlockResult | RichTextResult)[] {
+  return Array.from(node.childNodes).reduce<(BlockResult | RichTextResult)[]>(
+    (results, childNode) => {
+      const result = convertNode(childNode, options);
+
+      if (!result) return results;
+
+      if (isBlockResult(result)) return [...results, result];
+
+      if (isListResult(result)) return [...results, ...result.results];
+
+      const prevResult = results[results.length - 1];
+
+      if (prevResult && isRichTextResult(prevResult)) {
+        const concatResult = richTextResult([
+          ...prevResult.richText,
+          ...result.richText,
+        ]);
+        return [...results.slice(0, -1), concatResult];
+      }
+
+      return [...results, result];
+    },
+    []
+  );
+}
+
+function convertRichTextChildNodes(
+  node: Node,
+  options: RichTextOptions
+): RichText {
+  return Array.from(node.childNodes).reduce<RichText>(
+    (combinedRichText, childNode) => {
+      const parsedNode = parseNode(childNode);
+
+      if (!parsedNode) return combinedRichText;
+
+      return [...combinedRichText, ...convertRichTextNode(parsedNode, options)];
+    },
+    []
+  );
+}
+
+function convertRichTextNode(
+  node: ParsedNode,
+  options: RichTextOptions
+): RichText {
+  if (node.type === 'text') {
+    return buildRichText(node.textContent, options);
+  }
+
+  if (node.type === 'br') {
+    return buildRichText('\n', { ...options, preserveWhitespace: true });
+  }
+
+  const updatedOptions = { ...options };
+
+  if (node.type === 'rich_text') {
+    updatedOptions.annotations = {
+      ...options.annotations,
+      ...node.annotations,
+    };
+    if (node.link) {
+      updatedOptions.link = node.link;
+    }
+  }
+
+  return convertRichTextChildNodes(node.element, updatedOptions);
+}
+
+function buildRichText(
+  textContent: string | null,
+  { annotations, link, preserveWhitespace }: RichTextOptions
+): RichText {
+  if (!textContent?.length) return [];
+
+  const text = preserveWhitespace
+    ? textContent
+    : collapseWhitespace(textContent);
+
+  const hasAnnotations = Boolean(
+    annotations && Object.keys(annotations).length
+  );
+
+  return chunkString(text, TEXT_CONTENT_MAX_LENGTH).map((content) => {
+    const richText: RichTextText = { text: { content } };
+    if (hasAnnotations) richText.annotations = annotations;
+    if (link) richText.text.link = link;
+    return richText;
+  });
+}
+
+function collapseWhitespace(text: string): string {
+  return text.replace(/[\s\n]+/g, ' ');
+}
+
+function paragraphBlock(richText: RichText): ParagraphBlock {
+  return { paragraph: { rich_text: richText } };
 }
 
 function trimRichText(richText: RichText): RichText {
@@ -283,78 +332,4 @@ function trimRichText(richText: RichText): RichText {
   );
 
   return [...first, ...middle, ...last];
-}
-
-function buildRichText(node: Node, options: RichTextOptions): RichTextText[] {
-  if (isTextNode(node)) {
-    return buildChunkedRichText(node.textContent, options);
-  }
-
-  if (isHTMLBRElement(node)) {
-    return buildChunkedRichText('\n', { ...options, preserveWhitespace: true });
-  }
-
-  if (!isHTMLElement(node) || !node.hasChildNodes()) return [];
-
-  const updatedOptions = {
-    ...options,
-    annotations: {
-      ...options.annotations,
-      ...getAnnotations(node),
-    },
-  };
-
-  if (isHTMLAnchorElement(node)) {
-    updatedOptions.link = { url: node.href };
-  }
-
-  return Array.from(node.childNodes).reduce<RichTextText[]>(
-    (combinedRichText, childNode) =>
-      combinedRichText.concat(buildRichText(childNode, updatedOptions)),
-    []
-  );
-}
-
-function buildChunkedRichText(
-  textContent: string | null,
-  { annotations, link, preserveWhitespace }: RichTextOptions
-): RichTextText[] {
-  if (!textContent?.length) return [];
-
-  const text = preserveWhitespace
-    ? textContent
-    : collapseWhitespace(textContent);
-
-  const hasAnnotations = Boolean(
-    annotations && Object.keys(annotations).length
-  );
-
-  return chunkString(text, TEXT_CONTENT_MAX_LENGTH).map((content) => {
-    const richText: RichTextText = { text: { content } };
-    if (hasAnnotations) richText.annotations = annotations;
-    if (link) richText.text.link = link;
-    return richText;
-  });
-}
-
-function collapseWhitespace(text: string): string {
-  return text.replace(/[\s\n]+/g, ' ');
-}
-
-export function convertHtmlToBlocks(htmlString: string): ChildBlock[] {
-  const root = getRootElement(htmlString);
-  if (!root) throw new Error('Failed to load HTML content');
-
-  const result = buildResult(root);
-
-  if (!isBlockResult(result) || !isBlockType('paragraph', result.block)) {
-    throw new Error('Unexpected HTML content');
-  }
-
-  const { children, rich_text } = result.block.paragraph;
-
-  return [
-    ...(rich_text.length ? [paragraphBlock(rich_text)] : []),
-    ...(children || []),
-  ];
 }

@@ -197,10 +197,10 @@ resources made by wonderful members of the community:
 
 - [Using Notion and Zotero to build a literature tracker](https://sciquest.netlify.app/posts/notion_literature/)
   (blog post) by [Jewel Johnson](https://jeweljohnsonj.github.io/jewel_resume/)
+- [How To Sync Zotero → Notion // Research Paper Workflow (2023 Tutorial)](https://youtu.be/8RFFxFcrLCo)
+  (video) by [Holly Jane](https://hollyjane.org/)
 - [Smart notetaking by starting with integrating Zotero and Notion: A first step](https://youtu.be/4Z_5tskdNsY?t=1173)
   (video) by [Dr. Jingjing Lin](https://jingjing-lin.com/)
-- [Sync Zotero to Notion to Level-Up Your Academic Research | AWESOME Notion Plug-In | Notion Tutorial](https://youtu.be/8IC8-mPbjCo)
-  (video) by [Holly Jane Woods](https://hollyjanewoods.com/)
 
 _If you'd like to share how you use Notero and want to be listed here, please
 feel free to submit a PR or [contact me](https://twitter.com/dvanoni)!_

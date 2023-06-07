@@ -53,6 +53,10 @@ export default class NoteroItem {
     return this.zoteroItem.getField('date') || null;
   }
 
+  public getDateAdded(): string | null {
+    return this.zoteroItem.getField('dateAdded') || null;
+  }
+
   public getDOI(): string | null {
     const doi = this.zoteroItem.getField('DOI');
     return doi ? `https://doi.org/${doi}` : null;

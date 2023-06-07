@@ -15,6 +15,7 @@ import 'core-js/stable/object/from-entries';
 
 import NoteroItem from './notero-item';
 import { log } from './utils';
+const dayjs = require('dayjs')
 
 type CreateDatabasePageParameters = Extract<
   CreatePageParameters,
@@ -74,6 +75,11 @@ export default class Notion {
       },
     ];
   }
+
+  static buildDate(content: string | null): PropertyRequest<'date'> {
+    return { start: dayjs(content) };
+  }
+
 
   static convertWebURLToAppURL(url: string): string {
     return url.replace(/^https:/, this.APP_URL_PROTOCOL);
@@ -182,6 +188,11 @@ export default class Notion {
         name: 'Date',
         type: 'rich_text',
         buildRequest: () => Notion.buildRichText(item.getDate()),
+      },
+      {
+        name: 'Date Added',
+        type: 'date',
+        buildRequest: () => Notion.buildDate(item.getDateAdded()),
       },
       {
         name: 'DOI',

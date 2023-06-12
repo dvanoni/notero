@@ -76,8 +76,8 @@ export default class Notion {
     ];
   }
 
-  static buildDate(content: string | null): PropertyRequest<'date'> {
-    return { start: dayjs(content) };
+  static buildDate(date: Date | null): PropertyRequest<'date'> {
+    return date && { start: date.toISOString() };
   }
 
 

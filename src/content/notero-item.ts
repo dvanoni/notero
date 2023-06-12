@@ -53,8 +53,8 @@ export default class NoteroItem {
     return this.zoteroItem.getField('date') || null;
   }
 
-  public getDateAdded(): string | null {
-    return this.zoteroItem.getField('dateAdded') || null;
+  public getDateAdded(): Date | null {
+    return Zotero.Date.sqlToDate(this.zoteroItem.dateAdded, true) || null;
   }
 
   public getDOI(): string | null {

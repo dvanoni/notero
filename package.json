@@ -36,7 +36,6 @@
   "dependencies": {
     "@notionhq/client": "^2.2.3",
     "core-js": "^3.29.1",
-    "dayjs": "^1.11.8",
     "eventemitter3": "^5.0.0"
   },
   "devDependencies": {

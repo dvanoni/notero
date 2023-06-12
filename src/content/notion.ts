@@ -15,7 +15,6 @@ import 'core-js/stable/object/from-entries';
 
 import NoteroItem from './notero-item';
 import { log } from './utils';
-const dayjs = require('dayjs')
 
 type CreateDatabasePageParameters = Extract<
   CreatePageParameters,

@@ -132,6 +132,15 @@ declare namespace Zotero {
     getLoaded(): T[];
   }
 
+  interface Date {
+    /**
+     * Convert an SQL date in the form '2006-06-13 11:03:05' into a JS Date object
+     *
+     * Can also accept just the date part (e.g. '2006-06-13')
+     */
+    sqlToDate(sqldate: string, isUTC?: boolean): globalThis.Date | false;
+  }
+
   interface Item extends DataObject {
     readonly itemTypeID: number;
     readonly itemType: string;
@@ -432,6 +441,7 @@ declare interface Zotero {
   Attachments: Zotero.Attachments;
   Collections: Zotero.Collections;
   CreatorTypes: Zotero.CreatorTypes;
+  Date: Zotero.Date;
   Items: Zotero.Items;
   ItemTypes: Zotero.ItemTypes;
   Notifier: Zotero.Notifier;

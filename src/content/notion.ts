@@ -79,7 +79,6 @@ export default class Notion {
     return date && { start: date.toISOString() };
   }
 
-
   static convertWebURLToAppURL(url: string): string {
     return url.replace(/^https:/, this.APP_URL_PROTOCOL);
   }

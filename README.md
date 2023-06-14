@@ -157,6 +157,7 @@ property names are case-sensitive, so the capitalization must match exactly.
 | `Authors`          | Text          |                                                                                     |
 | `Collections`      | Multi-select  |                                                                                     |
 | `Date`             | Text          |                                                                                     |
+| `Date Added`       | Date          |                                                                                     |
 | `DOI`              | URL           |                                                                                     |
 | `Editors`          | Text          |                                                                                     |
 | `File Path`        | Text          |                                                                                     |

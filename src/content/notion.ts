@@ -75,6 +75,11 @@ export default class Notion {
     ];
   }
 
+  static buildDate(date: Date | null): PropertyRequest<'date'> {
+    return date && { start: date.toISOString() };
+  }
+
+
   static convertWebURLToAppURL(url: string): string {
     return url.replace(/^https:/, this.APP_URL_PROTOCOL);
   }
@@ -182,6 +187,11 @@ export default class Notion {
         name: 'Date',
         type: 'rich_text',
         buildRequest: () => Notion.buildRichText(item.getDate()),
+      },
+      {
+        name: 'Date Added',
+        type: 'date',
+        buildRequest: () => Notion.buildDate(item.getDateAdded()),
       },
       {
         name: 'DOI',

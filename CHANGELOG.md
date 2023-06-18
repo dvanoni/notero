@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.4.7](https://github.com/dvanoni/notero/compare/v0.4.6...v0.4.7) (2023-06-18)
+
+
+### Features
+
+* Sync date added ([#274](https://github.com/dvanoni/notero/issues/274)) ([c114b41](https://github.com/dvanoni/notero/commit/c114b412424b8db70ed5c349da35c5c90e710b1d))
+
+
+### Bug Fixes
+
+* Sync top-level items from context menu ([#226](https://github.com/dvanoni/notero/issues/226)) ([6b7ed9b](https://github.com/dvanoni/notero/commit/6b7ed9bff8f19aee5b9e257e5b035d46e99e54a9))
+
 ### [0.4.6](https://github.com/dvanoni/notero/compare/v0.4.5...v0.4.6) (2023-02-02)
 
 

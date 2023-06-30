@@ -55,38 +55,39 @@ export class SyncManager implements Service {
   }
 
   private handleNotifierEvent = (...params: NotifierEventParams) => {
-    this.handleEventItems(this.getItemsForNotifierEvent(...params), true);
-  };
+    const items = this.getItemsForNotifierEvent(...params);
+    if (!items.length) return;
 
-  private handleSyncCollection = (collection: Zotero.Collection) => {
-    this.handleEventItems(collection.getChildItems(false), false);
-  };
-
-  private handleSyncItems = (items: Zotero.Item[]) => {
-    this.handleEventItems(items, false);
-  };
-
-  private handleEventItems(
-    items: Zotero.Item[],
-    requireSyncedCollections: boolean
-  ) {
     const collectionIDs = loadSyncEnabledCollectionIDs();
-    if (requireSyncedCollections && !collectionIDs.size) return;
+    if (!collectionIDs.size) return;
 
     const validItems = items.filter(
       (item) =>
         !item.deleted &&
         item.isRegularItem() &&
-        (!requireSyncedCollections ||
-          item
-            .getCollections()
-            .some((collectionID) => collectionIDs.has(collectionID)))
+        item
+          .getCollections()
+          .some((collectionID) => collectionIDs.has(collectionID))
     );
 
-    if (validItems.length) {
-      this.enqueueItemsToSync(validItems);
-    }
-  }
+    this.enqueueItemsToSync(validItems);
+  };
+
+  private handleSyncCollection = (collection: Zotero.Collection) => {
+    const validItems = collection
+      .getChildItems(false)
+      .filter((item) => !item.deleted && item.isRegularItem());
+
+    this.enqueueItemsToSync(validItems);
+  };
+
+  private handleSyncItems = (items: Zotero.Item[]) => {
+    const validItems = items.filter(
+      (item) => !item.deleted && item.isRegularItem()
+    );
+
+    this.enqueueItemsToSync(validItems);
+  };
 
   /**
    * Return the Zotero items (if any) that should be synced for the given
@@ -205,9 +206,15 @@ export class SyncManager implements Service {
    * @param items the Zotero items to sync to Notion
    */
   private enqueueItemsToSync(items: readonly Zotero.Item[]) {
-    log(`Enqueue ${items.length} item(s) to sync`);
-
     if (!items.length) return;
+
+    const idsToSync = items.map(({ id }) => id);
+
+    log(
+      `Enqueue ${idsToSync.length} item(s) to sync with IDs ${JSON.stringify(
+        idsToSync
+      )}`
+    );
 
     if (this.queuedSync?.timeoutID) {
       clearTimeout(this.queuedSync.timeoutID);
@@ -215,7 +222,7 @@ export class SyncManager implements Service {
 
     const itemIDs = new Set([
       ...(this.queuedSync?.itemIDs?.values() ?? []),
-      ...items.map(({ id }) => id),
+      ...idsToSync,
     ]);
 
     const timeoutID = setTimeout(() => {

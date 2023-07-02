@@ -22,7 +22,7 @@ const SYNC_DEBOUNCE_MS = 2000;
 
 type QueuedSync = {
   readonly itemIDs: Set<Zotero.Item['id']>;
-  timeoutID?: ReturnType<Zotero['setTimeout']>;
+  timeoutID?: ReturnType<typeof setTimeout>;
 };
 
 export default class SyncManager implements Service {
@@ -210,7 +210,7 @@ export default class SyncManager implements Service {
     if (!items.length) return;
 
     if (this.queuedSync?.timeoutID) {
-      Zotero.clearTimeout(this.queuedSync.timeoutID);
+      clearTimeout(this.queuedSync.timeoutID);
     }
 
     const itemIDs = new Set([
@@ -218,7 +218,7 @@ export default class SyncManager implements Service {
       ...items.map(({ id }) => id),
     ]);
 
-    const timeoutID = Zotero.setTimeout(() => {
+    const timeoutID = setTimeout(() => {
       if (!this.queuedSync) return;
 
       this.queuedSync.timeoutID = undefined;

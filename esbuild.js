@@ -4,6 +4,17 @@ require('@dvanoni/zotero-plugin/copy-assets');
 require('@dvanoni/zotero-plugin/generate-install-manifest');
 require('@dvanoni/zotero-plugin/version');
 
+const banner = `if (!Zotero.Notero) {
+
+// Make timer functions globally available in Zotero 6
+if (typeof setTimeout === 'undefined') {
+  var setTimeout = Zotero.setTimeout;
+}
+if (typeof clearTimeout === 'undefined') {
+  var clearTimeout = Zotero.clearTimeout;
+}
+`;
+
 const builds = [
   {
     entryPoints: ['src/bootstrap.ts'],
@@ -17,7 +28,7 @@ const builds = [
     target: ['firefox60'],
     entryPoints: ['src/content/notero.ts'],
     outdir: 'build/content',
-    banner: { js: 'if (!Zotero.Notero) {\n' },
+    banner: { js: banner },
     footer: { js: '\n}' },
   },
   {

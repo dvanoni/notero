@@ -1,4 +1,4 @@
-import { log } from '../utils';
+import { isObject, log } from '../utils';
 
 import { getNoteroPref, NoteroPref, setNoteroPref } from './notero-pref';
 
@@ -96,10 +96,6 @@ function convertKeyToNumber([key, value]: [string, unknown]): [
   unknown
 ] {
   return [Number(key), value];
-}
-
-function isObject(value: unknown): value is Record<string, unknown> {
-  return typeof value === 'object' && value !== null;
 }
 
 function isCollectionSyncConfig(value: unknown): value is CollectionSyncConfig {

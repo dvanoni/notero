@@ -3,6 +3,7 @@ export enum NoteroPref {
   notionDatabaseID = 'notionDatabaseID',
   notionToken = 'notionToken',
   pageTitleFormat = 'pageTitleFormat',
+  syncNotes = 'syncNotes',
   syncOnModifyItems = 'syncOnModifyItems',
 }
 
@@ -19,6 +20,7 @@ type NoteroPrefValue = Partial<{
   [NoteroPref.notionDatabaseID]: string;
   [NoteroPref.notionToken]: string;
   [NoteroPref.pageTitleFormat]: PageTitleFormat;
+  [NoteroPref.syncNotes]: boolean;
   [NoteroPref.syncOnModifyItems]: boolean;
 }>;
 
@@ -70,6 +72,7 @@ export function getNoteroPref<P extends NoteroPref>(
     [NoteroPref.notionDatabaseID]: stringPref,
     [NoteroPref.notionToken]: stringPref,
     [NoteroPref.pageTitleFormat]: pageTitleFormatPref,
+    [NoteroPref.syncNotes]: booleanPref,
     [NoteroPref.syncOnModifyItems]: booleanPref,
   }[pref];
 }

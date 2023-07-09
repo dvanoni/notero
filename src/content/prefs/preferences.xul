@@ -24,6 +24,9 @@
       <preference id="pref-pageTitleFormat"
                   name="extensions.notero.pageTitleFormat"
                   type="string" />
+      <preference id="pref-syncNotes"
+                  name="extensions.notero.syncNotes"
+                  type="bool" />
       <preference id="pref-syncOnModifyItems"
                   name="extensions.notero.syncOnModifyItems"
                   type="bool" />
@@ -77,6 +80,9 @@
       <checkbox id="notero-syncOnModifyItems"
                 label="&notero.preferences.syncOnModifyItems;"
                 preference="pref-syncOnModifyItems" />
+      <checkbox id="notero-syncNotes"
+                label="&notero.preferences.syncNotes;"
+                preference="pref-syncNotes" />
     </groupbox>
   </prefpane>
 

@@ -20,3 +20,4 @@
 <!ENTITY notero.preferences.collectionColumn "集合">
 <!ENTITY notero.preferences.syncEnabledColumn "启用同步">
 <!ENTITY notero.preferences.syncOnModifyItems "当修改条目时同步">
+<!ENTITY notero.preferences.syncNotes "Sync notes (EXPERIMENTAL)">

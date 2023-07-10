@@ -35,7 +35,6 @@ type EventTypes = {
   'notifier-event': NotifierEventListener;
   'request-sync-collection': (collection: Zotero.Collection) => void;
   'request-sync-items': (items: Zotero.Item[]) => void;
-  'build-item-notes': (item: Zotero.Item) => void;
 };
 
 const emitter = new EventEmitter<EventTypes>();

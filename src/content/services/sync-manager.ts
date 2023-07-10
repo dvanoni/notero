@@ -8,6 +8,8 @@ import {
   NoteroPref,
   PageTitleFormat,
 } from '../prefs/notero-pref';
+import { getNotionClient } from '../sync/notion-client';
+import { syncNote } from '../sync/sync-note';
 import {
   getAllCollectionItems,
   getLocalizedString,
@@ -82,8 +84,13 @@ export class SyncManager implements Service {
   };
 
   private handleSyncItems = (items: Zotero.Item[]) => {
+    if (!items.length) return;
+
+    const syncNotes = getNoteroPref(NoteroPref.syncNotes);
+
     const validItems = items.filter(
-      (item) => !item.deleted && item.isRegularItem()
+      (item) =>
+        !item.deleted && (item.isRegularItem() || (syncNotes && item.isNote()))
     );
 
     this.enqueueItemsToSync(validItems);
@@ -276,7 +283,11 @@ export class SyncManager implements Service {
         const progressMessage = `Item ${step} of ${items.length}`;
         log(`Saving ${progressMessage} with ID ${item.id}`);
         itemProgress.setText(progressMessage);
-        await this.saveItemToNotion(item, notion, buildTitle);
+        if (item.isNote()) {
+          await this.saveNoteToNotion(item);
+        } else {
+          await this.saveItemToNotion(item, notion, buildTitle);
+        }
         itemProgress.setProgress((step / items.length) * PERCENTAGE_MULTIPLIER);
       }
       itemProgress.setIcon(SyncManager.tickIcon);
@@ -312,5 +323,11 @@ export class SyncManager implements Service {
           'for the Notero integration at www.notion.so/my-integrations.'
       );
     }
+  }
+
+  private async saveNoteToNotion(item: Zotero.Item) {
+    const notion = getNotionClient();
+
+    await syncNote(notion, item);
   }
 }

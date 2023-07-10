@@ -47,8 +47,7 @@ export class UIManager implements Service {
       onCommand: () => {
         const items = Zotero.getActiveZoteroPane()?.getSelectedItems(false);
         if (items) {
-          const topLevelItems = Zotero.Items.getTopLevel(items);
-          EventManager.emit('request-sync-items', topLevelItems);
+          EventManager.emit('request-sync-items', items);
         }
       },
     });

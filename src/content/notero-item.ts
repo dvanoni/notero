@@ -1,9 +1,19 @@
 import { Notion } from './notion';
-import { buildCollectionFullName } from './utils';
+import { NoteroPref, getNoteroPref } from './prefs/notero-pref';
+import { buildCollectionFullName, getDOMParser, isObject } from './utils';
 
 const APA_STYLE = 'bibliography=http://www.zotero.org/styles/apa';
 
 const PARENS_REGEX = /^\((.+)\)$/;
+
+const SYNCED_NOTES_ID = 'notero-synced-notes';
+
+type SyncedNoteBlockIDs = {
+  containerBlockID?: string;
+  noteBlockIDs?: {
+    [noteItemKey: Zotero.DataObjectKey]: string;
+  };
+};
 
 export class NoteroItem {
   static NOTION_TAG_NAME = 'notion';
@@ -161,7 +171,7 @@ export class NoteroItem {
     return Zotero.URI.getItemURI(this.zoteroItem);
   }
 
-  public getNotionLinkAttachments(): Zotero.Item[] {
+  private getAllNotionLinkAttachments(): Zotero.Item[] {
     const attachmentIDs = this.zoteroItem
       .getAttachments(false)
       .slice()
@@ -173,14 +183,18 @@ export class NoteroItem {
     );
   }
 
+  public getNotionLinkAttachment(): Zotero.Item | undefined {
+    return this.getAllNotionLinkAttachments()[0];
+  }
+
   public getNotionPageID(): string | undefined {
-    const notionURL = this.getNotionLinkAttachments()[0]?.getField('url');
+    const notionURL = this.getNotionLinkAttachment()?.getField('url');
     return notionURL && Notion.getPageIDFromURL(notionURL);
   }
 
   public async saveNotionLinkAttachment(webURL: string): Promise<void> {
     const appURL = Notion.convertWebURLToAppURL(webURL);
-    const attachments = this.getNotionLinkAttachments();
+    const attachments = this.getAllNotionLinkAttachments();
 
     if (attachments.length > 1) {
       const attachmentIDs = attachments.slice(1).map(({ id }) => id);
@@ -202,15 +216,101 @@ export class NoteroItem {
       });
     }
 
-    attachment.setNote(`
-<h2 style="background-color: #ff666680;">Do not delete!</h2>
+    this.updateNotionLinkAttachmentNote(attachment);
+
+    await attachment.saveTx();
+  }
+
+  private getSyncedNotesJSON(
+    this: void,
+    attachment: Zotero.Item
+  ): string | undefined {
+    const doc = getDOMParser().parseFromString(
+      attachment.getNote(),
+      'text/html'
+    );
+
+    return doc.getElementById(SYNCED_NOTES_ID)?.innerText;
+  }
+
+  public getSyncedNoteBlockIDs(
+    attachment: Zotero.Item | undefined = this.getNotionLinkAttachment()
+  ): SyncedNoteBlockIDs {
+    if (!attachment) return {};
+
+    const syncedNotesJSON = this.getSyncedNotesJSON(attachment);
+    if (!syncedNotesJSON) return {};
+
+    const parsedValue = JSON.parse(syncedNotesJSON);
+
+    if (!isObject(parsedValue)) return {};
+
+    let containerBlockID, noteBlockIDs;
+
+    if (typeof parsedValue.containerBlockID === 'string') {
+      containerBlockID = parsedValue.containerBlockID;
+    }
+
+    if (isObject(parsedValue.noteBlockIDs)) {
+      noteBlockIDs = Object.entries(parsedValue.noteBlockIDs)
+        .filter(
+          (entry): entry is [string, string] => typeof entry[1] === 'string'
+        )
+        .reduce<Record<string, string>>(
+          (ids, [key, value]) => ({ ...ids, [key]: value }),
+          {}
+        );
+    }
+
+    return { containerBlockID, noteBlockIDs };
+  }
+
+  public async saveSyncedNoteBlockID(
+    containerBlockID: string,
+    noteBlockID: string,
+    noteItemKey: Zotero.DataObjectKey
+  ) {
+    const attachment = this.getNotionLinkAttachment();
+    if (!attachment) return;
+
+    const { noteBlockIDs } = this.getSyncedNoteBlockIDs(attachment);
+
+    const syncedNoteBlockIDs = {
+      containerBlockID,
+      noteBlockIDs: {
+        ...noteBlockIDs,
+        [noteItemKey]: noteBlockID,
+      },
+    };
+
+    this.updateNotionLinkAttachmentNote(attachment, syncedNoteBlockIDs);
+
+    await attachment.saveTx();
+  }
+
+  private updateNotionLinkAttachmentNote(
+    attachment: Zotero.Item,
+    syncedNoteBlockIDs?: Required<SyncedNoteBlockIDs>
+  ) {
+    let note = `
+<h2 style="background-color: #ff666680;">Do not modify or delete!</h2>
 <p>This link attachment serves as a reference for
 <a href="https://github.com/dvanoni/notero">Notero</a>
 so that it can properly update the Notion page for this item.</p>
 <p>Last synced: ${new Date().toLocaleString()}</p>
-`);
+`;
 
-    await attachment.saveTx();
+    if (getNoteroPref(NoteroPref.syncNotes)) {
+      const syncedNotesJSON = syncedNoteBlockIDs
+        ? JSON.stringify(syncedNoteBlockIDs)
+        : this.getSyncedNotesJSON(attachment);
+
+      if (syncedNotesJSON) {
+        note += `<pre id="${SYNCED_NOTES_ID}">${syncedNotesJSON}</pre>`;
+      }
+    }
+
+    attachment.setNote(note);
   }
 
   public async saveNotionTag(): Promise<void> {

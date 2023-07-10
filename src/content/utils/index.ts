@@ -7,6 +7,7 @@ export { getDOMParser } from './getDOMParser';
 export { getLocalizedString } from './getLocalizedString';
 export { getXULElementById } from './getXULElementById';
 export { hasErrorStack } from './hasErrorStack';
+export { isNotionErrorWithCode } from './isNotionErrorWithCode';
 export { isObject } from './isObject';
 export { keyValue } from './keyValue';
 export { log } from './log';

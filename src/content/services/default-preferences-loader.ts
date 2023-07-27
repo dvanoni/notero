@@ -27,7 +27,7 @@ const prefsContext = {
  * @see https://groups.google.com/g/zotero-dev/c/HI7itFdtws4
  * @see https://www.zotero.org/support/dev/zotero_7_for_developers#default_preferences
  */
-export default class DefaultPreferencesLoader implements Service {
+export class DefaultPreferencesLoader implements Service {
   public startup({ rootURI }: PluginInfo) {
     Services.scriptloader.loadSubScript(rootURI + 'prefs.js', prefsContext);
   }

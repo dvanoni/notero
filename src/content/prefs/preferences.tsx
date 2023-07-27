@@ -5,7 +5,7 @@ import ReactDOM from 'react-dom';
 import { getLocalizedString, getXULElementById } from '../utils';
 
 import { PageTitleFormat } from './notero-pref';
-import SyncConfigsTable from './sync-configs-table';
+import { SyncConfigsTable } from './sync-configs-table';
 
 class Preferences {
   private pageTitleFormatMenu!: XUL.MenuListElement;

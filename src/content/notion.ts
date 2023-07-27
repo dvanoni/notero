@@ -1,10 +1,4 @@
-import {
-  APIErrorCode,
-  APIResponseError,
-  Client,
-  Logger,
-  LogLevel,
-} from '@notionhq/client';
+import { APIErrorCode, Client, Logger, LogLevel } from '@notionhq/client';
 import {
   CreatePageParameters,
   CreatePageResponse,
@@ -13,8 +7,8 @@ import {
 } from '@notionhq/client/build/src/api-endpoints';
 import 'core-js/stable/object/from-entries';
 
-import NoteroItem from './notero-item';
-import { log } from './utils';
+import { NoteroItem } from './notero-item';
+import { isNotionErrorWithCode, log } from './utils';
 
 type CreateDatabasePageParameters = Extract<
   CreatePageParameters,
@@ -45,7 +39,7 @@ export type TitleBuilder = (item: NoteroItem) => string | Promise<string>;
 
 const TEXT_CONTENT_MAX_LENGTH = 2000;
 
-export default class Notion {
+export class Notion {
   private readonly client: Client;
   private readonly databaseID: string;
   private _databaseProperties?: DatabaseProperties;
@@ -125,10 +119,7 @@ export default class Notion {
       try {
         return await this.client.pages.update({ page_id: pageID, properties });
       } catch (error) {
-        if (
-          !APIResponseError.isAPIResponseError(error) ||
-          error.code !== APIErrorCode.ObjectNotFound
-        ) {
+        if (!isNotionErrorWithCode(error, APIErrorCode.ObjectNotFound)) {
           throw error;
         }
       }

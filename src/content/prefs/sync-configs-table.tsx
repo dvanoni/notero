@@ -57,7 +57,7 @@ const COMPARATORS: Record<DataKey, RowSortCompareFn> = {
   },
 };
 
-export default class SyncConfigsTable extends React.Component {
+export class SyncConfigsTable extends React.Component {
   private _rows?: SyncConfigsTableRow[];
   private _syncConfigs?: CollectionSyncConfigsRecord;
 

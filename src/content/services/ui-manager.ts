@@ -1,10 +1,10 @@
 import { IS_ZOTERO_7 } from '../constants';
 import { createXULElement, getLocalizedString, log } from '../utils';
 
-import EventManager from './event-manager';
+import { EventManager } from './event-manager';
 import type { Service } from './service';
 
-export default class UIManager implements Service {
+export class UIManager implements Service {
   private get window() {
     return Zotero.getMainWindow();
   }
@@ -47,8 +47,7 @@ export default class UIManager implements Service {
       onCommand: () => {
         const items = Zotero.getActiveZoteroPane()?.getSelectedItems(false);
         if (items) {
-          const topLevelItems = Zotero.Items.getTopLevel(items);
-          EventManager.emit('request-sync-items', topLevelItems);
+          EventManager.emit('request-sync-items', items);
         }
       },
     });

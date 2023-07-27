@@ -4,7 +4,7 @@
  * @param collection The collection to get items for.
  * @returns An array of items (which may include duplicates).
  */
-export default function getAllCollectionItems(
+export function getAllCollectionItems(
   collection: Zotero.Collection
 ): Zotero.Item[] {
   return collection

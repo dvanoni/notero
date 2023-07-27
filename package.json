@@ -5,6 +5,7 @@
   "scripts": {
     "build": "node esbuild.js",
     "clean": "rm -r build gen xpi",
+    "dev": "pkill zotero; truncate -s0 zotero.log; zotero-start && sleep 2 && osascript -e 'tell app \"Zotero\" to activate'",
     "generateUpdateManifest": "zotero-plugin-generate-update",
     "lint": "eslint . --cache",
     "lint:fix": "eslint . --fix",
@@ -42,6 +43,7 @@
     "@commitlint/cli": "^17.5.1",
     "@commitlint/config-conventional": "^17.4.4",
     "@dvanoni/zotero-plugin": "^1.8.0",
+    "@total-typescript/ts-reset": "^0.4.2",
     "@types/jest": "^29.5.0",
     "@types/react": "^17.0.55",
     "@types/react-dom": "^17.0.19",
@@ -54,6 +56,7 @@
     "eslint-plugin-import": "^2.27.5",
     "husky": "^8.0.3",
     "jest": "^29.5.0",
+    "jest-environment-jsdom": "^29.5.0",
     "jest-mock-extended": "^3.0.4",
     "npm-run-all": "^4.1.5",
     "patch-package": "^6.5.1",

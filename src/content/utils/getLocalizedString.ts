@@ -1,5 +1,7 @@
 import { NoteroPref } from '../prefs/notero-pref';
 
+import { log } from '.';
+
 Components.utils.import('resource://gre/modules/Services.jsm');
 
 const STRING_BUNDLE_URL = 'chrome://notero/locale/notero.properties';
@@ -13,7 +15,13 @@ function getStringBundle(): XPCOM.nsIStringBundle {
   return stringBundle;
 }
 
-export default function getLocalizedString(name: NoteroPref | string): string {
+export function getLocalizedString(name: NoteroPref | string): string {
   const fullName = name in NoteroPref ? `notero.preferences.${name}` : name;
-  return getStringBundle().GetStringFromName(fullName);
+  try {
+    return getStringBundle().GetStringFromName(fullName);
+  } catch (error) {
+    log(`Missing localized string '${fullName}'`, 'error');
+    log(error, 'error');
+    return `###${fullName}###`;
+  }
 }

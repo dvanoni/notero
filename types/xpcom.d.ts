@@ -4,6 +4,7 @@
 declare namespace XPCOM {
   type Interfaces = {
     amIAddonManagerStartup: amIAddonManagerStartup;
+    nsIDOMParser: nsIDOMParser;
     nsIDOMWindow: nsIDOMWindow;
     nsIDOMWindowInternal: nsIDOMWindow;
     nsIInterfaceRequestor: nsIInterfaceRequestor;
@@ -17,6 +18,8 @@ declare namespace XPCOM {
     loadSubScript(url: string, targetObj?: unknown, charset?: string): void;
   }
 
+  interface nsIDOMParser extends nsISupports, DOMParser {}
+
   interface nsIDOMWindow extends nsISupports, Window {}
 
   interface nsIInterfaceRequestor {
@@ -28,6 +31,7 @@ declare namespace XPCOM {
   }
 
   interface nsIJSCID {
+    createInstance<I extends Interfaces[keyof Interfaces]>(uuid: I): I;
     getService<I extends Interfaces[keyof Interfaces]>(uuid: I): I;
   }
 

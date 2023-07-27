@@ -20,3 +20,4 @@
 <!ENTITY notero.preferences.collectionColumn "Collection">
 <!ENTITY notero.preferences.syncEnabledColumn "Sync Enabled">
 <!ENTITY notero.preferences.syncOnModifyItems "Sync when items are modified">
+<!ENTITY notero.preferences.syncNotes "Sync notes (EXPERIMENTAL)">

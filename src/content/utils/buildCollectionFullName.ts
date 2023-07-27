@@ -1,6 +1,4 @@
-export default function buildCollectionFullName(
-  collection: Zotero.Collection
-): string {
+export function buildCollectionFullName(collection: Zotero.Collection): string {
   const parentCollection =
     collection.parentID && Zotero.Collections.get(collection.parentID);
 

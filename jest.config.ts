@@ -9,8 +9,10 @@ const config: Config = {
   clearMocks: true,
   errorOnDeprecated: true,
   preset: 'ts-jest',
-  rootDir: 'src',
-  testEnvironment: 'node',
+  setupFilesAfterEnv: ['<rootDir>/test/setup-tests.ts'],
+  testEnvironment: 'jsdom',
+  testMatch: ['**/?(*.)+(spec|test).[jt]s?(x)'],
 };
 
+// eslint-disable-next-line import/no-default-export
 export default config;

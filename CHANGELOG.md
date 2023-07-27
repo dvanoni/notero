@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.4.8](https://github.com/dvanoni/notero/compare/v0.4.7...v0.4.8) (2023-07-27)
+
+
+### Features
+
+* Add experimental support for syncing notes ([#290](https://github.com/dvanoni/notero/issues/290)) ([bb69ecb](https://github.com/dvanoni/notero/commit/bb69ecb834a85ee7672300714f37b7ae55b927a3))
+
+
+### Bug Fixes
+
+* Make timer functions work in both Zotero 6 and 7 ([#286](https://github.com/dvanoni/notero/issues/286)) ([9377ebf](https://github.com/dvanoni/notero/commit/9377ebf7576f3d500f2aff2809e0ea6e9677012f))
+
 ### [0.4.7](https://github.com/dvanoni/notero/compare/v0.4.6...v0.4.7) (2023-06-18)
 
 

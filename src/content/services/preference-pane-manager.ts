@@ -7,7 +7,6 @@ export class PreferencePaneManager implements Service {
       src: rootURI + 'content/prefs/preferences.xhtml',
       scripts: [rootURI + 'content/prefs/preferences.js'],
       stylesheets: [rootURI + 'content/style/preferences.css'],
-      extraDTD: ['chrome://notero/locale/notero.dtd'],
       helpURL: 'https://github.com/dvanoni/notero#readme',
     });
   }

@@ -1,17 +1,21 @@
+<linkset>
+  <html:link rel="localization" href="notero.ftl" />
+</linkset>
+
+<!-- The `notero` variable used below is defined in `esbuild.js` -->
 <vbox onload="notero.preferences.init();">
   <vbox class="main-section">
-    <html:h1>&notero.preferences.notionGroupboxCaption;</html:h1>
-    <description>
-      &notero.preferences.notionGroupboxDescription;
+    <html:h1 data-l10n-id="notero-preferences-notion-groupbox-heading" />
+    <description data-l10n-id="notero-preferences-notion-groupbox-description">
       <label
+        data-l10n-name="notero-preferences-readme"
         is="zotero-text-link"
         href="https://github.com/dvanoni/notero#readme"
-        value="&notero.preferences.readme;"
-      />.
+      />
     </description>
     <groupbox>
       <label control="notero-notionToken">
-        <html:h2>&notero.preferences.notionToken;</html:h2>
+        <html:h2 data-l10n-id="notero-preferences-notion-token" />
       </label>
       <html:input
         id="notero-notionToken"
@@ -19,7 +23,7 @@
         type="text"
       />
       <label control="notero-notionDatabaseID">
-        <html:h2>&notero.preferences.notionDatabaseID;</html:h2>
+        <html:h2 data-l10n-id="notero-preferences-notion-database-id" />
       </label>
       <html:input
         id="notero-notionDatabaseID"
@@ -30,13 +34,13 @@
   </vbox>
 
   <vbox class="main-section">
-    <html:h1>&notero.preferences.propertiesGroupboxCaption;</html:h1>
-    <description>
-      &notero.preferences.propertiesGroupboxDescription;
-    </description>
+    <html:h1 data-l10n-id="notero-preferences-properties-groupbox-heading" />
+    <description
+      data-l10n-id="notero-preferences-properties-groupbox-description"
+    />
     <groupbox>
       <label control="notero-pageTitleFormat">
-        <html:h2>&notero.preferences.pageTitleFormat;</html:h2>
+        <html:h2 data-l10n-id="notero-preferences-page-title-format" />
       </label>
       <menulist
         id="notero-pageTitleFormat"
@@ -48,19 +52,25 @@
   </vbox>
 
   <vbox class="main-section">
-    <html:h1>&notero.preferences.syncGroupboxCaption;</html:h1>
-    <description>&notero.preferences.syncGroupboxDescription1;</description>
-    <description>&notero.preferences.syncGroupboxDescription2;</description>
+    <html:h1 data-l10n-id="notero-preferences-sync-groupbox-heading" />
+    <description data-l10n-id="notero-preferences-sync-groupbox-description1" />
+    <description data-l10n-id="notero-preferences-sync-groupbox-description2" />
     <separator class="thin" />
     <hbox class="virtualized-table-container" flex="1" height="220px">
       <html:div id="notero-syncConfigsTable-container" />
     </hbox>
     <separator class="thin" />
     <checkbox
+      data-l10n-id="notero-preferences-sync-on-modify-items"
       id="notero-syncOnModifyItems"
-      label="&notero.preferences.syncOnModifyItems;"
       native="true"
       preference="extensions.notero.syncOnModifyItems"
+    />
+    <checkbox
+      data-l10n-id="notero-preferences-sync-notes"
+      id="notero-syncNotes"
+      native="true"
+      preference="extensions.notero.syncNotes"
     />
   </vbox>
 </vbox>

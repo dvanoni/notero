@@ -31,4 +31,4 @@ notero-preferences-sync-enabled-column = 启用同步
 notero-preferences-sync-on-modify-items =
   .label = 当修改条目时同步
 notero-preferences-sync-notes =
-  .label = Sync notes (EXPERIMENTAL)
+  .label = 同步笔记（实验）

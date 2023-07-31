@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.4.9](https://github.com/dvanoni/notero/compare/v0.4.8...v0.4.9) (2023-07-31)
+
+
+### Features
+
+* Enable support for Zotero 7 ([#305](https://github.com/dvanoni/notero/issues/305)) ([da2779c](https://github.com/dvanoni/notero/commit/da2779cb85c2a92d5421dca26b3a81b61707294e))
+* Localize Zotero 7 preference pane using Fluent ([#304](https://github.com/dvanoni/notero/issues/304)) ([2ab1715](https://github.com/dvanoni/notero/commit/2ab17156245fff8b3d6daa8e9f2d63b059e09846))
+
 ### [0.4.8](https://github.com/dvanoni/notero/compare/v0.4.7...v0.4.8) (2023-07-27)
 
 

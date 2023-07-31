@@ -6,7 +6,7 @@ Components.utils.import('resource://gre/modules/Services.jsm');
 
 const STRING_BUNDLE_URL = 'chrome://notero/locale/notero.properties';
 
-let stringBundle: XPCOM.nsIStringBundle;
+let stringBundle: XPCOM.nsIStringBundle | undefined;
 
 function getStringBundle(): XPCOM.nsIStringBundle {
   if (!stringBundle) {

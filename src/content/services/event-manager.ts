@@ -106,7 +106,7 @@ export class EventManager implements Service {
 
   private mapCompoundIDs(this: void, ids: NotifierIDs): [number, number][] {
     return (ids as string[]).map((compoundID) => {
-      const ids = compoundID.split('-').map(Number);
+      const ids = compoundID.split('-').map(Number) as [number, number];
       return [ids[0], ids[1]];
     });
   }

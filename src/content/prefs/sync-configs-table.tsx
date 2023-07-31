@@ -99,10 +99,12 @@ export class SyncConfigsTable extends React.Component {
   }
 
   private toggleEnabled(indices: number[]) {
-    const enable = !indices.every((index) => this.rows[index].syncEnabled);
+    const enable = !indices.every((index) => this.rows[index]?.syncEnabled);
 
     this.syncConfigs = indices.reduce((configs, index) => {
-      const { collection } = this.rows[index];
+      const collection = this.rows[index]?.collection;
+      if (!collection) return configs;
+
       return {
         ...configs,
         [collection.id]: {
@@ -114,7 +116,7 @@ export class SyncConfigsTable extends React.Component {
 
   getRowCount = () => this.rows.length;
 
-  getRowString = (index: number) => this.rows[index].collectionFullName;
+  getRowString = (index: number) => this.rows[index]?.collectionFullName || '';
 
   handleActivate = (_event: KeyboardEvent | MouseEvent, indices: number[]) => {
     this.toggleEnabled(indices);
@@ -124,12 +126,12 @@ export class SyncConfigsTable extends React.Component {
 
   handleColumnSort = (columnIndex: number, sortDirection: number) => {
     this.sortDirection = sortDirection;
-    this.sortKey = COLUMNS[columnIndex]['dataKey'];
+    this.sortKey = COLUMNS[columnIndex]?.['dataKey'] || 'collectionFullName';
     this.invalidateRows();
     this.table?.invalidate();
   };
 
-  renderItem = makeRowRenderer((index) => this.rows[index]);
+  renderItem = makeRowRenderer((index) => this.rows[index] || {});
 
   render() {
     return (

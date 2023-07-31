@@ -133,7 +133,7 @@ export class SyncManager implements Service {
    * @param ids An array of compound IDs.
    * @returns An array of extracted IDs.
    */
-  private getIndexedIDs(this: void, index: number, ids: number[][]) {
+  private getIndexedIDs(this: void, index: 0 | 1, ids: [number, number][]) {
     return ids.map((compoundID) => compoundID[index]);
   }
 
@@ -228,7 +228,7 @@ export class SyncManager implements Service {
     }
 
     const itemIDs = new Set([
-      ...(this.queuedSync?.itemIDs?.values() ?? []),
+      ...(this.queuedSync?.itemIDs.values() ?? []),
       ...idsToSync,
     ]);
 

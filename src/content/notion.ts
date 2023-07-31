@@ -10,16 +10,7 @@ import 'core-js/stable/object/from-entries';
 import { NoteroItem } from './notero-item';
 import { isNotionErrorWithCode, log } from './utils';
 
-type CreateDatabasePageParameters = Extract<
-  CreatePageParameters,
-  {
-    parent: {
-      database_id: string;
-    };
-  }
->;
-
-type DatabasePageProperties = CreateDatabasePageParameters['properties'];
+type DatabasePageProperties = CreatePageParameters['properties'];
 
 type DatabaseProperties = GetDatabaseResponse['properties'];
 

@@ -38,7 +38,7 @@ type SyncConfigsTableRow = CollectionSyncConfig & {
 type RowSortCompareFn = (
   a: SyncConfigsTableRow,
   b: SyncConfigsTableRow,
-  sortDirection: number
+  sortDirection: number,
 ) => number;
 
 const COLLATOR = new Intl.Collator(Zotero.locale, {

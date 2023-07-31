@@ -37,7 +37,7 @@ function getStringPref(value: Zotero.Prefs.Value): string | undefined {
 }
 
 function isPageTitleFormat(
-  value: Zotero.Prefs.Value
+  value: Zotero.Prefs.Value,
 ): value is PageTitleFormat {
   return (
     typeof value === 'string' &&
@@ -46,7 +46,7 @@ function isPageTitleFormat(
 }
 
 function getPageTitleFormatPref(
-  value: Zotero.Prefs.Value
+  value: Zotero.Prefs.Value,
 ): PageTitleFormat | undefined {
   return isPageTitleFormat(value) ? value : undefined;
 }
@@ -56,7 +56,7 @@ export function clearNoteroPref(pref: NoteroPref): void {
 }
 
 export function getNoteroPref<P extends NoteroPref>(
-  pref: P
+  pref: P,
 ): NoteroPrefValue[P] {
   const value = Zotero.Prefs.get(buildFullPrefName(pref), true);
 
@@ -79,7 +79,7 @@ export function getNoteroPref<P extends NoteroPref>(
 
 export function setNoteroPref<P extends NoteroPref>(
   pref: P,
-  value: NoteroPrefValue[P]
+  value: NoteroPrefValue[P],
 ): void {
   Zotero.Prefs.set(buildFullPrefName(pref), value, true);
 }

@@ -7,7 +7,7 @@ import { convertHtmlToBlocks } from './html-to-notion';
 
 export async function syncNote(
   notion: Client,
-  item: Zotero.Item
+  item: Zotero.Item,
 ): Promise<void> {
   const noteroItem = new NoteroItem(item.topLevelItem);
   const attachment = noteroItem.getNotionLinkAttachment();
@@ -46,13 +46,13 @@ export async function syncNote(
   await noteroItem.saveSyncedNoteBlockID(
     containerBlockID,
     newNoteBlockID,
-    item.key
+    item.key,
   );
 }
 
 async function createContainerBlock(
   notion: Client,
-  pageID: string
+  pageID: string,
 ): Promise<string> {
   const { results } = await notion.blocks.children.append({
     block_id: pageID,
@@ -72,7 +72,7 @@ async function createContainerBlock(
 async function createNoteBlock(
   notion: Client,
   containerBlockID: string,
-  item: Zotero.Item
+  item: Zotero.Item,
 ): Promise<string> {
   const { results } = await notion.blocks.children.append({
     block_id: containerBlockID,

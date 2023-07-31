@@ -27,7 +27,7 @@ async function waitForZotero() {
   }
 
   const { Services } = ChromeUtils.import(
-    'resource://gre/modules/Services.jsm'
+    'resource://gre/modules/Services.jsm',
   ) as { Services: Services };
 
   const windows = Services.wm.getEnumerator('navigator:browser');
@@ -96,7 +96,7 @@ async function install(_data: BootstrapData, _reason: Zotero.Plugins.REASONS) {
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 async function startup(
   { id, resourceURI, rootURI = resourceURI.spec }: BootstrapData,
-  _reason: Zotero.Plugins.REASONS
+  _reason: Zotero.Plugins.REASONS,
 ) {
   await waitForZotero();
 
@@ -108,7 +108,7 @@ async function startup(
   if (typeof Services === 'undefined') {
     // eslint-disable-next-line no-var
     var { Services } = ChromeUtils.import(
-      'resource://gre/modules/Services.jsm'
+      'resource://gre/modules/Services.jsm',
     ) as { Services: Services };
   }
 

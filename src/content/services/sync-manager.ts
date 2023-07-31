@@ -42,7 +42,7 @@ export class SyncManager implements Service {
     EventManager.addListener('notifier-event', this.handleNotifierEvent);
     EventManager.addListener(
       'request-sync-collection',
-      this.handleSyncCollection
+      this.handleSyncCollection,
     );
     EventManager.addListener('request-sync-items', this.handleSyncItems);
   }
@@ -51,7 +51,7 @@ export class SyncManager implements Service {
     EventManager.removeListener('notifier-event', this.handleNotifierEvent);
     EventManager.removeListener(
       'request-sync-collection',
-      this.handleSyncCollection
+      this.handleSyncCollection,
     );
     EventManager.removeListener('request-sync-items', this.handleSyncItems);
   }
@@ -69,7 +69,7 @@ export class SyncManager implements Service {
         item.isRegularItem() &&
         item
           .getCollections()
-          .some((collectionID) => collectionIDs.has(collectionID))
+          .some((collectionID) => collectionIDs.has(collectionID)),
     );
 
     this.enqueueItemsToSync(validItems);
@@ -90,7 +90,7 @@ export class SyncManager implements Service {
 
     const validItems = items.filter(
       (item) =>
-        !item.deleted && (item.isRegularItem() || (syncNotes && item.isNote()))
+        !item.deleted && (item.isRegularItem() || (syncNotes && item.isNote())),
     );
 
     this.enqueueItemsToSync(validItems);
@@ -141,7 +141,7 @@ export class SyncManager implements Service {
     const items = Zotero.Collections.get(ids).reduce(
       (items: Zotero.Item[], collection) =>
         items.concat(getAllCollectionItems(collection)),
-      []
+      [],
     );
 
     // Deduplicate items in multiple collections
@@ -158,7 +158,7 @@ export class SyncManager implements Service {
 
     if (!databaseID) {
       throw new Error(
-        `Missing ${getLocalizedString(NoteroPref.notionDatabaseID)}`
+        `Missing ${getLocalizedString(NoteroPref.notionDatabaseID)}`,
       );
     }
 
@@ -219,8 +219,8 @@ export class SyncManager implements Service {
 
     log(
       `Enqueue ${idsToSync.length} item(s) to sync with IDs ${JSON.stringify(
-        idsToSync
-      )}`
+        idsToSync,
+      )}`,
     );
 
     if (this.queuedSync?.timeoutID) {
@@ -270,7 +270,7 @@ export class SyncManager implements Service {
     this.progressWindow.show();
     const itemProgress = new this.progressWindow.ItemProgress(
       'chrome://notero/content/style/notion-logo-32.png',
-      ''
+      '',
     );
 
     try {
@@ -306,7 +306,7 @@ export class SyncManager implements Service {
   private async saveItemToNotion(
     item: Zotero.Item,
     notion: Notion,
-    buildTitle: TitleBuilder
+    buildTitle: TitleBuilder,
   ) {
     const noteroItem = new NoteroItem(item);
     const response = await notion.saveItemToDatabase(noteroItem, buildTitle);
@@ -320,7 +320,7 @@ export class SyncManager implements Service {
         'Failed to create Notion link attachment. ' +
           'This will result in duplicate Notion pages. ' +
           'Please ensure that the "read content" capability is enabled ' +
-          'for the Notero integration at www.notion.so/my-integrations.'
+          'for the Notero integration at www.notion.so/my-integrations.',
       );
     }
   }

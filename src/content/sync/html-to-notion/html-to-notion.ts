@@ -66,7 +66,7 @@ export function convertHtmlToBlocks(htmlString: string): ChildBlock[] {
 
 function convertNode(
   node: Node,
-  options: RichTextOptions = {}
+  options: RichTextOptions = {},
 ): ContentResult | undefined {
   const parsedNode = parseNode(node);
 
@@ -88,7 +88,7 @@ function convertNode(
 
 function convertParentElement(
   { annotations, blockType, color, element }: ParentElement,
-  options: RichTextOptions
+  options: RichTextOptions,
 ): BlockResult {
   const updatedOptions = {
     ...options,
@@ -135,13 +135,13 @@ function convertParentElement(
       rich_text,
       ...(children && { children }),
       ...(color && { color }),
-    })
+    }),
   );
 }
 
 function convertBlockElement(
   { annotations, blockType, color, element }: BlockElement,
-  options: RichTextOptions
+  options: RichTextOptions,
 ): BlockResult {
   const preserveWhitespace = blockType === 'code';
 
@@ -162,7 +162,7 @@ function convertBlockElement(
 
   if (blockType === 'code') {
     return blockResult(
-      keyValue(blockType, { rich_text, language: 'plain text' })
+      keyValue(blockType, { rich_text, language: 'plain text' }),
     );
   }
 
@@ -170,13 +170,13 @@ function convertBlockElement(
     keyValue(blockType, {
       rich_text,
       ...(color && { color }),
-    })
+    }),
   );
 }
 
 function convertListElement(
   node: ListElement,
-  options: RichTextOptions
+  options: RichTextOptions,
 ): ListResult {
   return listResult(
     Array.from(node.element.children)
@@ -191,13 +191,13 @@ function convertListElement(
           return convertParentElement(parsedChild, options);
         }
       })
-      .filter(Boolean)
+      .filter(Boolean),
   );
 }
 
 function convertChildNodes(
   node: Node,
-  options: RichTextOptions
+  options: RichTextOptions,
 ): (BlockResult | RichTextResult)[] {
   return Array.from(node.childNodes).reduce<(BlockResult | RichTextResult)[]>(
     (results, childNode) => {
@@ -221,13 +221,13 @@ function convertChildNodes(
 
       return [...results, result];
     },
-    []
+    [],
   );
 }
 
 function convertRichTextChildNodes(
   node: Node,
-  options: RichTextOptions
+  options: RichTextOptions,
 ): RichText {
   return Array.from(node.childNodes).reduce<RichText>(
     (combinedRichText, childNode) => {
@@ -237,13 +237,13 @@ function convertRichTextChildNodes(
 
       return [...combinedRichText, ...convertRichTextNode(parsedNode, options)];
     },
-    []
+    [],
   );
 }
 
 function convertRichTextNode(
   node: ParsedNode,
-  options: RichTextOptions
+  options: RichTextOptions,
 ): RichText {
   if (node.type === 'text') {
     return buildRichText(node.textContent, options);
@@ -270,7 +270,7 @@ function convertRichTextNode(
 
 function buildRichText(
   textContent: string | null,
-  { annotations, link, preserveWhitespace }: RichTextOptions
+  { annotations, link, preserveWhitespace }: RichTextOptions,
 ): RichText {
   if (!textContent?.length) return [];
 
@@ -279,7 +279,7 @@ function buildRichText(
     : collapseWhitespace(textContent);
 
   const hasAnnotations = Boolean(
-    annotations && Object.keys(annotations).length
+    annotations && Object.keys(annotations).length,
   );
 
   return chunkString(text, TEXT_CONTENT_MAX_LENGTH).map((content) => {
@@ -301,7 +301,7 @@ function paragraphBlock(richText: RichText): ParagraphBlock {
 function trimRichText(richText: RichText): RichText {
   function updateContent(
     index: number,
-    updater: (content: string) => string
+    updater: (content: string) => string,
   ): RichText {
     const richTextPart = richText[index];
 
@@ -328,7 +328,7 @@ function trimRichText(richText: RichText): RichText {
   const first = updateContent(0, (content) => content.trimStart());
   const middle = richText.slice(1, -1);
   const last = updateContent(richText.length - 1, (content) =>
-    content.trimEnd()
+    content.trimEnd(),
   );
 
   return [...first, ...middle, ...last];

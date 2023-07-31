@@ -17,7 +17,7 @@ declare namespace XUL {
     appendItem(
       label: string,
       value?: string,
-      description?: string
+      description?: string,
     ): MenuItemElement;
     disabled: boolean;
     selectedIndex: number;

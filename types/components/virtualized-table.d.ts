@@ -28,7 +28,7 @@ declare module 'components/virtualized-table' {
     index: number,
     selection: TreeSelection,
     oldElem: Element | null,
-    columns: (Column<DataKey> & { className: string })[]
+    columns: (Column<DataKey> & { className: string })[],
   ) => Element;
 
   export class TreeSelection {
@@ -97,7 +97,7 @@ declare module 'components/virtualized-table' {
     multiSelect?: boolean;
     onSelectionChange?: (
       selection: TreeSelection,
-      shouldDebounce: boolean
+      shouldDebounce: boolean,
     ) => void;
     // The below are for arrow-key navigation
     isSelectable?: (index: number) => boolean;
@@ -121,7 +121,7 @@ declare module 'components/virtualized-table' {
     onItemContextMenu?: (
       event: KeyboardEvent | MouseEvent,
       x: number,
-      y: number
+      y: number,
     ) => void;
   };
 
@@ -138,17 +138,17 @@ declare module 'components/virtualized-table' {
   export function renderCell<DataKey extends string>(
     index: number,
     data: unknown,
-    column: Column<DataKey>
+    column: Column<DataKey>,
   ): HTMLSpanElement;
 
   export function renderCheckboxCell<DataKey extends string>(
     index: number,
     data: unknown,
-    column: Column<DataKey>
+    column: Column<DataKey>,
   ): HTMLSpanElement;
 
   export function makeRowRenderer<DataKey extends string>(
-    getRowData: (index: number) => { [dataKey: string]: unknown }
+    getRowData: (index: number) => { [dataKey: string]: unknown },
   ): RenderItem<DataKey>;
 
   // eslint-disable-next-line import/no-default-export

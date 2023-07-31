@@ -69,7 +69,7 @@ export type ParsedNode =
   | TextNode;
 
 function doesBlockSupportChildren(
-  blockType: BlockElement['blockType']
+  blockType: BlockElement['blockType'],
 ): blockType is ParentBlockType {
   return BLOCKS_SUPPORTING_CHILDREN.has(blockType);
 }
@@ -83,7 +83,7 @@ function parseAnchorElement(element: HTMLAnchorElement): RichTextElement {
 
 function parseBlockElement(
   element: HTMLElement,
-  blockType: BlockElement['blockType']
+  blockType: BlockElement['blockType'],
 ): BlockElement {
   const { color, ...annotations } = getAnnotations(element);
 

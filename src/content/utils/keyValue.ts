@@ -5,7 +5,7 @@
  */
 export function keyValue<K extends PropertyKey, const V>(
   key: K,
-  value: V
+  value: V,
 ): { [P in K]: { [Q in P]: V } }[K] {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-explicit-any
   return { [key]: value } as any;

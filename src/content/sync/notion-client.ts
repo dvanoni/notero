@@ -6,7 +6,7 @@ import { getLocalizedString, log } from '../utils';
 const logger: Logger = (level, message, extraInfo) => {
   log(
     `${message} - ${JSON.stringify(extraInfo)}`,
-    level === LogLevel.ERROR ? 'error' : 'warning'
+    level === LogLevel.ERROR ? 'error' : 'warning',
   );
 };
 

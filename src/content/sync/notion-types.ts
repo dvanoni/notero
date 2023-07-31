@@ -27,7 +27,7 @@ export type TextLink = RichTextText['text']['link'];
 
 export function isBlockType<T extends BlockType>(
   type: T,
-  value: object
+  value: object,
 ): value is Block<T> {
   return type in value;
 }

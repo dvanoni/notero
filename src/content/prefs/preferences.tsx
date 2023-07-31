@@ -19,7 +19,7 @@ class Preferences {
 
     ReactDOM.render(
       <SyncConfigsTable />,
-      document.getElementById('notero-syncConfigsTable-container')
+      document.getElementById('notero-syncConfigsTable-container'),
     );
   }
 

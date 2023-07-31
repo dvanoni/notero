@@ -47,13 +47,13 @@ export class Notion {
   static APP_URL_PROTOCOL = 'notion:';
 
   static PAGE_URL_REGEX = new RegExp(
-    `^${Notion.APP_URL_PROTOCOL}.+([0-9a-f]{32})$`
+    `^${Notion.APP_URL_PROTOCOL}.+([0-9a-f]{32})$`,
   );
 
   static logger: Logger = (level, message, extraInfo) => {
     log(
       `${message} - ${JSON.stringify(extraInfo)}`,
-      level === LogLevel.ERROR ? 'error' : 'warning'
+      level === LogLevel.ERROR ? 'error' : 'warning',
     );
   };
 
@@ -110,7 +110,7 @@ export class Notion {
 
   public async saveItemToDatabase(
     item: NoteroItem,
-    buildTitle: TitleBuilder
+    buildTitle: TitleBuilder,
   ): Promise<CreatePageResponse & UpdatePageResponse> {
     const pageID = item.getNotionPageID();
     const properties = await this.buildItemProperties(item, buildTitle);
@@ -133,7 +133,7 @@ export class Notion {
 
   private async buildItemProperties(
     item: NoteroItem,
-    buildTitle: TitleBuilder
+    buildTitle: TitleBuilder,
   ): Promise<DatabasePageProperties> {
     type Definition<T extends PropertyType = PropertyType> = {
       [P in T]: {
@@ -204,7 +204,7 @@ export class Notion {
         type: 'rich_text',
         buildRequest: async () =>
           Notion.buildRichText(
-            (await item.getFullCitation()) || item.getTitle()
+            (await item.getFullCitation()) || item.getTitle(),
           ),
       },
       {
@@ -212,7 +212,7 @@ export class Notion {
         type: 'rich_text',
         buildRequest: async () =>
           Notion.buildRichText(
-            (await item.getInTextCitation()) || item.getTitle()
+            (await item.getInTextCitation()) || item.getTitle(),
           ),
       },
       {

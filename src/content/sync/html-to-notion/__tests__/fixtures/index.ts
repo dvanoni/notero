@@ -26,5 +26,5 @@ export const htmlTestCases: NoteTestCase[] = Object.entries(cases).map(
     name,
     html: fs.readFileSync(path.resolve(__dirname, `${name}.html`), 'utf8'),
     expected,
-  })
+  }),
 );

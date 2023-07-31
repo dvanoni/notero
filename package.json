@@ -69,6 +69,7 @@
   "xpi": {
     "name": "Notero",
     "bootstrapped": true,
-    "releaseURL": "https://github.com/dvanoni/notero/releases/download/release/"
+    "releaseURL": "https://github.com/dvanoni/notero/releases/download/release/",
+    "supportsZotero7": true
   }
 }

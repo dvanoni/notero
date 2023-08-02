@@ -38,7 +38,7 @@ export function isListResult(result: ContentResult): result is ListResult {
 }
 
 export function isRichTextResult(
-  result: ContentResult
+  result: ContentResult,
 ): result is RichTextResult {
   return result.type === 'rich_text';
 }

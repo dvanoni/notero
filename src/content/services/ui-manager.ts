@@ -91,7 +91,7 @@ export class UIManager implements Service {
   private openPreferences() {
     this.window.openDialog(
       'chrome://notero/content/prefs/preferences.xul',
-      'notero-preferences'
+      'notero-preferences',
     );
   }
 }

@@ -27,7 +27,7 @@ describe('buildCollectionFullName', () => {
     collection.parentID = PARENT_ID;
 
     expect(buildCollectionFullName(collection)).toBe(
-      'Parent Name ▸ Collection Name'
+      'Parent Name ▸ Collection Name',
     );
   });
 });

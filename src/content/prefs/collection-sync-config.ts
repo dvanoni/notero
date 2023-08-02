@@ -38,7 +38,7 @@ export function loadSyncEnabledConfigs(): CollectionSyncConfigsRecord {
       }
       return syncEnabledConfigs;
     },
-    {}
+    {},
   );
 }
 
@@ -81,7 +81,7 @@ export function parseSyncConfigs(json: unknown): CollectionSyncConfigsRecord {
           configs[collectionID] = config;
           return configs;
         },
-        {}
+        {},
       );
   } catch (error) {
     log(`Failed to parse sync configs: ${String(error)}`, 'error');
@@ -93,7 +93,7 @@ export function parseSyncConfigs(json: unknown): CollectionSyncConfigsRecord {
 
 function convertKeyToNumber([key, value]: [string, unknown]): [
   number,
-  unknown
+  unknown,
 ] {
   return [Number(key), value];
 }
@@ -103,7 +103,7 @@ function isCollectionSyncConfig(value: unknown): value is CollectionSyncConfig {
 }
 
 function isCollectionSyncConfigEntry(
-  entry: [number, unknown]
+  entry: [number, unknown],
 ): entry is [Zotero.Collection['id'], CollectionSyncConfig] {
   const [key, value] = entry;
   return key > 0 && isCollectionSyncConfig(value);

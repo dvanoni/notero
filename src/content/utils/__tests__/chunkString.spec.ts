@@ -19,6 +19,6 @@ describe('chunkString', () => {
       expected: string[];
     }) => {
       expect(chunkString(str, chunkSize)).toStrictEqual(expected);
-    }
+    },
   );
 });

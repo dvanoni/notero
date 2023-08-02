@@ -3,7 +3,7 @@ export function getDOMParser() {
     return new DOMParser();
   } catch {
     return Cc['@mozilla.org/xmlextras/domparser;1'].createInstance(
-      Ci.nsIDOMParser
+      Ci.nsIDOMParser,
     );
   }
 }

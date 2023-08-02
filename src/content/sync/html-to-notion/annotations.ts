@@ -13,7 +13,7 @@ const TAG_ANNOTATIONS = {
 } satisfies Partial<Record<HTMLElementTagName, Annotations>>;
 
 function canAnnotateTag(
-  tagName: string
+  tagName: string,
 ): tagName is keyof typeof TAG_ANNOTATIONS {
   return tagName in TAG_ANNOTATIONS;
 }

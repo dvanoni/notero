@@ -5,13 +5,13 @@
  * @returns An array of items (which may include duplicates).
  */
 export function getAllCollectionItems(
-  collection: Zotero.Collection
+  collection: Zotero.Collection,
 ): Zotero.Item[] {
   return collection
     .getChildCollections(false)
     .reduce(
       (items, childCollection) =>
         items.concat(getAllCollectionItems(childCollection)),
-      collection.getChildItems(false)
+      collection.getChildItems(false),
     );
 }

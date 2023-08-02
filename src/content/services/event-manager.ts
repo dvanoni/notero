@@ -59,7 +59,7 @@ export class EventManager implements Service {
 
     Zotero.getMainWindow().removeEventListener(
       'unload',
-      this.unregisterObserver
+      this.unregisterObserver,
     );
   }
 
@@ -67,7 +67,7 @@ export class EventManager implements Service {
     this.observerID = Zotero.Notifier.registerObserver(
       this.observer,
       ['collection', 'collection-item', 'item', 'item-tag'],
-      'notero'
+      'notero',
     );
   };
 
@@ -83,7 +83,7 @@ export class EventManager implements Service {
       event: string,
       type: Zotero.Notifier.Type,
       ids: NotifierIDs,
-      _extraData: Record<string, unknown>
+      _extraData: Record<string, unknown>,
     ) => {
       log(`Notified of ${event} ${type} for IDs ${JSON.stringify(ids)}`);
 

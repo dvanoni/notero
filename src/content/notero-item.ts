@@ -44,7 +44,7 @@ export class NoteroItem {
 
   public getAuthors(): string[] {
     const primaryCreatorTypeID = Zotero.CreatorTypes.getPrimaryIDForType(
-      this.zoteroItem.itemTypeID
+      this.zoteroItem.itemTypeID,
     );
 
     return this.zoteroItem
@@ -55,7 +55,7 @@ export class NoteroItem {
 
   public getCollections(): string[] {
     return Zotero.Collections.get(this.zoteroItem.getCollections()).map(
-      buildCollectionFullName
+      buildCollectionFullName,
     );
   }
 
@@ -77,7 +77,7 @@ export class NoteroItem {
       .getCreators()
       .filter(
         ({ creatorTypeID }) =>
-          Zotero.CreatorTypes.getName(creatorTypeID) === 'editor'
+          Zotero.CreatorTypes.getName(creatorTypeID) === 'editor',
       )
       .map(NoteroItem.formatCreatorName);
   }
@@ -91,7 +91,7 @@ export class NoteroItem {
 
   private getCitation(
     format: string,
-    inTextCitation: boolean
+    inTextCitation: boolean,
   ): Promise<string | null> {
     return new Promise((resolve) => {
       const result = Zotero.QuickCopy.getContentFromItems(
@@ -100,7 +100,7 @@ export class NoteroItem {
         (obj, worked) => {
           resolve(worked ? obj.string.trim() : null);
         },
-        inTextCitation
+        inTextCitation,
       );
 
       if (result === false) {
@@ -113,14 +113,14 @@ export class NoteroItem {
 
   private async getCachedCitation(
     format: string,
-    inTextCitation: boolean
+    inTextCitation: boolean,
   ): Promise<string | null> {
     const cacheKey = `${format}-${String(inTextCitation)}`;
 
     if (this.cachedCitations[cacheKey] === undefined) {
       this.cachedCitations[cacheKey] = await this.getCitation(
         format,
-        inTextCitation
+        inTextCitation,
       );
     }
     return this.cachedCitations[cacheKey];
@@ -178,8 +178,9 @@ export class NoteroItem {
       // Sort to get largest ID first
       .sort((a, b) => b - a);
 
-    return Zotero.Items.get(attachmentIDs).filter((attachment) =>
-      attachment.getField('url')?.startsWith(Notion.APP_URL_PROTOCOL)
+    return Zotero.Items.get(attachmentIDs).filter(
+      (attachment) =>
+        attachment.getField('url')?.startsWith(Notion.APP_URL_PROTOCOL),
     );
   }
 
@@ -223,18 +224,18 @@ export class NoteroItem {
 
   private getSyncedNotesJSON(
     this: void,
-    attachment: Zotero.Item
+    attachment: Zotero.Item,
   ): string | undefined {
     const doc = getDOMParser().parseFromString(
       attachment.getNote(),
-      'text/html'
+      'text/html',
     );
 
     return doc.getElementById(SYNCED_NOTES_ID)?.innerText;
   }
 
   public getSyncedNoteBlockIDs(
-    attachment: Zotero.Item | undefined = this.getNotionLinkAttachment()
+    attachment: Zotero.Item | undefined = this.getNotionLinkAttachment(),
   ): SyncedNoteBlockIDs {
     if (!attachment) return {};
 
@@ -254,11 +255,11 @@ export class NoteroItem {
     if (isObject(parsedValue.noteBlockIDs)) {
       noteBlockIDs = Object.entries(parsedValue.noteBlockIDs)
         .filter(
-          (entry): entry is [string, string] => typeof entry[1] === 'string'
+          (entry): entry is [string, string] => typeof entry[1] === 'string',
         )
         .reduce<Record<string, string>>(
           (ids, [key, value]) => ({ ...ids, [key]: value }),
-          {}
+          {},
         );
     }
 
@@ -268,7 +269,7 @@ export class NoteroItem {
   public async saveSyncedNoteBlockID(
     containerBlockID: string,
     noteBlockID: string,
-    noteItemKey: Zotero.DataObjectKey
+    noteItemKey: Zotero.DataObjectKey,
   ) {
     const attachment = this.getNotionLinkAttachment();
     if (!attachment) return;
@@ -290,7 +291,7 @@ export class NoteroItem {
 
   private updateNotionLinkAttachmentNote(
     attachment: Zotero.Item,
-    syncedNoteBlockIDs?: Required<SyncedNoteBlockIDs>
+    syncedNoteBlockIDs?: Required<SyncedNoteBlockIDs>,
   ) {
     let note = `
 <h2 style="background-color: #ff666680;">Do not modify or delete!</h2>

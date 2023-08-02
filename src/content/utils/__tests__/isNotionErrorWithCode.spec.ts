@@ -9,7 +9,7 @@ describe('isNotionErrorWithCode', () => {
     const error = new Error('Generic error');
 
     expect(isNotionErrorWithCode(error, APIErrorCode.ObjectNotFound)).toBe(
-      false
+      false,
     );
   });
 
@@ -23,7 +23,7 @@ describe('isNotionErrorWithCode', () => {
     });
 
     expect(isNotionErrorWithCode(error, APIErrorCode.ObjectNotFound)).toBe(
-      false
+      false,
     );
   });
 
@@ -37,7 +37,7 @@ describe('isNotionErrorWithCode', () => {
     });
 
     expect(isNotionErrorWithCode(error, APIErrorCode.ObjectNotFound)).toBe(
-      true
+      true,
     );
   });
 });

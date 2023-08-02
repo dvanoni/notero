@@ -111,7 +111,7 @@ declare namespace Zotero {
      */
     erase(
       ids: DataObjectID | DataObjectID[],
-      options?: DataObject.EraseOptions
+      options?: DataObject.EraseOptions,
     ): Promise<void>;
 
     /**
@@ -175,7 +175,7 @@ declare namespace Zotero {
     getField(
       field: number | string,
       unformatted?: boolean,
-      includeBaseMapped?: boolean
+      includeBaseMapped?: boolean,
     ): string | undefined;
 
     getFilePathAsync(): Promise<string | false>;
@@ -220,12 +220,12 @@ declare namespace Zotero {
           event: string,
           type: Notifier.Type,
           ids: (number | string)[],
-          extraData: Record<string, unknown>
+          extraData: Record<string, unknown>,
         ): void;
       },
       types?: readonly Notifier.Type[],
       id?: string,
-      priority?: number
+      priority?: number,
     ): string;
 
     /**
@@ -324,7 +324,7 @@ declare namespace Zotero {
     registerObserver(
       name: string,
       handler: (value: Prefs.Value) => void,
-      global?: boolean
+      global?: boolean,
     ): symbol;
 
     /**
@@ -344,7 +344,7 @@ declare namespace Zotero {
 
     addLines(
       labels: string | Record<string, string>,
-      icons: string | Record<string, string>
+      icons: string | Record<string, string>,
     ): void;
 
     changeHeadline(text: string, icon?: string, postText?: string): void;
@@ -361,7 +361,7 @@ declare namespace Zotero {
       new (
         iconSrc: string,
         text: string,
-        parentItemProgress?: ItemProgress
+        parentItemProgress?: ItemProgress,
       ): ItemProgress;
 
       setError(): void;
@@ -401,7 +401,7 @@ declare namespace Zotero {
       items: [Item],
       format: string | QuickCopy.Format,
       callback?: (obj: { string: string }, worked: boolean) => void,
-      modified?: boolean
+      modified?: boolean,
     ): boolean | { html: string; text: string };
   }
 
@@ -458,7 +458,7 @@ declare interface Zotero {
   /** Log a message to the Mozilla JS error console */
   log(
     message: string,
-    type?: 'error' | 'warning' | 'exception' | 'strict'
+    type?: 'error' | 'warning' | 'exception' | 'strict',
   ): void;
 
   getActiveZoteroPane(): Zotero.ZoteroPane | null;

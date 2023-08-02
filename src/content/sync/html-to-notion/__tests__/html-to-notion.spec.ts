@@ -7,7 +7,7 @@ describe('convertHtmlToBlocks', () => {
     const html = '<h1>Unexpected</h1>';
 
     expect(() => convertHtmlToBlocks(html)).toThrow(
-      new Error('Failed to load HTML content')
+      new Error('Failed to load HTML content'),
     );
   });
 
@@ -15,6 +15,6 @@ describe('convertHtmlToBlocks', () => {
     'returns expected blocks for "$name"',
     ({ html, expected }) => {
       expect(convertHtmlToBlocks(html)).toStrictEqual(expected);
-    }
+    },
   );
 });

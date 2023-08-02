@@ -19,7 +19,7 @@ class Preferences {
 
     ReactDOM.render(
       <SyncConfigsTable />,
-      document.getElementById('notero-syncConfigsTable-container')
+      document.getElementById('notero-syncConfigsTable-container'),
     );
   }
 
@@ -27,6 +27,7 @@ class Preferences {
     Object.values(PageTitleFormat).forEach((format) => {
       const label = getLocalizedString(`notero.pageTitleFormat.${format}`);
       const item = this.pageTitleFormatMenu.appendItem(label, format);
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
       if (format === this.pageTitleFormatMenu.value) {
         this.pageTitleFormatMenu.selectedItem = item;
       }

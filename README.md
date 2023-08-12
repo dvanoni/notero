@@ -240,6 +240,17 @@ See the [Syncing Items](#syncing-items) section above.
 
 ### How to fix Notion API errors
 
+#### Invalid request URL
+
+If you receive the following error:
+
+> APIResponseError: Invalid request URL.
+
+This usually occurs when there's something amiss with the database ID entered in
+the Notero preferences. Double check that the database ID follows the format
+described in the [Configure Notion](#configure-notion) section. It should be 32
+characters consisting of only numbers and letters.
+
 #### Could not find database
 
 If you receive the following error:

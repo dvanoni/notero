@@ -4,9 +4,10 @@ export class ChromeManager implements Service {
   private chromeHandle?: XPCOM.nsIJSRAIIHelper;
 
   public startup({ rootURI }: PluginInfo) {
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const aomStartup = Cc[
       '@mozilla.org/addons/addon-manager-startup;1'
-    ].getService(Ci.amIAddonManagerStartup);
+    ]!.getService(Ci.amIAddonManagerStartup);
 
     const manifestURI = Services.io.newURI(rootURI + 'manifest.json');
 

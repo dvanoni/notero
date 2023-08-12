@@ -66,6 +66,8 @@ async function createContainerBlock(
     ],
   });
 
+  if (!results[0]) throw new Error('Failed to create container block');
+
   return results[0].id;
 }
 
@@ -85,6 +87,8 @@ async function createNoteBlock(
       },
     ],
   });
+
+  if (!results[0]) throw new Error('Failed to create note block');
 
   const noteBlockID = results[0].id;
 

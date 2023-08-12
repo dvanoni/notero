@@ -3,7 +3,7 @@ import type { Notero } from './content/notero';
 const LOG_PREFIX = 'Notero: ';
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
+// @ts-expect-error
 if (typeof Zotero === 'undefined') {
   // eslint-disable-next-line no-var
   var Zotero: Zotero & { Notero?: Notero };
@@ -23,7 +23,8 @@ function log(msg: string) {
 // and the `Zotero` is automatically made available.
 async function waitForZotero() {
   if (typeof Zotero !== 'undefined') {
-    return await Zotero.initializationPromise;
+    await Zotero.initializationPromise;
+    return;
   }
 
   const { Services } = ChromeUtils.import(
@@ -104,7 +105,7 @@ async function startup(
 
   // `Services` may not be available in Zotero 6
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
+  // @ts-expect-error
   if (typeof Services === 'undefined') {
     // eslint-disable-next-line no-var
     var { Services } = ChromeUtils.import(

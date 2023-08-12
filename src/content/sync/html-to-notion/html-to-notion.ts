@@ -305,6 +305,8 @@ function trimRichText(richText: RichText): RichText {
   ): RichText {
     const richTextPart = richText[index];
 
+    if (!richTextPart) return [];
+
     if (!('text' in richTextPart)) return [richTextPart];
 
     const content = updater(richTextPart.text.content);

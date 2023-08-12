@@ -154,5 +154,6 @@ declare module 'components/virtualized-table' {
   // eslint-disable-next-line import/no-default-export
   export default VirtualizedTable;
 
+  // eslint-disable-next-line @typescript-eslint/no-extraneous-class
   class WindowedList {}
 }

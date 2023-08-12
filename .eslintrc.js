@@ -7,7 +7,7 @@ module.exports = {
   },
   extends: [
     'eslint:recommended',
-    'plugin:@typescript-eslint/recommended-type-checked',
+    'plugin:@typescript-eslint/strict-type-checked',
     'plugin:import/recommended',
     'plugin:import/typescript',
     'prettier',
@@ -26,6 +26,10 @@ module.exports = {
     },
   },
   rules: {
+    '@typescript-eslint/no-invalid-void-type': [
+      'error',
+      { allowAsThisParameter: true },
+    ],
     '@typescript-eslint/no-unused-vars': [
       'error',
       {

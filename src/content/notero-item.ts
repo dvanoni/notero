@@ -123,7 +123,7 @@ export class NoteroItem {
         inTextCitation,
       );
     }
-    return this.cachedCitations[cacheKey];
+    return this.cachedCitations[cacheKey] || null;
   }
 
   public async getAuthorDateCitation(): Promise<string | null> {

@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.4.10](https://github.com/dvanoni/notero/compare/v0.4.9...v0.4.10) (2023-08-14)
+
+
+### Features
+
+* Support note highlight colors other than Zotero's ([#312](https://github.com/dvanoni/notero/issues/312)) ([af4d8fa](https://github.com/dvanoni/notero/commit/af4d8fa196fcd225dfb6750d84fc74336484c9a5))
+
 ### [0.4.9](https://github.com/dvanoni/notero/compare/v0.4.8...v0.4.9) (2023-07-31)
 
 

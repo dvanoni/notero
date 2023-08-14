@@ -2,6 +2,8 @@ import { Annotations, Color } from '../notion-types';
 
 import { HTMLElementTagName } from './dom-utils';
 
+type RGB = [r: number, g: number, b: number];
+
 const TAG_ANNOTATIONS = {
   B: { bold: true },
   CODE: { code: true },
@@ -18,40 +20,96 @@ function canAnnotateTag(
   return tagName in TAG_ANNOTATIONS;
 }
 
-// https://www.zotero.org/support/note_templates#variables
-const ZOTERO_COLORS: Record<string, Color> = {
-  '255, 32, 32': 'red', // #ff2020
-  '255, 119, 0': 'orange', // #ff7700
-  '255, 203, 0': 'yellow', // #ffcb00
-  '78, 179, 28': 'green', // #4eb31c
-  '5, 162, 239': 'blue', // #05a2ef
-  '121, 83, 227': 'purple', // #7953e3
-  '235, 82, 247': 'pink', // #eb52f7
-  '126, 131, 134': 'gray', // #7e8386
-  '255, 102, 102': 'red_background', // #ff6666
-  '241, 152, 55': 'orange_background', // #f19837
-  '255, 212, 0': 'yellow_background', // #ffd400
-  '95, 178, 54': 'green_background', // #5fb236
-  '46, 168, 229': 'blue_background', // #2ea8e5
-  '162, 138, 229': 'purple_background', // #a28ae5
-  '229, 110, 238': 'pink_background', // #e56eee
-  '170, 170, 170': 'gray_background', // #aaaaaa
-};
+// These were originally derived from https://www.zotero.org/support/note_templates#variables
+// and then modified to better match colors provided in a PDF shared in
+// https://github.com/dvanoni/notero/issues/4#issuecomment-1661322835
+const BACKGROUND_COLORS = new Map([
+  ['red_background', [255, 102, 102]],
+  ['orange_background', [255, 180, 55]],
+  ['yellow_background', [255, 212, 0]],
+  ['green_background', [95, 240, 54]],
+  ['blue_background', [80, 200, 229]],
+  ['purple_background', [162, 138, 229]],
+  ['pink_background', [229, 110, 238]],
+  ['gray_background', [170, 170, 170]],
+]) satisfies Map<Color, RGB>;
 
-function getNotionColorFromString(color: string): Color {
+// Determined empirically from Zotero
+const TEXT_COLORS = new Map([
+  ['red', [255, 32, 32]], // #ff2020
+  ['orange', [255, 119, 0]], // #ff7700
+  ['yellow', [255, 203, 0]], // #ffcb00
+  ['green', [78, 179, 28]], // #4eb31c
+  ['blue', [5, 162, 239]], // #05a2ef
+  ['purple', [121, 83, 227]], // #7953e3
+  ['pink', [235, 82, 247]], // #eb52f7
+  ['gray', [126, 131, 134]], // #7e8386
+]) satisfies Map<Color, RGB>;
+
+/**
+ * Return the squared distance between two colors using the "redmean" approach.
+ * @see https://en.wikipedia.org/wiki/Color_difference
+ */
+function colorDifference(color1: RGB, color2: RGB): number {
+  const [r1, g1, b1] = color1;
+  const [r2, g2, b2] = color2;
+  const rMean = (r1 + r2) / 2;
+
+  return (
+    (2 + rMean / 256) * (r1 - r2) ** 2 +
+    4 * (g1 - g2) ** 2 +
+    (2 + (255 - rMean) / 256) * (b1 - b2) ** 2
+  );
+}
+
+function getClosestNotionColor(target: RGB, palette: Map<Color, RGB>): Color {
+  let closestDifference = Number.MAX_VALUE;
+  let closestColor: Color;
+
+  palette.forEach((rgb, color) => {
+    const difference = colorDifference(target, rgb);
+
+    if (difference < closestDifference) {
+      closestDifference = difference;
+      closestColor = color;
+    }
+  });
+
+  return closestColor;
+}
+
+function getRGBFromStyleString(color: string): RGB | undefined {
   if (!color) return;
 
-  const matches = color.match(/^rgba?\((\d+,\s*\d+,\s*\d+)/);
-  const rgb = matches?.[1];
+  const matches = color.match(/^rgba?\((\d+),\s*(\d+),\s*(\d+)/);
 
-  return (rgb && ZOTERO_COLORS[rgb]) || undefined;
+  if (!matches) return;
+
+  const r = Number(matches[1]);
+  const g = Number(matches[2]);
+  const b = Number(matches[3]);
+
+  return [r, g, b];
 }
 
 export function getNotionColor(element: HTMLElement): Color {
-  return (
-    getNotionColorFromString(element.style.backgroundColor) ||
-    getNotionColorFromString(element.style.color)
-  );
+  const { backgroundColor, color } = element.style;
+
+  if (backgroundColor) {
+    const rgb = getRGBFromStyleString(backgroundColor);
+
+    if (rgb) {
+      return getClosestNotionColor(rgb, BACKGROUND_COLORS);
+    }
+  }
+
+  if (color) {
+    const rgb = getRGBFromStyleString(color);
+
+    if (rgb) {
+      return getClosestNotionColor(rgb, TEXT_COLORS);
+    }
+  }
 }
 
 export function getAnnotations(element: HTMLElement): NonNullable<Annotations> {

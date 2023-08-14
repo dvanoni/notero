@@ -3,6 +3,7 @@ import path from 'path';
 
 import { BlockObjectRequest } from '@notionhq/client/build/src/api-endpoints';
 
+import * as annotations from './annotations';
 import * as blockquote from './blockquote';
 import * as formatting from './formatting';
 import * as nestedStyles from './nestedStyles';
@@ -18,6 +19,7 @@ const cases: Record<string, Pick<NoteTestCase, 'expected'>> = {
   simple,
   blockquote,
   nestedStyles,
+  annotations,
   formatting,
 };
 

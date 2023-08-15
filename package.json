@@ -1,6 +1,6 @@
 {
   "name": "notero",
-  "version": "0.4.10",
+  "version": "0.4.11",
   "description": "Sync Zotero items into a Notion database",
   "scripts": {
     "build": "node esbuild.js",

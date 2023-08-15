@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.4.11](https://github.com/dvanoni/notero/compare/v0.4.10...v0.4.11) (2023-08-15)
+
+
+### Bug Fixes
+
+* Downgrade `core-js` to v3.31.1 to fix issue with `use strict` ([#317](https://github.com/dvanoni/notero/issues/317)) ([c525841](https://github.com/dvanoni/notero/commit/c525841b024e182f7778fd81dc8d2305a513989f))
+
 ### [0.4.10](https://github.com/dvanoni/notero/compare/v0.4.9...v0.4.10) (2023-08-14)
 
 

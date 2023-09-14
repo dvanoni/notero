@@ -2,8 +2,7 @@ import type { Notero } from './content/notero';
 
 const LOG_PREFIX = 'Notero: ';
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-expect-error
+// @ts-expect-error Check if `Zotero` is defined
 if (typeof Zotero === 'undefined') {
   // eslint-disable-next-line no-var
   var Zotero: Zotero & { Notero?: Notero };
@@ -104,8 +103,7 @@ async function startup(
   log('Starting');
 
   // `Services` may not be available in Zotero 6
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-expect-error
+  // @ts-expect-error Check if `Services` is defined
   if (typeof Services === 'undefined') {
     // eslint-disable-next-line no-var
     var { Services } = ChromeUtils.import(

@@ -1,9 +1,9 @@
-import type { PluginInfo, Service } from './service';
+import type { Service, ServiceParams } from './service';
 
 export class ChromeManager implements Service {
   private chromeHandle?: XPCOM.nsIJSRAIIHelper;
 
-  public startup({ rootURI }: PluginInfo) {
+  public startup({ pluginInfo: { rootURI } }: ServiceParams) {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const aomStartup = Cc[
       '@mozilla.org/addons/addon-manager-startup;1'

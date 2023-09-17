@@ -17,8 +17,8 @@ import {
   log,
 } from '../utils';
 
-import { EventManager, NotifierEventParams } from './event-manager';
-import type { Service } from './service';
+import type { EventManager, NotifierEventParams } from './event-manager';
+import type { Service, ServiceParams } from './service';
 
 const SYNC_DEBOUNCE_MS = 2000;
 
@@ -32,28 +32,38 @@ export class SyncManager implements Service {
     return `chrome://zotero/skin/tick${Zotero.hiDPISuffix}.png`;
   }
 
+  private eventManager?: EventManager;
+
   private readonly progressWindow = new Zotero.ProgressWindow();
 
   private queuedSync?: QueuedSync;
 
   private syncInProgress = false;
 
-  public startup() {
-    EventManager.addListener('notifier-event', this.handleNotifierEvent);
-    EventManager.addListener(
+  public startup({ dependencies: { eventManager } }: ServiceParams) {
+    this.eventManager = eventManager;
+
+    eventManager.addListener('notifier-event', this.handleNotifierEvent);
+    eventManager.addListener(
       'request-sync-collection',
       this.handleSyncCollection,
     );
-    EventManager.addListener('request-sync-items', this.handleSyncItems);
+    eventManager.addListener('request-sync-items', this.handleSyncItems);
   }
 
   public shutdown() {
-    EventManager.removeListener('notifier-event', this.handleNotifierEvent);
-    EventManager.removeListener(
+    this.eventManager?.removeListener(
+      'notifier-event',
+      this.handleNotifierEvent,
+    );
+    this.eventManager?.removeListener(
       'request-sync-collection',
       this.handleSyncCollection,
     );
-    EventManager.removeListener('request-sync-items', this.handleSyncItems);
+    this.eventManager?.removeListener(
+      'request-sync-items',
+      this.handleSyncItems,
+    );
   }
 
   private handleNotifierEvent = (...params: NotifierEventParams) => {

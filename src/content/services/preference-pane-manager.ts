@@ -1,7 +1,7 @@
-import type { PluginInfo, Service } from './service';
+import type { Service, ServiceParams } from './service';
 
 export class PreferencePaneManager implements Service {
-  public startup({ pluginID, rootURI }: PluginInfo) {
+  public startup({ pluginInfo: { pluginID, rootURI } }: ServiceParams) {
     void Zotero.PreferencePanes.register({
       pluginID,
       src: rootURI + 'content/prefs/preferences.xhtml',

@@ -40,9 +40,9 @@ type EventTypes = {
 const emitter = new EventEmitter<EventTypes>();
 
 export class EventManager implements Service {
-  static readonly emit = emitter.emit.bind(emitter);
-  static readonly addListener = emitter.addListener.bind(emitter);
-  static readonly removeListener = emitter.removeListener.bind(emitter);
+  readonly emit = emitter.emit.bind(emitter);
+  readonly addListener = emitter.addListener.bind(emitter);
+  readonly removeListener = emitter.removeListener.bind(emitter);
 
   private observerID?: ReturnType<Zotero.Notifier['registerObserver']>;
 

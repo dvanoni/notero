@@ -1,4 +1,5 @@
 import { IS_ZOTERO_7 } from './constants';
+import type { PluginInfo } from './plugin-info';
 import {
   ChromeManager,
   DefaultPreferencesLoader,
@@ -15,21 +16,30 @@ if (!IS_ZOTERO_7) {
 }
 
 export class Notero {
-  private readonly services: Service[] = [
-    ...(IS_ZOTERO_7
-      ? [new ChromeManager(), new PreferencePaneManager()]
-      : [new DefaultPreferencesLoader()]),
-    new EventManager(),
-    new SyncManager(),
-    new UIManager(),
-  ];
+  private readonly eventManager: EventManager;
+  private readonly services: Service[];
 
-  public async startup(pluginID: string, rootURI: string) {
+  public constructor() {
+    this.eventManager = new EventManager();
+
+    this.services = [
+      ...(IS_ZOTERO_7
+        ? [new ChromeManager(), new PreferencePaneManager()]
+        : [new DefaultPreferencesLoader()]),
+      this.eventManager,
+      new SyncManager(),
+      new UIManager(),
+    ];
+  }
+
+  public async startup(pluginInfo: PluginInfo) {
     await Zotero.uiReadyPromise;
+
+    const dependencies = { eventManager: this.eventManager };
 
     this.services.forEach((service) => {
       log(`Starting ${service.constructor.name}`);
-      service.startup({ pluginID, rootURI });
+      service.startup({ dependencies, pluginInfo });
     });
   }
 

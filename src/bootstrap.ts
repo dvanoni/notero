@@ -116,7 +116,7 @@ async function startup(
 
   Services.scriptloader.loadSubScript(rootURI + 'content/notero.js');
 
-  void Zotero.Notero?.startup(id, rootURI);
+  void Zotero.Notero?.startup({ pluginID: id, rootURI, version });
 }
 
 /**

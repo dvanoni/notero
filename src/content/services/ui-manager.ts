@@ -1,8 +1,8 @@
 import { IS_ZOTERO_7 } from '../constants';
 import { createXULElement, getLocalizedString, log } from '../utils';
 
-import { EventManager } from './event-manager';
-import type { Service } from './service';
+import type { EventManager } from './event-manager';
+import type { Service, ServiceParams } from './service';
 
 export class UIManager implements Service {
   private get window() {
@@ -13,9 +13,12 @@ export class UIManager implements Service {
     return this.window.document;
   }
 
+  private eventManager?: EventManager;
+
   private managedNodes = new Set<Node>();
 
-  public startup() {
+  public startup({ dependencies: { eventManager } }: ServiceParams) {
+    this.eventManager = eventManager;
     this.initCollectionMenuItem();
     this.initItemMenuItem();
     if (!IS_ZOTERO_7) this.initToolsMenuItem();
@@ -34,7 +37,7 @@ export class UIManager implements Service {
         const collection =
           Zotero.getActiveZoteroPane()?.getSelectedCollection(false);
         if (collection) {
-          EventManager.emit('request-sync-collection', collection);
+          this.eventManager?.emit('request-sync-collection', collection);
         }
       },
     });
@@ -47,7 +50,7 @@ export class UIManager implements Service {
       onCommand: () => {
         const items = Zotero.getActiveZoteroPane()?.getSelectedItems(false);
         if (items) {
-          EventManager.emit('request-sync-items', items);
+          this.eventManager?.emit('request-sync-items', items);
         }
       },
     });

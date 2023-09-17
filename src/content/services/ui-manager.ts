@@ -5,10 +5,6 @@ import type { EventManager } from './event-manager';
 import type { Service, ServiceParams } from './service';
 
 export class UIManager implements Service {
-  private get window() {
-    return Zotero.getMainWindow();
-  }
-
   private get document() {
     return this.window.document;
   }
@@ -17,8 +13,12 @@ export class UIManager implements Service {
 
   private managedNodes = new Set<Node>();
 
-  public startup({ dependencies: { eventManager } }: ServiceParams) {
+  private window!: ReturnType<Zotero['getMainWindow']>;
+
+  public startup({ dependencies: { eventManager, window } }: ServiceParams) {
     this.eventManager = eventManager;
+    this.window = window;
+
     this.initCollectionMenuItem();
     this.initItemMenuItem();
     if (!IS_ZOTERO_7) this.initToolsMenuItem();

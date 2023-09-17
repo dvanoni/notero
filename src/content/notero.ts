@@ -35,7 +35,10 @@ export class Notero {
   public async startup(pluginInfo: PluginInfo) {
     await Zotero.uiReadyPromise;
 
-    const dependencies = { eventManager: this.eventManager };
+    const dependencies = {
+      eventManager: this.eventManager,
+      window: Zotero.getMainWindow(),
+    };
 
     this.services.forEach((service) => {
       log(`Starting ${service.constructor.name}`);

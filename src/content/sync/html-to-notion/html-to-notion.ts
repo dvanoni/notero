@@ -79,7 +79,7 @@ function convertNode(
         : convertBlockElement(parsedNode, options);
     case 'list':
       return convertListElement(parsedNode, options);
-    case 'math':
+    case 'math_block':
       return blockResult({ equation: { expression: parsedNode.expression } });
     default:
       return richTextResult(convertRichTextNode(parsedNode, options));
@@ -251,6 +251,10 @@ function convertRichTextNode(
 
   if (node.type === 'br') {
     return buildRichText('\n', { ...options, preserveWhitespace: true });
+  }
+
+  if (node.type === 'inline_math') {
+    return [{ equation: { expression: node.expression } }];
   }
 
   const updatedOptions = { ...options };

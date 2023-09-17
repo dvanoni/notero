@@ -292,4 +292,13 @@ export const expected: BlockObjectRequest[] = [
       expression: 'x^2 = 5',
     },
   },
+  {
+    paragraph: {
+      rich_text: [
+        { text: { content: 'inline math ' } },
+        { equation: { expression: 'p_{i}^{g}' } },
+        { text: { content: ' goes here' } },
+      ],
+    },
+  },
 ];

@@ -37,12 +37,12 @@ type EventTypes = {
   'request-sync-items': (items: Zotero.Item[]) => void;
 };
 
-const emitter = new EventEmitter<EventTypes>();
-
 export class EventManager implements Service {
-  readonly emit = emitter.emit.bind(emitter);
-  readonly addListener = emitter.addListener.bind(emitter);
-  readonly removeListener = emitter.removeListener.bind(emitter);
+  private readonly emitter = new EventEmitter<EventTypes>();
+
+  readonly emit = this.emitter.emit.bind(this.emitter);
+  readonly addListener = this.emitter.addListener.bind(this.emitter);
+  readonly removeListener = this.emitter.removeListener.bind(this.emitter);
 
   private observerID?: ReturnType<Zotero.Notifier['registerObserver']>;
 
@@ -53,7 +53,7 @@ export class EventManager implements Service {
   }
 
   public shutdown() {
-    emitter.removeAllListeners();
+    this.emitter.removeAllListeners();
 
     this.unregisterObserver();
 
@@ -93,12 +93,16 @@ export class EventManager implements Service {
         case 'collection.delete':
         case 'collection.modify':
         case 'item.modify':
-          emitter.emit('notifier-event', eventName, ids as number[]);
+          this.emitter.emit('notifier-event', eventName, ids as number[]);
           break;
         case 'collection-item.add':
         case 'item-tag.modify':
         case 'item-tag.remove':
-          emitter.emit('notifier-event', eventName, this.mapCompoundIDs(ids));
+          this.emitter.emit(
+            'notifier-event',
+            eventName,
+            this.mapCompoundIDs(ids),
+          );
           break;
       }
     },

@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.4.12](https://github.com/dvanoni/notero/compare/v0.4.11...v0.4.12) (2023-09-17)
+
+
+### Features
+
+* Support inline math expressions in notes ([#334](https://github.com/dvanoni/notero/issues/334)) ([9e864a8](https://github.com/dvanoni/notero/commit/9e864a805ad6bd93dc58976d9b695bc40693e099))
+
 ### [0.4.11](https://github.com/dvanoni/notero/compare/v0.4.10...v0.4.11) (2023-08-15)
 
 

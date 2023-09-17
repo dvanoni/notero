@@ -81,10 +81,13 @@ async function waitForZotero() {
  * installed, upgraded, or downgraded.
  */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-async function install(_data: BootstrapData, _reason: Zotero.Plugins.REASONS) {
+async function install(
+  { version }: BootstrapData,
+  _reason: Zotero.Plugins.REASONS,
+) {
   await waitForZotero();
 
-  log('Installed');
+  log(`Installed v${version}`);
 }
 
 /**
@@ -95,12 +98,12 @@ async function install(_data: BootstrapData, _reason: Zotero.Plugins.REASONS) {
  */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 async function startup(
-  { id, resourceURI, rootURI = resourceURI.spec }: BootstrapData,
+  { id, resourceURI, rootURI = resourceURI.spec, version }: BootstrapData,
   _reason: Zotero.Plugins.REASONS,
 ) {
   await waitForZotero();
 
-  log('Starting');
+  log(`Starting v${version}`);
 
   // `Services` may not be available in Zotero 6
   // @ts-expect-error Check if `Services` is defined
@@ -123,8 +126,8 @@ async function startup(
  * shut down, and objects disposed of.
  */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-function shutdown(_data: BootstrapData, _reason: Zotero.Plugins.REASONS) {
-  log('Shutting down');
+function shutdown({ version }: BootstrapData, _reason: Zotero.Plugins.REASONS) {
+  log(`Shutting down v${version}`);
 
   Zotero.Notero?.shutdown();
 
@@ -136,12 +139,15 @@ function shutdown(_data: BootstrapData, _reason: Zotero.Plugins.REASONS) {
  * particular version of an extension is uninstalled.
  */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-function uninstall(_data: BootstrapData, _reason: Zotero.Plugins.REASONS) {
+function uninstall(
+  { version }: BootstrapData,
+  _reason: Zotero.Plugins.REASONS,
+) {
   // `Zotero` object isn't available in `uninstall()` in Zotero 6, so log manually
   if (typeof Zotero === 'undefined') {
-    dump(`${LOG_PREFIX}Uninstalled\n\n`);
+    dump(`${LOG_PREFIX}Uninstalled v${version}\n\n`);
     return;
   }
 
-  log('Uninstalled');
+  log(`Uninstalled v${version}`);
 }

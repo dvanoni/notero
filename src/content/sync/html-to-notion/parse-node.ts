@@ -36,16 +36,22 @@ type BRElement = {
   type: 'br';
 };
 
+type InlineMathElement = {
+  element: HTMLElement;
+  expression: string;
+  type: 'inline_math';
+};
+
 export type ListElement = {
   element: HTMLElement;
   type: 'list';
 };
 
-type MathElement = {
+type MathBlockElement = {
   blockType: 'equation';
   element: HTMLElement;
   expression: string;
-  type: 'math';
+  type: 'math_block';
 };
 
 type RichTextElement = {
@@ -63,8 +69,9 @@ type TextNode = {
 export type ParsedNode =
   | BlockElement
   | BRElement
+  | InlineMathElement
   | ListElement
-  | MathElement
+  | MathBlockElement
   | RichTextElement
   | TextNode;
 
@@ -72,6 +79,19 @@ function doesBlockSupportChildren(
   blockType: BlockElement['blockType'],
 ): blockType is ParentBlockType {
   return BLOCKS_SUPPORTING_CHILDREN.has(blockType);
+}
+
+function getMathExpression(element: HTMLElement): string | null {
+  const { classList, textContent } = element;
+
+  const isMathElement = textContent && classList.contains('math');
+
+  if (!isMathElement) return null;
+
+  const matches = /^\${1,2}((?:.|\n)+?)\${1,2}$/.exec(textContent);
+  const expression = matches?.[1];
+
+  return expression || null;
 }
 
 function parseAnchorElement(element: HTMLAnchorElement): RichTextElement {
@@ -108,21 +128,28 @@ function parseListItemElement(element: HTMLElement): BlockElement {
   return parseBlockElement(element, 'paragraph');
 }
 
-function parsePreElement(element: HTMLElement): ParsedNode {
-  const { classList, textContent } = element;
+function parsePreElement(
+  element: HTMLElement,
+): BlockElement | MathBlockElement {
+  const expression = getMathExpression(element);
 
-  const isMathElement = textContent && classList.contains('math');
-
-  if (isMathElement) {
-    const matches = /^\$\$((?:.|\n)+)\$\$$/.exec(textContent);
-    const expression = matches?.[1];
-
-    if (expression) {
-      return { blockType: 'equation', element, expression, type: 'math' };
-    }
+  if (expression) {
+    return { blockType: 'equation', element, expression, type: 'math_block' };
   }
 
   return parseBlockElement(element, 'code');
+}
+
+function parseSpanElement(
+  element: HTMLElement,
+): InlineMathElement | RichTextElement {
+  const expression = getMathExpression(element);
+
+  if (expression) {
+    return { element, expression, type: 'inline_math' };
+  }
+
+  return parseRichTextElement(element);
 }
 
 function parseRichTextElement(element: HTMLElement): RichTextElement {
@@ -167,6 +194,8 @@ export function parseNode(node: Node): ParsedNode | undefined {
       return { element: node, type: 'list' };
     case 'PRE':
       return parsePreElement(node);
+    case 'SPAN':
+      return parseSpanElement(node);
     default:
       return parseRichTextElement(node);
   }

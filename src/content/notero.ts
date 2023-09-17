@@ -34,7 +34,7 @@ export class Notero {
   }
 
   public shutdown() {
-    this.services.forEach((service) => {
+    [...this.services].reverse().forEach((service) => {
       if (service.shutdown) {
         log(`Shutting down ${service.constructor.name}`);
         service.shutdown();

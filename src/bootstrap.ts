@@ -1,6 +1,6 @@
 import type { Notero } from './content/notero';
 
-const LOG_PREFIX = 'Notero: ';
+const LOG_PREFIX = '[Notero] ';
 
 // @ts-expect-error Check if `Zotero` is defined
 if (typeof Zotero === 'undefined') {

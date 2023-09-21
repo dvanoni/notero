@@ -89,7 +89,7 @@ Detailed setup instructions are below.
     See [examples](#example-notion-databases) below that you can duplicate into
     your Notion workspace.
 
-2.  Create a Notion [internal integration](https://developers.notion.com/docs/create-a-notion-integration#step-1-create-an-integration)
+2.  Create a Notion [internal integration](https://developers.notion.com/docs/create-a-notion-integration)
     at https://www.notion.com/my-integrations and enable _all_ of the
     "content capabilities."
 
@@ -101,17 +101,16 @@ Detailed setup instructions are below.
       />
     </details>
 
-3.  Take note of the **internal integration token** from the previous step.
+3.  Take note of the "internal integration secret" from the previous step.
 
-4.  Share the database with the integration you created.
+4.  Give your integration access to your database.
 
-    From the [Notion developer docs](https://developers.notion.com/docs/create-a-notion-integration#step-2-share-a-database-with-your-integration):
+    From the [Notion developer docs](https://developers.notion.com/docs/create-a-notion-integration#give-your-integration-page-permissions):
 
     > 1. Go to the database page in your workspace.
-    > 2. Click the **•••** on the top right corner of the page.
-    > 3. At the bottom of the pop-up, click **Add connections**.
-    > 4. Search for and select your integration in the
-    >    **Search for connections...** menu.
+    > 2. Click on the **•••** More menu in the top-right corner of the page.
+    > 3. Scroll down to and click **+ Add Connections**.
+    > 4. Search for and select your integration in the **Search for connections...** menu.
 
       <details>
         <summary>Example of share settings from the Notion documentation</summary>
@@ -123,18 +122,16 @@ Detailed setup instructions are below.
 
 5.  Take note of the database ID.
 
-    From the [Notion developer docs](https://developers.notion.com/docs/create-a-notion-integration#step-3-save-the-database-id):
+    To get the database ID, copy the URL of your Notion database. If you're
+    using an inline database, then make sure you're viewing the database as a
+    full page. If you're using the Notion desktop app, then click **Share**
+    and select **Copy link** to find the database URL.
 
-    > To get the database ID, copy the URL of your Notion database. If you're
-    > using an inline database, then make sure you're viewing the database as a
-    > full page. If you're using the Notion desktop app, then click **Share**
-    > and select **Copy link** to find the database URL.
-    >
-    > The database ID is the string of characters in the database URL that is
-    > between the slash following your workspace name (if you named it) and the
-    > question mark. The ID is 32 characters long, containing numbers and letters.
-    >
-    > ![Notion database ID](https://files.readme.io/62e5027-notion_database_id.png)
+    The database ID is the string of characters in the database URL that is
+    between the slash following your workspace name (if you named it) and the
+    question mark. The ID is 32 characters long, containing numbers and letters.
+
+    ![Notion database ID](https://files.readme.io/62e5027-notion_database_id.png)
 
 6.  Configure the database properties as desired. See the
     [database properties](#notion-database-properties) section below for more details.

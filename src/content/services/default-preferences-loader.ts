@@ -1,6 +1,6 @@
 import { log } from '../utils';
 
-import type { PluginInfo, Service } from './service';
+import type { Service, ServiceParams } from './service';
 
 const branch = Services.prefs.getDefaultBranch('');
 
@@ -28,7 +28,7 @@ const prefsContext = {
  * @see https://www.zotero.org/support/dev/zotero_7_for_developers#default_preferences
  */
 export class DefaultPreferencesLoader implements Service {
-  public startup({ rootURI }: PluginInfo) {
+  public startup({ pluginInfo: { rootURI } }: ServiceParams) {
     Services.scriptloader.loadSubScript(rootURI + 'prefs.js', prefsContext);
   }
 }

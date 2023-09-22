@@ -10,12 +10,16 @@ const logger: Logger = (level, message, extraInfo) => {
   );
 };
 
-export function getNotionClient() {
+export function getNotionClient(window: Window) {
   const authToken = getNoteroPref(NoteroPref.notionToken);
 
   if (!authToken) {
     throw new Error(`Missing ${getLocalizedString(NoteroPref.notionToken)}`);
   }
 
-  return new Client({ auth: authToken, logger });
+  return new Client({
+    auth: authToken,
+    fetch: window.fetch.bind(window),
+    logger,
+  });
 }

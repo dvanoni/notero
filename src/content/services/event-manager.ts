@@ -37,46 +37,38 @@ type EventTypes = {
   'request-sync-items': (items: Zotero.Item[]) => void;
 };
 
-const emitter = new EventEmitter<EventTypes>();
-
 export class EventManager implements Service {
-  static readonly emit = emitter.emit.bind(emitter);
-  static readonly addListener = emitter.addListener.bind(emitter);
-  static readonly removeListener = emitter.removeListener.bind(emitter);
+  private readonly emitter = new EventEmitter<EventTypes>();
+
+  readonly emit = this.emitter.emit.bind(this.emitter);
+  readonly addListener = this.emitter.addListener.bind(this.emitter);
+  readonly removeListener = this.emitter.removeListener.bind(this.emitter);
 
   private observerID?: ReturnType<Zotero.Notifier['registerObserver']>;
 
   public startup() {
     this.registerObserver();
-
-    Zotero.getMainWindow().addEventListener('unload', this.unregisterObserver);
   }
 
   public shutdown() {
-    emitter.removeAllListeners();
-
+    this.emitter.removeAllListeners();
     this.unregisterObserver();
-
-    Zotero.getMainWindow().removeEventListener(
-      'unload',
-      this.unregisterObserver,
-    );
   }
 
-  private registerObserver = () => {
+  private registerObserver() {
     this.observerID = Zotero.Notifier.registerObserver(
       this.observer,
       ['collection', 'collection-item', 'item', 'item-tag'],
       'notero',
     );
-  };
+  }
 
-  private unregisterObserver = () => {
+  private unregisterObserver() {
     if (this.observerID) {
       Zotero.Notifier.unregisterObserver(this.observerID);
       delete this.observerID;
     }
-  };
+  }
 
   private observer = {
     notify: (
@@ -93,12 +85,16 @@ export class EventManager implements Service {
         case 'collection.delete':
         case 'collection.modify':
         case 'item.modify':
-          emitter.emit('notifier-event', eventName, ids as number[]);
+          this.emitter.emit('notifier-event', eventName, ids as number[]);
           break;
         case 'collection-item.add':
         case 'item-tag.modify':
         case 'item-tag.remove':
-          emitter.emit('notifier-event', eventName, this.mapCompoundIDs(ids));
+          this.emitter.emit(
+            'notifier-event',
+            eventName,
+            this.mapCompoundIDs(ids),
+          );
           break;
       }
     },

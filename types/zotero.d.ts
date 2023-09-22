@@ -433,6 +433,10 @@ declare namespace Zotero {
 
     loadURI(uris: string | string[]): void;
   }
+
+  interface ZoteroWindow extends XPCOM.nsIDOMWindow {
+    ZoteroPane?: ZoteroPane;
+  }
 }
 
 declare interface Zotero {
@@ -463,7 +467,8 @@ declare interface Zotero {
 
   getActiveZoteroPane(): Zotero.ZoteroPane | null;
 
-  getMainWindow(): ReturnType<XPCOM.nsIWindowMediator['getMostRecentWindow']>;
+  getMainWindow(): Zotero.ZoteroWindow;
+  getMainWindows(): Zotero.ZoteroWindow[];
 
   hiDPI: boolean;
   hiDPISuffix: '@2x' | '';

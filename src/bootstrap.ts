@@ -1,11 +1,30 @@
 import type { Notero } from './content/notero';
 
-const LOG_PREFIX = 'Notero: ';
+const LOG_PREFIX = '[Notero] ';
+
+let mainWindowListener: XPCOM.nsIWindowMediatorListener | undefined;
 
 // @ts-expect-error Check if `Zotero` is defined
 if (typeof Zotero === 'undefined') {
   // eslint-disable-next-line no-var
   var Zotero: Zotero & { Notero?: Notero };
+}
+
+function domWindowFromXulWindow(xulWindow: XPCOM.nsIXULWindow) {
+  return xulWindow
+    .QueryInterface(Ci.nsIInterfaceRequestor)
+    .getInterface(Ci.nsIDOMWindow);
+}
+
+function isMainWindow(domWindow: XPCOM.nsIDOMWindow) {
+  return (
+    domWindow.location.href ===
+    'chrome://zotero/content/standalone/standalone.xul'
+  );
+}
+
+function isZotero6() {
+  return Zotero.platformMajorVersion < 102;
 }
 
 function log(msg: string) {
@@ -47,9 +66,7 @@ async function waitForZotero() {
       const windowMediatorListener = {
         onOpenWindow(xulWindow: XPCOM.nsIXULWindow) {
           // Wait for the window to finish loading
-          const domWindow = xulWindow
-            .QueryInterface(Ci.nsIInterfaceRequestor)
-            .getInterface(Ci.nsIDOMWindow);
+          const domWindow = domWindowFromXulWindow(xulWindow);
           const windowListener = () => {
             if (domWindow.Zotero) {
               Services.wm.removeListener(windowMediatorListener);
@@ -67,6 +84,36 @@ async function waitForZotero() {
   await Zotero.initializationPromise;
 }
 
+/** Add main window open/close listeners in Zotero 6. */
+function listenForMainWindowEvents() {
+  mainWindowListener = {
+    onOpenWindow(xulWindow: XPCOM.nsIXULWindow) {
+      const domWindow = domWindowFromXulWindow(xulWindow);
+      const onLoad = () => {
+        if (isMainWindow(domWindow)) {
+          onMainWindowLoad({ window: domWindow });
+        }
+      };
+      domWindow.addEventListener('load', onLoad, { once: true });
+    },
+
+    onCloseWindow(xulWindow: XPCOM.nsIXULWindow) {
+      const domWindow = domWindowFromXulWindow(xulWindow);
+      if (isMainWindow(domWindow)) {
+        onMainWindowUnload({ window: domWindow });
+      }
+    },
+  };
+
+  Services.wm.addListener(mainWindowListener);
+}
+
+function removeMainWindowListener() {
+  if (mainWindowListener) {
+    Services.wm.removeListener(mainWindowListener);
+  }
+}
+
 /**
  *
  * Bootstrap entry points
@@ -81,10 +128,13 @@ async function waitForZotero() {
  * installed, upgraded, or downgraded.
  */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-async function install(_data: BootstrapData, _reason: Zotero.Plugins.REASONS) {
+async function install(
+  { version }: BootstrapData,
+  _reason: Zotero.Plugins.REASONS,
+) {
   await waitForZotero();
 
-  log('Installed');
+  log(`Installed v${version}`);
 }
 
 /**
@@ -95,12 +145,12 @@ async function install(_data: BootstrapData, _reason: Zotero.Plugins.REASONS) {
  */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 async function startup(
-  { id, resourceURI, rootURI = resourceURI.spec }: BootstrapData,
+  { id, resourceURI, rootURI = resourceURI.spec, version }: BootstrapData,
   _reason: Zotero.Plugins.REASONS,
 ) {
   await waitForZotero();
 
-  log('Starting');
+  log(`Starting v${version}`);
 
   // `Services` may not be available in Zotero 6
   // @ts-expect-error Check if `Services` is defined
@@ -111,9 +161,35 @@ async function startup(
     ) as { Services: Services };
   }
 
+  if (isZotero6()) {
+    // Listen for window load/unload events in Zotero 6, since
+    // onMainWindowLoad/Unload don't get called.
+    listenForMainWindowEvents();
+  }
+
   Services.scriptloader.loadSubScript(rootURI + 'content/notero.js');
 
-  void Zotero.Notero?.startup(id, rootURI);
+  await Zotero.Notero?.startup({ pluginID: id, rootURI, version });
+}
+
+/**
+ * Called when a main Zotero window is opened.
+ * @since Zotero 7
+ * @see https://www.zotero.org/support/dev/zotero_7_for_developers#window_hooks
+ */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function onMainWindowLoad({ window }: { window: Zotero.ZoteroWindow }) {
+  Zotero.Notero?.addToWindow(window);
+}
+
+/**
+ * Called when a main Zotero window is closed.
+ * @since Zotero 7
+ * @see https://www.zotero.org/support/dev/zotero_7_for_developers#window_hooks
+ */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function onMainWindowUnload({ window }: { window: Zotero.ZoteroWindow }) {
+  Zotero.Notero?.removeFromWindow(window);
 }
 
 /**
@@ -123,8 +199,12 @@ async function startup(
  * shut down, and objects disposed of.
  */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-function shutdown(_data: BootstrapData, _reason: Zotero.Plugins.REASONS) {
-  log('Shutting down');
+function shutdown({ version }: BootstrapData, _reason: Zotero.Plugins.REASONS) {
+  log(`Shutting down v${version}`);
+
+  if (isZotero6()) {
+    removeMainWindowListener();
+  }
 
   Zotero.Notero?.shutdown();
 
@@ -136,12 +216,15 @@ function shutdown(_data: BootstrapData, _reason: Zotero.Plugins.REASONS) {
  * particular version of an extension is uninstalled.
  */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-function uninstall(_data: BootstrapData, _reason: Zotero.Plugins.REASONS) {
+function uninstall(
+  { version }: BootstrapData,
+  _reason: Zotero.Plugins.REASONS,
+) {
   // `Zotero` object isn't available in `uninstall()` in Zotero 6, so log manually
   if (typeof Zotero === 'undefined') {
-    dump(`${LOG_PREFIX}Uninstalled\n\n`);
+    dump(`${LOG_PREFIX}Uninstalled v${version}\n\n`);
     return;
   }
 
-  log('Uninstalled');
+  log(`Uninstalled v${version}`);
 }

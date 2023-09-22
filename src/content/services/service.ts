@@ -1,0 +1,19 @@
+import type { PluginInfo } from '../plugin-info';
+
+import type { EventManager } from './event-manager';
+
+type Dependencies = {
+  eventManager: EventManager;
+};
+
+export type ServiceParams = {
+  dependencies: Dependencies;
+  pluginInfo: PluginInfo;
+};
+
+export interface Service {
+  startup(params: ServiceParams): void;
+  shutdown?(): void;
+  addToWindow?(window: Zotero.ZoteroWindow): void;
+  removeFromWindow?(window: Zotero.ZoteroWindow): void;
+}

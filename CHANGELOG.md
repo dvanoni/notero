@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.4.13](https://github.com/dvanoni/notero/compare/v0.4.12...v0.4.13) (2023-09-22)
+
+
+### Bug Fixes
+
+* Support Zotero window closing and reopening ([#340](https://github.com/dvanoni/notero/issues/340)) ([9d84462](https://github.com/dvanoni/notero/commit/9d844622698eb1e76f1b2d735279688df3293dc6))
+
 ### [0.4.12](https://github.com/dvanoni/notero/compare/v0.4.11...v0.4.12) (2023-09-17)
 
 

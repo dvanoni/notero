@@ -2,7 +2,7 @@ import EventEmitter from 'eventemitter3';
 
 import { log } from '../utils';
 
-import type { Service, ServiceParams } from './service';
+import type { Service } from './service';
 
 type CollectionID = Zotero.Collection['id'];
 type ItemID = Zotero.Item['id'];
@@ -46,38 +46,29 @@ export class EventManager implements Service {
 
   private observerID?: ReturnType<Zotero.Notifier['registerObserver']>;
 
-  private window!: ReturnType<Zotero['getMainWindow']>;
-
-  public startup({ dependencies: { window } }: ServiceParams) {
-    this.window = window;
-
+  public startup() {
     this.registerObserver();
-
-    window.addEventListener('unload', this.unregisterObserver);
   }
 
   public shutdown() {
     this.emitter.removeAllListeners();
-
     this.unregisterObserver();
-
-    this.window.removeEventListener('unload', this.unregisterObserver);
   }
 
-  private registerObserver = () => {
+  private registerObserver() {
     this.observerID = Zotero.Notifier.registerObserver(
       this.observer,
       ['collection', 'collection-item', 'item', 'item-tag'],
       'notero',
     );
-  };
+  }
 
-  private unregisterObserver = () => {
+  private unregisterObserver() {
     if (this.observerID) {
       Zotero.Notifier.unregisterObserver(this.observerID);
       delete this.observerID;
     }
-  };
+  }
 
   private observer = {
     notify: (

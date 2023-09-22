@@ -4,7 +4,6 @@ import type { EventManager } from './event-manager';
 
 type Dependencies = {
   eventManager: EventManager;
-  window: ReturnType<Zotero['getMainWindow']>;
 };
 
 export type ServiceParams = {
@@ -15,4 +14,6 @@ export type ServiceParams = {
 export interface Service {
   startup(params: ServiceParams): void;
   shutdown?(): void;
+  addToWindow?(window: Zotero.ZoteroWindow): void;
+  removeFromWindow?(window: Zotero.ZoteroWindow): void;
 }

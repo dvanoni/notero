@@ -32,38 +32,38 @@ export class SyncManager implements Service {
     return `chrome://zotero/skin/tick${Zotero.hiDPISuffix}.png`;
   }
 
-  private eventManager?: EventManager;
-
-  private readonly progressWindow = new Zotero.ProgressWindow();
+  private eventManager!: EventManager;
 
   private queuedSync?: QueuedSync;
 
   private syncInProgress = false;
 
+  private window?: Zotero.ZoteroWindow;
+
   public startup({ dependencies: { eventManager } }: ServiceParams) {
     this.eventManager = eventManager;
 
-    eventManager.addListener('notifier-event', this.handleNotifierEvent);
-    eventManager.addListener(
-      'request-sync-collection',
-      this.handleSyncCollection,
-    );
-    eventManager.addListener('request-sync-items', this.handleSyncItems);
+    const { addListener } = eventManager;
+
+    addListener('notifier-event', this.handleNotifierEvent);
+    addListener('request-sync-collection', this.handleSyncCollection);
+    addListener('request-sync-items', this.handleSyncItems);
   }
 
   public shutdown() {
-    this.eventManager?.removeListener(
-      'notifier-event',
-      this.handleNotifierEvent,
-    );
-    this.eventManager?.removeListener(
-      'request-sync-collection',
-      this.handleSyncCollection,
-    );
-    this.eventManager?.removeListener(
-      'request-sync-items',
-      this.handleSyncItems,
-    );
+    const { removeListener } = this.eventManager;
+
+    removeListener('notifier-event', this.handleNotifierEvent);
+    removeListener('request-sync-collection', this.handleSyncCollection);
+    removeListener('request-sync-items', this.handleSyncItems);
+  }
+
+  public addToWindow(window: Zotero.ZoteroWindow) {
+    this.window = window;
+  }
+
+  public removeFromWindow() {
+    this.window = undefined;
   }
 
   private handleNotifierEvent = (...params: NotifierEventParams) => {
@@ -158,7 +158,7 @@ export class SyncManager implements Service {
     return Array.from(new Set(items));
   }
 
-  private getNotion() {
+  private getNotion(window: Zotero.ZoteroWindow) {
     const authToken = getNoteroPref(NoteroPref.notionToken);
     const databaseID = getNoteroPref(NoteroPref.notionDatabaseID);
 
@@ -172,7 +172,7 @@ export class SyncManager implements Service {
       );
     }
 
-    return new Notion(authToken, databaseID);
+    return new Notion(authToken, databaseID, window);
   }
 
   private getTitleBuilder(): TitleBuilder {
@@ -255,13 +255,13 @@ export class SyncManager implements Service {
   }
 
   private async performSync() {
-    if (!this.queuedSync) return;
+    if (!this.queuedSync || !this.window) return;
 
     const { itemIDs } = this.queuedSync;
     this.queuedSync = undefined as QueuedSync | undefined;
     this.syncInProgress = true;
 
-    await this.saveItemsToNotion(itemIDs);
+    await this.saveItemsToNotion(itemIDs, this.window);
 
     if (this.queuedSync && !this.queuedSync.timeoutID) {
       await this.performSync();
@@ -270,21 +270,26 @@ export class SyncManager implements Service {
     this.syncInProgress = false;
   }
 
-  private async saveItemsToNotion(itemIDs: Set<Zotero.Item['id']>) {
+  private async saveItemsToNotion(
+    itemIDs: Set<Zotero.Item['id']>,
+    window: Zotero.ZoteroWindow,
+  ) {
     const PERCENTAGE_MULTIPLIER = 100;
 
     const items = Zotero.Items.get(Array.from(itemIDs));
     if (!items.length) return;
 
-    this.progressWindow.changeHeadline('Saving items to Notion...');
-    this.progressWindow.show();
-    const itemProgress = new this.progressWindow.ItemProgress(
+    const progressWindow = new Zotero.ProgressWindow();
+
+    progressWindow.changeHeadline('Saving items to Notion...');
+    progressWindow.show();
+    const itemProgress = new progressWindow.ItemProgress(
       'chrome://notero/content/style/notion-logo-32.png',
       '',
     );
 
     try {
-      const notion = this.getNotion();
+      const notion = this.getNotion(window);
       const buildTitle = this.getTitleBuilder();
       let step = 0;
 
@@ -294,14 +299,14 @@ export class SyncManager implements Service {
         log(`Saving ${progressMessage} with ID ${item.id}`);
         itemProgress.setText(progressMessage);
         if (item.isNote()) {
-          await this.saveNoteToNotion(item);
+          await this.saveNoteToNotion(item, window);
         } else {
           await this.saveItemToNotion(item, notion, buildTitle);
         }
         itemProgress.setProgress((step / items.length) * PERCENTAGE_MULTIPLIER);
       }
       itemProgress.setIcon(SyncManager.tickIcon);
-      this.progressWindow.startCloseTimer();
+      progressWindow.startCloseTimer();
     } catch (error) {
       const errorMessage = String(error);
       log(errorMessage, 'error');
@@ -309,7 +314,7 @@ export class SyncManager implements Service {
         log(error.stack, 'error');
       }
       itemProgress.setError();
-      this.progressWindow.addDescription(errorMessage);
+      progressWindow.addDescription(errorMessage);
     }
   }
 
@@ -335,8 +340,11 @@ export class SyncManager implements Service {
     }
   }
 
-  private async saveNoteToNotion(item: Zotero.Item) {
-    const notion = getNotionClient();
+  private async saveNoteToNotion(
+    item: Zotero.Item,
+    window: Zotero.ZoteroWindow,
+  ) {
+    const notion = getNotionClient(window);
 
     await syncNote(notion, item);
   }

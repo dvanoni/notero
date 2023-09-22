@@ -5,63 +5,70 @@ import type { EventManager } from './event-manager';
 import type { Service, ServiceParams } from './service';
 
 export class UIManager implements Service {
-  private get document() {
-    return this.window.document;
-  }
+  private eventManager!: EventManager;
 
-  private eventManager?: EventManager;
+  private managedWindows = new Map<Zotero.ZoteroWindow, Set<Node>>();
 
-  private managedNodes = new Set<Node>();
-
-  private window!: ReturnType<Zotero['getMainWindow']>;
-
-  public startup({ dependencies: { eventManager, window } }: ServiceParams) {
+  public startup({ dependencies: { eventManager } }: ServiceParams) {
     this.eventManager = eventManager;
-    this.window = window;
-
-    this.initCollectionMenuItem();
-    this.initItemMenuItem();
-    if (!IS_ZOTERO_7) this.initToolsMenuItem();
   }
 
-  public shutdown() {
-    this.managedNodes.forEach((node) => node.parentNode?.removeChild(node));
-    this.managedNodes.clear();
+  public addToWindow(window: Zotero.ZoteroWindow) {
+    this.initCollectionMenuItem(window);
+    this.initItemMenuItem(window);
+    if (!IS_ZOTERO_7) this.initToolsMenuItem(window);
   }
 
-  private initCollectionMenuItem() {
+  public removeFromWindow(window: Zotero.ZoteroWindow) {
+    const managedNodes = this.managedWindows.get(window);
+    if (!managedNodes) return;
+
+    managedNodes.forEach((node) => node.parentNode?.removeChild(node));
+    this.managedWindows.delete(window);
+  }
+
+  private addManagedNode(window: Zotero.ZoteroWindow, node: Node) {
+    const managedNodes = this.managedWindows.get(window) ?? new Set();
+    managedNodes.add(node);
+    this.managedWindows.set(window, managedNodes);
+  }
+
+  private initCollectionMenuItem(window: Zotero.ZoteroWindow) {
     this.createMenuItem({
+      window,
       labelName: 'notero.collectionMenu.sync',
       parentId: 'zotero-collectionmenu',
       onCommand: () => {
         const collection =
           Zotero.getActiveZoteroPane()?.getSelectedCollection(false);
         if (collection) {
-          this.eventManager?.emit('request-sync-collection', collection);
+          this.eventManager.emit('request-sync-collection', collection);
         }
       },
     });
   }
 
-  private initItemMenuItem() {
+  private initItemMenuItem(window: Zotero.ZoteroWindow) {
     this.createMenuItem({
+      window,
       labelName: 'notero.itemMenu.sync',
       parentId: 'zotero-itemmenu',
       onCommand: () => {
         const items = Zotero.getActiveZoteroPane()?.getSelectedItems(false);
         if (items) {
-          this.eventManager?.emit('request-sync-items', items);
+          this.eventManager.emit('request-sync-items', items);
         }
       },
     });
   }
 
-  private initToolsMenuItem() {
+  private initToolsMenuItem(window: Zotero.ZoteroWindow) {
     this.createMenuItem({
+      window,
       labelName: 'notero.toolsMenu.preferences',
       parentId: 'menu_ToolsPopup',
       onCommand: () => {
-        this.openPreferences();
+        this.openPreferences(window);
       },
     });
   }
@@ -70,29 +77,31 @@ export class UIManager implements Service {
     labelName,
     onCommand,
     parentId,
+    window,
   }: {
     labelName: string;
     onCommand: (event: Event) => void;
     parentId: string;
+    window: Zotero.ZoteroWindow;
   }): XUL.MenuItemElement | null {
-    let menuItem = createXULElement(this.document, 'menuitem');
+    let menuItem = createXULElement(window.document, 'menuitem');
     menuItem.setAttribute('label', getLocalizedString(labelName));
     menuItem.addEventListener('command', onCommand);
 
-    const parentMenu = this.document.getElementById(parentId);
+    const parentMenu = window.document.getElementById(parentId);
     if (!parentMenu) {
       log(`Failed to find element '${parentId}'`, 'error');
       return null;
     }
 
     menuItem = parentMenu.appendChild(menuItem);
-    this.managedNodes.add(menuItem);
+    this.addManagedNode(window, menuItem);
 
     return menuItem;
   }
 
-  private openPreferences() {
-    this.window.openDialog(
+  private openPreferences(window: Zotero.ZoteroWindow) {
+    window.openDialog(
       'chrome://notero/content/prefs/preferences.xul',
       'notero-preferences',
     );

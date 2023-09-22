@@ -35,10 +35,17 @@ export class Notero {
   public async startup(pluginInfo: PluginInfo) {
     await Zotero.uiReadyPromise;
 
-    const dependencies = {
-      eventManager: this.eventManager,
-      window: Zotero.getMainWindow(),
-    };
+    this.startServices(pluginInfo);
+    this.addToAllWindows();
+  }
+
+  public shutdown() {
+    this.removeFromAllWindows();
+    this.shutDownServices();
+  }
+
+  private startServices(pluginInfo: PluginInfo) {
+    const dependencies = { eventManager: this.eventManager };
 
     this.services.forEach((service) => {
       log(`Starting ${service.constructor.name}`);
@@ -46,12 +53,41 @@ export class Notero {
     });
   }
 
-  public shutdown() {
+  private shutDownServices() {
     [...this.services].reverse().forEach((service) => {
-      if (service.shutdown) {
-        log(`Shutting down ${service.constructor.name}`);
-        service.shutdown();
-      }
+      if (!service.shutdown) return;
+      log(`Shutting down ${service.constructor.name}`);
+      service.shutdown();
+    });
+  }
+
+  private addToAllWindows() {
+    Zotero.getMainWindows().forEach((window) => {
+      if (!window.ZoteroPane) return;
+      this.addToWindow(window);
+    });
+  }
+
+  public addToWindow(window: Zotero.ZoteroWindow) {
+    this.services.forEach((service) => {
+      if (!service.addToWindow) return;
+      log(`Adding ${service.constructor.name} to window`);
+      service.addToWindow(window);
+    });
+  }
+
+  private removeFromAllWindows() {
+    Zotero.getMainWindows().forEach((window) => {
+      if (!window.ZoteroPane) return;
+      this.removeFromWindow(window);
+    });
+  }
+
+  public removeFromWindow(window: Zotero.ZoteroWindow) {
+    this.services.forEach((service) => {
+      if (!service.removeFromWindow) return;
+      log(`Removing ${service.constructor.name} from window`);
+      service.removeFromWindow(window);
     });
   }
 }

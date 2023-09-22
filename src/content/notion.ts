@@ -81,9 +81,10 @@ export class Notion {
     return text.substr(0, TEXT_CONTENT_MAX_LENGTH);
   }
 
-  public constructor(authToken: string, databaseID: string) {
+  public constructor(authToken: string, databaseID: string, window: Window) {
     this.client = new Client({
       auth: authToken,
+      fetch: window.fetch.bind(window),
       logger: Notion.logger,
     });
     this.databaseID = databaseID;

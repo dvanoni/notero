@@ -9,6 +9,7 @@ import {
   PageTitleFormat,
 } from '../prefs/notero-pref';
 import { getNotionClient } from '../sync/notion-client';
+import { ProgressWindow } from '../sync/progress-window';
 import { syncNote } from '../sync/sync-note';
 import {
   getAllCollectionItems,
@@ -28,10 +29,6 @@ type QueuedSync = {
 };
 
 export class SyncManager implements Service {
-  private static get tickIcon() {
-    return `chrome://zotero/skin/tick${Zotero.hiDPISuffix}.png`;
-  }
-
   private eventManager!: EventManager;
 
   private queuedSync?: QueuedSync;
@@ -274,47 +271,34 @@ export class SyncManager implements Service {
     itemIDs: Set<Zotero.Item['id']>,
     window: Zotero.ZoteroWindow,
   ) {
-    const PERCENTAGE_MULTIPLIER = 100;
-
     const items = Zotero.Items.get(Array.from(itemIDs));
     if (!items.length) return;
 
-    const progressWindow = new Zotero.ProgressWindow();
-
-    progressWindow.changeHeadline('Saving items to Notion...');
-    progressWindow.show();
-    const itemProgress = new progressWindow.ItemProgress(
-      'chrome://notero/content/style/notion-logo-32.png',
-      '',
-    );
+    const progressWindow = new ProgressWindow(items.length);
 
     try {
       const notion = this.getNotion(window);
       const buildTitle = this.getTitleBuilder();
-      let step = 0;
 
-      for (const item of items) {
-        step++;
-        const progressMessage = `Item ${step} of ${items.length}`;
-        log(`Saving ${progressMessage} with ID ${item.id}`);
-        itemProgress.setText(progressMessage);
+      for (const [index, item] of items.entries()) {
+        const step = index + 1;
+        log(`Saving item ${step} of ${items.length} with ID ${item.id}`);
+        progressWindow.updateText(step);
         if (item.isNote()) {
           await this.saveNoteToNotion(item, window);
         } else {
           await this.saveItemToNotion(item, notion, buildTitle);
         }
-        itemProgress.setProgress((step / items.length) * PERCENTAGE_MULTIPLIER);
+        progressWindow.updateProgress(step);
       }
-      itemProgress.setIcon(SyncManager.tickIcon);
-      progressWindow.startCloseTimer();
+      progressWindow.complete();
     } catch (error) {
       const errorMessage = String(error);
       log(errorMessage, 'error');
       if (hasErrorStack(error)) {
         log(error.stack, 'error');
       }
-      itemProgress.setError();
-      progressWindow.addDescription(errorMessage);
+      progressWindow.fail(errorMessage);
     }
   }
 

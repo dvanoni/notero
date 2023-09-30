@@ -25,6 +25,12 @@ export type Annotations = RichTextText['annotations'];
 
 export type TextLink = RichTextText['text']['link'];
 
+export type RichTextOptions = {
+  annotations?: Annotations;
+  link?: TextLink;
+  preserveWhitespace?: boolean;
+};
+
 export function isBlockType<T extends BlockType>(
   type: T,
   value: object,

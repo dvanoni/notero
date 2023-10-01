@@ -40,7 +40,7 @@
     "eventemitter3": "^5.0.1"
   },
   "devDependencies": {
-    "@commitlint/cli": "^17.6.7",
+    "@commitlint/cli": "^17.7.2",
     "@commitlint/config-conventional": "^17.6.7",
     "@dvanoni/zotero-plugin": "^1.8.0",
     "@total-typescript/ts-reset": "^0.4.2",

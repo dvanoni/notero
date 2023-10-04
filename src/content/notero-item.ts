@@ -1,6 +1,10 @@
 import { NOTION_TAG_NAME } from './constants';
-import { Notion } from './notion';
 import { NoteroPref, getNoteroPref } from './prefs/notero-pref';
+import {
+  convertWebURLToAppURL,
+  getPageIDFromURL,
+  isNotionURL,
+} from './sync/notion-utils';
 import { getDOMParser, isObject } from './utils';
 
 const SYNCED_NOTES_ID = 'notero-synced-notes';
@@ -26,9 +30,8 @@ export class NoteroItem {
       // Sort to get largest ID first
       .sort((a, b) => b - a);
 
-    return Zotero.Items.get(attachmentIDs).filter(
-      (attachment) =>
-        attachment.getField('url')?.startsWith(Notion.APP_URL_PROTOCOL),
+    return Zotero.Items.get(attachmentIDs).filter((attachment) =>
+      isNotionURL(attachment.getField('url')),
     );
   }
 
@@ -38,11 +41,11 @@ export class NoteroItem {
 
   public getNotionPageID(): string | undefined {
     const notionURL = this.getNotionLinkAttachment()?.getField('url');
-    return notionURL && Notion.getPageIDFromURL(notionURL);
+    return notionURL && getPageIDFromURL(notionURL);
   }
 
   public async saveNotionLinkAttachment(webURL: string): Promise<void> {
-    const appURL = Notion.convertWebURLToAppURL(webURL);
+    const appURL = convertWebURLToAppURL(webURL);
     const attachments = this.getAllNotionLinkAttachments();
 
     if (attachments.length > 1) {

@@ -1,4 +1,5 @@
 import { Client, Logger, LogLevel } from '@notionhq/client';
+import 'core-js/stable/object/from-entries';
 
 import { getNoteroPref, NoteroPref } from '../prefs/notero-pref';
 import { getLocalizedString, log } from '../utils';

@@ -19,6 +19,7 @@ declare namespace Zotero {
   }
 
   interface CachedTypes {
+    getID(idOrName: number | string): number | false;
     getName(idOrName: number | string): string;
   }
 
@@ -202,7 +203,7 @@ declare namespace Zotero {
     getTopLevel(items: Item[]): Item[];
   }
 
-  interface ItemTypes {
+  interface ItemTypes extends CachedTypes {
     getLocalizedString(idOrName: number | string): string;
   }
 
@@ -398,7 +399,7 @@ declare namespace Zotero {
      * `false` is returned.
      */
     getContentFromItems(
-      items: [Item],
+      items: Item[],
       format: string | QuickCopy.Format,
       callback?: (obj: { string: string }, worked: boolean) => void,
       modified?: boolean,

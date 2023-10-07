@@ -1,3 +1,5 @@
+import { TextEncoder, TextDecoder } from 'util';
+
 import { mockDeep } from 'jest-mock-extended';
 
 type MockedGlobal = typeof globalThis & {
@@ -19,3 +21,8 @@ mockedGlobal.Cu = Components.utils;
 mockedGlobal.ChromeUtils = Components.utils;
 mockedGlobal.Services = mockDeep<typeof Services>();
 mockedGlobal.Zotero = mockDeep<typeof Zotero>();
+
+// Workaround for https://github.com/jsdom/jsdom/issues/2524
+mockedGlobal.TextEncoder = TextEncoder;
+// @ts-expect-error The types don't match
+mockedGlobal.TextDecoder = TextDecoder;

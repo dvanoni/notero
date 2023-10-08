@@ -157,6 +157,8 @@ declare namespace Zotero {
     createdByUserID: number | null;
     lastModifiedByUserID: number | null;
 
+    addToCollection(collectionIDOrKey: DataObjectID | DataObjectKey): void;
+
     /**
      * Add a single tag to the item. If type is 1 and an automatic tag with the
      * same name already exists, replace it with a manual one.

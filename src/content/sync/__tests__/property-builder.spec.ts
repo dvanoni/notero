@@ -1,6 +1,9 @@
-import { CalledWithMock, any, mock } from 'jest-mock-extended';
+import { any, mock } from 'jest-mock-extended';
 
-import { zoteroMock } from '../../../../test/utils/zotero-mock';
+import {
+  createZoteroCollectionMock,
+  zoteroMock,
+} from '../../../../test/utils/zotero-mock';
 import { PageTitleFormat } from '../../prefs/notero-pref';
 import { keyValue } from '../../utils';
 import type {
@@ -10,11 +13,7 @@ import type {
 } from '../notion-types';
 import { buildProperties } from '../property-builder';
 
-const mockCollection = mock<Zotero.Collection>({
-  id: 1,
-  name: 'Fake Collection',
-  parentID: undefined,
-});
+const mockCollection = createZoteroCollectionMock({ name: 'Fake Collection' });
 const fakeItemType = 'Journal Article';
 const fakePrimaryID = 1;
 const fakeTag = 'Fake Tag';
@@ -115,15 +114,6 @@ function propertyConfig<N extends string>(
 }
 
 function setup() {
-  (
-    zoteroMock.Collections.get as unknown as CalledWithMock<
-      Zotero.Collection[],
-      [Zotero.DataObjectID[]]
-    >
-  ).mockImplementation((ids) =>
-    ids[0] === mockCollection.id ? [mockCollection] : [],
-  );
-
   zoteroMock.CreatorTypes.getPrimaryIDForType.mockReturnValue(fakePrimaryID);
 
   zoteroMock.ItemTypes.getLocalizedString.mockReturnValue(fakeItemType);

@@ -44,7 +44,7 @@ export class SyncManager implements Service {
     this.window = window;
   }
 
-  public removeFromWindow() {
+  public removeFromWindow(_window: Zotero.ZoteroWindow) {
     this.window = undefined;
   }
 

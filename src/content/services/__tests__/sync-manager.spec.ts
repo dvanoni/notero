@@ -104,19 +104,31 @@ describe('SyncManager', () => {
     expect(performSyncJob).toHaveBeenCalledTimes(0);
   });
 
-  it('performs sync using the latest available window', () => {
+  it('performs sync using the latest available window', async () => {
     const { eventManager, syncManager, window: window1 } = setup();
 
     const window2 = createWindowMock();
+    const window3 = createWindowMock();
+    const window4 = createWindowMock();
 
     syncManager.removeFromWindow(window1);
     syncManager.addToWindow(window2);
+    syncManager.addToWindow(window3);
+    syncManager.addToWindow(window4);
+    syncManager.removeFromWindow(window3);
 
     eventManager.emit('request-sync-items', [regularItem]);
+    await jest.runAllTimersAsync();
 
-    jest.runAllTimers();
+    expect(mockedPerformSyncJob.mock.lastCall?.[1]).toBe(window4);
 
-    expect(mockedPerformSyncJob.mock.lastCall?.[1]).toStrictEqual(window2);
+    syncManager.removeFromWindow(window4);
+
+    eventManager.emit('request-sync-items', [regularItem]);
+    await jest.runAllTimersAsync();
+
+    expect(mockedPerformSyncJob).toHaveBeenCalledTimes(2);
+    expect(mockedPerformSyncJob.mock.lastCall?.[1]).toBe(window2);
   });
 
   describe('receiving `request-sync-collection` event', () => {

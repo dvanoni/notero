@@ -21,4 +21,10 @@ describe('chunkString', () => {
       expect(chunkString(str, chunkSize)).toStrictEqual(expected);
     },
   );
+
+  it('does not split Unicode strings in the middle of a code point', () => {
+    // 👋🏻 is two code points, each of which are a surrogate pair.
+    // This means that '👋🏻'.length == 4 and [...'👋🏻'].length == 2.
+    expect(chunkString('👋🏻🌍 Hello', 3)).toStrictEqual(['👋🏻🌍', ' He', 'llo']);
+  });
 });

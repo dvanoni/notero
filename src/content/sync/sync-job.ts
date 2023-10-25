@@ -11,15 +11,11 @@ import {
   PageTitleFormat,
   getNoteroPref,
 } from '../prefs/notero-pref';
-import {
-  getLocalizedString,
-  hasErrorStack,
-  isNotionErrorWithCode,
-  log,
-} from '../utils';
+import { getLocalizedString, hasErrorStack, log } from '../utils';
 
 import { getNotionClient } from './notion-client';
 import type { DatabaseProperties } from './notion-types';
+import { isNotionErrorWithCode } from './notion-utils';
 import { ProgressWindow } from './progress-window';
 import { buildProperties } from './property-builder';
 import { syncNote } from './sync-note';

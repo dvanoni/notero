@@ -2,7 +2,7 @@ import { APIErrorCode } from '@notionhq/client';
 import { APIResponseError } from '@notionhq/client/build/src/errors';
 import { mock } from 'jest-mock-extended';
 
-import { isNotionErrorWithCode } from '../isNotionErrorWithCode';
+import { isNotionErrorWithCode } from '../error';
 
 describe('isNotionErrorWithCode', () => {
   it('returns false for generic error', () => {

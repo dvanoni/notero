@@ -1,9 +1,9 @@
 import { APIErrorCode, Client } from '@notionhq/client';
 
 import { NoteroItem } from '../notero-item';
-import { isNotionErrorWithCode } from '../utils';
 
 import { convertHtmlToBlocks } from './html-to-notion';
+import { isNotionErrorWithCode } from './notion-utils';
 
 export async function syncNote(
   notion: Client,

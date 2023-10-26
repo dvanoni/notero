@@ -1,21 +1,7 @@
-import { isFullPage } from '@notionhq/client';
-
-import { NoteroItem } from '../notero-item';
-import { Notion, TitleBuilder } from '../notion';
 import { loadSyncEnabledCollectionIDs } from '../prefs/collection-sync-config';
-import {
-  getNoteroPref,
-  NoteroPref,
-  PageTitleFormat,
-} from '../prefs/notero-pref';
-import { getNotionClient } from '../sync/notion-client';
-import { syncNote } from '../sync/sync-note';
-import {
-  getAllCollectionItems,
-  getLocalizedString,
-  hasErrorStack,
-  log,
-} from '../utils';
+import { getNoteroPref, NoteroPref } from '../prefs/notero-pref';
+import { performSyncJob } from '../sync/sync-job';
+import { getAllCollectionItems, log } from '../utils';
 
 import type { EventManager, NotifierEventParams } from './event-manager';
 import type { Service, ServiceParams } from './service';
@@ -28,17 +14,13 @@ type QueuedSync = {
 };
 
 export class SyncManager implements Service {
-  private static get tickIcon() {
-    return `chrome://zotero/skin/tick${Zotero.hiDPISuffix}.png`;
-  }
-
   private eventManager!: EventManager;
 
   private queuedSync?: QueuedSync;
 
   private syncInProgress = false;
 
-  private window?: Zotero.ZoteroWindow;
+  private readonly windows: Zotero.ZoteroWindow[] = [];
 
   public startup({ dependencies: { eventManager } }: ServiceParams) {
     this.eventManager = eventManager;
@@ -59,11 +41,20 @@ export class SyncManager implements Service {
   }
 
   public addToWindow(window: Zotero.ZoteroWindow) {
-    this.window = window;
+    if (!this.windows.includes(window)) {
+      this.windows.unshift(window);
+    }
   }
 
-  public removeFromWindow() {
-    this.window = undefined;
+  public removeFromWindow(window: Zotero.ZoteroWindow) {
+    const index = this.windows.indexOf(window);
+    if (index >= 0) {
+      this.windows.splice(index, 1);
+    }
+  }
+
+  private get latestWindow(): Zotero.ZoteroWindow | undefined {
+    return this.windows[0];
   }
 
   private handleNotifierEvent = (...params: NotifierEventParams) => {
@@ -158,43 +149,6 @@ export class SyncManager implements Service {
     return Array.from(new Set(items));
   }
 
-  private getNotion(window: Zotero.ZoteroWindow) {
-    const authToken = getNoteroPref(NoteroPref.notionToken);
-    const databaseID = getNoteroPref(NoteroPref.notionDatabaseID);
-
-    if (!authToken) {
-      throw new Error(`Missing ${getLocalizedString(NoteroPref.notionToken)}`);
-    }
-
-    if (!databaseID) {
-      throw new Error(
-        `Missing ${getLocalizedString(NoteroPref.notionDatabaseID)}`,
-      );
-    }
-
-    return new Notion(authToken, databaseID, window);
-  }
-
-  private getTitleBuilder(): TitleBuilder {
-    const titleBuilders: Record<
-      PageTitleFormat,
-      (item: NoteroItem) => string | null | Promise<string | null>
-    > = {
-      [PageTitleFormat.itemAuthorDateCitation]: (item) =>
-        item.getAuthorDateCitation(),
-      [PageTitleFormat.itemFullCitation]: (item) => item.getFullCitation(),
-      [PageTitleFormat.itemInTextCitation]: (item) => item.getInTextCitation(),
-      [PageTitleFormat.itemShortTitle]: (item) => item.getShortTitle(),
-      [PageTitleFormat.itemTitle]: (item) => item.getTitle(),
-    };
-
-    const format =
-      getNoteroPref(NoteroPref.pageTitleFormat) || PageTitleFormat.itemTitle;
-    const buildTitle = titleBuilders[format];
-
-    return async (item) => (await buildTitle(item)) || item.getTitle();
-  }
-
   /**
    * Enqueue Zotero items to sync to Notion.
    *
@@ -255,97 +209,18 @@ export class SyncManager implements Service {
   }
 
   private async performSync() {
-    if (!this.queuedSync || !this.window) return;
+    if (!this.queuedSync || !this.latestWindow) return;
 
     const { itemIDs } = this.queuedSync;
     this.queuedSync = undefined as QueuedSync | undefined;
     this.syncInProgress = true;
 
-    await this.saveItemsToNotion(itemIDs, this.window);
+    await performSyncJob(itemIDs, this.latestWindow);
 
     if (this.queuedSync && !this.queuedSync.timeoutID) {
       await this.performSync();
     }
 
     this.syncInProgress = false;
-  }
-
-  private async saveItemsToNotion(
-    itemIDs: Set<Zotero.Item['id']>,
-    window: Zotero.ZoteroWindow,
-  ) {
-    const PERCENTAGE_MULTIPLIER = 100;
-
-    const items = Zotero.Items.get(Array.from(itemIDs));
-    if (!items.length) return;
-
-    const progressWindow = new Zotero.ProgressWindow();
-
-    progressWindow.changeHeadline('Saving items to Notion...');
-    progressWindow.show();
-    const itemProgress = new progressWindow.ItemProgress(
-      'chrome://notero/content/style/notion-logo-32.png',
-      '',
-    );
-
-    try {
-      const notion = this.getNotion(window);
-      const buildTitle = this.getTitleBuilder();
-      let step = 0;
-
-      for (const item of items) {
-        step++;
-        const progressMessage = `Item ${step} of ${items.length}`;
-        log(`Saving ${progressMessage} with ID ${item.id}`);
-        itemProgress.setText(progressMessage);
-        if (item.isNote()) {
-          await this.saveNoteToNotion(item, window);
-        } else {
-          await this.saveItemToNotion(item, notion, buildTitle);
-        }
-        itemProgress.setProgress((step / items.length) * PERCENTAGE_MULTIPLIER);
-      }
-      itemProgress.setIcon(SyncManager.tickIcon);
-      progressWindow.startCloseTimer();
-    } catch (error) {
-      const errorMessage = String(error);
-      log(errorMessage, 'error');
-      if (hasErrorStack(error)) {
-        log(error.stack, 'error');
-      }
-      itemProgress.setError();
-      progressWindow.addDescription(errorMessage);
-    }
-  }
-
-  private async saveItemToNotion(
-    item: Zotero.Item,
-    notion: Notion,
-    buildTitle: TitleBuilder,
-  ) {
-    const noteroItem = new NoteroItem(item);
-    const response = await notion.saveItemToDatabase(noteroItem, buildTitle);
-
-    await noteroItem.saveNotionTag();
-
-    if (isFullPage(response)) {
-      await noteroItem.saveNotionLinkAttachment(response.url);
-    } else {
-      throw new Error(
-        'Failed to create Notion link attachment. ' +
-          'This will result in duplicate Notion pages. ' +
-          'Please ensure that the "read content" capability is enabled ' +
-          'for the Notero integration at www.notion.so/my-integrations.',
-      );
-    }
-  }
-
-  private async saveNoteToNotion(
-    item: Zotero.Item,
-    window: Zotero.ZoteroWindow,
-  ) {
-    const notion = getNotionClient(window);
-
-    await syncNote(notion, item);
   }
 }

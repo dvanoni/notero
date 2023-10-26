@@ -1,30 +1,18 @@
-import { mock, MockProxy } from 'jest-mock-extended';
-
-import { zoteroMock } from '../../../../test/utils/zotero-mock';
+import { createZoteroCollectionMock } from '../../../../test/utils/zotero-mock';
 import { buildCollectionFullName } from '../buildCollectionFullName';
 
-let collection: MockProxy<Zotero.Collection>;
-let parent: MockProxy<Zotero.Collection>;
-
-const PARENT_ID = 1234;
-
-beforeEach(() => {
-  collection = mock<Zotero.Collection>();
-  collection.name = 'Collection Name';
-
-  parent = mock<Zotero.Collection>();
-  parent.name = 'Parent Name';
-
-  zoteroMock.Collections.get.calledWith(PARENT_ID).mockReturnValue(parent);
-});
+const parent = createZoteroCollectionMock({ name: 'Parent Name' });
+const collection = createZoteroCollectionMock({ name: 'Collection Name' });
 
 describe('buildCollectionFullName', () => {
   it('returns collection name when collection has no parent', () => {
+    collection.parentID = false;
+
     expect(buildCollectionFullName(collection)).toBe('Collection Name');
   });
 
   it('returns parent name prepended to collection name when collection has a parent', () => {
-    collection.parentID = PARENT_ID;
+    collection.parentID = parent.id;
 
     expect(buildCollectionFullName(collection)).toBe(
       'Parent Name ▸ Collection Name',

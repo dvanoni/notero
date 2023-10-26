@@ -19,6 +19,7 @@ declare namespace Zotero {
   }
 
   interface CachedTypes {
+    getID(idOrName: number | string): number | false;
     getName(idOrName: number | string): string;
   }
 
@@ -31,8 +32,9 @@ declare namespace Zotero {
      * @param asIDs Return as collectionIDs
      * @return Array of Zotero.Collection instances or collectionIDs
      */
-    getChildCollections(asIDs: true): number[];
-    getChildCollections(asIDs: false): Collection[];
+    getChildCollections<A extends boolean>(
+      asIDs: A,
+    ): A extends true ? DataObjectID[] : Collection[];
 
     /**
      * Returns child items of this collection
@@ -41,8 +43,10 @@ declare namespace Zotero {
      * @param	includeDeleted	Include items in Trash (default false)
      * @return Array of Zotero.Item instances or itemIDs
      */
-    getChildItems(asIDs: true, includeDeleted?: boolean): number[];
-    getChildItems(asIDs: false, includeDeleted?: boolean): Item[];
+    getChildItems<A extends boolean>(
+      asIDs: A,
+      includeDeleted?: boolean,
+    ): A extends true ? DataObjectID[] : Item[];
   }
 
   type Collections = DataObjects<Collection>;
@@ -121,8 +125,9 @@ declare namespace Zotero {
      * @return A Zotero.DataObject, if a scalar id was passed;
      *         otherwise, an array of Zotero.DataObject
      */
-    get(ids: DataObjectID[]): T[];
-    get(ids: DataObjectID): T | false;
+    get<I extends DataObjectID | DataObjectID[]>(
+      ids: I,
+    ): I extends DataObjectID ? T | false : T[];
 
     /** Get all loaded objects */
     getLoaded(): T[];
@@ -151,6 +156,8 @@ declare namespace Zotero {
     synced: boolean;
     createdByUserID: number | null;
     lastModifiedByUserID: number | null;
+
+    addToCollection(collectionIDOrKey: DataObjectID | DataObjectKey): void;
 
     /**
      * Add a single tag to the item. If type is 1 and an automatic tag with the
@@ -202,7 +209,7 @@ declare namespace Zotero {
     getTopLevel(items: Item[]): Item[];
   }
 
-  interface ItemTypes {
+  interface ItemTypes extends CachedTypes {
     getLocalizedString(idOrName: number | string): string;
   }
 
@@ -398,7 +405,7 @@ declare namespace Zotero {
      * `false` is returned.
      */
     getContentFromItems(
-      items: [Item],
+      items: Item[],
       format: string | QuickCopy.Format,
       callback?: (obj: { string: string }, worked: boolean) => void,
       modified?: boolean,
@@ -425,11 +432,13 @@ declare namespace Zotero {
   interface ZoteroPane {
     document: Document;
 
-    getSelectedCollection(asId: true): number | undefined;
-    getSelectedCollection(asId: false): Collection | undefined;
+    getSelectedCollection<A extends boolean>(
+      asID: A,
+    ): (A extends true ? DataObjectID : Collection) | undefined;
 
-    getSelectedItems(asIds: true): number[];
-    getSelectedItems(asIds: false): Item[];
+    getSelectedItems<A extends boolean>(
+      asIDs: A,
+    ): A extends true ? DataObjectID[] : Item[];
 
     loadURI(uris: string | string[]): void;
   }

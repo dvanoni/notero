@@ -1,16 +1,15 @@
 import 'core-js/stable/string/trim-end';
 import 'core-js/stable/string/trim-start';
 
-import { chunkString, keyValue } from '../../utils';
+import { keyValue } from '../../utils';
 import {
-  Annotations,
   ChildBlock,
   ParagraphBlock,
   RichText,
-  RichTextText,
-  TextLink,
+  RichTextOptions,
   isBlockType,
 } from '../notion-types';
+import { buildRichText } from '../notion-utils';
 
 import {
   BlockResult,
@@ -32,15 +31,6 @@ import {
   ParsedNode,
   parseNode,
 } from './parse-node';
-
-type RichTextOptions = {
-  annotations?: Annotations;
-  link?: TextLink;
-  preserveWhitespace?: boolean;
-};
-
-// https://developers.notion.com/reference/request-limits#limits-for-property-values
-const TEXT_CONTENT_MAX_LENGTH = 2000;
 
 export function convertHtmlToBlocks(htmlString: string): ChildBlock[] {
   const root = getRootElement(htmlString);
@@ -270,32 +260,6 @@ function convertRichTextNode(
   }
 
   return convertRichTextChildNodes(node.element, updatedOptions);
-}
-
-function buildRichText(
-  textContent: string | null,
-  { annotations, link, preserveWhitespace }: RichTextOptions,
-): RichText {
-  if (!textContent?.length) return [];
-
-  const text = preserveWhitespace
-    ? textContent
-    : collapseWhitespace(textContent);
-
-  const hasAnnotations = Boolean(
-    annotations && Object.keys(annotations).length,
-  );
-
-  return chunkString(text, TEXT_CONTENT_MAX_LENGTH).map((content) => {
-    const richText: RichTextText = { text: { content } };
-    if (hasAnnotations) richText.annotations = annotations;
-    if (link) richText.text.link = link;
-    return richText;
-  });
-}
-
-function collapseWhitespace(text: string): string {
-  return text.replace(/[\s\n]+/g, ' ');
 }
 
 function paragraphBlock(richText: RichText): ParagraphBlock {

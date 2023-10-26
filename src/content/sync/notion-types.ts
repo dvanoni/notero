@@ -1,4 +1,10 @@
-import { BlockObjectRequest } from '@notionhq/client/build/src/api-endpoints';
+import type {
+  BlockObjectRequest,
+  CreatePageParameters,
+  GetDatabaseResponse,
+} from '@notionhq/client/build/src/api-endpoints';
+
+/*** Blocks ***/
 
 export type BlockType = NonNullable<BlockObjectRequest['type']>;
 
@@ -25,9 +31,38 @@ export type Annotations = RichTextText['annotations'];
 
 export type TextLink = RichTextText['text']['link'];
 
+export type RichTextOptions = {
+  annotations?: Annotations;
+  link?: TextLink;
+  preserveWhitespace?: boolean;
+};
+
 export function isBlockType<T extends BlockType>(
   type: T,
   value: object,
 ): value is Block<T> {
   return type in value;
 }
+
+/*** Databases ***/
+
+export type DatabaseProperties = GetDatabaseResponse['properties'];
+
+export type DatabasePropertyConfig<T extends PropertyType> = Extract<
+  DatabaseProperties[string],
+  { type: T }
+>;
+
+export type DatabasePageProperties = CreatePageParameters['properties'];
+
+export type DatabasePageProperty = Extract<
+  DatabasePageProperties[string],
+  { type?: string }
+>;
+
+export type PropertyType = NonNullable<DatabasePageProperty['type']>;
+
+export type PropertyRequest<T extends PropertyType> = Extract<
+  DatabasePageProperty,
+  { [P in T]: unknown }
+>[T];

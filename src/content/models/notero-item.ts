@@ -1,11 +1,11 @@
-import { NOTION_TAG_NAME } from './constants';
-import { NoteroPref, getNoteroPref } from './prefs/notero-pref';
+import { NOTION_TAG_NAME } from '../constants';
+import { NoteroPref, getNoteroPref } from '../prefs/notero-pref';
 import {
   convertWebURLToAppURL,
   getPageIDFromURL,
   isNotionURL,
-} from './sync/notion-utils';
-import { getDOMParser, isObject } from './utils';
+} from '../sync/notion-utils';
+import { getDOMParser, isObject } from '../utils';
 
 const SYNCED_NOTES_ID = 'notero-synced-notes';
 

@@ -5,7 +5,7 @@ import type {
 } from '@notionhq/client/build/src/api-endpoints';
 
 import { APA_STYLE } from '../constants';
-import { NoteroItem } from '../notero-item';
+import { NoteroItem } from '../models/notero-item';
 import {
   NoteroPref,
   PageTitleFormat,

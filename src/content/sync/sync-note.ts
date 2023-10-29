@@ -1,6 +1,6 @@
 import { APIErrorCode, Client } from '@notionhq/client';
 
-import { NoteroItem } from '../notero-item';
+import { NoteroItem } from '../models/notero-item';
 
 import { convertHtmlToBlocks } from './html-to-notion';
 import { isNotionErrorWithCode } from './notion-utils';

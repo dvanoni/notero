@@ -10,10 +10,9 @@ export async function syncNote(
   item: Zotero.Item,
 ): Promise<void> {
   const noteroItem = new NoteroItem(item.topLevelItem);
-  const attachment = noteroItem.getNotionLinkAttachment();
   const pageID = noteroItem.getNotionPageID();
 
-  if (!attachment || !pageID) {
+  if (!pageID) {
     throw new Error('Cannot sync note for item that is not synced.');
   }
 

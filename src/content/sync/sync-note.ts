@@ -7,9 +7,9 @@ import { isNotionErrorWithCode } from './notion-utils';
 
 export async function syncNote(
   notion: Client,
-  item: Zotero.Item,
+  noteItem: Zotero.Item,
 ): Promise<void> {
-  const noteroItem = new NoteroItem(item.topLevelItem);
+  const noteroItem = new NoteroItem(noteItem.topLevelItem);
   const pageID = noteroItem.getNotionPageID();
 
   if (!pageID) {
@@ -23,7 +23,7 @@ export async function syncNote(
     containerBlockID = await createContainerBlock(notion, pageID);
   }
 
-  const existingNoteBlockID = blockIDs.noteBlockIDs?.[item.key];
+  const existingNoteBlockID = blockIDs.noteBlockIDs?.[noteItem.key];
 
   if (existingNoteBlockID) {
     await deleteNoteBlock(notion, existingNoteBlockID);
@@ -32,20 +32,20 @@ export async function syncNote(
   let newNoteBlockID;
 
   try {
-    newNoteBlockID = await createNoteBlock(notion, containerBlockID, item);
+    newNoteBlockID = await createNoteBlock(notion, containerBlockID, noteItem);
   } catch (error) {
     if (!isNotionErrorWithCode(error, APIErrorCode.ObjectNotFound)) {
       throw error;
     }
 
     containerBlockID = await createContainerBlock(notion, pageID);
-    newNoteBlockID = await createNoteBlock(notion, containerBlockID, item);
+    newNoteBlockID = await createNoteBlock(notion, containerBlockID, noteItem);
   }
 
   await noteroItem.saveSyncedNoteBlockID(
     containerBlockID,
     newNoteBlockID,
-    item.key,
+    noteItem.key,
   );
 }
 
@@ -73,14 +73,14 @@ async function createContainerBlock(
 async function createNoteBlock(
   notion: Client,
   containerBlockID: string,
-  item: Zotero.Item,
+  noteItem: Zotero.Item,
 ): Promise<string> {
   const { results } = await notion.blocks.children.append({
     block_id: containerBlockID,
     children: [
       {
         heading_1: {
-          rich_text: [{ text: { content: item.getNoteTitle() } }],
+          rich_text: [{ text: { content: noteItem.getNoteTitle() } }],
           is_toggleable: true,
         },
       },
@@ -93,7 +93,7 @@ async function createNoteBlock(
 
   await notion.blocks.children.append({
     block_id: noteBlockID,
-    children: convertHtmlToBlocks(item.getNote()),
+    children: convertHtmlToBlocks(noteItem.getNote()),
   });
 
   return noteBlockID;

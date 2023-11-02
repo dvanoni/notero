@@ -19,3 +19,12 @@ updates:
         update-types:
           - 'minor'
           - 'patch'
+      commitlint:
+        patterns:
+          - '@commitlint*'
+      jest:
+        patterns:
+          - '*jest*'
+      typescript-eslint:
+        patterns:
+          - '@typescript-eslint*'

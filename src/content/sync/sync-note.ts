@@ -5,6 +5,27 @@ import { NoteroItem } from '../models/notero-item';
 import { convertHtmlToBlocks } from './html-to-notion';
 import { isNotionErrorWithCode } from './notion-utils';
 
+/**
+ * Sync a Zotero note item to Notion as children blocks of the page for its
+ * parent regular item.
+ *
+ * All notes are children of a single toggle heading block on the page. This
+ * enables Notero to have a single container on the page where it can update
+ * note content without impacting anything else on the page added by the user.
+ * Within this top-level container block, each note is contained within its own
+ * toggle heading block using the note title.
+ *
+ * Syncing a note performs the following steps:
+ * 1. If the top-level container block ID is not saved in Zotero, create the
+ *    block by appending it to the page and save its ID.
+ * 2. If a block ID is saved in Zotero for the note's toggle heading, delete
+ *    the block (including all its children).
+ * 3. Append a new toggle heading block with the note content as a child of
+ *    the top-level container block.
+ *
+ * @param notion an initialized Notion `Client` instance
+ * @param noteItem the Zotero note item to sync to Notion
+ */
 export async function syncNote(
   notion: Client,
   noteItem: Zotero.Item,

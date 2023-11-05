@@ -1,5 +1,5 @@
 diff --git a/node_modules/@notionhq/client/build/src/Client.d.ts b/node_modules/@notionhq/client/build/src/Client.d.ts
-index d1c763b..c52427f 100644
+index 540eafa..e3085af 100644
 --- a/node_modules/@notionhq/client/build/src/Client.d.ts
 +++ b/node_modules/@notionhq/client/build/src/Client.d.ts
 @@ -11,7 +11,7 @@ export interface ClientOptions {
@@ -12,7 +12,7 @@ index d1c763b..c52427f 100644
      agent?: Agent;
  }
 diff --git a/node_modules/@notionhq/client/build/src/Client.js b/node_modules/@notionhq/client/build/src/Client.js
-index 63fb1e6..d61753b 100644
+index 390de9c..8faf72a 100644
 --- a/node_modules/@notionhq/client/build/src/Client.js
 +++ b/node_modules/@notionhq/client/build/src/Client.js
 @@ -16,7 +16,6 @@ const logging_1 = require("./logging");
@@ -23,7 +23,7 @@ index 63fb1e6..d61753b 100644
  const package_json_1 = require("../package.json");
  class Client {
      constructor(options) {
-@@ -295,7 +294,7 @@ class Client {
+@@ -312,7 +311,7 @@ class Client {
          __classPrivateFieldSet(this, _Client_prefixUrl, ((_c = options === null || options === void 0 ? void 0 : options.baseUrl) !== null && _c !== void 0 ? _c : "https://api.notion.com") + "/v1/", "f");
          __classPrivateFieldSet(this, _Client_timeoutMs, (_d = options === null || options === void 0 ? void 0 : options.timeoutMs) !== null && _d !== void 0 ? _d : 60000, "f");
          __classPrivateFieldSet(this, _Client_notionVersion, (_e = options === null || options === void 0 ? void 0 : options.notionVersion) !== null && _e !== void 0 ? _e : Client.defaultNotionVersion, "f");

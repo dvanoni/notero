@@ -17,5 +17,6 @@ export function getNotionClient(window: Window) {
     auth: authToken,
     fetch: window.fetch.bind(window),
     logger,
+    logLevel: LogLevel.DEBUG,
   });
 }

@@ -5,10 +5,13 @@ import { getDOMParser, isObject } from '../utils';
 
 const SYNCED_NOTES_ID = 'notero-synced-notes';
 
-type SyncedNoteBlockIDs = {
+type SyncedNotes = {
   containerBlockID?: string;
-  noteBlockIDs?: {
-    [noteItemKey: Zotero.DataObjectKey]: string;
+  notes?: {
+    [noteItemKey: Zotero.DataObjectKey]: {
+      blockID: string;
+      syncedAt?: Date;
+    };
   };
 };
 
@@ -69,19 +72,19 @@ export async function saveNotionLinkAttachment(
 function getSyncedNotesJSON(attachment: Zotero.Item): string | undefined {
   const doc = getDOMParser().parseFromString(attachment.getNote(), 'text/html');
 
-  return doc.getElementById(SYNCED_NOTES_ID)?.innerText;
+  return doc.getElementById(SYNCED_NOTES_ID)?.innerHTML;
 }
 
-export function getSyncedNoteBlockIDs(item: Zotero.Item): SyncedNoteBlockIDs {
+export function getSyncedNotes(item: Zotero.Item): SyncedNotes {
   const attachment = getNotionLinkAttachment(item);
   if (!attachment) return {};
 
-  return getSyncedNoteBlockIDsFromAttachment(attachment);
+  return getSyncedNotesFromAttachment(attachment);
 }
 
-function getSyncedNoteBlockIDsFromAttachment(
+export function getSyncedNotesFromAttachment(
   attachment: Zotero.Item,
-): SyncedNoteBlockIDs {
+): SyncedNotes {
   const syncedNotesJSON = getSyncedNotesJSON(attachment);
   if (!syncedNotesJSON) return {};
 
@@ -89,27 +92,40 @@ function getSyncedNoteBlockIDsFromAttachment(
 
   if (!isObject(parsedValue)) return {};
 
-  let containerBlockID, noteBlockIDs;
+  let containerBlockID;
+  const notes: Required<SyncedNotes>['notes'] = {};
 
   if (typeof parsedValue.containerBlockID === 'string') {
     containerBlockID = parsedValue.containerBlockID;
   }
 
   if (isObject(parsedValue.noteBlockIDs)) {
-    noteBlockIDs = Object.entries(parsedValue.noteBlockIDs)
-      .filter(
-        (entry): entry is [string, string] => typeof entry[1] === 'string',
-      )
-      .reduce<Record<string, string>>(
-        (ids, [key, value]) => ({ ...ids, [key]: value }),
-        {},
-      );
+    // Convert from original format
+    Object.entries(parsedValue.noteBlockIDs).forEach(([key, value]) => {
+      if (typeof value === 'string') {
+        notes[key] = { blockID: value };
+      }
+    });
   }
 
-  return { containerBlockID, noteBlockIDs };
+  if (isObject(parsedValue.notes)) {
+    Object.entries(parsedValue.notes).forEach(([key, value]) => {
+      if (!isObject(value)) return;
+
+      const { blockID, syncedAt } = value;
+      if (typeof blockID !== 'string') return;
+
+      notes[key] = {
+        blockID,
+        syncedAt: typeof syncedAt === 'string' ? new Date(syncedAt) : undefined,
+      };
+    });
+  }
+
+  return { containerBlockID, notes };
 }
 
-export async function saveSyncedNoteBlockID(
+export async function saveSyncedNote(
   item: Zotero.Item,
   containerBlockID: string,
   noteBlockID: string,
@@ -118,24 +134,27 @@ export async function saveSyncedNoteBlockID(
   const attachment = getNotionLinkAttachment(item);
   if (!attachment) return;
 
-  const { noteBlockIDs } = getSyncedNoteBlockIDsFromAttachment(attachment);
+  const { notes } = getSyncedNotesFromAttachment(attachment);
 
-  const syncedNoteBlockIDs = {
+  const syncedNotes = {
     containerBlockID,
-    noteBlockIDs: {
-      ...noteBlockIDs,
-      [noteItemKey]: noteBlockID,
+    notes: {
+      ...notes,
+      [noteItemKey]: {
+        blockID: noteBlockID,
+        syncedAt: new Date(),
+      },
     },
   };
 
-  updateNotionLinkAttachmentNote(attachment, syncedNoteBlockIDs);
+  updateNotionLinkAttachmentNote(attachment, syncedNotes);
 
   await attachment.saveTx();
 }
 
 function updateNotionLinkAttachmentNote(
   attachment: Zotero.Item,
-  syncedNoteBlockIDs?: Required<SyncedNoteBlockIDs>,
+  syncedNotes?: Required<SyncedNotes>,
 ) {
   let note = `
 <h2 style="background-color: #ff666680;">Do not modify or delete!</h2>
@@ -146,8 +165,8 @@ so that it can properly update the Notion page for this item.</p>
 `;
 
   if (getNoteroPref(NoteroPref.syncNotes)) {
-    const syncedNotesJSON = syncedNoteBlockIDs
-      ? JSON.stringify(syncedNoteBlockIDs)
+    const syncedNotesJSON = syncedNotes
+      ? JSON.stringify(syncedNotes)
       : getSyncedNotesJSON(attachment);
 
     if (syncedNotesJSON) {

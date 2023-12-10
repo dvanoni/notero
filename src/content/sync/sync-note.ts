@@ -2,8 +2,8 @@ import { APIErrorCode, Client } from '@notionhq/client';
 
 import {
   getNotionPageID,
-  getSyncedNoteBlockIDs,
-  saveSyncedNoteBlockID,
+  getSyncedNotes,
+  saveSyncedNote,
 } from '../data/item-data';
 
 import { convertHtmlToBlocks } from './html-to-notion';
@@ -41,14 +41,14 @@ export async function syncNote(
     throw new Error('Cannot sync note for item that is not synced.');
   }
 
-  const blockIDs = getSyncedNoteBlockIDs(regularItem);
-  let { containerBlockID } = blockIDs;
+  const syncedNotes = getSyncedNotes(regularItem);
+  let { containerBlockID } = syncedNotes;
 
   if (!containerBlockID) {
     containerBlockID = await createContainerBlock(notion, pageID);
   }
 
-  const existingNoteBlockID = blockIDs.noteBlockIDs?.[noteItem.key];
+  const existingNoteBlockID = syncedNotes.notes?.[noteItem.key]?.blockID;
 
   if (existingNoteBlockID) {
     await deleteNoteBlock(notion, existingNoteBlockID);
@@ -67,7 +67,7 @@ export async function syncNote(
     newNoteBlockID = await createNoteBlock(notion, containerBlockID, noteItem);
   }
 
-  await saveSyncedNoteBlockID(
+  await saveSyncedNote(
     regularItem,
     containerBlockID,
     newNoteBlockID,

@@ -1,5 +1,5 @@
 import { createZoteroCollectionMock } from '../../../../test/utils/zotero-mock';
-import { buildCollectionFullName } from '../buildCollectionFullName';
+import { buildCollectionFullName } from '../build-collection-full-name';
 
 const parent = createZoteroCollectionMock({ name: 'Parent Name' });
 const collection = createZoteroCollectionMock({ name: 'Collection Name' });

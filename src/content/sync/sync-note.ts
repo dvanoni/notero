@@ -1,6 +1,10 @@
 import { APIErrorCode, Client } from '@notionhq/client';
 
-import { NoteroItem } from '../models/notero-item';
+import {
+  getNotionPageID,
+  getSyncedNoteBlockIDs,
+  saveSyncedNoteBlockID,
+} from '../data/item-data';
 
 import { convertHtmlToBlocks } from './html-to-notion';
 import { isNotionErrorWithCode } from './notion-utils';
@@ -30,14 +34,14 @@ export async function syncNote(
   notion: Client,
   noteItem: Zotero.Item,
 ): Promise<void> {
-  const noteroItem = new NoteroItem(noteItem.topLevelItem);
-  const pageID = noteroItem.getNotionPageID();
+  const regularItem = noteItem.topLevelItem;
+  const pageID = getNotionPageID(regularItem);
 
   if (!pageID) {
     throw new Error('Cannot sync note for item that is not synced.');
   }
 
-  const blockIDs = noteroItem.getSyncedNoteBlockIDs();
+  const blockIDs = getSyncedNoteBlockIDs(regularItem);
   let { containerBlockID } = blockIDs;
 
   if (!containerBlockID) {
@@ -63,7 +67,8 @@ export async function syncNote(
     newNoteBlockID = await createNoteBlock(notion, containerBlockID, noteItem);
   }
 
-  await noteroItem.saveSyncedNoteBlockID(
+  await saveSyncedNoteBlockID(
+    regularItem,
     containerBlockID,
     newNoteBlockID,
     noteItem.key,

@@ -1,6 +1,6 @@
 import { APA_STYLE, NOTION_TAG_NAME } from '../constants';
 import { PageTitleFormat } from '../prefs/notero-pref';
-import { buildCollectionFullName } from '../utils';
+import { buildCollectionFullName, parseItemDate } from '../utils';
 
 import type {
   DatabasePageProperties,
@@ -202,8 +202,7 @@ class PropertyBuilder {
     {
       name: 'Date Added',
       type: 'date',
-      buildRequest: () =>
-        buildDate(Zotero.Date.sqlToDate(this.item.dateAdded, true)),
+      buildRequest: () => buildDate(parseItemDate(this.item.dateAdded)),
     },
     {
       name: 'DOI',

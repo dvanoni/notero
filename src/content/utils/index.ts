@@ -10,3 +10,4 @@ export { hasErrorStack } from './has-error-stack';
 export { isObject } from './is-object';
 export { keyValue } from './key-value';
 export { log } from './log';
+export { parseItemDate } from './parse-item-date';

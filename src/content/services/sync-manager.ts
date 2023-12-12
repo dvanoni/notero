@@ -1,7 +1,8 @@
+import { getSyncedNotes } from '../data/item-data';
 import { loadSyncEnabledCollectionIDs } from '../prefs/collection-sync-config';
 import { getNoteroPref, NoteroPref } from '../prefs/notero-pref';
 import { performSyncJob } from '../sync/sync-job';
-import { getAllCollectionItems, log } from '../utils';
+import { getAllCollectionItems, log, parseItemDate } from '../utils';
 
 import type { EventManager, NotifierEventParams } from './event-manager';
 import type { Service, ServiceParams } from './service';
@@ -61,16 +62,23 @@ export class SyncManager implements Service {
     const items = this.getItemsForNotifierEvent(...params);
     if (!items.length) return;
 
-    const collectionIDs = loadSyncEnabledCollectionIDs();
-    if (!collectionIDs.size) return;
+    const syncedCollectionIDs = loadSyncEnabledCollectionIDs();
+    if (!syncedCollectionIDs.size) return;
+
+    const isItemInSyncedCollection = (item: Zotero.Item) =>
+      item
+        .getCollections()
+        .some((collectionID) => syncedCollectionIDs.has(collectionID));
+
+    const isValidRegularItem = (item: Zotero.Item) =>
+      item.isRegularItem() && isItemInSyncedCollection(item);
+
+    const isValidNoteItem = (item: Zotero.Item) =>
+      item.isNote() && isValidRegularItem(item.topLevelItem);
 
     const validItems = items.filter(
       (item) =>
-        !item.deleted &&
-        item.isRegularItem() &&
-        item
-          .getCollections()
-          .some((collectionID) => collectionIDs.has(collectionID)),
+        !item.deleted && (isValidRegularItem(item) || isValidNoteItem(item)),
     );
 
     this.enqueueItemsToSync(validItems);
@@ -81,20 +89,21 @@ export class SyncManager implements Service {
       .getChildItems(false)
       .filter((item) => !item.deleted && item.isRegularItem());
 
-    this.enqueueItemsToSync(validItems);
+    const noteItems = this.getNotesToSync(validItems);
+
+    this.enqueueItemsToSync(validItems.concat(noteItems));
   };
 
   private handleSyncItems = (items: Zotero.Item[]) => {
     if (!items.length) return;
 
-    const syncNotes = getNoteroPref(NoteroPref.syncNotes);
-
     const validItems = items.filter(
-      (item) =>
-        !item.deleted && (item.isRegularItem() || (syncNotes && item.isNote())),
+      (item) => !item.deleted && (item.isRegularItem() || item.isNote()),
     );
 
-    this.enqueueItemsToSync(validItems);
+    const noteItems = this.getNotesToSync(validItems);
+
+    this.enqueueItemsToSync(validItems.concat(noteItems));
   };
 
   /**
@@ -109,7 +118,9 @@ export class SyncManager implements Service {
 
     if (!syncOnModifyItems) {
       if (event === 'collection-item.add') {
-        return Zotero.Items.get(this.getIndexedIDs(1, ids));
+        const items = Zotero.Items.get(this.getIndexedIDs(1, ids));
+        const notes = this.getNotesToSync(items);
+        return items.concat(notes);
       }
       return [];
     }
@@ -118,8 +129,11 @@ export class SyncManager implements Service {
       case 'collection.delete':
       case 'collection.modify':
         return this.getItemsFromCollectionIDs(ids);
-      case 'item.modify':
-        return Zotero.Items.get(ids);
+      case 'item.modify': {
+        const items = Zotero.Items.get(ids);
+        const notes = this.getNotesToSync(items);
+        return items.concat(notes);
+      }
       case 'item-tag.modify':
       case 'item-tag.remove':
         return Zotero.Items.get(this.getIndexedIDs(0, ids));
@@ -147,6 +161,29 @@ export class SyncManager implements Service {
 
     // Deduplicate items in multiple collections
     return Array.from(new Set(items));
+  }
+
+  private getNotesToSync(items: Zotero.Item[]): Zotero.Item[] {
+    const syncNotes = getNoteroPref(NoteroPref.syncNotes);
+    if (!syncNotes) return [];
+
+    const notesToSync: Zotero.Item[] = [];
+
+    items.forEach((item) => {
+      if (!item.isRegularItem()) return;
+
+      const { notes: syncedNotes } = getSyncedNotes(item);
+      const notes = Zotero.Items.get(item.getNotes(false));
+
+      notes.forEach((note) => {
+        const syncedAt = syncedNotes?.[note.key]?.syncedAt;
+        if (!syncedAt || syncedAt < parseItemDate(note.dateModified)) {
+          notesToSync.push(note);
+        }
+      });
+    });
+
+    return notesToSync;
   }
 
   /**

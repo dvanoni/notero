@@ -35,10 +35,10 @@ type SyncJobParams = {
 };
 
 export async function performSyncJob(
-  itemsIDs: Set<Zotero.Item['id']>,
+  itemIDs: Set<Zotero.Item['id']>,
   window: Window,
 ): Promise<void> {
-  const items = Zotero.Items.get(Array.from(itemsIDs));
+  const items = Zotero.Items.get(Array.from(itemIDs));
   if (!items.length) return;
 
   const progressWindow = new ProgressWindow(items.length);

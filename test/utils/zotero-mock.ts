@@ -19,7 +19,11 @@ export function createZoteroCollectionMock(
   ...args: Parameters<typeof mock<Zotero.Collection>>
 ): MockProxy<Zotero.Collection> {
   const id = getDataObjectID();
-  const collectionMock = mock<Zotero.Collection>({ ...args[0], id }, args[1]);
+  const key = `key${id}`;
+  const collectionMock = mock<Zotero.Collection>(
+    { ...args[0], id, key },
+    args[1],
+  );
 
   collectionsStore.set(id, collectionMock);
 
@@ -36,7 +40,8 @@ export function createZoteroItemMock(
   ...args: Parameters<typeof mock<Zotero.Item>>
 ): MockProxy<Zotero.Item> {
   const id = getDataObjectID();
-  const itemMock = mock<Zotero.Item>({ ...args[0], id }, args[1]);
+  const key = `key${id}`;
+  const itemMock = mock<Zotero.Item>({ ...args[0], id, key }, args[1]);
 
   itemsStore.set(id, itemMock);
 

@@ -5,7 +5,11 @@ import type {
 } from '@notionhq/client/build/src/api-endpoints';
 
 import { APA_STYLE } from '../constants';
-import { NoteroItem } from '../notero-item';
+import {
+  getNotionPageID,
+  saveNotionLinkAttachment,
+  saveNotionTag,
+} from '../data/item-data';
 import {
   NoteroPref,
   PageTitleFormat,
@@ -15,7 +19,7 @@ import { getLocalizedString, hasErrorStack, log } from '../utils';
 
 import { getNotionClient } from './notion-client';
 import type { DatabaseProperties } from './notion-types';
-import { isNotionErrorWithCode } from './notion-utils';
+import { convertWebURLToAppURL, isNotionErrorWithCode } from './notion-utils';
 import { ProgressWindow } from './progress-window';
 import { buildProperties } from './property-builder';
 import { syncNote } from './sync-note';
@@ -31,10 +35,10 @@ type SyncJobParams = {
 };
 
 export async function performSyncJob(
-  itemsIDs: Set<Zotero.Item['id']>,
+  itemIDs: Set<Zotero.Item['id']>,
   window: Window,
 ): Promise<void> {
-  const items = Zotero.Items.get(Array.from(itemsIDs));
+  const items = Zotero.Items.get(Array.from(itemIDs));
   if (!items.length) return;
 
   const progressWindow = new ProgressWindow(items.length);
@@ -150,14 +154,13 @@ class SyncJob {
   }
 
   private async syncRegularItem(item: Zotero.Item) {
-    const noteroItem = new NoteroItem(item);
+    const response = await this.saveItemToDatabase(item);
 
-    const response = await this.saveItemToDatabase(noteroItem);
-
-    await noteroItem.saveNotionTag();
+    await saveNotionTag(item);
 
     if (isFullPage(response)) {
-      await noteroItem.saveNotionLinkAttachment(response.url);
+      const appURL = convertWebURLToAppURL(response.url);
+      await saveNotionLinkAttachment(item, appURL);
     } else {
       throw new Error(
         'Failed to create Notion link attachment. ' +
@@ -169,14 +172,14 @@ class SyncJob {
   }
 
   private async saveItemToDatabase(
-    noteroItem: NoteroItem,
+    item: Zotero.Item,
   ): Promise<CreatePageResponse & UpdatePageResponse> {
-    const pageID = noteroItem.getNotionPageID();
+    const pageID = getNotionPageID(item);
 
     const properties = await buildProperties({
       citationFormat: this.citationFormat,
       databaseProperties: this.databaseProperties,
-      item: noteroItem.zoteroItem,
+      item,
       pageTitleFormat: this.pageTitleFormat,
     });
 

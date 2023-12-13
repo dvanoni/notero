@@ -33,4 +33,4 @@ notero-preferences-sync-enabled-column = Sync Enabled
 notero-preferences-sync-on-modify-items =
   .label = Sync when items are modified
 notero-preferences-sync-notes =
-  .label = Sync notes (EXPERIMENTAL)
+  .label = Sync notes

@@ -1,4 +1,4 @@
-import { chunkString } from '../chunkString';
+import { chunkString } from '../chunk-string';
 
 describe('chunkString', () => {
   it.each`

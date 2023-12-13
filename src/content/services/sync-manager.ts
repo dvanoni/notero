@@ -74,7 +74,9 @@ export class SyncManager implements Service {
       item.isRegularItem() && isItemInSyncedCollection(item);
 
     const isValidNoteItem = (item: Zotero.Item) =>
-      item.isNote() && isValidRegularItem(item.topLevelItem);
+      item.isNote() &&
+      Boolean(item.getNote()) &&
+      isValidRegularItem(item.topLevelItem);
 
     const validItems = items.filter(
       (item) =>
@@ -98,7 +100,9 @@ export class SyncManager implements Service {
     if (!items.length) return;
 
     const validItems = items.filter(
-      (item) => !item.deleted && (item.isRegularItem() || item.isNote()),
+      (item) =>
+        !item.deleted &&
+        (item.isRegularItem() || (item.isNote() && item.getNote())),
     );
 
     const noteItems = this.getNotesToSync(validItems);
@@ -176,6 +180,8 @@ export class SyncManager implements Service {
       const notes = Zotero.Items.get(item.getNotes(false));
 
       notes.forEach((note) => {
+        if (!note.getNote()) return;
+
         const syncedAt = syncedNotes?.[note.key]?.syncedAt;
         if (!syncedAt || syncedAt < parseItemDate(note.dateModified)) {
           notesToSync.push(note);

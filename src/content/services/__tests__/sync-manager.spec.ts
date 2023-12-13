@@ -37,6 +37,7 @@ const regularItem = createZoteroItemMock({
 const syncedNoteItem = createZoteroItemMock({
   dateModified: '2023-10-09T15:00:00Z',
   deleted: false,
+  getNote: () => 'Synced note item',
   isRegularItem: () => false,
   isNote: () => true,
   topLevelItem: regularItem,
@@ -45,6 +46,7 @@ const syncedNoteItem = createZoteroItemMock({
 const outOfSyncNoteItem = createZoteroItemMock({
   dateModified: '2023-07-12T09:00:00Z',
   deleted: false,
+  getNote: () => 'Out-of-sync note item',
   isRegularItem: () => false,
   isNote: () => true,
   topLevelItem: regularItem,
@@ -53,6 +55,16 @@ const outOfSyncNoteItem = createZoteroItemMock({
 const unsyncedNoteItem = createZoteroItemMock({
   dateModified: '2023-03-02T13:00:00Z',
   deleted: false,
+  getNote: () => 'Unsynced note item',
+  isRegularItem: () => false,
+  isNote: () => true,
+  topLevelItem: regularItem,
+});
+
+const emptyNoteItem = createZoteroItemMock({
+  dateModified: '2023-12-05T10:00:00Z',
+  deleted: false,
+  getNote: () => '',
   isRegularItem: () => false,
   isNote: () => true,
   topLevelItem: regularItem,
@@ -71,6 +83,7 @@ const regularItemNotInCollection = createZoteroItemMock({
 const noteItemNotInCollection = createZoteroItemMock({
   dateModified: '2023-04-10T17:00:00Z',
   deleted: false,
+  getNote: () => 'Note item not in collection',
   isRegularItem: () => false,
   isNote: () => true,
   topLevelItem: regularItemNotInCollection,
@@ -83,6 +96,7 @@ regularItem.getNotes.mockReturnValue([
   syncedNoteItem.id,
   outOfSyncNoteItem.id,
   unsyncedNoteItem.id,
+  emptyNoteItem.id,
 ]);
 
 deletedItem.getNotes.mockReturnValue([]);
@@ -216,7 +230,7 @@ describe('SyncManager', () => {
       );
     });
 
-    it('syncs note items in collection that have not synced or have been modified since last sync when `syncNotes` is enabled', () => {
+    it('syncs non-empty note items in collection that have not synced or have been modified since last sync when `syncNotes` is enabled', () => {
       const { eventManager } = setup({ syncNotes: true });
 
       eventManager.emit('request-sync-collection', collection);
@@ -230,12 +244,13 @@ describe('SyncManager', () => {
   });
 
   describe('receiving `request-sync-items` event', () => {
-    it('syncs both regular and note items when requested even if `syncNotes` is disabled', () => {
+    it('syncs both regular and non-empty note items when requested even if `syncNotes` is disabled', () => {
       const { eventManager } = setup({ syncNotes: false });
 
       eventManager.emit('request-sync-items', [
         regularItem,
         syncedNoteItem,
+        emptyNoteItem,
         regularItemNotInCollection,
         noteItemNotInCollection,
       ]);
@@ -252,7 +267,7 @@ describe('SyncManager', () => {
       );
     });
 
-    it('syncs note items that have not synced or have been modified since last sync when `syncNotes` is enabled', () => {
+    it('syncs non-empty note items that have not synced or have been modified since last sync when `syncNotes` is enabled', () => {
       const { eventManager } = setup({ syncNotes: true });
 
       eventManager.emit('request-sync-items', [

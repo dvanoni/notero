@@ -1,8 +1,6 @@
 import { chunkString } from '../../utils';
+import { LIMITS } from '../notion-limits';
 import type { RichText, RichTextOptions, RichTextText } from '../notion-types';
-
-// https://developers.notion.com/reference/request-limits#limits-for-property-values
-const TEXT_CONTENT_MAX_LENGTH = 2000;
 
 export function buildRichText(
   textContent: string | null | undefined,
@@ -18,7 +16,7 @@ export function buildRichText(
     annotations && Object.keys(annotations).length,
   );
 
-  return chunkString(text, TEXT_CONTENT_MAX_LENGTH).map((content) => {
+  return chunkString(text, LIMITS.TEXT_CONTENT_CHARACTERS).map((content) => {
     const richText: RichTextText = { text: { content } };
     if (hasAnnotations) richText.annotations = annotations;
     if (link) richText.text.link = link;

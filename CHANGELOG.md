@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.5.0](https://github.com/dvanoni/notero/compare/v0.4.13...v0.5.0) (2023-12-13)
+
+
+### Features
+
+* Automatically sync notes ([#392](https://github.com/dvanoni/notero/issues/392)) ([df3c8d1](https://github.com/dvanoni/notero/commit/df3c8d1c6efcc29bf8a51bb4fbe4508dad5296e3))
+
+
+### Bug Fixes
+
+* Batch note block requests to comply with Notion API limits ([#393](https://github.com/dvanoni/notero/issues/393)) ([1659f3b](https://github.com/dvanoni/notero/commit/1659f3bfa49f2830ea831f41a728334d96b59657))
+
 ### [0.4.13](https://github.com/dvanoni/notero/compare/v0.4.12...v0.4.13) (2023-09-22)
 
 

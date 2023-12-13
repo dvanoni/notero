@@ -7,6 +7,8 @@ import {
 } from '../data/item-data';
 
 import { convertHtmlToBlocks } from './html-to-notion';
+import { LIMITS } from './notion-limits';
+import { ChildBlock } from './notion-types';
 import { isNotionErrorWithCode } from './notion-utils';
 
 /**
@@ -117,12 +119,33 @@ async function createNoteBlock(
 
   const noteBlockID = results[0].id;
 
-  await notion.blocks.children.append({
-    block_id: noteBlockID,
-    children: convertHtmlToBlocks(noteItem.getNote()),
-  });
+  const blockBatches = buildNoteBlockBatches(noteItem);
+
+  for (const blocks of blockBatches) {
+    await notion.blocks.children.append({
+      block_id: noteBlockID,
+      children: blocks,
+    });
+  }
 
   return noteBlockID;
+}
+
+function buildNoteBlockBatches(noteItem: Zotero.Item): ChildBlock[][] {
+  const blocks = convertHtmlToBlocks(noteItem.getNote());
+
+  const numBatches = Math.ceil(blocks.length / LIMITS.BLOCK_ARRAY_ELEMENTS);
+  const batches = new Array<ChildBlock[]>(numBatches);
+  let offset = 0;
+  let nextOffset = LIMITS.BLOCK_ARRAY_ELEMENTS;
+
+  for (let i = 0; i < numBatches; ++i) {
+    batches[i] = blocks.slice(offset, nextOffset);
+    offset = nextOffset;
+    nextOffset += LIMITS.BLOCK_ARRAY_ELEMENTS;
+  }
+
+  return batches;
 }
 
 async function deleteNoteBlock(notion: Client, blockID: string): Promise<void> {

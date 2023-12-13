@@ -1,0 +1,15 @@
+/**
+ * @see https://developers.notion.com/reference/request-limits#limits-for-property-values
+ */
+export const LIMITS = {
+  TEXT_CONTENT_CHARACTERS: 2000,
+  TEXT_LINK_URL_CHARACTERS: 2000,
+  EQUATION_EXPRESSION_CHARACTERS: 1000,
+  BLOCK_ARRAY_ELEMENTS: 100,
+  URL_CHARACTERS: 2000,
+  EMAIL_CHARACTERS: 200,
+  PHONE_NUMBER_CHARACTERS: 200,
+  MULTI_SELECT_OPTIONS: 100,
+  RELATION_RELATED_PAGES: 100,
+  PEOPLE_USERS: 100,
+} as const;

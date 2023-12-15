@@ -5,7 +5,7 @@
 <a href="https://www.buymeacoffee.com/dvanoni"><img alt="Buy me a coffee" height="20" src="https://img.buymeacoffee.com/button-api/?text=Buy me a coffee&emoji=&slug=dvanoni&button_colour=BD5FFF&font_colour=ffffff&font_family=Lato&outline_colour=000000&coffee_colour=FFDD00" /></a>
 
 Notero is a [Zotero plugin](https://www.zotero.org/support/plugins) for syncing
-items into [Notion](https://www.notion.so/product). To use it:
+items and notes into [Notion](https://www.notion.so/product). To use it:
 
 1. 📔 [Configure](#configure-notion) your Notion database.
 2. 💾 [Install](#install-and-configure-notero-plugin) the Notero plugin into Zotero.
@@ -30,10 +30,9 @@ Built with ❤️ by [@dvanoni](https://github.com/dvanoni)
 
 ## Why Use Notero?
 
-- Allows you to integrate your reference manager, task list, reading notes,
-  analytical tables, and drafts in one location.
-- The name of database entries is the in-text citation, which allows you to
-  easily link to references when writing in Notion.
+- Integrate your reference manager, task list, reading notes, analytical tables,
+  and drafts in one location.
+- Easily link to references when writing in Notion.
 - Create custom views to filter and sort large reference lists by project,
   tag, author, etc.
 - Backlinks make it easy to locate any of the notes and drafts that mention
@@ -54,13 +53,13 @@ is added or modified, Notero does a few things:
 
 In addition to providing a convenient way to open a Notion page from Zotero,
 the link attachment also serves as a reference for Notero so that it can update
-existing pages instead of creating duplicate pages for a given Zotero item.
+the corresponding Notion page for a given Zotero item.
 
 ### Syncing Items
 
 By default, Notero will sync items in your monitored collections whenever they
 are modified. You can disable this functionality by unchecking the **Sync when
-items are modified** option in Notero preferences.
+items are modified** option in the Notero preferences.
 
 You can also sync items from the collection or item context menus (right-click):
 
@@ -69,10 +68,35 @@ You can also sync items from the collection or item context menus (right-click):
 - To sync one item or multiple items, select the item(s) in the main pane, open
   the context menu, and select **Sync to Notion**.
 
-⚠️ _**Note:** To prevent the "sync on modify" functionality from saving to Notion
-multiple times, Notero does not notify Zotero when the tag and link attachment
-are added to an item. This means they may not appear in Zotero immediately, and
-you may need to navigate to a different item and back to make them appear._
+> [!NOTE]
+> To prevent the "sync on modify" functionality from saving to Notion multiple
+> times, Notero does not notify Zotero when the tag and link attachment are
+> added to an item. This means they may not appear in Zotero immediately, and
+> you may need to navigate to a different item and back to make them appear.
+
+### Syncing Notes and PDF Annotations
+
+Zotero notes associated with an item can be synced into Notion as content of the
+corresponding page for that item. As with regular items, you can manually sync
+notes using the **Sync to Notion** option in the context menu.
+
+Automatic syncing of notes can be enabled via the **Sync notes** option in the
+Notero preferences. When enabled, notes will automatically sync whenever they
+are modified. Additionally, when a regular item is synced, all of its notes will
+also sync if they have not already.
+
+To sync annotations (notes and highlights) from a PDF, you'll first need to
+extract them into a Zotero note:
+
+1. Select an item or PDF, open the context menu, and select
+   **Add Note from Annotations**.
+2. If desired, enable highlight colors from the menu at the top-right of the
+   note panel.
+
+<details>
+  <summary>Example of creating a note from PDF annotations</summary>
+  <video src="https://github.com/dvanoni/notero/assets/299357/4cda5dc7-ba5b-4f5a-8f53-d6bc2c44b1dc" />
+</details>
 
 ## Installation and Setup
 
@@ -113,7 +137,7 @@ Detailed setup instructions are below.
     > 4. Search for and select your integration in the **Search for connections...** menu.
 
       <details>
-        <summary>Example of share settings from the Notion documentation</summary>
+        <summary>Example of connection settings from the Notion documentation</summary>
         <img
           alt="Share database with integration"
           src="https://files.readme.io/3e5cb5b-share-database-with-integration.gif"
@@ -187,6 +211,8 @@ Support for additional properties is planned for the future. See issues:
 4. Restart Zotero to activate the plugin.
 5. Open the Notero preferences from the **Tools → Notero Preferences...** menu
    item, and enter the required preferences.
+   - Note for Zotero 7 users: The Notero preferences have moved into a section
+     in the main Zotero preferences window.
 
 ## Usage Guides
 
@@ -201,7 +227,7 @@ resources made by wonderful members of the community:
   (video) by [Dr. Jingjing Lin](https://jingjing-lin.com/)
 
 _If you'd like to share how you use Notero and want to be listed here, please
-feel free to submit a PR or [contact me](https://twitter.com/dvanoni)!_
+feel free to submit a PR or [contact me](https://github.com/dvanoni)!_
 
 ## Frequently Asked Questions
 

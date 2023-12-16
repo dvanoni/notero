@@ -147,13 +147,6 @@ declare namespace XPCOM {
 }
 
 /**
- * @see https://searchfox.org/mozilla-central/source/dom/chrome-webidl/ChromeUtils.webidl
- */
-declare const ChromeUtils: {
-  import(aResourceURI: string, aTargetObj?: object): unknown;
-};
-
-/**
  * @see https://udn.realityripple.com/docs/Mozilla/Tech/XPCOM/Language_Bindings
  */
 declare const Components: {
@@ -168,16 +161,3 @@ declare const Components: {
 declare const Cc: typeof Components.classes;
 declare const Ci: typeof Components.interfaces;
 declare const Cu: typeof Components.utils;
-
-/**
- * @see https://udn.realityripple.com/docs/Mozilla/JavaScript_code_modules/Services.jsm
- */
-declare interface Services {
-  io: XPCOM.nsIIOService;
-  prefs: XPCOM.nsIPrefService;
-  scriptloader: XPCOM.mozIJSSubScriptLoader;
-  strings: XPCOM.nsIStringBundleService;
-  wm: XPCOM.nsIWindowMediator;
-}
-
-declare const Services: Services;

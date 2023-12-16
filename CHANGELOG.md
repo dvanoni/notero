@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.5.1](https://github.com/dvanoni/notero/compare/v0.5.0...v0.5.1) (2023-12-16)
+
+
+### Features
+
+* Support citation key property and page title format ([#397](https://github.com/dvanoni/notero/issues/397)) ([7469392](https://github.com/dvanoni/notero/commit/746939241e599054d091247d8dfd06de91c8481f))
+
 ## [0.5.0](https://github.com/dvanoni/notero/compare/v0.4.13...v0.5.0) (2023-12-13)
 
 

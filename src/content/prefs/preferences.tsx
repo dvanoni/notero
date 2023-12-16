@@ -15,7 +15,7 @@ class Preferences {
 
     await Zotero.uiReadyPromise;
 
-    this.initPageTitleFormatMenu();
+    await this.initPageTitleFormatMenu();
 
     ReactDOM.render(
       <SyncConfigsTable />,
@@ -23,7 +23,9 @@ class Preferences {
     );
   }
 
-  private initPageTitleFormatMenu(): void {
+  private async initPageTitleFormatMenu(): Promise<void> {
+    const isBetterBibTeXActive = await this.isBetterBibTeXActive();
+
     Object.values(PageTitleFormat).forEach((format) => {
       const label = getLocalizedString(`notero.pageTitleFormat.${format}`);
       const item = this.pageTitleFormatMenu.appendItem(label, format);
@@ -31,8 +33,22 @@ class Preferences {
       if (format === this.pageTitleFormatMenu.value) {
         this.pageTitleFormatMenu.selectedItem = item;
       }
+      if (format === PageTitleFormat.itemCitationKey) {
+        item.disabled = !isBetterBibTeXActive;
+      }
     });
+
     this.pageTitleFormatMenu.disabled = false;
+  }
+
+  private async isBetterBibTeXActive(): Promise<boolean> {
+    const { AddonManager } = ChromeUtils.import(
+      'resource://gre/modules/AddonManager.jsm',
+    );
+    const addon = await AddonManager.getAddonByID(
+      'better-bibtex@iris-advies.com',
+    );
+    return Boolean(addon?.isActive);
   }
 
   public openReadme(): void {

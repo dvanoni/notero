@@ -47,7 +47,7 @@ async function waitForZotero() {
 
   const { Services } = ChromeUtils.import(
     'resource://gre/modules/Services.jsm',
-  ) as { Services: Services };
+  );
 
   const windows = Services.wm.getEnumerator('navigator:browser');
   let found = false;
@@ -158,7 +158,7 @@ async function startup(
     // eslint-disable-next-line no-var
     var { Services } = ChromeUtils.import(
       'resource://gre/modules/Services.jsm',
-    ) as { Services: Services };
+    );
   }
 
   if (isZotero6()) {

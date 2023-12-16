@@ -20,6 +20,7 @@ const fakeTag = 'Fake Tag';
 const fakeFirstName = 'Fakey';
 const fakeLastName = 'Fakerson';
 const fakeAbstract = 'Fake abstract';
+const fakeCitationKey = 'fakeCitationKey';
 const fakeDate = '2023-10-01';
 const fakePublication = 'Fake Publication';
 const fakeShortTitle = 'Faking It';
@@ -38,6 +39,11 @@ const pageTitleTestCases: {
     description: 'item author-date citation',
     format: PageTitleFormat.itemAuthorDateCitation,
     expected: `${fakeLastName}, ${fakeYear}`,
+  },
+  {
+    description: 'item citation key',
+    format: PageTitleFormat.itemCitationKey,
+    expected: fakeCitationKey,
   },
   {
     description: 'item full citation',
@@ -137,6 +143,7 @@ function setup() {
   ]);
   item.getDisplayTitle.mockReturnValue(fakeTitle);
   item.getField.calledWith('abstractNote').mockReturnValue(fakeAbstract);
+  item.getField.calledWith('citationKey').mockReturnValue(fakeCitationKey);
   item.getField.calledWith('date').mockReturnValue(fakeDate);
   item.getField.calledWith('shortTitle').mockReturnValue(fakeShortTitle);
   item.getField.calledWith('year').mockReturnValue(String(fakeYear));
@@ -165,6 +172,25 @@ describe('buildProperties', () => {
             title: [{ text: { content: expected } }],
           },
         });
+      });
+    });
+
+    it('returns item display title for `itemCitationKey` when citation key is unavailable', async () => {
+      const { item } = setup();
+
+      item.getField.calledWith('citationKey').mockReturnValue('');
+
+      const result = await buildProperties({
+        citationFormat: 'style',
+        databaseProperties: {},
+        item,
+        pageTitleFormat: PageTitleFormat.itemCitationKey,
+      });
+
+      expect(result).toStrictEqual({
+        title: {
+          title: [{ text: { content: fakeTitle } }],
+        },
       });
     });
   });

@@ -161,18 +161,3 @@ declare const Components: {
 declare const Cc: typeof Components.classes;
 declare const Ci: typeof Components.interfaces;
 declare const Cu: typeof Components.utils;
-
-declare const ChromeUtils: typeof Components.utils;
-
-/**
- * @see https://udn.realityripple.com/docs/Mozilla/JavaScript_code_modules/Services.jsm
- */
-declare interface Services {
-  io: XPCOM.nsIIOService;
-  prefs: XPCOM.nsIPrefService;
-  scriptloader: XPCOM.mozIJSSubScriptLoader;
-  strings: XPCOM.nsIStringBundleService;
-  wm: XPCOM.nsIWindowMediator;
-}
-
-declare const Services: Services;

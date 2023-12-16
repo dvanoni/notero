@@ -88,6 +88,7 @@ class PropertyBuilder {
   > = {
     [PageTitleFormat.itemAuthorDateCitation]: () =>
       this.getAuthorDateCitation(),
+    [PageTitleFormat.itemCitationKey]: () => this.getCitationKey(),
     [PageTitleFormat.itemFullCitation]: () => this.getFullCitation(),
     [PageTitleFormat.itemInTextCitation]: () => this.getInTextCitation(),
     [PageTitleFormat.itemShortTitle]: () => this.getShortTitle(),
@@ -102,6 +103,10 @@ class PropertyBuilder {
   private async getAuthorDateCitation(): Promise<string | null> {
     const citation = await this.getCachedCitation(APA_STYLE, true);
     return citation?.match(/^\((.+)\)$/)?.[1] || null;
+  }
+
+  private getCitationKey(): string | undefined {
+    return this.item.getField('citationKey');
   }
 
   public getFullCitation(): Promise<string | null> {
@@ -183,6 +188,11 @@ class PropertyBuilder {
             .join('\n'),
         );
       },
+    },
+    {
+      name: 'Citation Key',
+      type: 'rich_text',
+      buildRequest: () => buildRichText(this.getCitationKey()),
     },
     {
       name: 'Collections',

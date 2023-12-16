@@ -11,7 +11,9 @@ declare namespace XUL {
     checked: boolean;
   }
 
-  type MenuItemElement = XULElement;
+  interface MenuItemElement extends XULElement {
+    disabled: boolean;
+  }
 
   interface MenuListElement extends XULElement {
     appendItem(

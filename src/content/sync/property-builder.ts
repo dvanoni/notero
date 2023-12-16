@@ -190,6 +190,11 @@ class PropertyBuilder {
       },
     },
     {
+      name: 'Citation Key',
+      type: 'rich_text',
+      buildRequest: () => buildRichText(this.getCitationKey()),
+    },
+    {
       name: 'Collections',
       type: 'multi_select',
       buildRequest: () =>

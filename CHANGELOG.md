@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.5.2](https://github.com/dvanoni/notero/compare/v0.5.1...v0.5.2) (2023-12-18)
+
+
+### Bug Fixes
+
+* Preserve whitespace when building properties ([#402](https://github.com/dvanoni/notero/issues/402)) ([f241ef6](https://github.com/dvanoni/notero/commit/f241ef66324df59965d0c4ebe3d8c8e9a9fe58cd))
+* Update translations for Simplified Chinese ([#400](https://github.com/dvanoni/notero/issues/400)) ([8ba59f3](https://github.com/dvanoni/notero/commit/8ba59f31c4700def10f2acb891fb69766e6151be))
+
 ### [0.5.1](https://github.com/dvanoni/notero/compare/v0.5.0...v0.5.1) (2023-12-16)
 
 

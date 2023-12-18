@@ -167,7 +167,10 @@ class PropertyBuilder {
     {
       name: 'Abstract',
       type: 'rich_text',
-      buildRequest: () => buildRichText(this.item.getField('abstractNote')),
+      buildRequest: () =>
+        buildRichText(this.item.getField('abstractNote'), {
+          preserveWhitespace: true,
+        }),
     },
     {
       name: 'Authors',
@@ -178,15 +181,13 @@ class PropertyBuilder {
         );
         if (!primaryCreatorTypeID) return [];
 
-        return buildRichText(
-          this.item
-            .getCreators()
-            .filter(
-              ({ creatorTypeID }) => creatorTypeID === primaryCreatorTypeID,
-            )
-            .map(formatCreatorName)
-            .join('\n'),
-        );
+        const authors = this.item
+          .getCreators()
+          .filter(({ creatorTypeID }) => creatorTypeID === primaryCreatorTypeID)
+          .map(formatCreatorName)
+          .join('\n');
+
+        return buildRichText(authors, { preserveWhitespace: true });
       },
     },
     {
@@ -229,13 +230,13 @@ class PropertyBuilder {
         const editorTypeID = Zotero.CreatorTypes.getID('editor');
         if (!editorTypeID) return [];
 
-        return buildRichText(
-          this.item
-            .getCreators()
-            .filter(({ creatorTypeID }) => creatorTypeID === editorTypeID)
-            .map(formatCreatorName)
-            .join('\n'),
-        );
+        const editors = this.item
+          .getCreators()
+          .filter(({ creatorTypeID }) => creatorTypeID === editorTypeID)
+          .map(formatCreatorName)
+          .join('\n');
+
+        return buildRichText(editors, { preserveWhitespace: true });
       },
     },
     {
@@ -251,7 +252,10 @@ class PropertyBuilder {
     {
       name: 'Full Citation',
       type: 'rich_text',
-      buildRequest: async () => buildRichText(await this.getFullCitation()),
+      buildRequest: async () =>
+        buildRichText(await this.getFullCitation(), {
+          preserveWhitespace: true,
+        }),
     },
     {
       name: 'In-Text Citation',

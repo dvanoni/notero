@@ -17,9 +17,11 @@ const mockCollection = createZoteroCollectionMock({ name: 'Fake Collection' });
 const fakeItemType = 'Journal Article';
 const fakePrimaryID = 1;
 const fakeTag = 'Fake Tag';
-const fakeFirstName = 'Fakey';
-const fakeLastName = 'Fakerson';
-const fakeAbstract = 'Fake abstract';
+const fakeFirstName1 = 'Fakey';
+const fakeLastName1 = 'Fakerson';
+const fakeFirstName2 = 'Chet';
+const fakeLastName2 = 'Faker';
+const fakeAbstract = 'Fake abstract\nwith newline';
 const fakeCitationKey = 'fakeCitationKey';
 const fakeDate = '2023-10-01';
 const fakePublication = 'Fake Publication';
@@ -27,8 +29,8 @@ const fakeShortTitle = 'Faking It';
 const fakeTitle = 'Faking It: How To Write A Fake Paper';
 const fakeURI = 'http://zotero.org/users/local/abcdef/items/abcdef';
 const fakeYear = 2023;
-const fakeFullCitation = `${fakeLastName}. (${fakeYear}). ${fakeTitle}. ${fakePublication}.`;
-const fakeInTextCitation = `(${fakeLastName}, ${fakeYear})`;
+const fakeFullCitation = `${fakeLastName1}. (${fakeYear}). ${fakeTitle}. ${fakePublication}.`;
+const fakeInTextCitation = `(${fakeLastName1}, ${fakeYear})`;
 
 const pageTitleTestCases: {
   description: string;
@@ -38,7 +40,7 @@ const pageTitleTestCases: {
   {
     description: 'item author-date citation',
     format: PageTitleFormat.itemAuthorDateCitation,
-    expected: `${fakeLastName}, ${fakeYear}`,
+    expected: `${fakeLastName1}, ${fakeYear}`,
   },
   {
     description: 'item citation key',
@@ -137,8 +139,14 @@ function setup() {
     {
       creatorTypeID: fakePrimaryID,
       fieldMode: 1,
-      firstName: fakeFirstName,
-      lastName: fakeLastName,
+      firstName: fakeFirstName1,
+      lastName: fakeLastName1,
+    },
+    {
+      creatorTypeID: fakePrimaryID,
+      fieldMode: 1,
+      firstName: fakeFirstName2,
+      lastName: fakeLastName2,
     },
   ]);
   item.getDisplayTitle.mockReturnValue(fakeTitle);
@@ -213,7 +221,13 @@ describe('buildProperties', () => {
         title: [{ text: { content: fakeTitle } }],
       },
       Authors: {
-        rich_text: [{ text: { content: `${fakeLastName}, ${fakeFirstName}` } }],
+        rich_text: [
+          {
+            text: {
+              content: `${fakeLastName1}, ${fakeFirstName1}\n${fakeLastName2}, ${fakeFirstName2}`,
+            },
+          },
+        ],
         type: 'rich_text',
       },
       Year: {
@@ -274,7 +288,13 @@ describe('buildProperties', () => {
         type: 'rich_text',
       },
       Authors: {
-        rich_text: [{ text: { content: `${fakeLastName}, ${fakeFirstName}` } }],
+        rich_text: [
+          {
+            text: {
+              content: `${fakeLastName1}, ${fakeFirstName1}\n${fakeLastName2}, ${fakeFirstName2}`,
+            },
+          },
+        ],
         type: 'rich_text',
       },
       Collections: {

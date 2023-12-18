@@ -10,11 +10,12 @@
     "noUncheckedIndexedAccess": true,
     "preserveConstEnums": false,
     "removeComments": false,
+    "resolveJsonModule": true,
     "sourceMap": true,
     "strict": true,
     "target": "es2017",
     "typeRoots": ["./types", "./node_modules/@types"]
   },
-  "include": ["src/**/*", "test/**/*", "types/**/*", "*.ts"],
+  "include": ["scripts/**/*", "src/**/*", "test/**/*", "types/**/*", "*.ts"],
   "exclude": ["node_modules"]
 }

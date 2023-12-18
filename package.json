@@ -3,7 +3,7 @@
   "version": "0.5.2",
   "description": "Sync Zotero items into a Notion database",
   "scripts": {
-    "build": "node esbuild.js",
+    "build": "tsx scripts/build.ts",
     "clean": "rm -r build gen xpi",
     "dev": "pkill zotero; truncate -s0 zotero.log; zotero-start && sleep 2 && osascript -e 'tell app \"Zotero\" to activate'",
     "generateUpdateManifest": "zotero-plugin-generate-update",
@@ -34,6 +34,13 @@
     "url": "https://github.com/dvanoni/notero/issues"
   },
   "homepage": "https://github.com/dvanoni/notero",
+  "xpi": {
+    "bootstrapped": true,
+    "id": "notero@vanoni.dev",
+    "name": "Notero",
+    "releaseURL": "https://github.com/dvanoni/notero/releases/download/release/",
+    "supportsZotero7": true
+  },
   "dependencies": {
     "@notionhq/client": "^2.2.13",
     "core-js": "^3.31.1",
@@ -70,11 +77,5 @@
     "ts-jest": "^29.1.1",
     "tsx": "^4.6.2",
     "typescript": "^5.3.2"
-  },
-  "xpi": {
-    "name": "Notero",
-    "bootstrapped": true,
-    "releaseURL": "https://github.com/dvanoni/notero/releases/download/release/",
-    "supportsZotero7": true
   }
 }

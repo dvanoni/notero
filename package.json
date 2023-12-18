@@ -36,6 +36,10 @@
   "homepage": "https://github.com/dvanoni/notero",
   "xpi": {
     "bootstrapped": true,
+    "icons": {
+      "48": "content/style/notero-48.png",
+      "96": "content/style/notero-96.png"
+    },
     "id": "notero@vanoni.dev",
     "name": "Notero",
     "releaseURL": "https://github.com/dvanoni/notero/releases/download/release/",

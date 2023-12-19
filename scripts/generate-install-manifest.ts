@@ -5,14 +5,13 @@ import pug from 'pug';
 
 import pkg from '../package.json';
 
+import { buildDir, relativeToRoot } from './paths';
 import { version } from './version';
 
-const INSTALL_RDF_PATH = 'build/install.rdf';
-const MANIFEST_JSON_PATH = 'build/manifest.json';
+const installRdfPath = path.join(buildDir, 'install.rdf');
+const manifestJsonPath = path.join(buildDir, 'manifest.json');
 
-const rootDir = path.join(__dirname, '..');
-
-console.log(`Generating ${INSTALL_RDF_PATH}`);
+console.log(`Generating ${relativeToRoot(installRdfPath)}`);
 
 const installRdfVars = {
   bootstrapped: pkg.xpi.bootstrapped,
@@ -32,9 +31,9 @@ const template = fs.readFileSync(
 
 const installRdf = pug.render(template, { ...installRdfVars, pretty: true });
 
-fs.outputFileSync(path.join(rootDir, INSTALL_RDF_PATH), installRdf);
+fs.outputFileSync(installRdfPath, installRdf);
 
-console.log(`Generating ${MANIFEST_JSON_PATH}`);
+console.log(`Generating ${relativeToRoot(manifestJsonPath)}`);
 
 const manifestJson = {
   author: pkg.author.name,
@@ -53,6 +52,4 @@ const manifestJson = {
   },
 };
 
-fs.outputJsonSync(path.join(rootDir, MANIFEST_JSON_PATH), manifestJson, {
-  spaces: 2,
-});
+fs.outputJsonSync(manifestJsonPath, manifestJson, { spaces: 2 });

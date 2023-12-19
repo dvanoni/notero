@@ -6,14 +6,16 @@ import { inc as semverInc } from 'semver';
 
 import pkg from '../package.json';
 
+import { genDir, relativeToRoot } from './paths';
+
 export let version: string;
 
-const version_js = path.join(__dirname, '../gen/version.js');
+const versionJsPath = path.join(genDir, 'version.js');
 
-if (fs.existsSync(version_js)) {
+if (fs.existsSync(versionJsPath)) {
   // eslint-disable-next-line @typescript-eslint/no-var-requires
-  version = require(version_js) as string;
-  console.log(`Found gen/version.js with ${version}`);
+  version = require(versionJsPath) as string;
+  console.log(`Found ${relativeToRoot(versionJsPath)} with ${version}`);
 } else {
   version = pkg.version;
 
@@ -28,10 +30,10 @@ if (fs.existsSync(version_js)) {
     }.${os.hostname()}`;
   }
 
-  console.log(`Writing gen/version.js with ${version}`);
+  console.log(`Writing ${relativeToRoot(versionJsPath)} with ${version}`);
 
   fs.outputFileSync(
-    version_js,
+    versionJsPath,
     `module.exports = ${JSON.stringify(version)};\n`,
   );
 }

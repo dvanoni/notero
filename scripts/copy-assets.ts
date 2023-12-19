@@ -2,12 +2,10 @@ import path from 'path';
 
 import fs from 'fs-extra';
 
+import { buildDir, relativeToRoot, srcDir } from './paths';
+
 const IGNORED_EXTENSIONS = ['.json', '.ts', '.tsx'];
 const IGNORED_PATHS = /(\.DS_Store|__tests__)$/;
-
-const rootDir = path.join(__dirname, '..');
-const srcDir = path.join(rootDir, 'src');
-const destDir = path.join(rootDir, 'build');
 
 // https://gist.github.com/jakub-g/5903dc7e4028133704a4
 function removeEmptyDirectories(dirPath: string) {
@@ -29,16 +27,16 @@ function removeEmptyDirectories(dirPath: string) {
 
 console.group('Copying assets');
 
-fs.copySync(srcDir, destDir, {
+fs.copySync(srcDir, buildDir, {
   filter(src) {
     const include =
       !IGNORED_EXTENSIONS.includes(path.extname(src).toLowerCase()) &&
       !IGNORED_PATHS.test(src);
-    if (include) console.log(path.relative(rootDir, src));
+    if (include) console.log(relativeToRoot(src));
     return include;
   },
 });
 
 console.groupEnd();
 
-removeEmptyDirectories(destDir);
+removeEmptyDirectories(buildDir);

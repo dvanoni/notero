@@ -5,20 +5,17 @@ import fs from 'fs-extra';
 
 import pkg from '../package.json';
 
+import { buildDir, relativeToRoot, xpiDir } from './paths';
 import { version } from './version';
 
-const rootDir = path.join(__dirname, '..');
-const buildDir = path.join(rootDir, 'build');
-const xpiDir = path.join(rootDir, 'xpi');
-
-if (!fs.pathExistsSync(buildDir)) {
+if (!fs.existsSync(buildDir)) {
   throw new Error('`build` directory does not exist');
 }
 
-const xpiName = `${pkg.name}-${version}.xpi`;
+const xpiPath = path.join(xpiDir, `${pkg.name}-${version}.xpi`);
 
-console.log(`Creating ${xpiName}`);
+console.log(`Creating ${relativeToRoot(xpiPath)}`);
 
 const zip = new AdmZip();
 zip.addLocalFolder(buildDir);
-zip.writeZip(path.join(xpiDir, xpiName));
+zip.writeZip(xpiPath);

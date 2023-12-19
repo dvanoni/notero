@@ -24,6 +24,7 @@ jobs:
       - run: npx patch-package
       - run: npm run verify
       - run: npm run build
+      - run: npm run create-xpi
       - id: release-xpi
         name: Release xpi
         uses: softprops/action-gh-release@v1

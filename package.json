@@ -7,7 +7,7 @@
     "clean": "rm -r build gen xpi",
     "create-xpi": "tsx scripts/create-xpi.ts",
     "dev": "pkill zotero; truncate -s0 zotero.log; zotero-start && sleep 2 && osascript -e 'tell app \"Zotero\" to activate'",
-    "generateUpdateManifest": "zotero-plugin-generate-update",
+    "generate-update-manifest": "tsx scripts/generate-update-manifest.ts",
     "lint": "eslint . --cache",
     "lint:fix": "eslint . --fix",
     "postinstall": "patch-package",

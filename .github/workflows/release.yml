@@ -32,7 +32,7 @@ jobs:
           files: xpi/*.xpi
           generate_release_notes: true
       - name: Generate update manifest
-        run: npm run generateUpdateManifest -- ${{ fromJSON(steps.release-xpi.outputs.assets)[0].browser_download_url }}
+        run: npm run generate-update-manifest -- ${{ fromJSON(steps.release-xpi.outputs.assets)[0].browser_download_url }}
       - name: Publish update manifest
         uses: softprops/action-gh-release@v1
         with:

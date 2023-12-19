@@ -14,7 +14,6 @@
     "prepare": "husky install",
     "prettier": "prettier --check .",
     "prettier:fix": "prettier --write .",
-    "release": "zotero-plugin-release",
     "start": "zotero-start",
     "test": "jest",
     "test:watch": "jest --watch",

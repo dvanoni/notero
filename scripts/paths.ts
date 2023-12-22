@@ -1,6 +1,6 @@
 import path from 'node:path';
 
-const rootDir = path.join(__dirname, '..');
+export const rootDir = path.join(__dirname, '..');
 
 export const buildDir = path.join(rootDir, 'build');
 export const genDir = path.join(rootDir, 'gen');

@@ -1,4 +1,4 @@
-import path from 'path';
+import path from 'node:path';
 
 import AdmZip from 'adm-zip';
 import fs from 'fs-extra';

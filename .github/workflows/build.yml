@@ -19,12 +19,7 @@ jobs:
         with:
           node-version-file: '.node-version'
           cache: 'npm'
-          registry-url: 'https://npm.pkg.github.com'
-      # Skip post-install scripts here, as a malicious script could steal NODE_AUTH_TOKEN.
-      - run: npm ci --ignore-scripts
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - run: npx patch-package
+      - run: npm ci
       - run: npm run verify
       - run: npm run build
       - id: artifact-name

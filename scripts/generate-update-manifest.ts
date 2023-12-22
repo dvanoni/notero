@@ -1,3 +1,4 @@
+import assert from 'node:assert/strict';
 import path from 'node:path';
 
 import fs from 'fs-extra';
@@ -12,9 +13,7 @@ const updateRdfPath = path.join(genDir, 'update.rdf');
 
 const [, , updateLink] = process.argv;
 
-if (!updateLink) {
-  throw new Error('Update link must be provided as first argument');
-}
+assert.ok(updateLink, 'Update link must be provided as first argument');
 
 console.log(
   `Generating ${relativeToRoot(

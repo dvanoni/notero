@@ -1,3 +1,4 @@
+import assert from 'node:assert/strict';
 import path from 'node:path';
 
 import AdmZip from 'adm-zip';
@@ -8,9 +9,7 @@ import pkg from '../package.json';
 import { buildDir, relativeToRoot, xpiDir } from './paths';
 import { version } from './version';
 
-if (!fs.existsSync(buildDir)) {
-  throw new Error('`build` directory does not exist');
-}
+assert.ok(fs.existsSync(buildDir), '`build` directory does not exist');
 
 const xpiPath = path.join(xpiDir, `${pkg.name}-${version}.xpi`);
 

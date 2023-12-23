@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.5.3](https://github.com/dvanoni/notero/compare/v0.5.2...v0.5.3) (2023-12-23)
+
+
+### Features
+
+* Add an icon! ([#405](https://github.com/dvanoni/notero/issues/405)) ([85700b2](https://github.com/dvanoni/notero/commit/85700b2d279e231bce497f5bba56803be48d2a89))
+
 ### [0.5.2](https://github.com/dvanoni/notero/compare/v0.5.1...v0.5.2) (2023-12-18)
 
 

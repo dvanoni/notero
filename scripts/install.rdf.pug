@@ -1,0 +1,33 @@
+doctype xml
+RDF(xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:em="http://www.mozilla.org/2004/em-rdf#")
+  Description(about="urn:mozilla:install-manifest")
+    em:name= name
+    em:description= description
+    if bootstrapped
+      em:bootstrap true
+    if localizedDescriptions
+      each localizedDescription, locale in localizedDescriptions
+        Description
+          em:locale= locale
+          em:name= name
+          em:description= localizedDescription
+    em:id= id
+    em:version= version
+    em:homepageURL= homepageURL
+    em:creator= creator
+    if iconURL
+      em:iconURL= iconURL
+    if updateURL
+      em:updateURL= updateURL
+    em:type 2
+    if optionsURL
+      em:optionsURL= optionsURL
+    em:targetApplication
+      Description
+        em:id zotero@chnm.gmu.edu
+        em:minVersion #{zotero || '5.0.79'}
+        em:maxVersion 6.0.*
+      Description
+        em:id juris-m@juris-m.github.io
+        em:minVersion #{jurism || '5.0.79'}
+        em:maxVersion 6.0.*

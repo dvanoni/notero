@@ -16,14 +16,10 @@ jobs:
         with:
           node-version-file: '.node-version'
           cache: 'npm'
-          registry-url: 'https://npm.pkg.github.com'
-      # Skip post-install scripts here, as a malicious script could steal NODE_AUTH_TOKEN.
-      - run: npm ci --ignore-scripts
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - run: npx patch-package
+      - run: npm ci
       - run: npm run verify
       - run: npm run build
+      - run: npm run create-xpi
       - id: release-xpi
         name: Release xpi
         uses: softprops/action-gh-release@v1
@@ -31,7 +27,7 @@ jobs:
           files: xpi/*.xpi
           generate_release_notes: true
       - name: Generate update manifest
-        run: npm run generateUpdateManifest -- ${{ fromJSON(steps.release-xpi.outputs.assets)[0].browser_download_url }}
+        run: npm run generate-update-manifest -- ${{ fromJSON(steps.release-xpi.outputs.assets)[0].browser_download_url }}
       - name: Publish update manifest
         uses: softprops/action-gh-release@v1
         with:

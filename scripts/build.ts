@@ -1,8 +1,4 @@
-const esbuild = require('esbuild');
-
-require('@dvanoni/zotero-plugin/copy-assets');
-require('@dvanoni/zotero-plugin/generate-install-manifest');
-require('@dvanoni/zotero-plugin/version');
+import esbuild, { BuildOptions } from 'esbuild';
 
 const banner = `if (!Zotero.Notero) {
 
@@ -15,7 +11,7 @@ if (typeof clearTimeout === 'undefined') {
 }
 `;
 
-const builds = [
+const builds: (BuildOptions & { entryPoints: [string] })[] = [
   {
     entryPoints: ['src/bootstrap.ts'],
     keepNames: true,
@@ -40,9 +36,19 @@ const builds = [
     external: ['components/*', 'react', 'react-dom', 'react-intl'],
     outdir: 'build/content/prefs',
   },
-].map((buildOptions) => esbuild.build(buildOptions));
+];
 
-Promise.all(builds).catch((err) => {
-  console.error(err);
-  process.exit(1);
-});
+Promise.all(
+  builds.map((buildOptions) => {
+    console.log(`Building ${buildOptions.entryPoints[0]}`);
+    return esbuild.build(buildOptions);
+  }),
+)
+  .then(() => {
+    require('./copy-assets');
+    require('./generate-install-manifest');
+  })
+  .catch((err) => {
+    console.error(err);
+    process.exit(1);
+  });

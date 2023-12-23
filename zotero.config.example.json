@@ -1,0 +1,27 @@
+{
+  "profile": {
+    // (optional) Name of your Zotero profile. If omitted and you have multiple
+    // Zotero profiles, the profile picker will appear when Zotero starts.
+    "name": "dev",
+    // (required) Absolute path to your Zotero profile.
+    "path": "/Users/dvanoni/Library/Application Support/Zotero/Profiles/sekg0jb3.dev"
+  },
+  "scripts": {
+    // (optional) Command to run before Zotero starts.
+    "prestart": "pkill zotero",
+    // (optional) Command to run after Zotero starts.
+    "poststart": "sleep 2 && osascript -e 'tell app \"Zotero\" to activate'"
+  },
+  "zotero": {
+    // (optional) Explicit path to executable for your default Zotero version.
+    // If omitted, default value is based on your operating system.
+    "path": "/Applications/Zotero.app/Contents/MacOS/zotero",
+    // (optional) Explicit path to executable for your beta Zotero version.
+    // Required when running `npm run start-beta`.
+    "betaPath": "/Applications/Zotero 7.app/Contents/MacOS/zotero",
+    // (optional) File name to write log output to. Disabled if omitted.
+    "logFile": "zotero.log",
+    // (optional) Whether to continuously append to log file. Default false.
+    "preserveLog": false
+  }
+}

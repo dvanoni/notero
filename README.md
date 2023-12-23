@@ -373,72 +373,55 @@ See below for descriptions of how you can use the different views.
 ## Development
 
 Notero was scaffolded with [generator-zotero-plugin][generator-zotero-plugin]
-and is built with a fork of [zotero-plugin][zotero-plugin].
+and uses build scripts heavily inspired by [zotero-plugin][zotero-plugin].
+Many thanks to [@retorquere](https://github.com/retorquere) for creating these.
 
 ### Local Setup
 
-The steps below should allow you to build and run Notero yourself.
+The steps below are based on the [Zotero Plugin Development][plugin-development]
+documentation and should allow you to build and run Notero yourself.
 
 1.  To avoid any potential damage to your default Zotero profile, you can
-    [create a new profile](https://www.zotero.org/support/kb/multiple_profiles)
-    for development purposes.
+    [create a new profile][zotero-profiles] for development purposes.
 
-2.  [Configure Zotero](https://www.zotero.org/support/dev/client_coding/plugin_development)
-    to run the plugin directly from source. Because the `start` script already
-    handles most of the steps, you only need to ensure your
-    [Zotero profile directory](https://www.zotero.org/support/kb/profile_directory)
-    has a directory named `extensions`.
+2.  Create a file named `zotero.config.json` that will contain the config
+    options used to start Zotero.
+    See [`zotero.config.example.json`](zotero.config.example.json) for an
+    example file that has descriptions of all available config options.
 
-3.  Create a `zotero-plugin.ini` file as described in the
-    [zotero-plugin][zotero-plugin] README.
-    This file is used by the [`zotero-start`][zotero-start] command to determine
-    where to install the plugin when running a development build.
-
-    **Example**
-
-    ```ini
-    [profile]
-    name = dev
-    path = /Users/dvanoni/Library/Application Support/Zotero/Profiles/sekg0jb3.dev
-
-    [plugin]
-    source = build
-    ```
-
-4.  In order to install the forked `zotero-plugin` package, you must
-    [log in to the GitHub Packages npm registry][github-npm-auth] using a GitHub
-    token with the `read:packages` scope (generate one [here][read-packages-token]):
-
-        npm login --scope=@dvanoni --registry=https://npm.pkg.github.com
-
-5.  Install dependencies:
+3.  Install dependencies:
 
         npm ci
 
-6.  Perform an initial build of the plugin to create the `build` directory:
-
-        npm run build
-
-7.  Start Zotero with the plugin installed:
+4.  Build Notero and start Zotero with the plugin installed:
 
         npm start
 
-    The `start` script runs [`zotero-start`][zotero-start] which performs a
-    number of steps:
+    Alternatively, you can start your desired beta version of Zotero:
 
-    1.  Executes `npm run build` to build the plugin into the `build` directory.
-    2.  Writes a file containing the absolute path to the `build` directory into
+        npm run start-beta
+
+    The `start` script performs a number of steps:
+
+    1.  Execute `npm run build` to build the plugin into the `build` directory.
+    2.  If defined, run the `scripts.prestart` command specified in
+        `zotero.config.json`.
+    3.  Write a file containing the absolute path to the `build` directory into
         the `extensions` directory in the Zotero profile directory.
-    3.  Starts Zotero with the profile specified in `zotero-plugin.ini` and the
+    4.  Remove the `extensions.lastAppBuildId` and `extensions.lastAppVersion`
+        lines from `prefs.js` in the Zotero profile directory.
+    5.  Start Zotero with the profile specified in `zotero.config.json` and the
         following command line arguments:
 
-            -purgecaches -jsconsole -ZoteroDebugText -debugger -datadir profile
+            -purgecaches -ZoteroDebugText -jsconsole -debugger -datadir profile
+
+    6.  If defined, run the `scripts.poststart` command specified in
+        `zotero.config.json`.
 
 [generator-zotero-plugin]: https://github.com/retorquere/generator-zotero-plugin
-[github-npm-auth]: https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-npm-registry#authenticating-with-a-personal-access-token
-[read-packages-token]: https://github.com/settings/tokens/new?scopes=read:packages
-[zotero-plugin]: https://github.com/dvanoni/zotero-plugin
-[zotero-start]: https://github.com/dvanoni/zotero-plugin/blob/master/bin/start.py
+[zotero-plugin]: https://github.com/retorquere/zotero-plugin
+[plugin-development]: https://www.zotero.org/support/dev/client_coding/plugin_development
+[zotero-profiles]: https://www.zotero.org/support/kb/multiple_profiles
 
 ### Releasing a New Version
 

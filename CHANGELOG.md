@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.5.4](https://github.com/dvanoni/notero/compare/v0.5.3...v0.5.4) (2023-12-24)
+
+
+### Bug Fixes
+
+* Support parsing notes without container div ([#406](https://github.com/dvanoni/notero/issues/406)) ([71b5f3e](https://github.com/dvanoni/notero/commit/71b5f3e0e35e9598ede59c22db3c10a73b8211f4))
+
 ### [0.5.3](https://github.com/dvanoni/notero/compare/v0.5.2...v0.5.3) (2023-12-23)
 
 

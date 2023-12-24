@@ -175,6 +175,7 @@ export function parseNode(node: Node): ParsedNode | undefined {
       return parseBlockElement(node, 'quote');
     case 'BR':
       return { type: 'br' };
+    case 'BODY':
     case 'DIV':
     case 'P':
       return parseBlockElement(node, 'paragraph');

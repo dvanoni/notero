@@ -8,6 +8,8 @@ import * as blockquote from './blockquote';
 import * as formatting from './formatting';
 import * as nestedStyles from './nestedStyles';
 import * as simple from './simple';
+import * as textOnly from './textOnly';
+import * as withoutContainer from './withoutContainer';
 
 type NoteTestCase = {
   name: string;
@@ -16,11 +18,13 @@ type NoteTestCase = {
 };
 
 const cases: Record<string, Pick<NoteTestCase, 'expected'>> = {
-  simple,
-  blockquote,
-  nestedStyles,
   annotations,
+  blockquote,
   formatting,
+  nestedStyles,
+  simple,
+  textOnly,
+  withoutContainer,
 };
 
 export const htmlTestCases: NoteTestCase[] = Object.entries(cases).map(

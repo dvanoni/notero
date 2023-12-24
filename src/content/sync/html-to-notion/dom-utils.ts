@@ -27,6 +27,7 @@ export function isHTMLElement(node: Node): node is HTMLElement {
 
 export function getRootElement(htmlString: string): Element | null {
   const domParser = getDOMParser();
-  const doc = domParser.parseFromString(htmlString, 'text/html');
-  return doc.querySelector('body > div[data-schema-version]');
+  const { body } = domParser.parseFromString(htmlString, 'text/html');
+  const containerDiv = body.querySelector('div[data-schema-version]');
+  return containerDiv || body;
 }

@@ -171,32 +171,36 @@ does not conflict with any of the other property names. The name and type of
 the other properties must be configured exactly as specified here. Note that
 property names are case-sensitive, so the capitalization must match exactly.
 
-| Property Name      | Property Type | Notes                                                                             |
-| ------------------ | ------------- | --------------------------------------------------------------------------------- |
-| `Name`             | Title         | Format configurable via the **Notion Page Title** option in Notero preferences    |
-| `Abstract`         | Text          |                                                                                   |
-| `Authors`          | Text          |                                                                                   |
-| `Citation Key`     | Text          | Requires [Better BibTeX](https://retorque.re/zotero-better-bibtex/)               |
-| `Collections`      | Multi-select  |                                                                                   |
-| `Date`             | Text          |                                                                                   |
-| `Date Added`       | Date          |                                                                                   |
-| `DOI`              | URL           |                                                                                   |
-| `Editors`          | Text          |                                                                                   |
-| `File Path`        | Text          |                                                                                   |
-| `Full Citation`    | Text          | Format is based on the Zotero setting for **Export → Quick Copy → Item Format**   |
-| `In-Text Citation` | Text          |                                                                                   |
-| `Item Type`        | Select        |                                                                                   |
-| `Short Title`      | Text          |                                                                                   |
-| `Tags`             | Multi-select  |                                                                                   |
-| `Title`            | Text          |                                                                                   |
-| `URL`              | URL           |                                                                                   |
-| `Year`             | Number        |                                                                                   |
-| `Zotero URI`       | URL           | Links do not work; see issue [#172](https://github.com/dvanoni/notero/issues/172) |
+Support for customizing properties is planned for the future;
+see issue [#355](https://github.com/dvanoni/notero/issues/355).
 
-Support for additional properties is planned for the future. See issues:
-[#49](https://github.com/dvanoni/notero/issues/49)
-[#52](https://github.com/dvanoni/notero/issues/52)
-[#65](https://github.com/dvanoni/notero/issues/65)
+| Property Name       | Property Type | Notes                                                                             |
+| ------------------- | ------------- | --------------------------------------------------------------------------------- |
+| `Name`              | Title         | Format configurable via the **Notion Page Title** option in Notero preferences    |
+| `Abstract`          | Text          |                                                                                   |
+| `Authors`           | Text          |                                                                                   |
+| `Citation Key`      | Text          | Requires [Better BibTeX](https://retorque.re/zotero-better-bibtex/)               |
+| `Collections`       | Multi-select  |                                                                                   |
+| `Date`              | Text          |                                                                                   |
+| `Date Added`        | Date          |                                                                                   |
+| `Date Modified`     | Date          |                                                                                   |
+| `DOI`               | URL           |                                                                                   |
+| `Editors`           | Text          |                                                                                   |
+| `Extra`             | Text          |                                                                                   |
+| `File Path`         | Text          |                                                                                   |
+| `Full Citation`     | Text          | Format based on the Zotero setting for **Export → Quick Copy → Item Format**      |
+| `In-Text Citation`  | Text          | Format based on the Zotero setting for **Export → Quick Copy → Item Format**      |
+| `Item Type`         | Select        |                                                                                   |
+| `Place`             | Text          |                                                                                   |
+| `Proceedings Title` | Text          |                                                                                   |
+| `Publication`       | Text          |                                                                                   |
+| `Series Title`      | Text          |                                                                                   |
+| `Short Title`       | Text          |                                                                                   |
+| `Tags`              | Multi-select  |                                                                                   |
+| `Title`             | Text          |                                                                                   |
+| `URL`               | URL           |                                                                                   |
+| `Year`              | Number        |                                                                                   |
+| `Zotero URI`        | URL           | Links do not work; see issue [#172](https://github.com/dvanoni/notero/issues/172) |
 
 ### Install and Configure Notero Plugin
 

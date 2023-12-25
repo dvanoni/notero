@@ -216,6 +216,11 @@ class PropertyBuilder {
       buildRequest: () => buildDate(parseItemDate(this.item.dateAdded)),
     },
     {
+      name: 'Date Modified',
+      type: 'date',
+      buildRequest: () => buildDate(parseItemDate(this.item.dateModified)),
+    },
+    {
       name: 'DOI',
       type: 'url',
       buildRequest: () => {
@@ -238,6 +243,14 @@ class PropertyBuilder {
 
         return buildRichText(editors, { preserveWhitespace: true });
       },
+    },
+    {
+      name: 'Extra',
+      type: 'rich_text',
+      buildRequest: () =>
+        buildRichText(this.item.getField('extra'), {
+          preserveWhitespace: true,
+        }),
     },
     {
       name: 'File Path',
@@ -268,6 +281,26 @@ class PropertyBuilder {
       buildRequest: () => ({
         name: Zotero.ItemTypes.getLocalizedString(this.item.itemTypeID),
       }),
+    },
+    {
+      name: 'Place',
+      type: 'rich_text',
+      buildRequest: () => buildRichText(this.item.getField('place')),
+    },
+    {
+      name: 'Proceedings Title',
+      type: 'rich_text',
+      buildRequest: () => buildRichText(this.item.getField('proceedingsTitle')),
+    },
+    {
+      name: 'Publication',
+      type: 'rich_text',
+      buildRequest: () => buildRichText(this.item.getField('publicationTitle')),
+    },
+    {
+      name: 'Series Title',
+      type: 'rich_text',
+      buildRequest: () => buildRichText(this.item.getField('seriesTitle')),
     },
     {
       name: 'Short Title',

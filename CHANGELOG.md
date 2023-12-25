@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.5.5](https://github.com/dvanoni/notero/compare/v0.5.4...v0.5.5) (2023-12-25)
+
+
+### Features
+
+* Add more properties that can be synced ([#407](https://github.com/dvanoni/notero/issues/407)) ([0783247](https://github.com/dvanoni/notero/commit/078324772f15ef3efbfe64b15d4fd99cff1125d5))
+
 ### [0.5.4](https://github.com/dvanoni/notero/compare/v0.5.3...v0.5.4) (2023-12-24)
 
 

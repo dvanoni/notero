@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.5.6](https://github.com/dvanoni/notero/compare/v0.5.5...v0.5.6) (2023-12-27)
+
+
+### Bug Fixes
+
+* Convert item URLs to format that opens web library ([#409](https://github.com/dvanoni/notero/issues/409)) ([05ac00f](https://github.com/dvanoni/notero/commit/05ac00f2b8ffc2788809a301166e5002768fb448)), closes [#172](https://github.com/dvanoni/notero/issues/172)
+
 ### [0.5.5](https://github.com/dvanoni/notero/compare/v0.5.4...v0.5.5) (2023-12-25)
 
 

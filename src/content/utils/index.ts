@@ -4,6 +4,7 @@ export { createHTMLElement } from './create-html-element';
 export { createXULElement } from './create-xul-element';
 export { getAllCollectionItems } from './get-all-collection-items';
 export { getDOMParser } from './get-dom-parser';
+export { getItemURL } from './get-item-url';
 export { getLocalizedString } from './get-localized-string';
 export { getXULElementById } from './get-xul-element-by-id';
 export { hasErrorStack } from './has-error-stack';

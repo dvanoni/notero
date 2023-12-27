@@ -1,6 +1,6 @@
 import { APA_STYLE, NOTION_TAG_NAME } from '../constants';
 import { PageTitleFormat } from '../prefs/notero-pref';
-import { buildCollectionFullName, parseItemDate } from '../utils';
+import { buildCollectionFullName, getItemURL, parseItemDate } from '../utils';
 
 import type {
   DatabasePageProperties,
@@ -337,7 +337,7 @@ class PropertyBuilder {
     {
       name: 'Zotero URI',
       type: 'url',
-      buildRequest: () => Zotero.URI.getItemURI(this.item),
+      buildRequest: () => getItemURL(this.item),
     },
   ];
 }

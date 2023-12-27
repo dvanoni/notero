@@ -429,6 +429,10 @@ declare namespace Zotero {
     getItemURI(item: Item): string;
   }
 
+  interface Users {
+    getCurrentUsername(): string | undefined;
+  }
+
   interface ZoteroPane {
     document: Document;
 
@@ -461,6 +465,7 @@ declare interface Zotero {
   ProgressWindow: Zotero.ProgressWindow;
   QuickCopy: Zotero.QuickCopy;
   URI: Zotero.URI;
+  Users: Zotero.Users;
 
   /** Display an alert in a given window */
   alert(window: Window, title: string, msg: string): void;

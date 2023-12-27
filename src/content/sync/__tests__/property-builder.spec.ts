@@ -5,13 +5,15 @@ import {
   zoteroMock,
 } from '../../../../test/utils/zotero-mock';
 import { PageTitleFormat } from '../../prefs/notero-pref';
-import { keyValue } from '../../utils';
+import { getItemURL, keyValue } from '../../utils';
 import type {
   DatabasePageProperties,
   DatabaseProperties,
   DatabasePropertyConfig,
 } from '../notion-types';
 import { buildProperties } from '../property-builder';
+
+jest.mock('../../utils/get-item-url');
 
 const mockCollection = createZoteroCollectionMock({ name: 'Fake Collection' });
 const fakeItemType = 'Journal Article';
@@ -27,7 +29,7 @@ const fakeDate = '2023-10-01';
 const fakePublication = 'Fake Publication';
 const fakeShortTitle = 'Faking It';
 const fakeTitle = 'Faking It: How To Write A Fake Paper';
-const fakeURI = 'http://zotero.org/users/local/abcdef/items/abcdef';
+const fakeURI = 'https://zotero.org/users/local/abcdef/items/abcdef';
 const fakeYear = 2023;
 const fakeFullCitation = `${fakeLastName1}. (${fakeYear}). ${fakeTitle}. ${fakePublication}.`;
 const fakeInTextCitation = `(${fakeLastName1}, ${fakeYear})`;
@@ -157,7 +159,7 @@ function setup() {
   item.getField.calledWith('year').mockReturnValue(String(fakeYear));
   item.getTags.mockReturnValue([{ tag: fakeTag, type: 1 }]);
 
-  zoteroMock.URI.getItemURI.mockReturnValue(fakeURI);
+  jest.mocked(getItemURL).mockReturnValue(fakeURI);
 
   return { item };
 }

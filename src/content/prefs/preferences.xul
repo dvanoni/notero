@@ -1,4 +1,5 @@
 <?xml version="1.0"?>
+<!-- prettier-ignore -->
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
 <?xml-stylesheet href="chrome://zotero-platform/content/preferences.css" type="text/css"?>
 <?xml-stylesheet href="chrome://zotero-platform/content/zotero-react-client.css" type="text/css"?>
@@ -7,63 +8,92 @@
 
 <!-- The `notero` variable used below is defined in `esbuild.js` -->
 <prefwindow
-    id="notero-prefwindow"
-    title="&notero.preferences.title;"
-    xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
-    xmlns:html="http://www.w3.org/1999/xhtml"
+  id="notero-prefwindow"
+  title="&notero.preferences.title;"
+  xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+  xmlns:html="http://www.w3.org/1999/xhtml"
 >
   <prefpane id="notero-prefpane" onpaneload="notero.preferences.init();">
     <preferences>
-      <preference id="pref-collectionSyncConfigs"
-                  name="extensions.notero.collectionSyncConfigs"
-                  type="string" />
-      <preference id="pref-notionToken" name="extensions.notero.notionToken" type="string" />
-      <preference id="pref-notionDatabaseID"
-                  name="extensions.notero.notionDatabaseID"
-                  type="string" />
-      <preference id="pref-pageTitleFormat"
-                  name="extensions.notero.pageTitleFormat"
-                  type="string" />
-      <preference id="pref-syncNotes"
-                  name="extensions.notero.syncNotes"
-                  type="bool" />
-      <preference id="pref-syncOnModifyItems"
-                  name="extensions.notero.syncOnModifyItems"
-                  type="bool" />
+      <preference
+        id="pref-collectionSyncConfigs"
+        name="extensions.notero.collectionSyncConfigs"
+        type="string"
+      />
+      <preference
+        id="pref-notionToken"
+        name="extensions.notero.notionToken"
+        type="string"
+      />
+      <preference
+        id="pref-notionDatabaseID"
+        name="extensions.notero.notionDatabaseID"
+        type="string"
+      />
+      <preference
+        id="pref-pageTitleFormat"
+        name="extensions.notero.pageTitleFormat"
+        type="string"
+      />
+      <preference
+        id="pref-syncNotes"
+        name="extensions.notero.syncNotes"
+        type="bool"
+      />
+      <preference
+        id="pref-syncOnModifyItems"
+        name="extensions.notero.syncOnModifyItems"
+        type="bool"
+      />
     </preferences>
 
     <groupbox>
       <caption label="&notero.preferences.notionGroupboxCaption;" />
       <description>
         &notero.preferences.notionGroupboxDescription;
-        <label class="text-link"
-               onclick="notero.preferences.openReadme();"
-               value="&notero.preferences.readme;" />.
+        <label
+          class="text-link"
+          onclick="notero.preferences.openReadme();"
+          value="&notero.preferences.readme;"
+        />.
       </description>
       <separator class="thin" />
-      <label id="notero-notionToken-label"
-             value="&notero.preferences.notionToken;"
-             control="notero-notionToken" />
+      <label
+        id="notero-notionToken-label"
+        value="&notero.preferences.notionToken;"
+        control="notero-notionToken"
+      />
       <textbox id="notero-notionToken" preference="pref-notionToken" />
       <separator class="thin" />
-      <label id="notero-notionDatabaseID-label"
-             value="&notero.preferences.notionDatabaseID;"
-             control="notero-notionDatabaseID" />
-      <textbox id="notero-notionDatabaseID" preference="pref-notionDatabaseID" />
+      <label
+        id="notero-notionDatabaseID-label"
+        value="&notero.preferences.notionDatabaseID;"
+        control="notero-notionDatabaseID"
+      />
+      <textbox
+        id="notero-notionDatabaseID"
+        preference="pref-notionDatabaseID"
+      />
     </groupbox>
 
     <separator class="thin" />
 
     <groupbox>
       <caption label="&notero.preferences.propertiesGroupboxCaption;" />
-      <description>&notero.preferences.propertiesGroupboxDescription;</description>
+      <description
+        >&notero.preferences.propertiesGroupboxDescription;</description
+      >
       <separator class="thin" />
-      <label id="notero-pageTitleFormat-label"
-             value="&notero.preferences.pageTitleFormat;"
-             control="notero-pageTitleFormat" />
-      <menulist id="notero-pageTitleFormat"
-                disabled="true"
-                preference="pref-pageTitleFormat" />
+      <label
+        id="notero-pageTitleFormat-label"
+        value="&notero.preferences.pageTitleFormat;"
+        control="notero-pageTitleFormat"
+      />
+      <menulist
+        id="notero-pageTitleFormat"
+        disabled="true"
+        preference="pref-pageTitleFormat"
+      />
     </groupbox>
 
     <separator class="thin" />
@@ -77,12 +107,16 @@
         <html:div id="notero-syncConfigsTable-container" />
       </hbox>
       <separator class="thin" />
-      <checkbox id="notero-syncOnModifyItems"
-                label="&notero.preferences.syncOnModifyItems;"
-                preference="pref-syncOnModifyItems" />
-      <checkbox id="notero-syncNotes"
-                label="&notero.preferences.syncNotes;"
-                preference="pref-syncNotes" />
+      <checkbox
+        id="notero-syncOnModifyItems"
+        label="&notero.preferences.syncOnModifyItems;"
+        preference="pref-syncOnModifyItems"
+      />
+      <checkbox
+        id="notero-syncNotes"
+        label="&notero.preferences.syncNotes;"
+        preference="pref-syncNotes"
+      />
     </groupbox>
   </prefpane>
 

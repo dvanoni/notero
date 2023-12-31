@@ -1,4 +1,10 @@
 {
   "$schema": "https://json.schemastore.org/prettierrc.json",
-  "singleQuote": true
+  "singleQuote": true,
+  "overrides": [
+    {
+      "files": ["*.xhtml", "*.xul"],
+      "options": { "parser": "html" }
+    }
+  ]
 }

@@ -1,6 +1,7 @@
 /**
  * @see https://www.xulplanet.com/references/elemref/
  * @see https://udn.realityripple.com/docs/Archive/Mozilla/XUL/XUL_Reference
+ * @see https://udn.realityripple.com/docs/Mozilla/Tech/XPCOM/Reference/Interface/nsIDOMXULElement
  */
 declare namespace XUL {
   interface ButtonElement extends XULElement {
@@ -9,6 +10,10 @@ declare namespace XUL {
 
   interface CheckboxElement extends XULElement {
     checked: boolean;
+  }
+
+  interface DescriptionElement extends XULElement {
+    value: string;
   }
 
   interface MenuItemElement extends XULElement {
@@ -22,6 +27,7 @@ declare namespace XUL {
       description?: string,
     ): MenuItemElement;
     disabled: boolean;
+    removeAllItems(): void;
     selectedIndex: number;
     selectedItem: MenuItemElement | null;
     value: string;
@@ -41,7 +47,9 @@ declare namespace XUL {
     view?: XPCOM.nsITreeView;
   }
 
-  type XULElement = Element;
+  interface XULElement extends Element {
+    hidden: boolean;
+  }
 
   type XULElementTagNameMap = {
     button: ButtonElement;

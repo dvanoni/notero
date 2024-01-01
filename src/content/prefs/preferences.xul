@@ -6,7 +6,7 @@
 <?xml-stylesheet href="chrome://notero/content/style/preferences.css" type="text/css"?>
 <!DOCTYPE prefwindow SYSTEM "chrome://notero/locale/notero.dtd">
 
-<!-- The `notero` variable used below is defined in `esbuild.js` -->
+<!-- The `notero` variable used below is defined in `scripts/build.ts` -->
 <prefwindow
   id="notero-prefwindow"
   title="&notero.preferences.title;"
@@ -22,6 +22,7 @@
       />
       <preference
         id="pref-notionToken"
+        instantApply="true"
         name="extensions.notero.notionToken"
         type="string"
       />
@@ -66,14 +67,16 @@
       <textbox id="notero-notionToken" preference="pref-notionToken" />
       <separator class="thin" />
       <label
-        id="notero-notionDatabaseID-label"
-        value="&notero.preferences.notionDatabaseID;"
-        control="notero-notionDatabaseID"
+        id="notero-notionDatabase-label"
+        value="&notero.preferences.notionDatabase;"
+        control="notero-notionDatabase"
       />
-      <textbox
-        id="notero-notionDatabaseID"
+      <menulist
+        id="notero-notionDatabase"
+        disabled="true"
         preference="pref-notionDatabaseID"
       />
+      <description id="notero-notionDatabaseError" hidden="true" />
     </groupbox>
 
     <separator class="thin" />

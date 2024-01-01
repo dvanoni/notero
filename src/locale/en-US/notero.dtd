@@ -8,7 +8,7 @@
 <!ENTITY notero.preferences.notionGroupboxDescription "For instructions on obtaining these values, view the ">
 <!ENTITY notero.preferences.readme "README">
 <!ENTITY notero.preferences.notionToken "Integration Token">
-<!ENTITY notero.preferences.notionDatabaseID "Database ID">
+<!ENTITY notero.preferences.notionDatabase "Database">
 
 <!ENTITY notero.preferences.propertiesGroupboxCaption "Property Preferences">
 <!ENTITY notero.preferences.propertiesGroupboxDescription "Customize how item properties sync to Notion.">

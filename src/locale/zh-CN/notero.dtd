@@ -8,7 +8,7 @@
 <!ENTITY notero.preferences.notionGroupboxDescription "有关获取这些值的说明，请查看 ">
 <!ENTITY notero.preferences.readme "README">
 <!ENTITY notero.preferences.notionToken "内部集成令牌">
-<!ENTITY notero.preferences.notionDatabase "数据库">
+<!ENTITY notero.preferences.notionDatabase "Database">
 
 <!ENTITY notero.preferences.propertiesGroupboxCaption "属性偏好">
 <!ENTITY notero.preferences.propertiesGroupboxDescription "自定义项目属性如何同步到 Notion。">

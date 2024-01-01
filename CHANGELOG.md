@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.5.7](https://github.com/dvanoni/notero/compare/v0.5.6...v0.5.7) (2024-01-01)
+
+
+### Features
+
+* Replace Notion database ID text field with selection menu ([#413](https://github.com/dvanoni/notero/issues/413)) ([b4b26b5](https://github.com/dvanoni/notero/commit/b4b26b54f5d09e9e95703c272dc2d891107a9f39)), closes [#319](https://github.com/dvanoni/notero/issues/319)
+
 ### [0.5.6](https://github.com/dvanoni/notero/compare/v0.5.5...v0.5.6) (2023-12-27)
 
 

@@ -5,7 +5,7 @@ notero-preferences-notion-groupbox-description =
     有关获取这些值的说明，请查看
     <label data-l10n-name="notero-preferences-readme">README</label>.
 notero-preferences-notion-token = 内部集成令牌
-notero-preferences-notion-database-id = 数据库 ID
+notero-preferences-notion-database = 数据库
 
 ## Property preferences
 
@@ -24,7 +24,7 @@ notero-preferences-sync-groupbox-description2 =
     要选择多行，请按住 { "[Shift]" } 然后单击。
 notero-preferences-collection-column = 集合
 notero-preferences-sync-enabled-column = 启用同步
-notero-preferences-sync-on-modify-items = 
+notero-preferences-sync-on-modify-items =
     .label = 当修改条目时同步
-notero-preferences-sync-notes = 
+notero-preferences-sync-notes =
     .label = 同步笔记

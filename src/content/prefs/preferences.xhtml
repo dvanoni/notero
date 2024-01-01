@@ -2,7 +2,7 @@
   <html:link rel="localization" href="notero.ftl" />
 </linkset>
 
-<!-- The `notero` variable used below is defined in `esbuild.js` -->
+<!-- The `notero` variable used below is defined in `scripts/build.ts` -->
 <vbox onload="notero.preferences.init();">
   <vbox class="main-section">
     <html:h1 data-l10n-id="notero-preferences-notion-groupbox-heading" />
@@ -22,14 +22,16 @@
         preference="extensions.notero.notionToken"
         type="text"
       />
-      <label control="notero-notionDatabaseID">
-        <html:h2 data-l10n-id="notero-preferences-notion-database-id" />
+      <label control="notero-notionDatabase">
+        <html:h2 data-l10n-id="notero-preferences-notion-database" />
       </label>
-      <html:input
-        id="notero-notionDatabaseID"
+      <menulist
+        id="notero-notionDatabase"
+        disabled="true"
+        native="true"
         preference="extensions.notero.notionDatabaseID"
-        type="text"
       />
+      <description id="notero-notionDatabaseError" hidden="true" />
     </groupbox>
   </vbox>
 

@@ -144,20 +144,7 @@ Detailed setup instructions are below.
         />
       </details>
 
-5.  Take note of the database ID.
-
-    To get the database ID, copy the URL of your Notion database. If you're
-    using an inline database, then make sure you're viewing the database as a
-    full page. If you're using the Notion desktop app, then click **Share**
-    and select **Copy link** to find the database URL.
-
-    The database ID is the string of characters in the database URL that is
-    between the slash following your workspace name (if you named it) and the
-    question mark. The ID is 32 characters long, containing numbers and letters.
-
-    ![Notion database ID](https://files.readme.io/62e5027-notion_database_id.png)
-
-6.  Configure the database properties as desired. See the
+5.  Configure the database properties as desired. See the
     [database properties](#notion-database-properties) section below for more details.
 
 #### Notion Database Properties
@@ -213,8 +200,7 @@ see issue [#355](https://github.com/dvanoni/notero/issues/355).
    - dragging and dropping it into the Add-ons Manager window _or_
    - selecting it using the **Install Add-on From File...** option in the
      gear menu in the top-right corner of the window
-4. Restart Zotero to activate the plugin.
-5. Open the Notero preferences from the **Tools → Notero Preferences...** menu
+4. Open the Notero preferences from the **Tools → Notero Preferences...** menu
    item, and enter the required preferences.
    - Note for Zotero 7 users: The Notero preferences have moved into a section
      in the main Zotero preferences window.
@@ -267,17 +253,6 @@ from the collection or item context menus.
 See the [Syncing Items](#syncing-items) section above.
 
 ### How to fix Notion API errors
-
-#### Invalid request URL
-
-If you receive the following error:
-
-> APIResponseError: Invalid request URL.
-
-This usually occurs when there's something amiss with the database ID entered in
-the Notero preferences. Double check that the database ID follows the format
-described in the [Configure Notion](#configure-notion) section. It should be 32
-characters consisting of only numbers and letters.
 
 #### Could not find database
 

@@ -52,15 +52,10 @@ function getPageTitleFormatPref(
   return isPageTitleFormat(value) ? value : undefined;
 }
 
-export function clearNoteroPref(pref: NoteroPref): void {
-  Zotero.Prefs.clear(buildFullPrefName(pref), true);
-}
-
-export function getNoteroPref<P extends NoteroPref>(
+function convertRawPrefValue<P extends NoteroPref>(
   pref: P,
+  value: Zotero.Prefs.Value,
 ): NoteroPrefValue[P] {
-  const value = Zotero.Prefs.get(buildFullPrefName(pref), true);
-
   const booleanPref = getBooleanPref(value);
   const stringPref = getStringPref(value);
 
@@ -78,9 +73,37 @@ export function getNoteroPref<P extends NoteroPref>(
   }[pref];
 }
 
+export function clearNoteroPref(pref: NoteroPref): void {
+  Zotero.Prefs.clear(buildFullPrefName(pref), true);
+}
+
+export function getNoteroPref<P extends NoteroPref>(
+  pref: P,
+): NoteroPrefValue[P] {
+  const value = Zotero.Prefs.get(buildFullPrefName(pref), true);
+  return convertRawPrefValue(pref, value);
+}
+
 export function setNoteroPref<P extends NoteroPref>(
   pref: P,
   value: NoteroPrefValue[P],
 ): void {
   Zotero.Prefs.set(buildFullPrefName(pref), value, true);
+}
+
+export function registerNoteroPrefObserver<P extends NoteroPref>(
+  pref: P,
+  handler: (value: NoteroPrefValue[P]) => void,
+): symbol {
+  return Zotero.Prefs.registerObserver(
+    buildFullPrefName(pref),
+    (value: Zotero.Prefs.Value) => {
+      handler(convertRawPrefValue(pref, value));
+    },
+    true,
+  );
+}
+
+export function unregisterNoteroPrefObserver(symbol: symbol): void {
+  Zotero.Prefs.unregisterObserver(symbol);
 }

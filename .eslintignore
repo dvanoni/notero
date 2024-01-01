@@ -1,5 +1,4 @@
 build
 gen
 node_modules
-esbuild.js
 .eslintrc.js

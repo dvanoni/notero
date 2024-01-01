@@ -6,7 +6,7 @@ notero-preferences-notion-groupbox-description =
   <label data-l10n-name="notero-preferences-readme">README</label>.
 
 notero-preferences-notion-token = Integration Token
-notero-preferences-notion-database-id = Database ID
+notero-preferences-notion-database = Database
 
 ## Property preferences
 

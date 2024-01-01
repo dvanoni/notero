@@ -13,3 +13,7 @@
 #notero-prefpane label.text-link {
   margin: 0;
 }
+
+#notero-notionDatabaseError {
+  color: darkred;
+}

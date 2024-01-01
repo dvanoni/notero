@@ -1,5 +1,5 @@
-import 'core-js/stable/string/trim-end';
-import 'core-js/stable/string/trim-start';
+import trimEnd from 'core-js-pure/es/string/trim-end';
+import trimStart from 'core-js-pure/es/string/trim-start';
 
 import { keyValue } from '../../utils';
 import {
@@ -295,11 +295,9 @@ function trimRichText(richText: RichText): RichText {
     return updateContent(0, (content) => content.trim());
   }
 
-  const first = updateContent(0, (content) => content.trimStart());
+  const first = updateContent(0, trimStart);
   const middle = richText.slice(1, -1);
-  const last = updateContent(richText.length - 1, (content) =>
-    content.trimEnd(),
-  );
+  const last = updateContent(richText.length - 1, trimEnd);
 
   return [...first, ...middle, ...last];
 }

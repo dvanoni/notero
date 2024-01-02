@@ -46,7 +46,7 @@
     "supportsZotero7": true
   },
   "dependencies": {
-    "@notionhq/client": "^2.2.13",
+    "@notionhq/client": "^2.2.14",
     "core-js-pure": "^3.35.0",
     "eventemitter3": "^5.0.1"
   },

@@ -4,8 +4,9 @@ import type {
   GetDatabaseResponse,
 } from '@notionhq/client/build/src/api-endpoints';
 
-/*** Blocks ***/
+/// Blocks ///
 
+/** Types of all blocks */
 export type BlockType = NonNullable<BlockObjectRequest['type']>;
 
 export type Block<T extends BlockType> = Extract<
@@ -15,11 +16,44 @@ export type Block<T extends BlockType> = Extract<
 
 export type ParagraphBlock = Block<'paragraph'>;
 
-export type ChildBlock = NonNullable<
-  ParagraphBlock['paragraph']['children']
->[number];
+/** Types of blocks that can have children */
+type ParentBlockType = {
+  [T in BlockType]: Required<
+    Extract<BlockObjectRequest, { [K in T]: unknown }>[T]
+  > extends { children: unknown }
+    ? T
+    : never;
+}[BlockType];
 
-export type ChildBlockType = NonNullable<ChildBlock['type']>;
+/** Types of blocks that can be used as children */
+type ChildBlockType = NonNullable<
+  NonNullable<ParagraphBlock['paragraph']['children']>[number]['type']
+>;
+
+/**
+ * Blocks that can be used as children.
+ *
+ * The Notion API only allows two levels of nested blocks, and the types are
+ * defined accordingly. However, as we convert HTML into blocks, we can end up
+ * with more nesting than this depending on the HTML content. To support
+ * infinite nesting, this `ChildBlock` type takes the types from
+ * `BlockObjectRequest` and redefines the `children` properties as
+ * `Array<ChildBlock>` instead of `Array<BlockObjectRequestWithoutChildren>`.
+ *
+ * @see https://developers.notion.com/reference/patch-block-children
+ */
+export type ChildBlock = {
+  [T in ChildBlockType]: T extends ParentBlockType
+    ? Omit<Extract<BlockObjectRequest, { [K in T]: unknown }>, T> & {
+        [K in T]: Omit<
+          Extract<BlockObjectRequest, { [K in T]: unknown }>[T],
+          'children'
+        > & {
+          children?: ChildBlock[];
+        };
+      }
+    : Extract<BlockObjectRequest, { [K in T]: unknown }>;
+}[ChildBlockType];
 
 export type Color = ParagraphBlock['paragraph']['color'];
 
@@ -44,7 +78,7 @@ export function isBlockType<T extends BlockType>(
   return type in value;
 }
 
-/*** Databases ***/
+/// Databases ///
 
 export type DatabaseProperties = GetDatabaseResponse['properties'];
 

@@ -1,4 +1,5 @@
 import { APIErrorCode, Client } from '@notionhq/client';
+import { BlockObjectRequest } from '@notionhq/client/build/src/api-endpoints';
 
 import {
   getNotionPageID,
@@ -131,7 +132,7 @@ async function createNoteBlock(
   return noteBlockID;
 }
 
-function buildNoteBlockBatches(noteItem: Zotero.Item): ChildBlock[][] {
+function buildNoteBlockBatches(noteItem: Zotero.Item): BlockObjectRequest[][] {
   const blocks = convertHtmlToBlocks(noteItem.getNote());
 
   const numBatches = Math.ceil(blocks.length / LIMITS.BLOCK_ARRAY_ELEMENTS);
@@ -145,6 +146,8 @@ function buildNoteBlockBatches(noteItem: Zotero.Item): ChildBlock[][] {
     nextOffset += LIMITS.BLOCK_ARRAY_ELEMENTS;
   }
 
+  // @ts-expect-error FIXME: This will result in errors if `batches` contains
+  // more than two levels of nested blocks.
   return batches;
 }
 

@@ -1,3 +1,4 @@
+import { isFullDatabase } from '@notionhq/client';
 import type { DatabaseObjectResponse } from '@notionhq/client/build/src/api-endpoints';
 import React from 'react';
 // eslint-disable-next-line import/no-unresolved
@@ -5,7 +6,6 @@ import ReactDOM from 'react-dom';
 
 import { IS_ZOTERO_7 } from '../constants';
 import { getNotionClient } from '../sync/notion-client';
-import { isFullDatabase } from '../sync/notion-utils';
 import {
   getLocalizedString,
   getXULElementById,

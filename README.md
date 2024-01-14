@@ -404,17 +404,21 @@ documentation and should allow you to build and run Notero yourself.
 
 ### Releasing a New Version
 
-1.  Run the `version` script (not to be confused with `npm version`) to run
-    [`standard-version`](https://github.com/conventional-changelog/standard-version).
-    This will create a new commit with a bumped package version and updated
-    changelog, and then it will create a version tag on the commit.
+Releases are performed via GitHub Actions. The
+[`release`](.github/workflows/release.yml) workflow defines the following jobs:
 
-        npm run version
+#### `release-please`
 
-2.  Push the new version to GitHub:
+This job uses the [release-please][release-please] action to create release PRs
+when new user-facing commits are pushed to the `main` branch. A release PR will
+bump the package version and update the changelog. When the PR is merged, this
+job then creates a new version tag and GitHub release.
 
-        git push --follow-tags
+#### `publish-artifacts`
 
-3.  GitHub Actions will run the [`release`](.github/workflows/release.yml)
-    workflow upon push of a version tag. This workflow will build the `.xpi`
-    file and then create a GitHub release with the `.xpi` file.
+This job runs when a new release is created by the `release-please` job. It
+builds the `.xpi` file and publishes it to the release. It also generates an
+updated manifest file and publishes it to the [`release`][release-tag] release.
+
+[release-please]: https://github.com/google-github-actions/release-please-action
+[release-tag]: https://github.com/dvanoni/notero/releases/tag/release

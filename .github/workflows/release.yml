@@ -2,10 +2,25 @@ name: Release
 
 on:
   push:
-    tags: ['v*.*.*']
+    branches: [main]
 
 jobs:
-  release:
+  release-please:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    outputs:
+      release_created: ${{ steps.release-please.outputs.release_created }}
+      tag_name: ${{ steps.release-please.outputs.tag_name }}
+    steps:
+      - id: release-please
+        uses: google-github-actions/release-please-action@v4
+        with:
+          release-type: node
+  publish-artifacts:
+    needs: release-please
+    if: needs.release-please.outputs.release_created
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -19,14 +34,14 @@ jobs:
       - run: npm run verify
       - run: npm run build
       - run: npm run create-xpi
-      - id: release-xpi
-        name: Release xpi
+      - id: publish-xpi
+        name: Publish xpi
         uses: softprops/action-gh-release@v1
         with:
+          tag_name: ${{ needs.release-please.outputs.tag_name }}
           files: xpi/*.xpi
-          generate_release_notes: true
       - name: Generate update manifest
-        run: npm run generate-update-manifest -- ${{ fromJSON(steps.release-xpi.outputs.assets)[0].browser_download_url }}
+        run: npm run generate-update-manifest -- ${{ fromJSON(steps.publish-xpi.outputs.assets)[0].browser_download_url }}
       - name: Publish update manifest
         uses: softprops/action-gh-release@v1
         with:

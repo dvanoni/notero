@@ -19,8 +19,7 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "typecheck": "tsc --noEmit",
-    "verify": "run-p lint prettier typecheck test",
-    "version": "standard-version --sign"
+    "verify": "run-p lint prettier typecheck test"
   },
   "repository": {
     "type": "git",

@@ -15,6 +15,8 @@ export function createXULElement<Name extends keyof XUL.XULElementTagNameMap>(
   return doc.createElementNS(XUL_NS, name) as XUL.XULElementTagNameMap[Name];
 }
 
-export function getXULElementById<E extends XUL.XULElement>(id: string): E {
-  return document.getElementById(id) as unknown as E;
+export function getXULElementById<E extends XUL.XULElement>(
+  id: string,
+): E | null {
+  return document.getElementById(id) as E | null;
 }

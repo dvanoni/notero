@@ -50,9 +50,11 @@ class Preferences {
   public async init(): Promise<void> {
     await Zotero.uiReadyPromise;
 
-    this.notionDatabaseError = getXULElementById('notero-notionDatabaseError');
-    this.notionDatabaseMenu = getXULElementById('notero-notionDatabase');
-    this.pageTitleFormatMenu = getXULElementById('notero-pageTitleFormat');
+    /* eslint-disable @typescript-eslint/no-non-null-assertion */
+    this.notionDatabaseError = getXULElementById('notero-notionDatabaseError')!;
+    this.notionDatabaseMenu = getXULElementById('notero-notionDatabase')!;
+    this.pageTitleFormatMenu = getXULElementById('notero-pageTitleFormat')!;
+    /* eslint-enable @typescript-eslint/no-non-null-assertion */
 
     this.prefObserverSymbol = registerNoteroPrefObserver(
       NoteroPref.notionToken,

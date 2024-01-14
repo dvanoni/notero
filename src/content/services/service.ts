@@ -1,9 +1,11 @@
 import type { PluginInfo } from '../plugin-info';
 
 import type { EventManager } from './event-manager';
+import type { WindowManager } from './window-manager';
 
 type Dependencies = {
   eventManager: EventManager;
+  windowManager: WindowManager;
 };
 
 export type ServiceParams = {

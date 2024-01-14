@@ -8,6 +8,7 @@ import {
   Service,
   SyncManager,
   UIManager,
+  WindowManager,
 } from './services';
 import { log } from './utils';
 
@@ -17,16 +18,19 @@ if (!IS_ZOTERO_7) {
 
 export class Notero {
   private readonly eventManager: EventManager;
+  private readonly windowManager: WindowManager;
   private readonly services: Service[];
 
   public constructor() {
     this.eventManager = new EventManager();
+    this.windowManager = new WindowManager();
 
     this.services = [
       ...(IS_ZOTERO_7
         ? [new ChromeManager(), new PreferencePaneManager()]
         : [new DefaultPreferencesLoader()]),
       this.eventManager,
+      this.windowManager,
       new SyncManager(),
       new UIManager(),
     ];
@@ -45,7 +49,10 @@ export class Notero {
   }
 
   private startServices(pluginInfo: PluginInfo) {
-    const dependencies = { eventManager: this.eventManager };
+    const dependencies = {
+      eventManager: this.eventManager,
+      windowManager: this.windowManager,
+    };
 
     this.services.forEach((service) => {
       log(`Starting ${service.constructor.name}`);

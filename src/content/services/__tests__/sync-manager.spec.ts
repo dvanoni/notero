@@ -1,5 +1,6 @@
-import { JSDOM } from 'jsdom';
+import { mock } from 'jest-mock-extended';
 
+import { createWindowMock } from '../../../../test/utils/window-mock';
 import {
   createZoteroCollectionMock,
   createZoteroItemMock,
@@ -10,7 +11,7 @@ import { saveSyncConfigs } from '../../prefs/collection-sync-config';
 import { NoteroPref, setNoteroPref } from '../../prefs/notero-pref';
 import { performSyncJob } from '../../sync/sync-job';
 import { parseItemDate } from '../../utils';
-import { EventManager, SyncManager } from '../index';
+import { EventManager, SyncManager, WindowManager } from '../index';
 
 jest.mock('../../data/item-data');
 jest.mock('../../sync/sync-job');
@@ -122,11 +123,6 @@ mockedGetSyncedNotes.mockReturnValue({
 
 const fakeTagID = 1234;
 
-function createWindowMock(): Zotero.ZoteroWindow {
-  const dom = new JSDOM();
-  return dom.window as unknown as Zotero.ZoteroWindow;
-}
-
 function setup({
   collectionSyncEnabled = true,
   syncNotes = true,
@@ -140,20 +136,20 @@ function setup({
 
   const eventManager = new EventManager();
   const syncManager = new SyncManager();
-  const window = createWindowMock();
+  const windowManager = mock<WindowManager>();
 
-  const dependencies = { eventManager };
+  const dependencies = { eventManager, windowManager };
 
   syncManager.startup({ dependencies, pluginInfo });
 
-  syncManager.addToWindow(window);
+  windowManager.getLatestWindow.mockReturnValue(createWindowMock());
 
   saveSyncConfigs({ [collection.id]: { syncEnabled: collectionSyncEnabled } });
 
   setNoteroPref(NoteroPref.syncNotes, syncNotes);
   setNoteroPref(NoteroPref.syncOnModifyItems, syncOnModifyItems);
 
-  return { eventManager, syncManager, window };
+  return { eventManager, windowManager };
 }
 
 beforeEach(() => {
@@ -167,9 +163,9 @@ afterEach(() => {
 
 describe('SyncManager', () => {
   it('does not perform sync when window is not available', () => {
-    const { eventManager, syncManager, window } = setup();
+    const { eventManager, windowManager } = setup();
 
-    syncManager.removeFromWindow(window);
+    windowManager.getLatestWindow.mockReturnValue(undefined);
 
     eventManager.emit('request-sync-items', [regularItem]);
 
@@ -179,30 +175,23 @@ describe('SyncManager', () => {
   });
 
   it('performs sync using the latest available window', async () => {
-    const { eventManager, syncManager, window: window1 } = setup();
+    const { eventManager, windowManager } = setup();
 
-    const window2 = createWindowMock();
-    const window3 = createWindowMock();
-    const window4 = createWindowMock();
-
-    syncManager.removeFromWindow(window1);
-    syncManager.addToWindow(window2);
-    syncManager.addToWindow(window3);
-    syncManager.addToWindow(window4);
-    syncManager.removeFromWindow(window3);
+    const firstWindow = windowManager.getLatestWindow();
 
     eventManager.emit('request-sync-items', [regularItem]);
     await jest.runAllTimersAsync();
 
-    expect(mockedPerformSyncJob.mock.lastCall?.[1]).toBe(window4);
+    expect(mockedPerformSyncJob.mock.lastCall?.[1]).toBe(firstWindow);
 
-    syncManager.removeFromWindow(window4);
+    const secondWindow = createWindowMock();
+    windowManager.getLatestWindow.mockReturnValue(secondWindow);
 
     eventManager.emit('request-sync-items', [regularItem]);
     await jest.runAllTimersAsync();
 
     expect(mockedPerformSyncJob).toHaveBeenCalledTimes(2);
-    expect(mockedPerformSyncJob.mock.lastCall?.[1]).toBe(window2);
+    expect(mockedPerformSyncJob.mock.lastCall?.[1]).toBe(secondWindow);
   });
 
   describe('receiving `request-sync-collection` event', () => {

@@ -1,4 +1,4 @@
-import { createZoteroItemMock } from '../../../../test/utils/zotero-mock';
+import { createZoteroItemMock } from '../../../../test/utils';
 import { getSyncedNotesFromAttachment } from '../item-data';
 
 describe('getSyncedNotesFromAttachment', () => {

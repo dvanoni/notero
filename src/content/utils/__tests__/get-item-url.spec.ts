@@ -1,7 +1,4 @@
-import {
-  createZoteroItemMock,
-  zoteroMock,
-} from '../../../../test/utils/zotero-mock';
+import { createZoteroItemMock, zoteroMock } from '../../../../test/utils';
 import { getItemURL } from '../get-item-url';
 
 const itemMock = createZoteroItemMock();

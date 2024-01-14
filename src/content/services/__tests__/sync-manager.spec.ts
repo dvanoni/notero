@@ -1,11 +1,11 @@
 import { mock } from 'jest-mock-extended';
 
-import { createWindowMock } from '../../../../test/utils/window-mock';
 import {
+  createWindowMock,
   createZoteroCollectionMock,
   createZoteroItemMock,
   mockZoteroPrefs,
-} from '../../../../test/utils/zotero-mock';
+} from '../../../../test/utils';
 import { getSyncedNotes } from '../../data/item-data';
 import { saveSyncConfigs } from '../../prefs/collection-sync-config';
 import { NoteroPref, setNoteroPref } from '../../prefs/notero-pref';

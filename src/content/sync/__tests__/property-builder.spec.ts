@@ -1,9 +1,6 @@
 import { any, mock } from 'jest-mock-extended';
 
-import {
-  createZoteroCollectionMock,
-  zoteroMock,
-} from '../../../../test/utils/zotero-mock';
+import { createZoteroCollectionMock, zoteroMock } from '../../../../test/utils';
 import { PageTitleFormat } from '../../prefs/notero-pref';
 import { getItemURL, keyValue } from '../../utils';
 import type {

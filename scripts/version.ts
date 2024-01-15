@@ -8,28 +8,39 @@ import pkg from '../package.json';
 
 import { genDir, relativeToRoot } from './paths';
 
+const versionJsPath = path.join(genDir, 'version.js');
+
 export let version: string;
 
-const versionJsPath = path.join(genDir, 'version.js');
+function getVersion(): string {
+  const isGitHubActions = Boolean(process.env.GITHUB_ACTIONS);
+  const isPublish = process.env.GITHUB_JOB === 'publish-artifacts';
+
+  if (!isGitHubActions) return getLocalVersion();
+
+  if (!isPublish) return getPrereleaseVersion();
+
+  return pkg.version;
+}
+
+function getLocalVersion(): string {
+  return `${getPatchBumpVersion()}-${os.userInfo().username}.${os.hostname()}`;
+}
+
+function getPrereleaseVersion(): string {
+  return `${getPatchBumpVersion()}-${process.env.GITHUB_RUN_NUMBER}`;
+}
+
+function getPatchBumpVersion(): string {
+  return semverInc(pkg.version, 'patch') || pkg.version;
+}
 
 if (fs.existsSync(versionJsPath)) {
   // eslint-disable-next-line @typescript-eslint/no-var-requires
   version = require(versionJsPath) as string;
   console.log(`Found ${relativeToRoot(versionJsPath)} with ${version}`);
 } else {
-  version = pkg.version;
-
-  const isGitHubActions = Boolean(process.env.GITHUB_ACTIONS);
-  const isGitHubTagRun = process.env.GITHUB_REF_TYPE === 'tag';
-
-  if (isGitHubActions && !isGitHubTagRun) {
-    version = `${semverInc(version, 'patch')}-${process.env.GITHUB_RUN_NUMBER}`;
-  } else if (!isGitHubActions) {
-    version = `${semverInc(version, 'patch')}-${
-      os.userInfo().username
-    }.${os.hostname()}`;
-  }
-
+  version = getVersion();
   console.log(`Writing ${relativeToRoot(versionJsPath)} with ${version}`);
 
   fs.outputFileSync(

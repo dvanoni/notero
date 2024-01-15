@@ -1,3 +1,5 @@
+import type { Client } from '@notionhq/client';
+
 import { IS_ZOTERO_7 } from './constants';
 import type { PluginInfo } from './plugin-info';
 import {
@@ -8,7 +10,10 @@ import {
   Service,
   SyncManager,
   UIManager,
+  WindowManager,
 } from './services';
+import { findDuplicates } from './sync/find-duplicates';
+import { getNotionClient } from './sync/notion-client';
 import { log } from './utils';
 
 if (!IS_ZOTERO_7) {
@@ -17,16 +22,19 @@ if (!IS_ZOTERO_7) {
 
 export class Notero {
   private readonly eventManager: EventManager;
+  private readonly windowManager: WindowManager;
   private readonly services: Service[];
 
   public constructor() {
     this.eventManager = new EventManager();
+    this.windowManager = new WindowManager();
 
     this.services = [
       ...(IS_ZOTERO_7
         ? [new ChromeManager(), new PreferencePaneManager()]
         : [new DefaultPreferencesLoader()]),
       this.eventManager,
+      this.windowManager,
       new SyncManager(),
       new UIManager(),
     ];
@@ -45,7 +53,10 @@ export class Notero {
   }
 
   private startServices(pluginInfo: PluginInfo) {
-    const dependencies = { eventManager: this.eventManager };
+    const dependencies = {
+      eventManager: this.eventManager,
+      windowManager: this.windowManager,
+    };
 
     this.services.forEach((service) => {
       log(`Starting ${service.constructor.name}`);
@@ -89,6 +100,17 @@ export class Notero {
       log(`Removing ${service.constructor.name} from window`);
       service.removeFromWindow(window);
     });
+  }
+
+  public getNotionClient(): Client {
+    const latestWindow = this.windowManager.getLatestWindow();
+    if (!latestWindow) throw new Error('No window available');
+
+    return getNotionClient(latestWindow);
+  }
+
+  public findDuplicates(propertyName: string = 'title'): Promise<Set<string>> {
+    return findDuplicates(this.getNotionClient(), propertyName);
   }
 }
 

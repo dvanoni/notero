@@ -6,6 +6,7 @@ import { getAllCollectionItems, log, parseItemDate } from '../utils';
 
 import type { EventManager, NotifierEventParams } from './event-manager';
 import type { Service, ServiceParams } from './service';
+import type { WindowManager } from './window-manager';
 
 const SYNC_DEBOUNCE_MS = 2000;
 
@@ -16,15 +17,17 @@ type QueuedSync = {
 
 export class SyncManager implements Service {
   private eventManager!: EventManager;
+  private windowManager!: WindowManager;
 
   private queuedSync?: QueuedSync;
 
   private syncInProgress = false;
 
-  private readonly windows: Zotero.ZoteroWindow[] = [];
-
-  public startup({ dependencies: { eventManager } }: ServiceParams) {
+  public startup({
+    dependencies: { eventManager, windowManager },
+  }: ServiceParams) {
     this.eventManager = eventManager;
+    this.windowManager = windowManager;
 
     const { addListener } = eventManager;
 
@@ -39,23 +42,6 @@ export class SyncManager implements Service {
     removeListener('notifier-event', this.handleNotifierEvent);
     removeListener('request-sync-collection', this.handleSyncCollection);
     removeListener('request-sync-items', this.handleSyncItems);
-  }
-
-  public addToWindow(window: Zotero.ZoteroWindow) {
-    if (!this.windows.includes(window)) {
-      this.windows.unshift(window);
-    }
-  }
-
-  public removeFromWindow(window: Zotero.ZoteroWindow) {
-    const index = this.windows.indexOf(window);
-    if (index >= 0) {
-      this.windows.splice(index, 1);
-    }
-  }
-
-  private get latestWindow(): Zotero.ZoteroWindow | undefined {
-    return this.windows[0];
   }
 
   private handleNotifierEvent = (...params: NotifierEventParams) => {
@@ -252,13 +238,14 @@ export class SyncManager implements Service {
   }
 
   private async performSync() {
-    if (!this.queuedSync || !this.latestWindow) return;
+    const latestWindow = this.windowManager.getLatestWindow();
+    if (!this.queuedSync || !latestWindow) return;
 
     const { itemIDs } = this.queuedSync;
     this.queuedSync = undefined as QueuedSync | undefined;
     this.syncInProgress = true;
 
-    await performSyncJob(itemIDs, this.latestWindow);
+    await performSyncJob(itemIDs, latestWindow);
 
     if (this.queuedSync && !this.queuedSync.timeoutID) {
       await this.performSync();

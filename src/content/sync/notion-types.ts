@@ -1,7 +1,8 @@
 import type {
   BlockObjectRequest,
   CreatePageParameters,
-  GetDatabaseResponse,
+  DatabaseObjectResponse,
+  PageObjectResponse,
 } from '@notionhq/client/build/src/api-endpoints';
 
 /// Blocks ///
@@ -80,23 +81,39 @@ export function isBlockType<T extends BlockType>(
 
 /// Databases ///
 
-export type DatabaseProperties = GetDatabaseResponse['properties'];
+export type DatabaseProperties = DatabaseObjectResponse['properties'];
 
-export type DatabasePropertyConfig<T extends PropertyType> = Extract<
+export type DatabasePropertyConfig<T extends RequestPropertyType> = Extract<
   DatabaseProperties[string],
   { type: T }
 >;
 
-export type DatabasePageProperties = CreatePageParameters['properties'];
+export type DatabaseRequestProperties = CreatePageParameters['properties'];
 
-export type DatabasePageProperty = Extract<
-  DatabasePageProperties[string],
+export type DatabaseRequestProperty = Extract<
+  DatabaseRequestProperties[string],
   { type?: string }
 >;
 
-export type PropertyType = NonNullable<DatabasePageProperty['type']>;
+export type RequestPropertyType = NonNullable<DatabaseRequestProperty['type']>;
 
-export type PropertyRequest<T extends PropertyType> = Extract<
-  DatabasePageProperty,
+export type PropertyRequest<T extends RequestPropertyType> = Extract<
+  DatabaseRequestProperty,
   { [P in T]: unknown }
 >[T];
+
+/// Pages ///
+
+export type PageResponseProperty = PageObjectResponse['properties'][string];
+
+export type ResponsePropertyType = PageResponseProperty['type'];
+
+export type PropertyResponse<T extends ResponsePropertyType> = Extract<
+  PageResponseProperty,
+  { type: T }
+>;
+
+export function isPropertyOfType<T extends ResponsePropertyType>(type: T[]) {
+  return (property: PageResponseProperty): property is PropertyResponse<T> =>
+    (type as ResponsePropertyType[]).includes(property.type);
+}

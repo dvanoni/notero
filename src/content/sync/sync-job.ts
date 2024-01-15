@@ -14,8 +14,9 @@ import {
   NoteroPref,
   PageTitleFormat,
   getNoteroPref,
+  getRequiredNoteroPref,
 } from '../prefs/notero-pref';
-import { getLocalizedString, hasErrorStack, log } from '../utils';
+import { hasErrorStack, log } from '../utils';
 
 import { getNotionClient } from './notion-client';
 import type { DatabaseProperties } from './notion-types';
@@ -67,7 +68,7 @@ async function prepareSyncJob({
   window: Window;
 }): Promise<SyncJob> {
   const notion = getNotionClient(window);
-  const databaseID = getDatabaseID();
+  const databaseID = getRequiredNoteroPref(NoteroPref.notionDatabaseID);
   const databaseProperties = await retrieveDatabaseProperties(
     notion,
     databaseID,
@@ -92,14 +93,6 @@ function getCitationFormat(): string {
   if (typeof format === 'string' && format) return format;
 
   return APA_STYLE;
-}
-
-function getDatabaseID(): string {
-  const databaseID = getNoteroPref(NoteroPref.notionDatabaseID);
-
-  if (databaseID) return databaseID;
-
-  throw new Error(`Missing ${getLocalizedString(NoteroPref.notionDatabaseID)}`);
 }
 
 function getPageTitleFormat(): PageTitleFormat {

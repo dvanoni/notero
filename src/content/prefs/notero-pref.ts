@@ -1,3 +1,5 @@
+import { getLocalizedString } from '../utils';
+
 export enum NoteroPref {
   collectionSyncConfigs = 'collectionSyncConfigs',
   notionDatabaseID = 'notionDatabaseID',
@@ -82,6 +84,16 @@ export function getNoteroPref<P extends NoteroPref>(
 ): NoteroPrefValue[P] {
   const value = Zotero.Prefs.get(buildFullPrefName(pref), true);
   return convertRawPrefValue(pref, value);
+}
+
+export function getRequiredNoteroPref<P extends NoteroPref>(
+  pref: P,
+): NonNullable<NoteroPrefValue[P]> {
+  const value = getNoteroPref(pref);
+
+  if (value) return value;
+
+  throw new Error(`Missing ${getLocalizedString(pref)}`);
 }
 
 export function setNoteroPref<P extends NoteroPref>(

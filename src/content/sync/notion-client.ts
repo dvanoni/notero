@@ -1,7 +1,7 @@
 import { Client, Logger, LogLevel } from '@notionhq/client';
 
-import { getNoteroPref, NoteroPref } from '../prefs/notero-pref';
-import { getLocalizedString, log } from '../utils';
+import { getRequiredNoteroPref, NoteroPref } from '../prefs/notero-pref';
+import { log } from '../utils';
 
 const logger: Logger = (level, message, extraInfo) => {
   log(
@@ -11,11 +11,7 @@ const logger: Logger = (level, message, extraInfo) => {
 };
 
 export function getNotionClient(window: Window) {
-  const authToken = getNoteroPref(NoteroPref.notionToken);
-
-  if (!authToken) {
-    throw new Error(`Missing ${getLocalizedString(NoteroPref.notionToken)}`);
-  }
+  const authToken = getRequiredNoteroPref(NoteroPref.notionToken);
 
   return new Client({
     auth: authToken,

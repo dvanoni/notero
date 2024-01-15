@@ -14,7 +14,7 @@ import {
 } from './services';
 import { findDuplicates } from './sync/find-duplicates';
 import { getNotionClient } from './sync/notion-client';
-import { log } from './utils';
+import { hasErrorStack, log } from './utils';
 
 if (!IS_ZOTERO_7) {
   Cu.importGlobalProperties(['URL']);
@@ -22,18 +22,21 @@ if (!IS_ZOTERO_7) {
 
 export class Notero {
   private readonly eventManager: EventManager;
+  private readonly preferencePaneManager: PreferencePaneManager;
   private readonly windowManager: WindowManager;
   private readonly services: Service[];
 
   public constructor() {
     this.eventManager = new EventManager();
+    this.preferencePaneManager = new PreferencePaneManager();
     this.windowManager = new WindowManager();
 
     this.services = [
       ...(IS_ZOTERO_7
-        ? [new ChromeManager(), new PreferencePaneManager()]
+        ? [new ChromeManager()]
         : [new DefaultPreferencesLoader()]),
       this.eventManager,
+      this.preferencePaneManager,
       this.windowManager,
       new SyncManager(),
       new UIManager(),
@@ -43,7 +46,7 @@ export class Notero {
   public async startup(pluginInfo: PluginInfo) {
     await Zotero.uiReadyPromise;
 
-    this.startServices(pluginInfo);
+    await this.startServices(pluginInfo);
     this.addToAllWindows();
   }
 
@@ -52,16 +55,23 @@ export class Notero {
     this.shutDownServices();
   }
 
-  private startServices(pluginInfo: PluginInfo) {
+  private async startServices(pluginInfo: PluginInfo) {
     const dependencies = {
       eventManager: this.eventManager,
+      preferencePaneManager: this.preferencePaneManager,
       windowManager: this.windowManager,
     };
 
-    this.services.forEach((service) => {
-      log(`Starting ${service.constructor.name}`);
-      service.startup({ dependencies, pluginInfo });
-    });
+    for (const service of this.services) {
+      const serviceName = service.constructor.name;
+      try {
+        log(`Starting ${serviceName}`);
+        await service.startup({ dependencies, pluginInfo });
+      } catch (error) {
+        log(`Failed to start ${serviceName}: ${String(error)}`, 'error');
+        if (hasErrorStack(error)) log(error.stack, 'error');
+      }
+    }
   }
 
   private shutDownServices() {

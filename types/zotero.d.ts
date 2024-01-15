@@ -433,6 +433,17 @@ declare namespace Zotero {
     getCurrentUsername(): string | undefined;
   }
 
+  interface UtilitiesInternal {
+    openPreferences(
+      paneID?: string,
+      options?: {
+        action?: string;
+        tab?: string;
+        tabIndex?: number;
+      },
+    ): XPCOM.nsIDOMWindow | null;
+  }
+
   interface ZoteroPane {
     document: Document;
 
@@ -466,6 +477,7 @@ declare interface Zotero {
   QuickCopy: Zotero.QuickCopy;
   URI: Zotero.URI;
   Users: Zotero.Users;
+  Utilities: { Internal: Zotero.UtilitiesInternal };
 
   /** Display an alert in a given window */
   alert(window: Window, title: string, msg: string): void;

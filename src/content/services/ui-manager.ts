@@ -1,22 +1,26 @@
-import { IS_ZOTERO_7 } from '../constants';
 import { createXULElement, getLocalizedString, log } from '../utils';
 
 import type { EventManager } from './event-manager';
+import type { PreferencePaneManager } from './preference-pane-manager';
 import type { Service, ServiceParams } from './service';
 
 export class UIManager implements Service {
   private eventManager!: EventManager;
+  private preferencePaneManager!: PreferencePaneManager;
 
   private managedWindows = new Map<Zotero.ZoteroWindow, Set<Node>>();
 
-  public startup({ dependencies: { eventManager } }: ServiceParams) {
-    this.eventManager = eventManager;
+  public startup({
+    dependencies,
+  }: ServiceParams<'eventManager' | 'preferencePaneManager'>) {
+    this.eventManager = dependencies.eventManager;
+    this.preferencePaneManager = dependencies.preferencePaneManager;
   }
 
   public addToWindow(window: Zotero.ZoteroWindow) {
     this.initCollectionMenuItem(window);
     this.initItemMenuItem(window);
-    if (!IS_ZOTERO_7) this.initToolsMenuItem(window);
+    this.initToolsMenuItem(window);
   }
 
   public removeFromWindow(window: Zotero.ZoteroWindow) {
@@ -68,7 +72,7 @@ export class UIManager implements Service {
       labelName: 'notero.toolsMenu.preferences',
       parentId: 'menu_ToolsPopup',
       onCommand: () => {
-        this.openPreferences(window);
+        this.preferencePaneManager.openPreferences(window);
       },
     });
   }
@@ -98,12 +102,5 @@ export class UIManager implements Service {
     this.addManagedNode(window, menuItem);
 
     return menuItem;
-  }
-
-  private openPreferences(window: Zotero.ZoteroWindow) {
-    window.openDialog(
-      'chrome://notero/content/prefs/preferences.xul',
-      'notero-preferences',
-    );
   }
 }

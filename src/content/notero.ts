@@ -1,3 +1,5 @@
+import type { Client } from '@notionhq/client';
+
 import { IS_ZOTERO_7 } from './constants';
 import type { PluginInfo } from './plugin-info';
 import {
@@ -10,6 +12,8 @@ import {
   UIManager,
   WindowManager,
 } from './services';
+import { findDuplicates } from './sync/find-duplicates';
+import { getNotionClient } from './sync/notion-client';
 import { log } from './utils';
 
 if (!IS_ZOTERO_7) {
@@ -96,6 +100,17 @@ export class Notero {
       log(`Removing ${service.constructor.name} from window`);
       service.removeFromWindow(window);
     });
+  }
+
+  public getNotionClient(): Client {
+    const latestWindow = this.windowManager.getLatestWindow();
+    if (!latestWindow) throw new Error('No window available');
+
+    return getNotionClient(latestWindow);
+  }
+
+  public findDuplicates(): Promise<Set<string>> {
+    return findDuplicates(this.getNotionClient());
   }
 }
 

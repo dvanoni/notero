@@ -101,3 +101,20 @@ export type PropertyRequest<T extends RequestPropertyType> = Extract<
   DatabaseRequestProperty,
   { [P in T]: unknown }
 >[T];
+
+/// Pages ///
+
+type PageResponseProperty = PageObjectResponse['properties'][string];
+
+type ResponsePropertyType = PageResponseProperty['type'];
+
+type PropertyResponse<T extends ResponsePropertyType> = Extract<
+  PageResponseProperty,
+  { type: T }
+>;
+
+export function isPropertyOfType<T extends ResponsePropertyType>(type: T) {
+  return (
+    property: PropertyResponse<ResponsePropertyType>,
+  ): property is PropertyResponse<T> => property.type === type;
+}

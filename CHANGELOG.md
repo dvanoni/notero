@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.5.9](https://github.com/dvanoni/notero/compare/v0.5.8...v0.5.9) (2024-01-15)
+
+
+### Bug Fixes
+
+* Restore preferences menu item in Zotero 7 ([#440](https://github.com/dvanoni/notero/issues/440)) ([35cf3cd](https://github.com/dvanoni/notero/commit/35cf3cdddffa0589d9209260894f1a7d8c9764fd)), closes [#432](https://github.com/dvanoni/notero/issues/432)
+
 ## [0.5.8](https://github.com/dvanoni/notero/compare/notero-v0.5.7...notero-v0.5.8) (2024-01-15)
 
 

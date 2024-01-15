@@ -14,7 +14,7 @@ export type ServiceParams = {
 };
 
 export interface Service {
-  startup(params: ServiceParams): void;
+  startup(params: ServiceParams): void | Promise<void>;
   shutdown?(): void;
   addToWindow?(window: Zotero.ZoteroWindow): void;
   removeFromWindow?(window: Zotero.ZoteroWindow): void;

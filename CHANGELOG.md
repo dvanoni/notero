@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.6.0](https://github.com/dvanoni/notero/compare/v0.5.7...v0.6.0) (2024-01-15)
+
+
+### Features
+
+* Add utility for finding duplicate Notion pages ([#433](https://github.com/dvanoni/notero/issues/433)) ([bd23e84](https://github.com/dvanoni/notero/commit/bd23e84e840ad320709ee043127d309d94fc4991))
+
 ### [0.5.7](https://github.com/dvanoni/notero/compare/v0.5.6...v0.5.7) (2024-01-01)
 
 

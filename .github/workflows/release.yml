@@ -16,8 +16,6 @@ jobs:
     steps:
       - id: release-please
         uses: google-github-actions/release-please-action@v4
-        with:
-          release-type: node
   publish-artifacts:
     needs: release-please
     if: needs.release-please.outputs.release_created

@@ -8,8 +8,8 @@ type Dependencies = {
   windowManager: WindowManager;
 };
 
-export type ServiceParams = {
-  dependencies: Dependencies;
+export type ServiceParams<D extends keyof Dependencies = never> = {
+  dependencies: Pick<Dependencies, D>;
   pluginInfo: PluginInfo;
 };
 

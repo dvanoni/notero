@@ -24,12 +24,12 @@ export class SyncManager implements Service {
   private syncInProgress = false;
 
   public startup({
-    dependencies: { eventManager, windowManager },
-  }: ServiceParams) {
-    this.eventManager = eventManager;
-    this.windowManager = windowManager;
+    dependencies,
+  }: ServiceParams<'eventManager' | 'windowManager'>) {
+    this.eventManager = dependencies.eventManager;
+    this.windowManager = dependencies.windowManager;
 
-    const { addListener } = eventManager;
+    const { addListener } = this.eventManager;
 
     addListener('notifier-event', this.handleNotifierEvent);
     addListener('request-sync-collection', this.handleSyncCollection);

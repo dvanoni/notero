@@ -104,17 +104,16 @@ export type PropertyRequest<T extends RequestPropertyType> = Extract<
 
 /// Pages ///
 
-type PageResponseProperty = PageObjectResponse['properties'][string];
+export type PageResponseProperty = PageObjectResponse['properties'][string];
 
-type ResponsePropertyType = PageResponseProperty['type'];
+export type ResponsePropertyType = PageResponseProperty['type'];
 
-type PropertyResponse<T extends ResponsePropertyType> = Extract<
+export type PropertyResponse<T extends ResponsePropertyType> = Extract<
   PageResponseProperty,
   { type: T }
 >;
 
-export function isPropertyOfType<T extends ResponsePropertyType>(type: T) {
-  return (
-    property: PropertyResponse<ResponsePropertyType>,
-  ): property is PropertyResponse<T> => property.type === type;
+export function isPropertyOfType<T extends ResponsePropertyType>(type: T[]) {
+  return (property: PageResponseProperty): property is PropertyResponse<T> =>
+    (type as ResponsePropertyType[]).includes(property.type);
 }

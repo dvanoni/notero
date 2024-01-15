@@ -109,8 +109,8 @@ export class Notero {
     return getNotionClient(latestWindow);
   }
 
-  public findDuplicates(): Promise<Set<string>> {
-    return findDuplicates(this.getNotionClient());
+  public findDuplicates(propertyName: string = 'title'): Promise<Set<string>> {
+    return findDuplicates(this.getNotionClient(), propertyName);
   }
 }
 

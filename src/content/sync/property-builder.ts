@@ -3,11 +3,11 @@ import { PageTitleFormat } from '../prefs/notero-pref';
 import { buildCollectionFullName, getItemURL, parseItemDate } from '../utils';
 
 import type {
-  DatabasePageProperties,
-  DatabasePageProperty,
   DatabaseProperties,
+  DatabaseRequestProperties,
+  DatabaseRequestProperty,
   PropertyRequest,
-  PropertyType,
+  RequestPropertyType,
 } from './notion-types';
 import { buildDate, buildRichText } from './notion-utils';
 
@@ -18,7 +18,7 @@ type PropertyBuilderParams = {
   pageTitleFormat: PageTitleFormat;
 };
 
-type PropertyDefinition<T extends PropertyType = PropertyType> = {
+type PropertyDefinition<T extends RequestPropertyType = RequestPropertyType> = {
   [P in T]: {
     name: string;
     type: P;
@@ -28,7 +28,7 @@ type PropertyDefinition<T extends PropertyType = PropertyType> = {
 
 export function buildProperties(
   params: PropertyBuilderParams,
-): Promise<DatabasePageProperties> {
+): Promise<DatabaseRequestProperties> {
   const propertyBuilder = new PropertyBuilder(params);
   return propertyBuilder.buildProperties();
 }
@@ -56,8 +56,8 @@ class PropertyBuilder {
     this.pageTitleFormat = params.pageTitleFormat;
   }
 
-  public async buildProperties(): Promise<DatabasePageProperties> {
-    const properties: DatabasePageProperties = {
+  public async buildProperties(): Promise<DatabaseRequestProperties> {
+    const properties: DatabaseRequestProperties = {
       title: {
         title: buildRichText(await this.getPageTitle()),
       },
@@ -73,7 +73,7 @@ class PropertyBuilder {
       properties[name] = {
         type,
         [type]: request,
-      } as DatabasePageProperty;
+      } as DatabaseRequestProperty;
     }
 
     return properties;

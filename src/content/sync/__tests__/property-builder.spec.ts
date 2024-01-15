@@ -4,9 +4,9 @@ import { createZoteroCollectionMock, zoteroMock } from '../../../../test/utils';
 import { PageTitleFormat } from '../../prefs/notero-pref';
 import { getItemURL, keyValue } from '../../utils';
 import type {
-  DatabasePageProperties,
   DatabaseProperties,
   DatabasePropertyConfig,
+  DatabaseRequestProperties,
 } from '../notion-types';
 import { buildProperties } from '../property-builder';
 
@@ -215,7 +215,7 @@ describe('buildProperties', () => {
       pageTitleFormat: PageTitleFormat.itemTitle,
     });
 
-    const expected: DatabasePageProperties = {
+    const expected: DatabaseRequestProperties = {
       title: {
         title: [{ text: { content: fakeTitle } }],
       },
@@ -255,7 +255,7 @@ describe('buildProperties', () => {
       pageTitleFormat: PageTitleFormat.itemTitle,
     });
 
-    const expected: DatabasePageProperties = {
+    const expected: DatabaseRequestProperties = {
       title: {
         title: [{ text: { content: fakeTitle } }],
       },
@@ -278,7 +278,7 @@ describe('buildProperties', () => {
       pageTitleFormat: PageTitleFormat.itemTitle,
     });
 
-    const expected: DatabasePageProperties = {
+    const expected: DatabaseRequestProperties = {
       title: {
         title: [{ text: { content: fakeTitle } }],
       },

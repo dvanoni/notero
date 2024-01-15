@@ -22,18 +22,21 @@ if (!IS_ZOTERO_7) {
 
 export class Notero {
   private readonly eventManager: EventManager;
+  private readonly preferencePaneManager: PreferencePaneManager;
   private readonly windowManager: WindowManager;
   private readonly services: Service[];
 
   public constructor() {
     this.eventManager = new EventManager();
+    this.preferencePaneManager = new PreferencePaneManager();
     this.windowManager = new WindowManager();
 
     this.services = [
       ...(IS_ZOTERO_7
-        ? [new ChromeManager(), new PreferencePaneManager()]
+        ? [new ChromeManager()]
         : [new DefaultPreferencesLoader()]),
       this.eventManager,
+      this.preferencePaneManager,
       this.windowManager,
       new SyncManager(),
       new UIManager(),
@@ -55,6 +58,7 @@ export class Notero {
   private async startServices(pluginInfo: PluginInfo) {
     const dependencies = {
       eventManager: this.eventManager,
+      preferencePaneManager: this.preferencePaneManager,
       windowManager: this.windowManager,
     };
 

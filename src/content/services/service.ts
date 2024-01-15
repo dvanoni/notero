@@ -1,10 +1,10 @@
 import type { PluginInfo } from '../plugin-info';
 
-import type { EventManager } from './event-manager';
-import type { WindowManager } from './window-manager';
+import type { EventManager, PreferencePaneManager, WindowManager } from '.';
 
 type Dependencies = {
   eventManager: EventManager;
+  preferencePaneManager: PreferencePaneManager;
   windowManager: WindowManager;
 };
 

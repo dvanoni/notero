@@ -25,6 +25,7 @@ module.exports = {
       typescript: true,
     },
   },
+  ignorePatterns: ['.eslintrc.js'],
   rules: {
     '@typescript-eslint/no-invalid-void-type': [
       'error',

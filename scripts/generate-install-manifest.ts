@@ -23,6 +23,7 @@ const installRdfVars = {
   name: pkg.xpi.name,
   updateURL: `${pkg.xpi.releaseURL}update.rdf`,
   version,
+  zoteroMinVersion: pkg.xpi.zoteroMinVersion,
 };
 
 const template = fs.readFileSync(

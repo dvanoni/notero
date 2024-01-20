@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.5.10](https://github.com/dvanoni/notero/compare/v0.5.9...v0.5.10) (2024-01-20)
+
+
+### Bug Fixes
+
+* Require minimum Zotero version 6.0.27 ([#446](https://github.com/dvanoni/notero/issues/446)) ([35e0669](https://github.com/dvanoni/notero/commit/35e0669850864c966dc1dd8b06539f615fb1e081))
+
 ## [0.5.9](https://github.com/dvanoni/notero/compare/v0.5.8...v0.5.9) (2024-01-15)
 
 

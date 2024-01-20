@@ -42,7 +42,8 @@
     "id": "notero@vanoni.dev",
     "name": "Notero",
     "releaseURL": "https://github.com/dvanoni/notero/releases/download/release/",
-    "supportsZotero7": true
+    "supportsZotero7": true,
+    "zoteroMinVersion": "6.0.27"
   },
   "dependencies": {
     "@notionhq/client": "^2.2.14",

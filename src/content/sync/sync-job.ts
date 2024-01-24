@@ -134,15 +134,23 @@ class SyncJob {
       const step = index + 1;
       log(`Saving item ${step} of ${this.items.length} with ID ${item.id}`);
 
-      this.progressWindow.updateText(step);
+      this.progressWindow.startItem();
 
-      if (item.isNote()) {
-        await this.syncNoteItem(item);
-      } else {
-        await this.syncRegularItem(item);
+      try {
+        if (item.isNote()) {
+          await this.syncNoteItem(item);
+        } else {
+          await this.syncRegularItem(item);
+        }
+      } catch (error) {
+        // if (!isNotionErrorWithCode(error, APIErrorCode.ValidationError)) {
+        //   throw error;
+        // }
+        this.progressWindow.addItemError(item, String(error));
       }
 
-      this.progressWindow.updateProgress(step);
+      // this.progressWindow.updateProgress(step);
+      this.progressWindow.completeItem();
     }
   }
 

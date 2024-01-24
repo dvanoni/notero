@@ -51,12 +51,20 @@ export async function performSyncJob(
 
     progressWindow.complete();
   } catch (error) {
-    const errorMessage = String(error);
+    let cause = error;
+    let failedItem: Zotero.Item | undefined;
+
+    if (error instanceof ItemSyncError) {
+      cause = error.cause;
+      failedItem = error.item;
+    }
+
+    const errorMessage = String(cause);
 
     log(errorMessage, 'error');
-    if (hasErrorStack(error)) log(error.stack, 'error');
+    if (hasErrorStack(cause)) log(cause.stack, 'error');
 
-    progressWindow.fail(errorMessage);
+    progressWindow.fail(errorMessage, failedItem);
   }
 }
 
@@ -110,6 +118,18 @@ async function retrieveDatabaseProperties(
   return database.properties;
 }
 
+class ItemSyncError extends Error {
+  public readonly cause: unknown;
+  public readonly item: Zotero.Item;
+  public readonly name = 'ItemSyncError';
+
+  public constructor(cause: unknown, item: Zotero.Item) {
+    super(`Failed to sync item with ID ${item.id} due to ${String(cause)}`);
+    this.cause = cause;
+    this.item = item;
+  }
+}
+
 class SyncJob {
   private readonly citationFormat: string;
   private readonly databaseID: string;
@@ -136,10 +156,14 @@ class SyncJob {
 
       this.progressWindow.updateText(step);
 
-      if (item.isNote()) {
-        await this.syncNoteItem(item);
-      } else {
-        await this.syncRegularItem(item);
+      try {
+        if (item.isNote()) {
+          await this.syncNoteItem(item);
+        } else {
+          await this.syncRegularItem(item);
+        }
+      } catch (error) {
+        throw new ItemSyncError(error, item);
       }
 
       this.progressWindow.updateProgress(step);

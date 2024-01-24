@@ -210,6 +210,7 @@ declare namespace Zotero {
   }
 
   interface ItemTypes extends CachedTypes {
+    getImageSrc(itemType: string): string;
     getLocalizedString(idOrName: number | string): string;
   }
 

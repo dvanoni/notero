@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.5.11](https://github.com/dvanoni/notero/compare/v0.5.10...v0.5.11) (2024-01-24)
+
+
+### Features
+
+* Show title of item when failing to sync ([#448](https://github.com/dvanoni/notero/issues/448)) ([acd5c29](https://github.com/dvanoni/notero/commit/acd5c2984204568091dc325e5a74ffa88ed3fb90))
+
 ## [0.5.10](https://github.com/dvanoni/notero/compare/v0.5.9...v0.5.10) (2024-01-20)
 
 

@@ -11,10 +11,13 @@ export class ProgressWindow {
     this.itemCount = itemCount;
 
     this.progressWindow = new Zotero.ProgressWindow();
-    this.progressWindow.changeHeadline('Syncing items to Notion...');
+    this.progressWindow.changeHeadline(
+      'Syncing items to Notion...',
+      NOTION_LOGO,
+    );
     this.progressWindow.show();
 
-    this.itemProgress = new this.progressWindow.ItemProgress(NOTION_LOGO, '');
+    this.itemProgress = new this.progressWindow.ItemProgress('', '');
   }
 
   public updateText(step: number) {
@@ -31,8 +34,18 @@ export class ProgressWindow {
     this.progressWindow.startCloseTimer();
   }
 
-  public fail(errorMessage: string) {
-    this.itemProgress.setError();
-    this.progressWindow.addDescription(errorMessage);
+  public fail(errorMessage: string, failedItem?: Zotero.Item) {
+    if (failedItem) {
+      new this.progressWindow.ItemProgress(
+        Zotero.ItemTypes.getImageSrc(failedItem.itemType),
+        failedItem.getDisplayTitle(),
+        this.itemProgress,
+      ).setProgress(100);
+      new this.progressWindow.ItemProgress('', errorMessage).setError();
+    } else {
+      this.itemProgress.setError();
+      this.itemProgress.setText(errorMessage);
+      this.progressWindow.addDescription(''); // Hack to force window resize
+    }
   }
 }

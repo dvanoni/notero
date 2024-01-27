@@ -12,7 +12,7 @@ import { buildProperties } from '../property-builder';
 
 jest.mock('../../utils/get-item-url');
 
-const mockCollection = createZoteroCollectionMock({ name: 'Fake Collection' });
+const fakeCollectionName = 'Fake Collection';
 const fakeItemType = 'Journal Article';
 const fakePrimaryID = 1;
 const fakeTag = 'Fake Tag';
@@ -132,8 +132,10 @@ function setup() {
     .calledWith(any(), any(), any(), false)
     .mockReturnValue({ html: fakeFullCitation, text: fakeFullCitation });
 
+  const collection = createZoteroCollectionMock({ name: fakeCollectionName });
+
   const item = mock<Zotero.Item>();
-  item.getCollections.mockReturnValue([mockCollection.id]);
+  item.getCollections.mockReturnValue([collection.id]);
   item.getCreators.mockReturnValue([
     {
       creatorTypeID: fakePrimaryID,
@@ -158,7 +160,7 @@ function setup() {
 
   jest.mocked(getItemURL).mockReturnValue(fakeURI);
 
-  return { item };
+  return { collection, item };
 }
 
 describe('buildProperties', () => {
@@ -268,6 +270,35 @@ describe('buildProperties', () => {
     expect(result).toStrictEqual(expected);
   });
 
+  it('returns truncated value when collection name exceeds limit', async () => {
+    const { collection, item } = setup();
+
+    const nameWithOver100Characters =
+      'This name has 27 characters ▸ This name has 27 characters ▸ This name has 27 characters ▸ This name has 27 characters';
+    const truncatedName =
+      'This name has 27 characters ▸ This name has 27 cha…e has 27 characters ▸ This name has 27 characters';
+
+    collection.name = nameWithOver100Characters;
+
+    const result = await buildProperties({
+      citationFormat: 'style',
+      databaseProperties: {
+        Collections: propertyConfigs.Collections,
+      },
+      item,
+      pageTitleFormat: PageTitleFormat.itemCitationKey,
+    });
+
+    expect(result).toStrictEqual(
+      expect.objectContaining({
+        Collections: {
+          multi_select: [{ name: truncatedName }],
+          type: 'multi_select',
+        },
+      }),
+    );
+  });
+
   it('returns correct values for all properties', async () => {
     const { item } = setup();
 
@@ -297,7 +328,7 @@ describe('buildProperties', () => {
         type: 'rich_text',
       },
       Collections: {
-        multi_select: [{ name: mockCollection.name }],
+        multi_select: [{ name: fakeCollectionName }],
         type: 'multi_select',
       },
       DOI: {

@@ -14,3 +14,4 @@ export { isObject } from './is-object';
 export { keyValue } from './key-value';
 export { log } from './log';
 export { parseItemDate } from './parse-item-date';
+export { truncateMiddle } from './truncate-middle';

@@ -1,7 +1,13 @@
 import { APA_STYLE, NOTION_TAG_NAME } from '../constants';
 import { PageTitleFormat } from '../prefs/notero-pref';
-import { buildCollectionFullName, getItemURL, parseItemDate } from '../utils';
+import {
+  buildCollectionFullName,
+  getItemURL,
+  parseItemDate,
+  truncateMiddle,
+} from '../utils';
 
+import { LIMITS } from './notion-limits';
 import type {
   DatabaseProperties,
   DatabaseRequestProperties,
@@ -37,8 +43,18 @@ function formatCreatorName({ firstName, lastName }: Zotero.Creator) {
   return [lastName, firstName].filter((name) => name).join(', ');
 }
 
+/**
+ * Sanitize name of select option to conform to the following constraints:
+ * - Commas (`,`) are not valid
+ * - Length must be <= 100
+ *
+ * @see https://developers.notion.com/reference/property-object#select
+ */
 function sanitizeSelectOption(text: string): string {
-  return text.replace(/,/g, ';');
+  return truncateMiddle(
+    text.replace(/,/g, ';'),
+    LIMITS.SELECT_OPTION_CHARACTERS,
+  );
 }
 
 class PropertyBuilder {

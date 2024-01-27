@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.5.12](https://github.com/dvanoni/notero/compare/v0.5.11...v0.5.12) (2024-01-27)
+
+
+### Bug Fixes
+
+* Truncate Notion select options that exceed length limit ([#451](https://github.com/dvanoni/notero/issues/451)) ([ebcdc9d](https://github.com/dvanoni/notero/commit/ebcdc9da3b3701a85e5168ce04a9559c9382a624)), closes [#240](https://github.com/dvanoni/notero/issues/240)
+
 ## [0.5.11](https://github.com/dvanoni/notero/compare/v0.5.10...v0.5.11) (2024-01-24)
 
 

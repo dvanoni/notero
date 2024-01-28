@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.5.13](https://github.com/dvanoni/notero/compare/v0.5.12...v0.5.13) (2024-01-28)
+
+
+### Bug Fixes
+
+* Ensure newly-added items sync even if not modified ([#453](https://github.com/dvanoni/notero/issues/453)) ([ad76ed2](https://github.com/dvanoni/notero/commit/ad76ed24cb82b3fa27c208d53a0e743e3bfca830)), closes [#269](https://github.com/dvanoni/notero/issues/269)
+
 ## [0.5.12](https://github.com/dvanoni/notero/compare/v0.5.11...v0.5.12) (2024-01-27)
 
 

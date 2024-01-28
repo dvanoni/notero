@@ -152,7 +152,7 @@ class SyncJob {
   public async perform() {
     for (const [index, item] of this.items.entries()) {
       const step = index + 1;
-      log(`Saving item ${step} of ${this.items.length} with ID ${item.id}`);
+      log(`Syncing item ${step} of ${this.items.length} with ID ${item.id}`);
 
       this.progressWindow.updateText(step);
 

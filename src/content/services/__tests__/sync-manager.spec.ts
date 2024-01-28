@@ -346,6 +346,48 @@ describe('SyncManager', () => {
     });
   });
 
+  describe('receiving `collection-item.add` notifier event', () => {
+    it('does not perform sync when item is not in sync-enabled collection', () => {
+      const { eventManager } = setup();
+
+      eventManager.emit('notifier-event', 'collection-item.add', [
+        [1234, regularItemNotInCollection.id],
+      ]);
+
+      jest.runAllTimers();
+
+      expect(performSyncJob).toHaveBeenCalledTimes(0);
+    });
+
+    it('syncs item and notes when `syncOnModifyItems` is disabled and item is in sync-enabled collection', () => {
+      const { eventManager } = setup({ syncOnModifyItems: false });
+
+      eventManager.emit('notifier-event', 'collection-item.add', [
+        [collection.id, regularItem.id],
+      ]);
+
+      jest.runAllTimers();
+
+      expect(mockedPerformSyncJob.mock.lastCall?.[0]).toStrictEqual(
+        new Set([regularItem.id, outOfSyncNoteItem.id, unsyncedNoteItem.id]),
+      );
+    });
+
+    it('syncs item when `syncOnModifyItems` is enabled and item is in sync-enabled collection', () => {
+      const { eventManager } = setup({ syncOnModifyItems: true });
+
+      eventManager.emit('notifier-event', 'collection-item.add', [
+        [collection.id, regularItem.id],
+      ]);
+
+      jest.runAllTimers();
+
+      expect(mockedPerformSyncJob.mock.lastCall?.[0]).toStrictEqual(
+        new Set([regularItem.id, outOfSyncNoteItem.id, unsyncedNoteItem.id]),
+      );
+    });
+  });
+
   describe('receiving `item.modify` notifier event', () => {
     it('does not perform sync when `syncOnModifyItems` is disabled', () => {
       const { eventManager } = setup({ syncOnModifyItems: false });

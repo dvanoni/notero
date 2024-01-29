@@ -57,13 +57,36 @@ const COMPARATORS: Record<DataKey, RowSortCompareFn> = {
   },
 };
 
-export class SyncConfigsTable extends React.Component {
+type Props = {
+  container: Element;
+};
+
+export class SyncConfigsTable extends React.Component<Props> {
   private _rows?: SyncConfigsTableRow[];
   private _syncConfigs?: CollectionSyncConfigsRecord;
 
+  private observer?: IntersectionObserver;
   private sortDirection = 1;
   private sortKey: DataKey = 'collectionFullName';
   private table: VirtualizedTable<DataKey> | null = null;
+
+  private observeFirstView() {
+    this.observer = new IntersectionObserver(
+      (entries: IntersectionObserverEntry[]) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            this.refreshUponFirstView();
+          }
+        });
+      },
+    );
+    this.observer.observe(this.props.container);
+  }
+
+  private refreshUponFirstView() {
+    this.table?.invalidate();
+    this.observer?.disconnect();
+  }
 
   private buildRows(): SyncConfigsTableRow[] {
     return Zotero.Collections.getLoaded()
@@ -133,6 +156,11 @@ export class SyncConfigsTable extends React.Component {
 
   renderItem = makeRowRenderer((index) => this.rows[index] || {});
 
+  setTableRef = (ref: typeof this.table) => {
+    this.table = ref;
+    this.observeFirstView();
+  };
+
   render() {
     return (
       <IntlProvider locale={Zotero.locale}>
@@ -141,7 +169,7 @@ export class SyncConfigsTable extends React.Component {
           columns={COLUMNS}
           getRowCount={this.getRowCount}
           getRowString={this.getRowString}
-          ref={(ref) => (this.table = ref)}
+          ref={this.setTableRef}
           renderItem={this.renderItem}
           multiSelect
           showHeader

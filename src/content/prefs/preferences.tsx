@@ -54,6 +54,9 @@ class Preferences {
     this.notionDatabaseError = getXULElementById('notero-notionDatabaseError')!;
     this.notionDatabaseMenu = getXULElementById('notero-notionDatabase')!;
     this.pageTitleFormatMenu = getXULElementById('notero-pageTitleFormat')!;
+    const syncConfigsTableContainer = document.getElementById(
+      'notero-syncConfigsTable-container',
+    )!;
     /* eslint-enable @typescript-eslint/no-non-null-assertion */
 
     this.prefObserverSymbol = registerNoteroPrefObserver(
@@ -75,8 +78,8 @@ class Preferences {
     }, 100);
 
     ReactDOM.render(
-      <SyncConfigsTable />,
-      document.getElementById('notero-syncConfigsTable-container'),
+      <SyncConfigsTable container={syncConfigsTableContainer} />,
+      syncConfigsTableContainer,
     );
   }
 

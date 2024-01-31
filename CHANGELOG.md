@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.5.14](https://github.com/dvanoni/notero/compare/v0.5.13...v0.5.14) (2024-01-31)
+
+
+### Bug Fixes
+
+* Fix sync configs table not rendering all items until scroll ([#455](https://github.com/dvanoni/notero/issues/455)) ([10f27ba](https://github.com/dvanoni/notero/commit/10f27ba4af91a2fad4d3dffa5e466e365faf407c))
+* Only convert html links if they use http or https protocol ([#459](https://github.com/dvanoni/notero/issues/459)) ([12c48d6](https://github.com/dvanoni/notero/commit/12c48d6241741b513a41562599be808a0fcf84c2))
+
 ## [0.5.13](https://github.com/dvanoni/notero/compare/v0.5.12...v0.5.13) (2024-01-28)
 
 

@@ -95,9 +95,11 @@ function getMathExpression(element: HTMLElement): string | null {
 }
 
 function parseAnchorElement(element: HTMLAnchorElement): RichTextElement {
+  const isHttpURL = /^https?:\/\/.+/.test(element.href);
+
   return {
     ...parseRichTextElement(element),
-    link: { url: element.href },
+    ...(isHttpURL && { link: { url: element.href } }),
   };
 }
 

@@ -27,7 +27,8 @@ jobs:
         with:
           result-encoding: string
           script: return `notero-${require('./gen/version')}`
-      - name: Upload xpi artifact
+      - id: upload-artifact
+        name: Upload xpi artifact
         uses: actions/upload-artifact@v4
         with:
           name: ${{ steps.artifact-name.outputs.result }}
@@ -41,4 +42,4 @@ jobs:
 
             **✅ Successful build**
 
-            ⬇️ Download: [${{ steps.artifact-name.outputs.result }}](https://nightly.link/${{ github.repository }}/actions/runs/${{ github.run_id }}/${{ steps.artifact-name.outputs.result }}.zip)
+            ⬇️ Download: [${{ steps.artifact-name.outputs.result }}](${{ steps.upload-artifact.outputs.artifact-url }})

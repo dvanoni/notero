@@ -1,16 +1,5 @@
 import esbuild, { BuildOptions } from 'esbuild';
 
-const banner = `if (!Zotero.Notero) {
-
-// Make timer functions globally available in Zotero 6
-if (typeof setTimeout === 'undefined') {
-  var setTimeout = Zotero.setTimeout;
-}
-if (typeof clearTimeout === 'undefined') {
-  var clearTimeout = Zotero.clearTimeout;
-}
-`;
-
 const builds: (BuildOptions & { entryPoints: [string] })[] = [
   {
     entryPoints: ['src/bootstrap.ts'],
@@ -23,9 +12,8 @@ const builds: (BuildOptions & { entryPoints: [string] })[] = [
     format: 'iife',
     target: ['firefox60'],
     entryPoints: ['src/content/notero.ts'],
+    inject: ['src/shims/timer.ts'],
     outdir: 'build/content',
-    banner: { js: banner },
-    footer: { js: '\n}' },
   },
   {
     bundle: true,

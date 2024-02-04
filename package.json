@@ -10,7 +10,7 @@
     "lint": "eslint --cache --ignore-path .gitignore .",
     "lint:fix": "eslint --fix --ignore-path .gitignore .",
     "postinstall": "patch-package",
-    "prepare": "husky install",
+    "prepare": "husky",
     "prestart": "npm run build",
     "prettier": "prettier --check .",
     "prettier:fix": "prettier --write .",

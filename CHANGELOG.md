@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.5.15](https://github.com/dvanoni/notero/compare/v0.5.14...v0.5.15) (2024-02-05)
+
+
+### Bug Fixes
+
+* Avoid creating duplicate note blocks in Notion ([#468](https://github.com/dvanoni/notero/issues/468)) ([00166c9](https://github.com/dvanoni/notero/commit/00166c9756e8c6f7145bc6ec480b0c113c9cfbce))
+
 ## [0.5.14](https://github.com/dvanoni/notero/compare/v0.5.13...v0.5.14) (2024-01-31)
 
 

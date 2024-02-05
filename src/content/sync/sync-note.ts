@@ -68,14 +68,16 @@ export async function syncNote(
 
     containerBlockID = await createContainerBlock(notion, pageID);
     newNoteBlockID = await createNoteBlock(notion, containerBlockID, noteItem);
+  } finally {
+    await saveSyncedNote(
+      regularItem,
+      containerBlockID,
+      newNoteBlockID,
+      noteItem.key,
+    );
   }
 
-  await saveSyncedNote(
-    regularItem,
-    containerBlockID,
-    newNoteBlockID,
-    noteItem.key,
-  );
+  await addNoteBlockContent(notion, newNoteBlockID, noteItem);
 }
 
 async function createContainerBlock(
@@ -118,8 +120,14 @@ async function createNoteBlock(
 
   if (!results[0]) throw new Error('Failed to create note block');
 
-  const noteBlockID = results[0].id;
+  return results[0].id;
+}
 
+async function addNoteBlockContent(
+  notion: Client,
+  noteBlockID: string,
+  noteItem: Zotero.Item,
+): Promise<void> {
   const blockBatches = buildNoteBlockBatches(noteItem);
 
   for (const blocks of blockBatches) {
@@ -128,8 +136,6 @@ async function createNoteBlock(
       children: blocks,
     });
   }
-
-  return noteBlockID;
 }
 
 function buildNoteBlockBatches(noteItem: Zotero.Item): BlockObjectRequest[][] {
@@ -148,6 +154,7 @@ function buildNoteBlockBatches(noteItem: Zotero.Item): BlockObjectRequest[][] {
 
   // @ts-expect-error FIXME: This will result in errors if `batches` contains
   // more than two levels of nested blocks.
+  // https://github.com/dvanoni/notero/issues/463
   return batches;
 }
 

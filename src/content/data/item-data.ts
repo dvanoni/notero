@@ -5,7 +5,7 @@ import { getDOMParser, isObject } from '../utils';
 
 const SYNCED_NOTES_ID = 'notero-synced-notes';
 
-type SyncedNotes = {
+export type SyncedNotes = {
   containerBlockID?: string;
   notes?: {
     [noteItemKey: Zotero.DataObjectKey]: {
@@ -128,7 +128,7 @@ export function getSyncedNotesFromAttachment(
 export async function saveSyncedNote(
   item: Zotero.Item,
   containerBlockID: string,
-  noteBlockID: string,
+  noteBlockID: string | undefined,
   noteItemKey: Zotero.DataObjectKey,
 ) {
   const attachment = getNotionLinkAttachment(item);
@@ -140,10 +140,12 @@ export async function saveSyncedNote(
     containerBlockID,
     notes: {
       ...notes,
-      [noteItemKey]: {
-        blockID: noteBlockID,
-        syncedAt: new Date(),
-      },
+      ...(noteBlockID && {
+        [noteItemKey]: {
+          blockID: noteBlockID,
+          syncedAt: new Date(),
+        },
+      }),
     },
   };
 

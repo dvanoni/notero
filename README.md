@@ -2,7 +2,8 @@
 
 [![Latest release](https://img.shields.io/github/v/release/dvanoni/notero)](https://github.com/dvanoni/notero/releases/latest)
 [![Total downloads](https://img.shields.io/github/downloads/dvanoni/notero/latest/total?sort=semver)](https://github.com/dvanoni/notero/releases/latest)
-<a href="https://www.buymeacoffee.com/dvanoni"><img alt="Buy me a coffee" height="20" src="https://img.buymeacoffee.com/button-api/?text=Buy me a coffee&emoji=&slug=dvanoni&button_colour=BD5FFF&font_colour=ffffff&font_family=Lato&outline_colour=000000&coffee_colour=FFDD00" /></a>
+[![Works with Zotero](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2Fdvanoni%2Fnotero%2Fmain%2Fpackage.json&query=%24.xpi.zoteroMinVersion&prefix=v&suffix=%2B&logo=zotero&label=Works%20with%20Zotero&color=%23CC2936)](https://www.zotero.org/)
+[![Buy me a coffee](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fapp.buymeacoffee.com%2Fapi%2Fcreators%2Fslug%2Fdvanoni&query=%24.data.public_supporters_count&prefix=%F0%9F%92%9C%20&style=social&logo=buymeacoffee&label=Buy%20me%20a%20coffee)](https://www.buymeacoffee.com/dvanoni)
 
 Notero is a [Zotero plugin](https://www.zotero.org/support/plugins) for syncing
 items and notes into [Notion](https://www.notion.so/product). To use it:
@@ -190,6 +191,9 @@ see issue [#355](https://github.com/dvanoni/notero/issues/355).
 | `Zotero URI`        | URL           | Opens items in web library if signed in to Zotero                              |
 
 ### Install and Configure Notero Plugin
+
+> [!IMPORTANT]
+> Notero requires Zotero version 6.0.27 or above and is also compatible with Zotero 7.
 
 1. Download the [latest version](https://github.com/dvanoni/notero/releases/latest)
    of the `.xpi` file.

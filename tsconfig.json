@@ -15,8 +15,8 @@
     "sourceMap": true,
     "strict": true,
     "target": "es2017",
-    "typeRoots": ["./types", "./node_modules/@types"],
+    "typeRoots": ["./types", "./node_modules/@types"]
   },
   "include": ["scripts/**/*", "src/**/*", "test/**/*", "types/**/*", "*.ts"],
-  "exclude": ["node_modules"],
+  "exclude": ["node_modules"]
 }

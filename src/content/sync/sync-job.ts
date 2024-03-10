@@ -202,6 +202,7 @@ class SyncJob {
 
     if (pageID) {
       try {
+        log(`Update page: ${JSON.stringify(properties)}`);
         return await this.notion.pages.update({ page_id: pageID, properties });
       } catch (error) {
         if (!isNotionErrorWithCode(error, APIErrorCode.ObjectNotFound)) {
@@ -210,6 +211,7 @@ class SyncJob {
       }
     }
 
+    log(`Create page: ${JSON.stringify(properties)}`);
     return await this.notion.pages.create({
       parent: { database_id: this.databaseID },
       properties,

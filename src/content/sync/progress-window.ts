@@ -1,5 +1,3 @@
-const NOTION_LOGO = 'chrome://notero/content/style/notion-logo-32.png';
-
 const getTickIcon = () => `chrome://zotero/skin/tick${Zotero.hiDPISuffix}.png`;
 
 export class ProgressWindow {
@@ -11,10 +9,7 @@ export class ProgressWindow {
     this.itemCount = itemCount;
 
     this.progressWindow = new Zotero.ProgressWindow();
-    this.progressWindow.changeHeadline(
-      'Syncing items to Notion...',
-      NOTION_LOGO,
-    );
+    this.progressWindow.changeHeadline('Syncing items to Notion...');
     this.progressWindow.show();
 
     this.itemProgress = new this.progressWindow.ItemProgress('', '');

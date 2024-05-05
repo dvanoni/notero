@@ -46,7 +46,7 @@
     "zoteroMinVersion": "6.0.27"
   },
   "dependencies": {
-    "@notionhq/client": "^2.2.14",
+    "@notionhq/client": "^2.2.15",
     "core-js-pure": "^3.37.0",
     "eventemitter3": "^5.0.1"
   },

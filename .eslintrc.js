@@ -31,11 +31,10 @@ module.exports = {
       'error',
       { allowAsThisParameter: true },
     ],
-    '@typescript-eslint/no-unused-vars': [
+    '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
+    '@typescript-eslint/restrict-template-expressions': [
       'error',
-      {
-        argsIgnorePattern: '^_',
-      },
+      { allowNumber: true },
     ],
     '@typescript-eslint/unbound-method': ['error', { ignoreStatic: true }],
     'import/no-default-export': 'error',

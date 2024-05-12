@@ -94,29 +94,33 @@ function propertyConfig<N extends string>(
 ): Record<N, DatabasePropertyConfig<typeof type>> {
   type SelectOptions = DatabasePropertyConfig<'select'>['select']['options'];
 
-  const idName = { id: 'id', name };
+  const idNameDescription = { id: 'id', name, description: null };
 
   switch (type) {
     case 'date':
-      return keyValue(name, { ...idName, type, [type]: {} });
+      return keyValue(name, { ...idNameDescription, type, [type]: {} });
     case 'multi_select':
       return keyValue(name, {
-        ...idName,
+        ...idNameDescription,
         type,
         [type]: { options: [] as SelectOptions },
       });
     case 'number':
-      return keyValue(name, { ...idName, type, [type]: { format: 'number' } });
+      return keyValue(name, {
+        ...idNameDescription,
+        type,
+        [type]: { format: 'number' },
+      });
     case 'rich_text':
-      return keyValue(name, { ...idName, type, [type]: {} });
+      return keyValue(name, { ...idNameDescription, type, [type]: {} });
     case 'select':
       return keyValue(name, {
-        ...idName,
+        ...idNameDescription,
         type,
         [type]: { options: [] as SelectOptions },
       });
     case 'url':
-      return keyValue(name, { ...idName, type, [type]: {} });
+      return keyValue(name, { ...idNameDescription, type, [type]: {} });
   }
 }
 

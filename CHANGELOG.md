@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.5.16](https://github.com/dvanoni/notero/compare/v0.5.15...v0.5.16) (2024-05-04)
+
+
+### Bug Fixes
+
+* Support changes to ProgressWindow API ([#502](https://github.com/dvanoni/notero/issues/502)) ([87f76a2](https://github.com/dvanoni/notero/commit/87f76a2fecb07c386bfd15c339b154934e88d8d9))
+
 ## [0.5.15](https://github.com/dvanoni/notero/compare/v0.5.14...v0.5.15) (2024-02-05)
 
 

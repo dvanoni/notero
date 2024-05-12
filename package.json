@@ -1,6 +1,6 @@
 {
   "name": "notero",
-  "version": "0.5.15",
+  "version": "0.5.16",
   "description": "Sync Zotero items and notes into Notion",
   "scripts": {
     "build": "tsx scripts/build.ts",
@@ -46,13 +46,13 @@
     "zoteroMinVersion": "6.0.27"
   },
   "dependencies": {
-    "@notionhq/client": "^2.2.14",
-    "core-js-pure": "^3.36.0",
+    "@notionhq/client": "^2.2.15",
+    "core-js-pure": "^3.37.0",
     "eventemitter3": "^5.0.1"
   },
   "devDependencies": {
-    "@commitlint/cli": "^19.0.3",
-    "@commitlint/config-conventional": "^19.0.3",
+    "@commitlint/cli": "^19.3.0",
+    "@commitlint/config-conventional": "^19.2.2",
     "@total-typescript/ts-reset": "^0.5.1",
     "@types/adm-zip": "^0.5.5",
     "@types/fs-extra": "^11.0.4",
@@ -60,10 +60,10 @@
     "@types/pug": "^2.0.10",
     "@types/react": "^17.0.55",
     "@types/react-dom": "^17.0.25",
-    "@typescript-eslint/eslint-plugin": "^7.1.0",
-    "@typescript-eslint/parser": "^7.1.0",
-    "adm-zip": "^0.5.10",
-    "esbuild": "^0.20.1",
+    "@typescript-eslint/eslint-plugin": "^7.8.0",
+    "@typescript-eslint/parser": "^7.8.0",
+    "adm-zip": "^0.5.12",
+    "esbuild": "^0.20.2",
     "eslint": "^8.57.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-import-resolver-typescript": "^3.6.1",
@@ -72,7 +72,7 @@
     "husky": "^9.0.11",
     "jest": "^29.7.0",
     "jest-environment-jsdom": "^29.7.0",
-    "jest-mock-extended": "^3.0.5",
+    "jest-mock-extended": "^3.0.7",
     "json5": "^2.2.3",
     "npm-run-all": "^4.1.5",
     "patch-package": "^8.0.0",
@@ -81,7 +81,7 @@
     "react-intl": "^3.12.1",
     "ts-jest": "^29.1.2",
     "tslib": "^2.6.2",
-    "tsx": "^4.7.1",
-    "typescript": "^5.3.3"
+    "tsx": "^4.9.0",
+    "typescript": "^5.4.5"
   }
 }

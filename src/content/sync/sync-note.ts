@@ -1,4 +1,4 @@
-import { APIErrorCode, Client } from '@notionhq/client';
+import { Client, isFullBlock } from '@notionhq/client';
 import { BlockObjectRequest } from '@notionhq/client/build/src/api-endpoints';
 
 import {
@@ -10,7 +10,7 @@ import {
 import { convertHtmlToBlocks } from './html-to-notion';
 import { LIMITS } from './notion-limits';
 import { ChildBlock } from './notion-types';
-import { isNotionErrorWithCode } from './notion-utils';
+import { isArchivedOrNotFoundError } from './notion-utils';
 
 /**
  * Sync a Zotero note item to Notion as children blocks of the page for its
@@ -28,9 +28,11 @@ import { isNotionErrorWithCode } from './notion-utils';
  * 2. If a block ID is saved in Zotero for the note's toggle heading, delete
  *    the block (including all its children).
  * 3. Append a new toggle heading block with the note content as a child of
- *    the top-level container block or it's previous container block (this
- *    is to allow for synced blocks inside of notes, if the parent cannot
- *    be retrieved, then simply use the top-level container).
+ *    the desired container block.
+ *    - For new notes, the container is the top-level container block.
+ *    - For existing notes, the container is the existing parent block. This
+ *      supports notes within synced blocks as the synced block is used as the
+ *      container rather than the top-level container.
  *
  * @param notion an initialized Notion `Client` instance
  * @param noteItem the Zotero note item to sync to Notion
@@ -55,33 +57,21 @@ export async function syncNote(
 
   const existingNoteBlockID = syncedNotes.notes?.[noteItem.key]?.blockID;
 
-  let subContainerBlockID = containerBlockID;
-
   if (existingNoteBlockID) {
-    const block = await notion.blocks.retrieve({
-      block_id: existingNoteBlockID,
-    });
-    if ('parent' in block && block.parent.type === 'block_id') {
-      const parentBlock = await notion.blocks.retrieve({
-        block_id: block.parent.block_id,
-      });
-      if ('in_trash' in parentBlock && !parentBlock.in_trash) {
-        subContainerBlockID = block.parent.block_id;
-      }
-    }
+    containerBlockID = await getEffectiveContainerBlockID(
+      notion,
+      existingNoteBlockID,
+      containerBlockID,
+    );
     await deleteNoteBlock(notion, existingNoteBlockID);
   }
 
   let newNoteBlockID;
 
   try {
-    newNoteBlockID = await createNoteBlock(
-      notion,
-      subContainerBlockID,
-      noteItem,
-    );
+    newNoteBlockID = await createNoteBlock(notion, containerBlockID, noteItem);
   } catch (error) {
-    if (!isNotionErrorWithCode(error, APIErrorCode.ObjectNotFound)) {
+    if (!isArchivedOrNotFoundError(error)) {
       throw error;
     }
 
@@ -181,8 +171,32 @@ async function deleteNoteBlock(notion: Client, blockID: string): Promise<void> {
   try {
     await notion.blocks.delete({ block_id: blockID });
   } catch (error) {
-    if (!isNotionErrorWithCode(error, APIErrorCode.ObjectNotFound)) {
+    if (!isArchivedOrNotFoundError(error)) {
       throw error;
     }
   }
+}
+
+async function getEffectiveContainerBlockID(
+  notion: Client,
+  noteBlockID: string,
+  containerBlockID: string,
+): Promise<string> {
+  const block = await notion.blocks.retrieve({ block_id: noteBlockID });
+
+  if (
+    isFullBlock(block) &&
+    'block_id' in block.parent &&
+    block.parent.block_id !== containerBlockID
+  ) {
+    const parentBlock = await notion.blocks.retrieve({
+      block_id: block.parent.block_id,
+    });
+
+    if (isFullBlock(parentBlock) && !parentBlock.in_trash) {
+      return parentBlock.id;
+    }
+  }
+
+  return containerBlockID;
 }

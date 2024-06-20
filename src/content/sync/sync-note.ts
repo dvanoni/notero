@@ -58,23 +58,15 @@ export async function syncNote(
   let subContainerBlockID = containerBlockID;
 
   if (existingNoteBlockID) {
-    try {
-      const block = await notion.blocks.retrieve({
-        block_id: existingNoteBlockID,
+    const block = await notion.blocks.retrieve({
+      block_id: existingNoteBlockID,
+    });
+    if ('parent' in block && block.parent.type === 'block_id') {
+      const parentBlock = await notion.blocks.retrieve({
+        block_id: block.parent.block_id,
       });
-      // get blocks parent
-      if ('parent' in block && block.parent.type === 'block_id') {
-        await notion.blocks.children.list({
-          block_id: block.parent.block_id,
-        });
+      if ('in_trash' in parentBlock && !parentBlock.in_trash) {
         subContainerBlockID = block.parent.block_id;
-      }
-    } catch (error) {
-      if (
-        !isNotionErrorWithCode(error, APIErrorCode.ObjectNotFound) &&
-        !isNotionErrorWithCode(error, APIErrorCode.ValidationError)
-      ) {
-        throw error;
       }
     }
     await deleteNoteBlock(notion, existingNoteBlockID);

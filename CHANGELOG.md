@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.5.17](https://github.com/dvanoni/notero/compare/v0.5.16...v0.5.17) (2024-06-21)
+
+
+### Features
+
+* **notes:** Allow for synced parent blocks ([#485](https://github.com/dvanoni/notero/issues/485)) ([0b5d2d5](https://github.com/dvanoni/notero/commit/0b5d2d5a80bba900c693b6d41c4dbf7fac91a0a0))
+
+
+### Bug Fixes
+
+* **notes:** Improve handling of deleted note blocks ([#522](https://github.com/dvanoni/notero/issues/522)) ([6b04dc2](https://github.com/dvanoni/notero/commit/6b04dc2f5073362de5c8b22b8460e0b7d0619af9))
+
 ## [0.5.16](https://github.com/dvanoni/notero/compare/v0.5.15...v0.5.16) (2024-05-04)
 
 

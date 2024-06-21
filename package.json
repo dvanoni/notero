@@ -1,6 +1,6 @@
 {
   "name": "notero",
-  "version": "0.5.16",
+  "version": "0.5.17",
   "description": "Sync Zotero items and notes into Notion",
   "scripts": {
     "build": "tsx scripts/build.ts",

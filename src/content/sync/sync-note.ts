@@ -28,7 +28,9 @@ import { isNotionErrorWithCode } from './notion-utils';
  * 2. If a block ID is saved in Zotero for the note's toggle heading, delete
  *    the block (including all its children).
  * 3. Append a new toggle heading block with the note content as a child of
- *    the top-level container block.
+ *    the top-level container block or it's previous container block (this
+ *    is to allow for synced blocks inside of notes, if the parent cannot
+ *    be retrieved, then simply use the top-level container).
  *
  * @param notion an initialized Notion `Client` instance
  * @param noteItem the Zotero note item to sync to Notion
@@ -53,14 +55,31 @@ export async function syncNote(
 
   const existingNoteBlockID = syncedNotes.notes?.[noteItem.key]?.blockID;
 
+  let subContainerBlockID = containerBlockID;
+
   if (existingNoteBlockID) {
+    const block = await notion.blocks.retrieve({
+      block_id: existingNoteBlockID,
+    });
+    if ('parent' in block && block.parent.type === 'block_id') {
+      const parentBlock = await notion.blocks.retrieve({
+        block_id: block.parent.block_id,
+      });
+      if ('in_trash' in parentBlock && !parentBlock.in_trash) {
+        subContainerBlockID = block.parent.block_id;
+      }
+    }
     await deleteNoteBlock(notion, existingNoteBlockID);
   }
 
   let newNoteBlockID;
 
   try {
-    newNoteBlockID = await createNoteBlock(notion, containerBlockID, noteItem);
+    newNoteBlockID = await createNoteBlock(
+      notion,
+      subContainerBlockID,
+      noteItem,
+    );
   } catch (error) {
     if (!isNotionErrorWithCode(error, APIErrorCode.ObjectNotFound)) {
       throw error;

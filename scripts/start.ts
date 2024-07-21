@@ -37,15 +37,20 @@ const config = JSON5.parse<Config>(configJson);
 
 const isBetaRun = process.argv.slice(2).includes('--beta');
 
-function runScript(name: keyof Required<Config>['scripts']): void {
+function runScript(
+  name: keyof Required<Config>['scripts'],
+  zoteroPID?: number,
+): void {
   const script = config.scripts?.[name];
   if (!script) return;
 
+  const command = zoteroPID ? `ZOTERO_PID=${zoteroPID}; ${script}` : script;
+
   console.group(`Running ${name} script`);
-  console.log(`Command: ${script}`);
+  console.log(`Command: ${command}`);
 
   try {
-    child_process.execSync(script);
+    child_process.execSync(command);
   } catch (err) {
     console.warn(String(err));
   }
@@ -147,7 +152,7 @@ function getZoteroPath(): string {
   throw new Error('Unrecognized platform');
 }
 
-function startZotero(): void {
+function startZotero(): number | undefined {
   const zoteroPath = getZoteroPath();
   const zoteroArgs = getZoteroArgs();
 
@@ -168,10 +173,12 @@ function startZotero(): void {
   subprocess.unref();
 
   console.groupEnd();
+
+  return subprocess.pid;
 }
 
 runScript('prestart');
 writePluginProxyFile();
 resetPrefs();
-startZotero();
-runScript('poststart');
+const zoteroPID = startZotero();
+runScript('poststart', zoteroPID);

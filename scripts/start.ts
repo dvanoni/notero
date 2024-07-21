@@ -105,11 +105,15 @@ function getZoteroArgs(): string[] {
   const zoteroArgs = [
     '-purgecaches',
     '-ZoteroDebugText',
-    '-jsconsole',
-    '-debugger',
     '-datadir',
     'profile',
   ];
+
+  if (isBetaRun) {
+    zoteroArgs.push('-jsdebugger');
+  } else {
+    zoteroArgs.push('-jsconsole', '-debugger');
+  }
 
   if (config.profile?.name) {
     zoteroArgs.push('-p', config.profile.name);
@@ -122,7 +126,7 @@ function getZoteroPath(): string {
   if (isBetaRun) {
     assert.ok(
       config.zotero?.betaPath && fs.existsSync(config.zotero.betaPath),
-      new Error('Invalid path to Zotero beta'),
+      'Invalid path to Zotero beta',
     );
     return config.zotero.betaPath;
   }

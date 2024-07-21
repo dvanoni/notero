@@ -10,7 +10,7 @@
     // (optional) Command to run before Zotero starts.
     "prestart": "pkill zotero",
     // (optional) Command to run after Zotero starts.
-    "poststart": "sleep 2 && osascript -e 'tell app \"Zotero\" to activate'"
+    "poststart": "sleep 3 && osascript -e \"tell application \\\"System Events\\\" to set frontmost of first application process whose unix id is $ZOTERO_PID to true\""
   },
   "zotero": {
     // (optional) Explicit path to executable for your default Zotero version.

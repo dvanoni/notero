@@ -396,10 +396,10 @@ documentation and should allow you to build and run Notero yourself.
     5.  Start Zotero with the profile specified in `zotero.config.json` and the
         following command line arguments:
 
-            -purgecaches -ZoteroDebugText -jsconsole -debugger -datadir profile
+            -purgecaches -ZoteroDebugText -jsdebugger -datadir profile
 
     6.  If defined, run the `scripts.poststart` command specified in
-        `zotero.config.json`.
+        `zotero.config.json`, providing it with a `ZOTERO_PID` environment variable.
 
 [generator-zotero-plugin]: https://github.com/retorquere/generator-zotero-plugin
 [zotero-plugin]: https://github.com/retorquere/zotero-plugin

@@ -24,7 +24,7 @@ notero-preferences-sync-groupbox-description2 =
     要选择多行，请按住 { "[Shift]" } 然后单击。
 notero-preferences-collection-column = 集合
 notero-preferences-sync-enabled-column = 启用同步
-notero-preferences-sync-on-modify-items =
+notero-preferences-sync-on-modify-items = 
     .label = 当修改条目时同步
-notero-preferences-sync-notes =
+notero-preferences-sync-notes = 
     .label = 同步笔记

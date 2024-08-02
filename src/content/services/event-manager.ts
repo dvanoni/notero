@@ -25,8 +25,8 @@ type NotifierEventsMap = {
   [E in NotifierEventName]: [event: E, ids: NotifierEvents[E]];
 };
 
-type NotifierEventListener = <E extends NotifierEventName>(
-  ...[event, ids]: NotifierEventsMap[E]
+type NotifierEventListener = (
+  ...[event, ids]: NotifierEventsMap[NotifierEventName]
 ) => void;
 
 export type NotifierEventParams = Parameters<NotifierEventListener>;

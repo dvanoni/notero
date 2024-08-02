@@ -33,8 +33,10 @@ Promise.all(
   }),
 )
   .then(() => {
+    /* eslint-disable @typescript-eslint/no-require-imports */
     require('./copy-assets');
     require('./generate-install-manifest');
+    /* eslint-enable @typescript-eslint/no-require-imports */
   })
   .catch((err: unknown) => {
     console.error(err);

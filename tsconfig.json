@@ -1,6 +1,8 @@
 {
   "$schema": "https://json.schemastore.org/tsconfig.json",
   "compilerOptions": {
+    "allowJs": true,
+    "checkJs": true,
     "disableSizeLimit": true,
     "downlevelIteration": true,
     "esModuleInterop": true,

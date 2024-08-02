@@ -36,7 +36,7 @@ function getPatchBumpVersion(): string {
 }
 
 if (fs.existsSync(versionJsPath)) {
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
   version = require(versionJsPath) as string;
   console.log(`Found ${relativeToRoot(versionJsPath)} with ${version}`);
 } else {

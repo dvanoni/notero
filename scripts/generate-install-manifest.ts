@@ -23,8 +23,8 @@ const manifestJson = {
     zotero: {
       id: pkg.xpi.id,
       update_url: `${pkg.xpi.releaseURL}updates.json`,
-      strict_min_version: '6.999',
-      strict_max_version: '7.0.*',
+      strict_min_version: pkg.xpi.zoteroMinVersion,
+      strict_max_version: pkg.xpi.zoteroMaxVersion,
     },
   },
 };

@@ -40,7 +40,7 @@
     },
     "id": "notero@vanoni.dev",
     "name": "Notero",
-    "releaseURL": "https://github.com/dvanoni/notero/releases/download/release/",
+    "updateURL": "https://github.com/dvanoni/notero/releases/download/release/updates.json",
     "zoteroMinVersion": "7.0",
     "zoteroMaxVersion": "7.0.*",
     "zotero6": {

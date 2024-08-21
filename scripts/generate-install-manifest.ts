@@ -22,7 +22,7 @@ const manifestJson = {
   applications: {
     zotero: {
       id: pkg.xpi.id,
-      update_url: `${pkg.xpi.releaseURL}updates.json`,
+      update_url: pkg.xpi.updateURL,
       strict_min_version: pkg.xpi.zoteroMinVersion,
       strict_max_version: pkg.xpi.zoteroMaxVersion,
     },

@@ -1,6 +1,3 @@
-import trimEnd from 'core-js-pure/es/string/trim-end';
-import trimStart from 'core-js-pure/es/string/trim-start';
-
 import { keyValue } from '../../utils';
 import {
   ChildBlock,
@@ -295,9 +292,11 @@ function trimRichText(richText: RichText): RichText {
     return updateContent(0, (content) => content.trim());
   }
 
-  const first = updateContent(0, trimStart);
+  const first = updateContent(0, (content) => content.trimStart());
   const middle = richText.slice(1, -1);
-  const last = updateContent(richText.length - 1, trimEnd);
+  const last = updateContent(richText.length - 1, (content) =>
+    content.trimEnd(),
+  );
 
   return [...first, ...middle, ...last];
 }

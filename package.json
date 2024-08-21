@@ -50,7 +50,6 @@
   },
   "dependencies": {
     "@notionhq/client": "^2.2.15",
-    "core-js-pure": "^3.37.1",
     "eventemitter3": "^5.0.1"
   },
   "devDependencies": {

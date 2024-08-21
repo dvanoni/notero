@@ -34,7 +34,6 @@
   },
   "homepage": "https://github.com/dvanoni/notero",
   "xpi": {
-    "bootstrapped": true,
     "icons": {
       "48": "content/style/notero-48.png",
       "96": "content/style/notero-96.png"

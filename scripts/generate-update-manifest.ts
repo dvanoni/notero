@@ -26,21 +26,27 @@ const updatesJson = {
     [pkg.xpi.id]: {
       updates: [
         {
-          version,
-          update_link: updateLink,
+          version: pkg.xpi.zotero6.version,
+          update_link: pkg.xpi.zotero6.updateLink,
           applications: {
             gecko: {
               strict_min_version: '60.9',
               strict_max_version: '60.9',
             },
-            ...(pkg.xpi.supportsZotero7
-              ? {
-                  zotero: {
-                    strict_min_version: '6.999',
-                    strict_max_version: '7.0.*',
-                  },
-                }
-              : null),
+            zotero: {
+              strict_min_version: '6.999',
+              strict_max_version: '7.0.*',
+            },
+          },
+        },
+        {
+          version,
+          update_link: updateLink,
+          applications: {
+            zotero: {
+              strict_min_version: pkg.xpi.zoteroMinVersion,
+              strict_max_version: pkg.xpi.zoteroMaxVersion,
+            },
           },
         },
       ],

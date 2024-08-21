@@ -41,9 +41,12 @@
     "id": "notero@vanoni.dev",
     "name": "Notero",
     "releaseURL": "https://github.com/dvanoni/notero/releases/download/release/",
-    "supportsZotero7": true,
     "zoteroMinVersion": "7.0",
-    "zoteroMaxVersion": "7.0.*"
+    "zoteroMaxVersion": "7.0.*",
+    "zotero6": {
+      "version": "0.5.17",
+      "updateLink": "https://github.com/dvanoni/notero/releases/download/v0.5.17/notero-0.5.17.xpi"
+    }
   },
   "dependencies": {
     "@notionhq/client": "^2.2.15",

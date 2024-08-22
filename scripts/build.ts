@@ -1,16 +1,18 @@
 import esbuild, { BuildOptions } from 'esbuild';
 
+const target = 'firefox115';
+
 const builds: (BuildOptions & { entryPoints: [string] })[] = [
   {
     entryPoints: ['src/bootstrap.ts'],
     keepNames: true,
     outdir: 'build',
-    target: ['firefox60'],
+    target,
   },
   {
     bundle: true,
     format: 'iife',
-    target: ['firefox60'],
+    target,
     entryPoints: ['src/content/notero.ts'],
     outdir: 'build/content',
   },
@@ -18,7 +20,7 @@ const builds: (BuildOptions & { entryPoints: [string] })[] = [
     bundle: true,
     format: 'iife',
     globalName: 'notero',
-    target: ['firefox60'],
+    target,
     entryPoints: ['src/content/prefs/preferences.tsx'],
     external: ['components/*', 'react', 'react-dom', 'react-intl'],
     outdir: 'build/content/prefs',

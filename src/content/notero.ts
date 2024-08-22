@@ -14,7 +14,7 @@ import { findDuplicates } from './sync/find-duplicates';
 import { getNotionClient } from './sync/notion-client';
 import { hasErrorStack, log } from './utils';
 
-export class Notero {
+class Notero {
   private readonly eventManager: EventManager;
   private readonly preferencePaneManager: PreferencePaneManager;
   private readonly windowManager: WindowManager;
@@ -116,4 +116,6 @@ export class Notero {
   }
 }
 
-(Zotero as Zotero & { Notero: Notero }).Notero = new Notero();
+export type ZoteroWithNotero = Zotero & { Notero?: Notero };
+
+(Zotero as ZoteroWithNotero).Notero = new Notero();

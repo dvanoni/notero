@@ -374,11 +374,7 @@ declare namespace Zotero {
 
       setError(): void;
 
-      // Available in Zotero 6
-      setIcon?(iconSrc: string): void;
-      // Available in Zotero 7
-      // See https://github.com/zotero/zotero/pull/4047
-      setItemTypeAndIcon?(itemType: string, cssIcon?: string): void;
+      setItemTypeAndIcon(itemType: string, cssIcon?: string): void;
 
       setProgress(percent: number): void;
 

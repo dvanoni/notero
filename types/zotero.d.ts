@@ -530,13 +530,6 @@ declare interface Zotero {
   hideZoteroPaneOverlays(): void;
 
   uiReadyPromise: Promise<void>;
-
-  /**
-   * @see https://groups.google.com/g/zotero-dev/c/O1TGIpfAdT0/m/Z7S8ONANAgAJ
-   * @see https://groups.google.com/g/zotero-dev/c/gvuARfJBDIo
-   */
-  setTimeout?(func: () => unknown, ms: number): number;
-  clearTimeout?(id: number): void;
 }
 
 declare const Zotero: Zotero;

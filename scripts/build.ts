@@ -12,7 +12,6 @@ const builds: (BuildOptions & { entryPoints: [string] })[] = [
     format: 'iife',
     target: ['firefox60'],
     entryPoints: ['src/content/notero.ts'],
-    inject: ['src/shims/timer.ts'],
     outdir: 'build/content',
   },
   {

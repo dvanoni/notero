@@ -1,5 +1,7 @@
 import esbuild, { BuildOptions } from 'esbuild';
 
+const enableSourcemap = process.argv.slice(2).includes('--sourcemap');
+const sourcemap = enableSourcemap && 'inline';
 const target = 'firefox115';
 
 const builds: (BuildOptions & { entryPoints: [string] })[] = [
@@ -11,19 +13,21 @@ const builds: (BuildOptions & { entryPoints: [string] })[] = [
   },
   {
     bundle: true,
-    format: 'iife',
-    target,
     entryPoints: ['src/content/notero.ts'],
+    format: 'iife',
     outdir: 'build/content',
+    sourcemap,
+    target,
   },
   {
     bundle: true,
-    format: 'iife',
-    globalName: 'notero',
-    target,
     entryPoints: ['src/content/prefs/preferences.tsx'],
     external: ['components/*', 'react', 'react-dom', 'react-intl'],
+    format: 'iife',
+    globalName: 'notero',
     outdir: 'build/content/prefs',
+    sourcemap,
+    target,
   },
 ];
 

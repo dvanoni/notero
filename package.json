@@ -11,7 +11,7 @@
     "lint:fix": "eslint --fix --ignore-path .gitignore .",
     "postinstall": "patch-package",
     "prepare": "husky",
-    "prestart": "npm run build",
+    "prestart": "npm run build -- --sourcemap",
     "prettier": "prettier --check .",
     "prettier:fix": "prettier --write .",
     "start": "tsx scripts/start.ts",

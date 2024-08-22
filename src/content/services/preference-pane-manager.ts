@@ -1,13 +1,9 @@
-import { IS_ZOTERO_7 } from '../constants';
-
 import type { Service, ServiceParams } from './service';
 
 export class PreferencePaneManager implements Service {
   private paneID?: string;
 
   public async startup({ pluginInfo: { pluginID, rootURI } }: ServiceParams) {
-    if (!IS_ZOTERO_7) return;
-
     this.paneID = await Zotero.PreferencePanes.register({
       pluginID,
       src: rootURI + 'content/prefs/preferences.xhtml',
@@ -18,8 +14,6 @@ export class PreferencePaneManager implements Service {
   }
 
   public openPreferences() {
-    if (IS_ZOTERO_7) {
-      Zotero.Utilities.Internal.openPreferences(this.paneID);
-    }
+    Zotero.Utilities.Internal.openPreferences(this.paneID);
   }
 }

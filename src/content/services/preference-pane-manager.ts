@@ -17,14 +17,9 @@ export class PreferencePaneManager implements Service {
     });
   }
 
-  public openPreferences(window: Zotero.ZoteroWindow) {
+  public openPreferences() {
     if (IS_ZOTERO_7) {
       Zotero.Utilities.Internal.openPreferences(this.paneID);
-    } else {
-      window.openDialog(
-        'chrome://notero/content/prefs/preferences.xul',
-        'notero-preferences',
-      );
     }
   }
 }

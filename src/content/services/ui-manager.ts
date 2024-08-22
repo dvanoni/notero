@@ -72,7 +72,7 @@ export class UIManager implements Service {
       labelName: 'notero.toolsMenu.preferences',
       parentId: 'menu_ToolsPopup',
       onCommand: () => {
-        this.preferencePaneManager.openPreferences(window);
+        this.preferencePaneManager.openPreferences();
       },
     });
   }

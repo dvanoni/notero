@@ -115,10 +115,6 @@ class Preferences {
     return Boolean(addon?.isActive);
   }
 
-  public openReadme(): void {
-    Zotero.launchURL('https://github.com/dvanoni/notero#readme');
-  }
-
   private async refreshNotionDatabaseMenu(): Promise<void> {
     let menuItems: MenuItem[] = [];
 

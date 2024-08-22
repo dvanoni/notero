@@ -4,7 +4,6 @@ import { IS_ZOTERO_7 } from './constants';
 import type { PluginInfo } from './plugin-info';
 import {
   ChromeManager,
-  DefaultPreferencesLoader,
   EventManager,
   PreferencePaneManager,
   Service,
@@ -32,9 +31,7 @@ export class Notero {
     this.windowManager = new WindowManager();
 
     this.services = [
-      ...(IS_ZOTERO_7
-        ? [new ChromeManager()]
-        : [new DefaultPreferencesLoader()]),
+      ...(IS_ZOTERO_7 ? [new ChromeManager()] : []),
       this.eventManager,
       this.preferencePaneManager,
       this.windowManager,

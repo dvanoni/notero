@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.6.0](https://github.com/dvanoni/notero/compare/v0.5.17...v0.6.0) (2024-08-24)
+
+
+### ⚠ BREAKING CHANGES
+
+* Zotero 7 is required to use this and future versions of Notero
+
+### Features
+
+* Drop support for Zotero 6 ([#541](https://github.com/dvanoni/notero/issues/541)) ([7c05ed2](https://github.com/dvanoni/notero/commit/7c05ed2830b3be356fe2518cbd914a2ad155ba92))
+
+
+### Bug Fixes
+
+* **preferences:** Fix height of sync configs table ([#545](https://github.com/dvanoni/notero/issues/545)) ([67c1db1](https://github.com/dvanoni/notero/commit/67c1db1934207f2e9ae30f5801fb89f061cca670))
+
 ## [0.5.17](https://github.com/dvanoni/notero/compare/v0.5.16...v0.5.17) (2024-06-21)
 
 

@@ -11,7 +11,7 @@
     "lint:fix": "eslint --fix --ignore-path .gitignore .",
     "postinstall": "patch-package",
     "prepare": "husky",
-    "prestart": "npm run build",
+    "prestart": "npm run build -- --sourcemap",
     "prettier": "prettier --check .",
     "prettier:fix": "prettier --write .",
     "start": "tsx scripts/start.ts",
@@ -34,20 +34,22 @@
   },
   "homepage": "https://github.com/dvanoni/notero",
   "xpi": {
-    "bootstrapped": true,
     "icons": {
       "48": "content/style/notero-48.png",
       "96": "content/style/notero-96.png"
     },
     "id": "notero@vanoni.dev",
     "name": "Notero",
-    "releaseURL": "https://github.com/dvanoni/notero/releases/download/release/",
-    "supportsZotero7": true,
-    "zoteroMinVersion": "6.0.27"
+    "updateURL": "https://github.com/dvanoni/notero/releases/download/release/updates.json",
+    "zoteroMinVersion": "7.0",
+    "zoteroMaxVersion": "7.0.*",
+    "zotero6": {
+      "version": "0.5.17",
+      "updateLink": "https://github.com/dvanoni/notero/releases/download/v0.5.17/notero-0.5.17.xpi"
+    }
   },
   "dependencies": {
     "@notionhq/client": "^2.2.15",
-    "core-js-pure": "^3.37.1",
     "eventemitter3": "^5.0.1"
   },
   "devDependencies": {
@@ -57,7 +59,6 @@
     "@types/adm-zip": "^0.5.5",
     "@types/fs-extra": "^11.0.4",
     "@types/jest": "^29.5.12",
-    "@types/pug": "^2.0.10",
     "@types/react": "^17.0.55",
     "@types/react-dom": "^17.0.25",
     "@types/semver": "^7.5.8",
@@ -78,7 +79,6 @@
     "npm-run-all": "^4.1.5",
     "patch-package": "^8.0.0",
     "prettier": "3.3.3",
-    "pug": "^3.0.3",
     "react-intl": "^3.12.1",
     "ts-jest": "^29.2.4",
     "tslib": "^2.6.3",

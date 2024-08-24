@@ -4,7 +4,6 @@ import React from 'react';
 // eslint-disable-next-line import/no-unresolved
 import ReactDOM from 'react-dom';
 
-import { IS_ZOTERO_7 } from '../constants';
 import { getNotionClient } from '../sync/notion-client';
 import {
   getLocalizedString,
@@ -115,10 +114,6 @@ class Preferences {
     return Boolean(addon?.isActive);
   }
 
-  public openReadme(): void {
-    Zotero.launchURL('https://github.com/dvanoni/notero#readme');
-  }
-
   private async refreshNotionDatabaseMenu(): Promise<void> {
     let menuItems: MenuItem[] = [];
 
@@ -130,9 +125,7 @@ class Preferences {
         const idWithoutDashes = database.id.replace(/-/g, '');
         const title = database.title.map((t) => t.plain_text).join('');
         const icon =
-          IS_ZOTERO_7 && database.icon?.type === 'emoji'
-            ? database.icon.emoji
-            : null;
+          database.icon?.type === 'emoji' ? database.icon.emoji : null;
 
         return {
           label: icon ? `${icon} ${title}` : title,

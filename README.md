@@ -101,8 +101,7 @@ extract them into a Zotero note:
 
 ## Installation and Setup
 
-The [latest release](https://github.com/dvanoni/notero/releases/latest) of the
-plugin is available on GitHub.
+The [latest release][] of the plugin is available on GitHub.
 See the [changelog](CHANGELOG.md) for release notes.
 
 Detailed setup instructions are below.
@@ -193,21 +192,25 @@ see issue [#355](https://github.com/dvanoni/notero/issues/355).
 ### Install and Configure Notero Plugin
 
 > [!IMPORTANT]
-> Notero requires Zotero version 6.0.27 or above and is also compatible with Zotero 7.
+>
+> - The latest release of Notero requires Zotero 7.0 or above.
+> - Support for Zotero 6.0.27 and above is available in Notero [v0.5.17][].
 
-1. Download the [latest version](https://github.com/dvanoni/notero/releases/latest)
-   of the `.xpi` file.
+1. Download the [latest release][] of the `.xpi` file.
    - Note for Firefox users: You'll need to right-click the `.xpi` file link and
      choose **Save Link As...** in order to properly download the file.
-2. Open the Zotero Add-ons Manager via the **Tools → Add-ons** menu item.
+2. Open the Zotero Plugins Manager via the **Tools → Plugins** menu item.
 3. Install the `.xpi` file by either:
-   - dragging and dropping it into the Add-ons Manager window _or_
-   - selecting it using the **Install Add-on From File...** option in the
+   - dragging and dropping it into the Plugins Manager window _or_
+   - selecting it using the **Install Plugin From File...** option in the
      gear menu in the top-right corner of the window
 4. Open the Notero preferences from the **Tools → Notero Preferences...** menu
    item, and enter the required preferences.
    - Note for Zotero 7 users: The Notero preferences have moved into a section
      in the main Zotero preferences window.
+
+[latest release]: https://github.com/dvanoni/notero/releases/latest
+[v0.5.17]: https://github.com/dvanoni/notero/releases/tag/v0.5.17
 
 ## Usage Guides
 
@@ -355,8 +358,8 @@ See below for descriptions of how you can use the different views.
 
 ## Development
 
-Notero was scaffolded with [generator-zotero-plugin][generator-zotero-plugin]
-and uses build scripts heavily inspired by [zotero-plugin][zotero-plugin].
+Notero was scaffolded with [generator-zotero-plugin][] and uses build scripts
+heavily inspired by [zotero-plugin][].
 Many thanks to [@retorquere](https://github.com/retorquere) for creating these.
 
 ### Local Setup
@@ -413,10 +416,10 @@ Releases are performed via GitHub Actions. The
 
 #### `release-please`
 
-This job uses the [release-please][release-please] action to create release PRs
-when new user-facing commits are pushed to the `main` branch. A release PR will
-bump the package version and update the changelog. When the PR is merged, this
-job then creates a new version tag and GitHub release.
+This job uses the [release-please][] action to create release PRs when new
+user-facing commits are pushed to the `main` branch. A release PR will bump the
+package version and update the changelog. When the PR is merged, this job then
+creates a new version tag and GitHub release.
 
 #### `publish-artifacts`
 
@@ -424,5 +427,5 @@ This job runs when a new release is created by the `release-please` job. It
 builds the `.xpi` file and publishes it to the release. It also generates an
 updated manifest file and publishes it to the [`release`][release-tag] release.
 
-[release-please]: https://github.com/google-github-actions/release-please-action
+[release-please]: https://github.com/googleapis/release-please-action
 [release-tag]: https://github.com/dvanoni/notero/releases/tag/release

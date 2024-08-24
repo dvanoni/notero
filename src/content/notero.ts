@@ -1,10 +1,8 @@
 import type { Client } from '@notionhq/client';
 
-import { IS_ZOTERO_7 } from './constants';
 import type { PluginInfo } from './plugin-info';
 import {
   ChromeManager,
-  DefaultPreferencesLoader,
   EventManager,
   PreferencePaneManager,
   Service,
@@ -16,11 +14,7 @@ import { findDuplicates } from './sync/find-duplicates';
 import { getNotionClient } from './sync/notion-client';
 import { hasErrorStack, log } from './utils';
 
-if (!IS_ZOTERO_7) {
-  Cu.importGlobalProperties(['URL']);
-}
-
-export class Notero {
+class Notero {
   private readonly eventManager: EventManager;
   private readonly preferencePaneManager: PreferencePaneManager;
   private readonly windowManager: WindowManager;
@@ -32,9 +26,7 @@ export class Notero {
     this.windowManager = new WindowManager();
 
     this.services = [
-      ...(IS_ZOTERO_7
-        ? [new ChromeManager()]
-        : [new DefaultPreferencesLoader()]),
+      new ChromeManager(),
       this.eventManager,
       this.preferencePaneManager,
       this.windowManager,
@@ -124,4 +116,6 @@ export class Notero {
   }
 }
 
-(Zotero as Zotero & { Notero: Notero }).Notero = new Notero();
+export type ZoteroWithNotero = Zotero & { Notero?: Notero };
+
+(Zotero as ZoteroWithNotero).Notero = new Notero();

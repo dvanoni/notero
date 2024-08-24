@@ -1,28 +1,33 @@
 import esbuild, { BuildOptions } from 'esbuild';
 
+const enableSourcemap = process.argv.slice(2).includes('--sourcemap');
+const sourcemap = enableSourcemap && 'inline';
+const target = 'firefox115';
+
 const builds: (BuildOptions & { entryPoints: [string] })[] = [
   {
     entryPoints: ['src/bootstrap.ts'],
     keepNames: true,
     outdir: 'build',
-    target: ['firefox60'],
+    target,
   },
   {
     bundle: true,
-    format: 'iife',
-    target: ['firefox60'],
     entryPoints: ['src/content/notero.ts'],
-    inject: ['src/shims/timer.ts'],
+    format: 'iife',
     outdir: 'build/content',
+    sourcemap,
+    target,
   },
   {
     bundle: true,
-    format: 'iife',
-    globalName: 'notero',
-    target: ['firefox60'],
     entryPoints: ['src/content/prefs/preferences.tsx'],
     external: ['components/*', 'react', 'react-dom', 'react-intl'],
+    format: 'iife',
+    globalName: 'notero',
     outdir: 'build/content/prefs',
+    sourcemap,
+    target,
   },
 ];
 

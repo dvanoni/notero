@@ -32,19 +32,3 @@ index 390de9c..8faf72a 100644
          __classPrivateFieldSet(this, _Client_agent, options === null || options === void 0 ? void 0 : options.agent, "f");
          __classPrivateFieldSet(this, _Client_userAgent, `notionhq-client/${package_json_1.version}`, "f");
      }
-diff --git a/node_modules/@notionhq/client/build/src/utils.js b/node_modules/@notionhq/client/build/src/utils.js
-index 3a71c2d..40e4b1e 100644
---- a/node_modules/@notionhq/client/build/src/utils.js
-+++ b/node_modules/@notionhq/client/build/src/utils.js
-@@ -14,7 +14,10 @@ function assertNever(value) {
- exports.assertNever = assertNever;
- function pick(base, keys) {
-     const entries = keys.map(key => [key, base === null || base === void 0 ? void 0 : base[key]]);
--    return Object.fromEntries(entries);
-+    return entries.reduce((obj, [key, value]) => {
-+      obj[key] = value;
-+      return obj;
-+    }, {});
- }
- exports.pick = pick;
- function isObject(o) {

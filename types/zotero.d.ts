@@ -374,11 +374,7 @@ declare namespace Zotero {
 
       setError(): void;
 
-      // Available in Zotero 6
-      setIcon?(iconSrc: string): void;
-      // Available in Zotero 7
-      // See https://github.com/zotero/zotero/pull/4047
-      setItemTypeAndIcon?(itemType: string, cssIcon?: string): void;
+      setItemTypeAndIcon(itemType: string, cssIcon?: string): void;
 
       setProgress(percent: number): void;
 
@@ -530,13 +526,6 @@ declare interface Zotero {
   hideZoteroPaneOverlays(): void;
 
   uiReadyPromise: Promise<void>;
-
-  /**
-   * @see https://groups.google.com/g/zotero-dev/c/O1TGIpfAdT0/m/Z7S8ONANAgAJ
-   * @see https://groups.google.com/g/zotero-dev/c/gvuARfJBDIo
-   */
-  setTimeout?(func: () => unknown, ms: number): number;
-  clearTimeout?(id: number): void;
 }
 
 declare const Zotero: Zotero;

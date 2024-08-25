@@ -88,15 +88,15 @@ export class UIManager implements Service {
     parentId: string;
     window: Zotero.ZoteroWindow;
   }): XUL.MenuItemElement | null {
-    let menuItem = createXULElement(window.document, 'menuitem');
-    menuItem.setAttribute('label', getLocalizedString(labelName));
-    menuItem.addEventListener('command', onCommand);
-
     const parentMenu = window.document.getElementById(parentId);
     if (!parentMenu) {
       logger.error(`Failed to find element '${parentId}'`);
       return null;
     }
+
+    let menuItem = createXULElement(window.document, 'menuitem');
+    menuItem.setAttribute('label', getLocalizedString(labelName));
+    menuItem.addEventListener('command', onCommand);
 
     menuItem = parentMenu.appendChild(menuItem);
     this.addManagedNode(window, menuItem);

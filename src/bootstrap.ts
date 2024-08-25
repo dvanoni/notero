@@ -6,14 +6,14 @@ const LOG_PREFIX = '[Notero] ';
 
 function log(msg: string) {
   Zotero.debug(`${LOG_PREFIX}${msg}`);
-  Zotero.log(`${LOG_PREFIX}${msg}`);
+  Zotero.log(`${LOG_PREFIX}${msg}`, 'info');
 }
 
 /**
  *
  * Bootstrap entry points
  * @see https://www.zotero.org/support/dev/zotero_7_for_developers#xul_overlays_bootstrapjs
- * @see http://www.devdoc.net/web/developer.mozilla.org/en-US/docs/Mozilla/Add-ons/Bootstrapped_Extensions.html#Bootstrap_entry_points
+ * @see https://udn.realityripple.com/docs/Archive/Add-ons/Bootstrapped_extensions#Bootstrap_entry_points
  *
  */
 

@@ -486,10 +486,14 @@ declare interface Zotero {
   /** Debug logging function */
   debug(message: string): void;
 
-  /** Log a message to the Mozilla JS error console */
+  /**
+   * Log a message to the Mozilla JS error console
+   * @param type One of the flag types in `nsIScriptError`
+   * @see https://udn.realityripple.com/docs/Mozilla/Tech/XPCOM/Reference/Interface/nsIScriptError#Flag_constants
+   */
   log(
     message: string,
-    type?: 'error' | 'warning' | 'exception' | 'strict',
+    type?: 'error' | 'warning' | 'exception' | 'strict' | 'info',
   ): void;
 
   getActiveZoteroPane(): Zotero.ZoteroPane | null;
@@ -533,7 +537,7 @@ declare const Zotero: Zotero;
 /**
  * Bootstrap data provided by Zotero
  * @see https://www.zotero.org/support/dev/zotero_7_for_developers#xul_overlays_bootstrapjs
- * @see http://www.devdoc.net/web/developer.mozilla.org/en-US/docs/Mozilla/Add-ons/Bootstrapped_Extensions.html#Bootstrap_data
+ * @see https://udn.realityripple.com/docs/Archive/Add-ons/Bootstrapped_extensions#Bootstrap_data
  */
 declare type BootstrapData = {
   id: string;

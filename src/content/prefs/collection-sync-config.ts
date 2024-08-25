@@ -1,4 +1,4 @@
-import { isObject, log } from '../utils';
+import { isObject, logger } from '../utils';
 
 import { getNoteroPref, NoteroPref, setNoteroPref } from './notero-pref';
 
@@ -84,7 +84,7 @@ export function parseSyncConfigs(json: unknown): CollectionSyncConfigsRecord {
         {},
       );
   } catch (error) {
-    log(`Failed to parse sync configs: ${String(error)}`, 'error');
+    logger.error('Failed to parse sync configs:', error);
     return {};
   }
 }

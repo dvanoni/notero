@@ -11,7 +11,6 @@ export { getItemURL } from './get-item-url';
 export { getLocalizedString } from './get-localized-string';
 export { isObject } from './is-object';
 export { keyValue } from './key-value';
-export { log } from './log';
 export { logger } from './logger';
 export { parseItemDate } from './parse-item-date';
 export { truncateMiddle } from './truncate-middle';

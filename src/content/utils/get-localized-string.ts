@@ -1,6 +1,6 @@
 import { NoteroPref } from '../prefs/notero-pref';
 
-import { log } from '.';
+import { logger } from '.';
 
 Components.utils.import('resource://gre/modules/Services.jsm');
 
@@ -20,8 +20,7 @@ export function getLocalizedString(name: NoteroPref | string): string {
   try {
     return getStringBundle().GetStringFromName(fullName);
   } catch (error) {
-    log(`Missing localized string '${fullName}'`, 'error');
-    log(error, 'error');
+    logger.error(`Missing localized string '${fullName}'`, error);
     return `###${fullName}###`;
   }
 }

@@ -1,4 +1,4 @@
-type LogLevel = 'DEBUG' | 'INFO' | 'WARN' | 'ERROR';
+type LogLevel = 'debug' | 'info' | 'warn' | 'error';
 
 type ProxiedMethod = keyof typeof PROXIED_METHODS;
 
@@ -10,13 +10,13 @@ const STYLED_LOG_PREFIX = [
 ];
 
 const PROXIED_METHODS = {
-  debug: 'DEBUG',
-  error: 'ERROR',
-  group: 'INFO',
-  groupCollapsed: 'INFO',
-  info: 'INFO',
-  log: 'INFO',
-  warn: 'WARN',
+  debug: 'debug',
+  error: 'error',
+  group: 'info',
+  groupCollapsed: 'info',
+  info: 'info',
+  log: 'info',
+  warn: 'warn',
 } as const satisfies Partial<Record<keyof Console, LogLevel>>;
 
 const LEVEL_MAX_LENGTH = Math.max(

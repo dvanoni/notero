@@ -2,7 +2,7 @@ import { getSyncedNotes } from '../data/item-data';
 import { loadSyncEnabledCollectionIDs } from '../prefs/collection-sync-config';
 import { getNoteroPref, NoteroPref } from '../prefs/notero-pref';
 import { performSyncJob } from '../sync/sync-job';
-import { getAllCollectionItems, log, parseItemDate } from '../utils';
+import { getAllCollectionItems, logger, parseItemDate } from '../utils';
 
 import type { EventManager, NotifierEventParams } from './event-manager';
 import type { Service, ServiceParams } from './service';
@@ -210,10 +210,9 @@ export class SyncManager implements Service {
 
     const idsToSync = items.map(({ id }) => id);
 
-    log(
-      `Enqueue ${idsToSync.length} item(s) to sync with IDs ${JSON.stringify(
-        idsToSync,
-      )}`,
+    logger.debug(
+      `Enqueue ${idsToSync.length} item(s) to sync with IDs`,
+      idsToSync,
     );
 
     if (this.queuedSync?.timeoutID) {

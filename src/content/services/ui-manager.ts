@@ -1,4 +1,4 @@
-import { createXULElement, getLocalizedString, log } from '../utils';
+import { createXULElement, getLocalizedString, logger } from '../utils';
 
 import type { EventManager } from './event-manager';
 import type { PreferencePaneManager } from './preference-pane-manager';
@@ -94,7 +94,7 @@ export class UIManager implements Service {
 
     const parentMenu = window.document.getElementById(parentId);
     if (!parentMenu) {
-      log(`Failed to find element '${parentId}'`, 'error');
+      logger.error(`Failed to find element '${parentId}'`);
       return null;
     }
 

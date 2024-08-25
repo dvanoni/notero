@@ -8,7 +8,7 @@
     "esModuleInterop": true,
     "importHelpers": true,
     "jsx": "react",
-    "lib": ["es2017", "dom"],
+    "lib": ["ES2022", "dom"],
     "module": "commonjs",
     "noUncheckedIndexedAccess": true,
     "preserveConstEnums": false,
@@ -16,7 +16,7 @@
     "resolveJsonModule": true,
     "sourceMap": true,
     "strict": true,
-    "target": "es2017",
+    "target": "ES2022",
     "typeRoots": ["./types", "./node_modules/@types"]
   },
   "include": ["scripts/**/*", "src/**/*", "test/**/*", "types/**/*", "*.ts"],

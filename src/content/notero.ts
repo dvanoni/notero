@@ -12,7 +12,7 @@ import {
 } from './services';
 import { findDuplicates } from './sync/find-duplicates';
 import { getNotionClient } from './sync/notion-client';
-import { hasErrorStack, log } from './utils';
+import { logger } from './utils';
 
 class Notero {
   private readonly eventManager: EventManager;
@@ -54,24 +54,27 @@ class Notero {
       windowManager: this.windowManager,
     };
 
+    logger.groupCollapsed('Starting services');
     for (const service of this.services) {
       const serviceName = service.constructor.name;
       try {
-        log(`Starting ${serviceName}`);
+        logger.log(`Starting ${serviceName}`);
         await service.startup({ dependencies, pluginInfo });
       } catch (error) {
-        log(`Failed to start ${serviceName}: ${String(error)}`, 'error');
-        if (hasErrorStack(error)) log(error.stack, 'error');
+        logger.error(`Failed to start ${serviceName}:`, error);
       }
     }
+    logger.groupEnd();
   }
 
   private shutDownServices() {
+    logger.groupCollapsed('Shutting down services');
     [...this.services].reverse().forEach((service) => {
       if (!service.shutdown) return;
-      log(`Shutting down ${service.constructor.name}`);
+      logger.log(`Shutting down ${service.constructor.name}`);
       service.shutdown();
     });
+    logger.groupEnd();
   }
 
   private addToAllWindows() {
@@ -82,11 +85,13 @@ class Notero {
   }
 
   public addToWindow(window: Zotero.ZoteroWindow) {
+    logger.groupCollapsed('Adding services to window');
     this.services.forEach((service) => {
       if (!service.addToWindow) return;
-      log(`Adding ${service.constructor.name} to window`);
+      logger.log(`Adding ${service.constructor.name} to window`);
       service.addToWindow(window);
     });
+    logger.groupEnd();
   }
 
   private removeFromAllWindows() {
@@ -97,11 +102,13 @@ class Notero {
   }
 
   public removeFromWindow(window: Zotero.ZoteroWindow) {
+    logger.groupCollapsed('Removing services from window');
     this.services.forEach((service) => {
       if (!service.removeFromWindow) return;
-      log(`Removing ${service.constructor.name} from window`);
+      logger.log(`Removing ${service.constructor.name} from window`);
       service.removeFromWindow(window);
     });
+    logger.groupEnd();
   }
 
   public getNotionClient(): Client {

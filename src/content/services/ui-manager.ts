@@ -1,4 +1,4 @@
-import { createXULElement, getLocalizedString, log } from '../utils';
+import { createXULElement, getLocalizedString, logger } from '../utils';
 
 import type { EventManager } from './event-manager';
 import type { PreferencePaneManager } from './preference-pane-manager';
@@ -88,15 +88,15 @@ export class UIManager implements Service {
     parentId: string;
     window: Zotero.ZoteroWindow;
   }): XUL.MenuItemElement | null {
+    const parentMenu = window.document.getElementById(parentId);
+    if (!parentMenu) {
+      logger.error(`Failed to find element '${parentId}'`);
+      return null;
+    }
+
     let menuItem = createXULElement(window.document, 'menuitem');
     menuItem.setAttribute('label', getLocalizedString(labelName));
     menuItem.addEventListener('command', onCommand);
-
-    const parentMenu = window.document.getElementById(parentId);
-    if (!parentMenu) {
-      log(`Failed to find element '${parentId}'`, 'error');
-      return null;
-    }
 
     menuItem = parentMenu.appendChild(menuItem);
     this.addManagedNode(window, menuItem);

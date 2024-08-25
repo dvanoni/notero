@@ -20,7 +20,9 @@ declare namespace XPCOM {
 
   interface nsIDOMParser extends nsISupports, DOMParser {}
 
-  interface nsIDOMWindow extends nsISupports, Window {}
+  interface nsIDOMWindow extends nsISupports, Window {
+    console: Console;
+  }
 
   interface nsIInterfaceRequestor {
     getInterface<I extends Interfaces[keyof Interfaces]>(uuid: I): I;

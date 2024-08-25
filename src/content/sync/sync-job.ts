@@ -16,7 +16,7 @@ import {
   getNoteroPref,
   getRequiredNoteroPref,
 } from '../prefs/notero-pref';
-import { hasErrorStack, log } from '../utils';
+import { logger } from '../utils';
 
 import { getNotionClient } from './notion-client';
 import type { DatabaseProperties } from './notion-types';
@@ -61,8 +61,7 @@ export async function performSyncJob(
 
     const errorMessage = String(cause);
 
-    log(errorMessage, 'error');
-    if (hasErrorStack(cause)) log(cause.stack, 'error');
+    logger.error(error, failedItem?.getDisplayTitle());
 
     progressWindow.fail(errorMessage, failedItem);
   }
@@ -119,13 +118,13 @@ async function retrieveDatabaseProperties(
 }
 
 class ItemSyncError extends Error {
-  public readonly cause: unknown;
   public readonly item: Zotero.Item;
   public readonly name = 'ItemSyncError';
 
   public constructor(cause: unknown, item: Zotero.Item) {
-    super(`Failed to sync item with ID ${item.id} due to ${String(cause)}`);
-    this.cause = cause;
+    super(`Failed to sync item with ID ${item.id} due to ${String(cause)}`, {
+      cause,
+    });
     this.item = item;
   }
 }
@@ -152,7 +151,10 @@ class SyncJob {
   public async perform() {
     for (const [index, item] of this.items.entries()) {
       const step = index + 1;
-      log(`Syncing item ${step} of ${this.items.length} with ID ${item.id}`);
+      logger.groupCollapsed(
+        `Syncing item ${step} of ${this.items.length} with ID ${item.id}`,
+      );
+      logger.debug(item.getDisplayTitle());
 
       this.progressWindow.updateText(step);
 
@@ -164,6 +166,8 @@ class SyncJob {
         }
       } catch (error) {
         throw new ItemSyncError(error, item);
+      } finally {
+        logger.groupEnd();
       }
 
       this.progressWindow.updateProgress(step);
@@ -202,6 +206,7 @@ class SyncJob {
 
     if (pageID) {
       try {
+        logger.debug('Update page', pageID, properties);
         return await this.notion.pages.update({ page_id: pageID, properties });
       } catch (error) {
         if (!isNotionErrorWithCode(error, APIErrorCode.ObjectNotFound)) {
@@ -210,6 +215,7 @@ class SyncJob {
       }
     }
 
+    logger.debug('Create page', properties);
     return await this.notion.pages.create({
       parent: { database_id: this.databaseID },
       properties,

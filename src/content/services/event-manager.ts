@@ -1,6 +1,6 @@
 import EventEmitter from 'eventemitter3';
 
-import { log } from '../utils';
+import { logger } from '../utils';
 
 import type { Service } from './service';
 
@@ -77,7 +77,7 @@ export class EventManager implements Service {
       ids: NotifierIDs,
       _extraData: Record<string, unknown>,
     ) => {
-      log(`Notified of ${event} ${type} for IDs ${JSON.stringify(ids)}`);
+      logger.debug(`Notified of ${event} ${type} for IDs`, ids);
 
       const eventName = `${type}.${event}`;
 

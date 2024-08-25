@@ -1,13 +1,11 @@
 import { Client, Logger, LogLevel } from '@notionhq/client';
 
 import { getRequiredNoteroPref, NoteroPref } from '../prefs/notero-pref';
-import { log } from '../utils';
+import { logger } from '../utils';
 
-const logger: Logger = (level, message, extraInfo) => {
-  log(
-    `${message} - ${JSON.stringify(extraInfo)}`,
-    level === LogLevel.ERROR ? 'error' : 'warning',
-  );
+const notionLogger: Logger = (level, message, extraInfo) => {
+  level = level === LogLevel.INFO ? LogLevel.DEBUG : level;
+  logger[level](message, extraInfo);
 };
 
 export function getNotionClient(window: Window) {
@@ -16,6 +14,7 @@ export function getNotionClient(window: Window) {
   return new Client({
     auth: authToken,
     fetch: window.fetch.bind(window),
-    logger,
+    logger: notionLogger,
+    logLevel: LogLevel.DEBUG,
   });
 }

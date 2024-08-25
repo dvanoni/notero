@@ -498,7 +498,7 @@ declare interface Zotero {
 
   getActiveZoteroPane(): Zotero.ZoteroPane | null;
 
-  getMainWindow(): Zotero.ZoteroWindow;
+  getMainWindow(): Zotero.ZoteroWindow | null;
   getMainWindows(): Zotero.ZoteroWindow[];
 
   hiDPI: boolean;

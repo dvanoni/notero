@@ -19,25 +19,34 @@ const PROXIED_METHODS = {
   warn: 'WARN',
 } as const satisfies Partial<Record<keyof Console, LogLevel>>;
 
+const LEVEL_MAX_LENGTH = Math.max(
+  ...Object.values(PROXIED_METHODS).map((level) => level.length),
+);
+
+let indentation = 0;
+
+let zoteroConsole: Console | undefined;
+
+function getLogLevel(method: ProxiedMethod): LogLevel {
+  return PROXIED_METHODS[method];
+}
+
+function getZoteroConsole(): Console | undefined {
+  zoteroConsole = Zotero.getMainWindow()?.console ?? zoteroConsole;
+  return zoteroConsole;
+}
+
 function isProxiedMethod(
   prop: string | number | symbol,
 ): prop is ProxiedMethod {
   return prop in PROXIED_METHODS;
 }
 
-function getLogLevel(method: ProxiedMethod): LogLevel {
-  return PROXIED_METHODS[method];
-}
-
-const LEVEL_MAX_LENGTH = Math.max(
-  ...Object.values(PROXIED_METHODS).map((level) => level.length),
-);
+function noOp() {}
 
 function printLevel(level: LogLevel): string {
   return `[${level.padEnd(LEVEL_MAX_LENGTH)}]`;
 }
-
-let indentation = 0;
 
 function printIndentation(): string {
   return '\t'.repeat(indentation);
@@ -59,26 +68,29 @@ function zoteroDebug(level: LogLevel, args: unknown[]): void {
   );
 }
 
-export const logger = new Proxy(Zotero.getMainWindow().console, {
-  get(target, prop, receiver) {
-    Zotero.debug(`NOTERO TARGET: ${String(target)}`);
+export const logger = new Proxy(
+  {},
+  {
+    get(_, prop, receiver) {
+      const console = getZoteroConsole();
 
-    if (prop === 'groupEnd') {
-      indentation -= 1;
-    }
-
-    if (!isProxiedMethod(prop)) {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-      return Reflect.get(target, prop, receiver);
-    }
-
-    return function (...args: unknown[]) {
-      target[prop](...STYLED_LOG_PREFIX, ...args);
-      zoteroDebug(getLogLevel(prop), args);
-
-      if (prop === 'group' || prop === 'groupCollapsed') {
-        indentation += 1;
+      if (prop === 'groupEnd') {
+        indentation -= 1;
       }
-    };
+
+      if (!isProxiedMethod(prop)) {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+        return console ? Reflect.get(console, prop, receiver) : noOp;
+      }
+
+      return function (...args: unknown[]) {
+        console?.[prop](...STYLED_LOG_PREFIX, ...args);
+        zoteroDebug(getLogLevel(prop), args);
+
+        if (prop === 'group' || prop === 'groupCollapsed') {
+          indentation += 1;
+        }
+      };
+    },
   },
-});
+) as Console;

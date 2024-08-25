@@ -210,10 +210,12 @@ export class SyncManager implements Service {
 
     const idsToSync = items.map(({ id }) => id);
 
-    logger.debug(
+    logger.groupCollapsed(
       `Enqueue ${idsToSync.length} item(s) to sync with IDs`,
       idsToSync,
     );
+    logger.table(items, ['_id', '_displayTitle']);
+    logger.groupEnd();
 
     if (this.queuedSync?.timeoutID) {
       clearTimeout(this.queuedSync.timeoutID);

@@ -61,7 +61,7 @@ export async function performSyncJob(
 
     const errorMessage = String(cause);
 
-    logger.error(error, failedItem);
+    logger.error(error, failedItem?.getDisplayTitle());
 
     progressWindow.fail(errorMessage, failedItem);
   }
@@ -152,7 +152,8 @@ class SyncJob {
     for (const [index, item] of this.items.entries()) {
       const step = index + 1;
       logger.debug(
-        `Syncing item ${step} of ${this.items.length} with ID ${item.id}`,
+        `Syncing item ${step} of ${this.items.length} with ID ${item.id}\n  `,
+        item.getDisplayTitle(),
       );
 
       this.progressWindow.updateText(step);

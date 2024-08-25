@@ -151,10 +151,10 @@ class SyncJob {
   public async perform() {
     for (const [index, item] of this.items.entries()) {
       const step = index + 1;
-      logger.debug(
-        `Syncing item ${step} of ${this.items.length} with ID ${item.id}\n  `,
-        item.getDisplayTitle(),
+      logger.groupCollapsed(
+        `Syncing item ${step} of ${this.items.length} with ID ${item.id}`,
       );
+      logger.debug(item.getDisplayTitle());
 
       this.progressWindow.updateText(step);
 
@@ -166,6 +166,8 @@ class SyncJob {
         }
       } catch (error) {
         throw new ItemSyncError(error, item);
+      } finally {
+        logger.groupEnd();
       }
 
       this.progressWindow.updateProgress(step);
@@ -204,6 +206,7 @@ class SyncJob {
 
     if (pageID) {
       try {
+        logger.debug('Update page', pageID, properties);
         return await this.notion.pages.update({ page_id: pageID, properties });
       } catch (error) {
         if (!isNotionErrorWithCode(error, APIErrorCode.ObjectNotFound)) {
@@ -212,6 +215,7 @@ class SyncJob {
       }
     }
 
+    logger.debug('Create page', properties);
     return await this.notion.pages.create({
       parent: { database_id: this.databaseID },
       properties,

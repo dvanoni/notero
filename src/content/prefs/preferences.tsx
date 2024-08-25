@@ -5,12 +5,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 
 import { getNotionClient } from '../sync/notion-client';
-import {
-  getLocalizedString,
-  getXULElementById,
-  hasErrorStack,
-  log,
-} from '../utils';
+import { getLocalizedString, getXULElementById, logger } from '../utils';
 
 import {
   NoteroPref,
@@ -162,8 +157,7 @@ class Preferences {
 
       return databases;
     } catch (error) {
-      log(String(error), 'error');
-      if (hasErrorStack(error)) log(error.stack, 'error');
+      logger.error(error);
       throw error;
     }
   }

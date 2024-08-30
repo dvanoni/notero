@@ -2,6 +2,8 @@ import { TextEncoder, TextDecoder } from 'util';
 
 import { mockDeep } from 'jest-mock-extended';
 
+import type { logger } from '../src/content/utils/logger';
+
 type MockedGlobal = typeof globalThis & {
   Components: typeof Components;
   Cc: typeof Components.classes;
@@ -26,3 +28,7 @@ mockedGlobal.Zotero = mockDeep<typeof Zotero>();
 mockedGlobal.TextEncoder = TextEncoder;
 // @ts-expect-error The types don't match
 mockedGlobal.TextDecoder = TextDecoder;
+
+jest.mock('../src/content/utils/logger', () => ({
+  logger: mockDeep<typeof logger>(),
+}));

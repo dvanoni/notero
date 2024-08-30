@@ -1,11 +1,10 @@
 import type { PluginInfo } from '../plugin-info';
 
-import type { EventManager, PreferencePaneManager, WindowManager } from '.';
+import type { EventManager, PreferencePaneManager } from '.';
 
 type Dependencies = {
   eventManager: EventManager;
   preferencePaneManager: PreferencePaneManager;
-  windowManager: WindowManager;
 };
 
 export type ServiceParams<D extends keyof Dependencies = never> = {

@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.6.1](https://github.com/dvanoni/notero/compare/v0.6.0...v0.6.1) (2024-08-30)
+
+
+### Features
+
+* Improve logging ([#546](https://github.com/dvanoni/notero/issues/546)) ([44cd2b3](https://github.com/dvanoni/notero/commit/44cd2b318afb18f4a4b0902fdd67487900d6a008))
+
 ## [0.6.0](https://github.com/dvanoni/notero/compare/v0.5.17...v0.6.0) (2024-08-24)
 
 

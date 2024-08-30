@@ -6,7 +6,6 @@ import { getAllCollectionItems, logger, parseItemDate } from '../utils';
 
 import type { EventManager, NotifierEventParams } from './event-manager';
 import type { Service, ServiceParams } from './service';
-import type { WindowManager } from './window-manager';
 
 const SYNC_DEBOUNCE_MS = 2000;
 
@@ -17,17 +16,13 @@ type QueuedSync = {
 
 export class SyncManager implements Service {
   private eventManager!: EventManager;
-  private windowManager!: WindowManager;
 
   private queuedSync?: QueuedSync;
 
   private syncInProgress = false;
 
-  public startup({
-    dependencies,
-  }: ServiceParams<'eventManager' | 'windowManager'>) {
+  public startup({ dependencies }: ServiceParams<'eventManager'>) {
     this.eventManager = dependencies.eventManager;
-    this.windowManager = dependencies.windowManager;
 
     const { addListener } = this.eventManager;
 
@@ -239,14 +234,19 @@ export class SyncManager implements Service {
   }
 
   private async performSync() {
-    const latestWindow = this.windowManager.getLatestWindow();
-    if (!this.queuedSync || !latestWindow) return;
+    if (!this.queuedSync) return;
+
+    const mainWindow = Zotero.getMainWindow();
+    if (!mainWindow) {
+      logger.warn('Zotero main window not available - cannot sync items');
+      return;
+    }
 
     const { itemIDs } = this.queuedSync;
     this.queuedSync = undefined as QueuedSync | undefined;
     this.syncInProgress = true;
 
-    await performSyncJob(itemIDs, latestWindow);
+    await performSyncJob(itemIDs, mainWindow);
 
     if (this.queuedSync && !this.queuedSync.timeoutID) {
       await this.performSync();

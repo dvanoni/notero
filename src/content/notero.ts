@@ -8,7 +8,6 @@ import {
   Service,
   SyncManager,
   UIManager,
-  WindowManager,
 } from './services';
 import { findDuplicates } from './sync/find-duplicates';
 import { getNotionClient } from './sync/notion-client';
@@ -17,19 +16,16 @@ import { logger } from './utils';
 class Notero {
   private readonly eventManager: EventManager;
   private readonly preferencePaneManager: PreferencePaneManager;
-  private readonly windowManager: WindowManager;
   private readonly services: Service[];
 
   public constructor() {
     this.eventManager = new EventManager();
     this.preferencePaneManager = new PreferencePaneManager();
-    this.windowManager = new WindowManager();
 
     this.services = [
       new ChromeManager(),
       this.eventManager,
       this.preferencePaneManager,
-      this.windowManager,
       new SyncManager(),
       new UIManager(),
     ];
@@ -51,7 +47,6 @@ class Notero {
     const dependencies = {
       eventManager: this.eventManager,
       preferencePaneManager: this.preferencePaneManager,
-      windowManager: this.windowManager,
     };
 
     logger.groupCollapsed('Starting services');
@@ -112,10 +107,10 @@ class Notero {
   }
 
   public getNotionClient(): Client {
-    const latestWindow = this.windowManager.getLatestWindow();
-    if (!latestWindow) throw new Error('No window available');
+    const mainWindow = Zotero.getMainWindow();
+    if (!mainWindow) throw new Error('No window available');
 
-    return getNotionClient(latestWindow);
+    return getNotionClient(mainWindow);
   }
 
   public findDuplicates(propertyName: string = 'title'): Promise<Set<string>> {

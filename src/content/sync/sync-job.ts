@@ -152,7 +152,8 @@ class SyncJob {
     for (const [index, item] of this.items.entries()) {
       const step = index + 1;
       logger.groupCollapsed(
-        `Syncing item ${step} of ${this.items.length} with ID ${item.id}`,
+        `Syncing item ${step} of ${this.items.length} with ID`,
+        item.id,
       );
       logger.debug(item.getDisplayTitle());
 

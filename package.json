@@ -15,7 +15,7 @@
     "prettier": "prettier --check .",
     "prettier:fix": "prettier --write .",
     "start": "tsx scripts/start.ts",
-    "start-beta": "npm start -- --beta",
+    "start:beta": "npm start -- --beta",
     "test": "jest",
     "test:watch": "jest --watch",
     "typecheck": "tsc --noEmit",

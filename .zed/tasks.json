@@ -1,0 +1,61 @@
+// Static tasks configuration.
+[
+  {
+    "label": "Build",
+    "command": "npm",
+    // rest of the parameters are optional
+    "args": ["run", "build"],
+    // Env overrides for the command, will be appended to the terminal's environment from the settings.
+    // "env": { "foo": "bar" },
+    // Current working directory to spawn the command into, defaults to current project root.
+    //"cwd": "/path/to/working/directory",
+    // Whether to use a new terminal tab or reuse the existing one to spawn the process, defaults to `false`.
+    "use_new_terminal": false,
+    // Whether to allow multiple instances of the same task to be run, or rather wait for the existing ones to finish, defaults to `false`.
+    "allow_concurrent_runs": false,
+    // What to do with the terminal pane and tab, after the command was started:
+    // * `always` — always show the terminal pane, add and focus the corresponding task's tab in it (default)
+    // * `never` — avoid changing current terminal pane focus, but still add/reuse the task's tab there
+    "reveal": "never"
+  },
+  {
+    "label": "Build with source maps",
+    "command": "npm",
+    "args": ["run", "build", "--", "--sourcemap"],
+    "use_new_terminal": false,
+    "allow_concurrent_runs": false,
+    "reveal": "never"
+  },
+  {
+    "label": "Start Zotero",
+    "command": "npm",
+    "args": ["run", "start"],
+    "use_new_terminal": false,
+    "allow_concurrent_runs": false,
+    "reveal": "never"
+  },
+  {
+    "label": "Start Zotero Beta",
+    "command": "npm",
+    "args": ["run", "start:beta"],
+    "use_new_terminal": false,
+    "allow_concurrent_runs": false,
+    "reveal": "never"
+  },
+  {
+    "label": "Test",
+    "command": "npm",
+    "args": ["run", "test"],
+    "use_new_terminal": false,
+    "allow_concurrent_runs": false,
+    "reveal": "always"
+  },
+  {
+    "label": "Test watch",
+    "command": "npm",
+    "args": ["run", "test:watch"],
+    "use_new_terminal": false,
+    "allow_concurrent_runs": false,
+    "reveal": "always"
+  }
+]

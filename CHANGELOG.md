@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.6.2](https://github.com/dvanoni/notero/compare/v0.6.1...v0.6.2) (2024-09-01)
+
+
+### Bug Fixes
+
+* Improve performance of generating author-date page titles ([#550](https://github.com/dvanoni/notero/issues/550)) ([743b6b6](https://github.com/dvanoni/notero/commit/743b6b6cac7a2e73537a861ac3e27158ab9e5bad))
+
 ## [0.6.1](https://github.com/dvanoni/notero/compare/v0.6.0...v0.6.1) (2024-08-30)
 
 

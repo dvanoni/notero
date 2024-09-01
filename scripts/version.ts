@@ -13,22 +13,24 @@ const versionJsPath = path.join(genDir, 'version.js');
 export let version: string;
 
 function getVersion(): string {
-  const isGitHubActions = Boolean(process.env.GITHUB_ACTIONS);
-  const isPublish = process.env.GITHUB_JOB === 'publish-artifacts';
+  const { GITHUB_ACTIONS, GITHUB_HEAD_REF, GITHUB_JOB } = process.env;
 
-  if (!isGitHubActions) return getLocalVersion();
+  if (!GITHUB_ACTIONS) return getLocalVersion();
 
-  if (!isPublish) return getPrereleaseVersion();
+  const isPublish = GITHUB_JOB === 'publish-artifacts';
+  if (isPublish) return pkg.version;
 
-  return pkg.version;
+  const isReleasePR = Boolean(GITHUB_HEAD_REF?.startsWith('release-please'));
+  const baseVersion = isReleasePR ? pkg.version : getPatchBumpVersion();
+  return getPrereleaseVersion(baseVersion);
 }
 
 function getLocalVersion(): string {
   return `${getPatchBumpVersion()}-${os.userInfo().username}.${os.hostname()}`;
 }
 
-function getPrereleaseVersion(): string {
-  return `${getPatchBumpVersion()}-${process.env.GITHUB_RUN_NUMBER}`;
+function getPrereleaseVersion(baseVersion: string): string {
+  return `${baseVersion}-${process.env.GITHUB_RUN_NUMBER}`;
 }
 
 function getPatchBumpVersion(): string {

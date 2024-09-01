@@ -1,4 +1,4 @@
-import { APA_STYLE, NOTION_TAG_NAME } from '../constants';
+import { NOTION_TAG_NAME } from '../constants';
 import { PageTitleFormat } from '../prefs/notero-pref';
 import {
   buildCollectionFullName,
@@ -116,9 +116,14 @@ class PropertyBuilder {
     return pageTitle || this.getTitle();
   }
 
-  private async getAuthorDateCitation(): Promise<string | null> {
-    const citation = await this.getCachedCitation(APA_STYLE, true);
-    return citation?.match(/^\((.+)\)$/)?.[1] || null;
+  private getAuthorDateCitation(): string {
+    let citation =
+      this.item.getField('firstCreator') || this.item.getDisplayTitle();
+    let date = this.item.getField('date', true, true);
+    if (date && (date = date.substring(0, 4)) !== '0000') {
+      citation += ', ' + date;
+    }
+    return citation;
   }
 
   private getCitationKey(): string | undefined {

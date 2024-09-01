@@ -158,6 +158,7 @@ function setup() {
   item.getField.calledWith('abstractNote').mockReturnValue(fakeAbstract);
   item.getField.calledWith('citationKey').mockReturnValue(fakeCitationKey);
   item.getField.calledWith('date').mockReturnValue(fakeDate);
+  item.getField.calledWith('firstCreator').mockReturnValue(fakeLastName1);
   item.getField.calledWith('shortTitle').mockReturnValue(fakeShortTitle);
   item.getField.calledWith('year').mockReturnValue(String(fakeYear));
   item.getTags.mockReturnValue([{ tag: fakeTag, type: 1 }]);

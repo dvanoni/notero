@@ -8,7 +8,7 @@ export class UIManager implements Service {
   private eventManager!: EventManager;
   private preferencePaneManager!: PreferencePaneManager;
 
-  private managedWindows = new Map<Zotero.ZoteroWindow, Set<Node>>();
+  private managedWindows = new Map<Zotero.ZoteroWindow, Set<Element>>();
 
   public startup({
     dependencies,
@@ -24,17 +24,19 @@ export class UIManager implements Service {
   }
 
   public removeFromWindow(window: Zotero.ZoteroWindow) {
-    const managedNodes = this.managedWindows.get(window);
-    if (!managedNodes) return;
+    const managedElements = this.managedWindows.get(window);
+    if (!managedElements) return;
 
-    managedNodes.forEach((node) => node.parentNode?.removeChild(node));
+    managedElements.forEach((element) => {
+      element.remove();
+    });
     this.managedWindows.delete(window);
   }
 
-  private addManagedNode(window: Zotero.ZoteroWindow, node: Node) {
-    const managedNodes = this.managedWindows.get(window) ?? new Set();
-    managedNodes.add(node);
-    this.managedWindows.set(window, managedNodes);
+  private addManagedElement(window: Zotero.ZoteroWindow, element: Element) {
+    const managedElements = this.managedWindows.get(window) ?? new Set();
+    managedElements.add(element);
+    this.managedWindows.set(window, managedElements);
   }
 
   private initCollectionMenuItem(window: Zotero.ZoteroWindow) {
@@ -106,7 +108,7 @@ export class UIManager implements Service {
     menuItem.addEventListener('command', onCommand);
 
     menuItem = parentMenu.appendChild(menuItem);
-    this.addManagedNode(window, menuItem);
+    this.addManagedElement(window, menuItem);
 
     return menuItem;
   }

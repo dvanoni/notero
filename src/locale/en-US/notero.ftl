@@ -1,3 +1,12 @@
+## Menus
+
+notero-collection-menu-sync =
+  .label = Sync Items to Notion
+notero-item-menu-sync =
+  .label = Sync to Notion
+notero-tools-menu-preferences =
+  .label = Notero Preferences…
+
 ## Notion preferences
 
 notero-preferences-notion-groupbox-heading = Notion Preferences

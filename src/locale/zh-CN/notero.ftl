@@ -1,3 +1,12 @@
+## Menus
+
+notero-collection-menu-sync =
+  .label = 同步条目至Notion
+notero-item-menu-sync =
+  .label = 同步到Notion
+notero-tools-menu-preferences =
+  .label = Notero 首选项…
+
 ## Notion preferences
 
 notero-preferences-notion-groupbox-heading = Notion 首选项

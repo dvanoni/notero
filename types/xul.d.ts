@@ -33,6 +33,13 @@ declare namespace XUL {
     value: string;
   }
 
+  /**
+   * @see https://searchfox.org/mozilla-esr102/source/toolkit/content/customElements.js
+   */
+  interface MozXULElement extends XULElement {
+    insertFTLIfNeeded(path: string): void;
+  }
+
   interface PreferenceElement extends XULElement {
     value: unknown;
   }

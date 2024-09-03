@@ -18,6 +18,19 @@ export enum PageTitleFormat {
   itemTitle = 'itemTitle',
 }
 
+export const PAGE_TITLE_FORMAT_L10N_IDS: Record<PageTitleFormat, string> = {
+  [PageTitleFormat.itemAuthorDateCitation]:
+    'notero-page-title-format-item-author-date-citation',
+  [PageTitleFormat.itemCitationKey]:
+    'notero-page-title-format-item-citation-key',
+  [PageTitleFormat.itemFullCitation]:
+    'notero-page-title-format-item-full-citation',
+  [PageTitleFormat.itemInTextCitation]:
+    'notero-page-title-format-item-in-text-citation',
+  [PageTitleFormat.itemShortTitle]: 'notero-page-title-format-item-short-title',
+  [PageTitleFormat.itemTitle]: 'notero-page-title-format-item-title',
+};
+
 type NoteroPrefValue = Partial<{
   [NoteroPref.collectionSyncConfigs]: string;
   [NoteroPref.notionDatabaseID]: string;

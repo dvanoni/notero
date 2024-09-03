@@ -25,6 +25,21 @@ notero-preferences-properties-groupbox-description =
 
 notero-preferences-page-title-format = Notion Page Title
 
+## Page title format options
+
+notero-page-title-format-item-author-date-citation =
+  .label = Item Author-Date Citation
+notero-page-title-format-item-citation-key =
+  .label = Item Citation Key (requires Better-BibTeX)
+notero-page-title-format-item-full-citation =
+  .label = Item Full Citation
+notero-page-title-format-item-in-text-citation =
+  .label = Item In-Text Citation
+notero-page-title-format-item-short-title =
+  .label = Item Short Title
+notero-page-title-format-item-title =
+  .label = Item Title
+
 ## Sync preferences
 
 notero-preferences-sync-groupbox-heading = Sync Preferences

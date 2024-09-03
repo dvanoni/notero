@@ -22,6 +22,21 @@ notero-preferences-properties-groupbox-heading = 属性偏好
 notero-preferences-properties-groupbox-description = 自定义项目属性如何同步到 Notion。
 notero-preferences-page-title-format = 概念页面标题
 
+## Page title format options
+
+notero-page-title-format-item-author-date-citation =
+  .label = 项目作者-日期引文
+notero-page-title-format-item-citation-key =
+  .label = 项目引文密钥 (需要 Better BibTeX)
+notero-page-title-format-item-full-citation =
+  .label = 项目完整引用
+notero-page-title-format-item-in-text-citation =
+  .label = 项目文本引用
+notero-page-title-format-item-short-title =
+  .label = 项目短标题
+notero-page-title-format-item-title =
+  .label = 项目标题
+
 ## Sync preferences
 
 notero-preferences-sync-groupbox-heading = 同步首选项

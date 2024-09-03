@@ -5,12 +5,12 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 
 import { getNotionClient } from '../sync/notion-client';
-import { getLocalizedString, getXULElementById, logger } from '../utils';
+import { createXULElement, getXULElementById, logger } from '../utils';
 
 import {
   NoteroPref,
+  PAGE_TITLE_FORMAT_L10N_IDS,
   PageTitleFormat,
-  getNoteroPref,
   registerNoteroPrefObserver,
   unregisterNoteroPrefObserver,
 } from './notero-pref';
@@ -18,20 +18,24 @@ import { SyncConfigsTable } from './sync-configs-table';
 
 type MenuItem = {
   disabled?: boolean;
-  label: string;
-  selected?: boolean;
-  value?: string;
+  l10nId?: string;
+  label?: string;
+  value: string;
 };
 
 function setMenuItems(menuList: XUL.MenuListElement, items: MenuItem[]): void {
-  menuList.removeAllItems();
+  menuList.menupopup.replaceChildren();
 
-  items.forEach(({ disabled, label, selected, value }) => {
-    const item = menuList.appendItem(label, value);
+  items.forEach(({ disabled, l10nId, label, value }) => {
+    const item = createXULElement(document, 'menuitem');
+    item.value = value;
     item.disabled = Boolean(disabled);
-    if (selected) {
-      menuList.selectedItem = item;
+    if (l10nId) {
+      document.l10n.setAttributes(item, l10nId);
+    } else {
+      item.label = label || value;
     }
+    menuList.menupopup.append(item);
   });
 }
 
@@ -88,9 +92,7 @@ class Preferences {
       (format) => ({
         disabled:
           format === PageTitleFormat.itemCitationKey && !isBetterBibTeXActive,
-        label: getLocalizedString(`notero.pageTitleFormat.${format}`),
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
-        selected: format === this.pageTitleFormatMenu.value,
+        l10nId: PAGE_TITLE_FORMAT_L10N_IDS[format],
         value: format,
       }),
     );
@@ -113,7 +115,6 @@ class Preferences {
     let menuItems: MenuItem[] = [];
 
     try {
-      const databaseID = getNoteroPref(NoteroPref.notionDatabaseID);
       const databases = await this.retrieveNotionDatabases();
 
       menuItems = databases.map<MenuItem>((database) => {
@@ -125,7 +126,6 @@ class Preferences {
         return {
           label: icon ? `${icon} ${title}` : title,
           value: idWithoutDashes,
-          selected: idWithoutDashes === databaseID,
         };
       });
 

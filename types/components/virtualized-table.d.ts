@@ -80,7 +80,7 @@ declare module 'components/virtualized-table' {
     /** Array of column objects like the ones in itemTreeColumns.js */
     columns: readonly Column<DataKey>[];
     onColumnPickerMenu?: (event: Event) => void;
-    onColumnSort?: (index: number, sortDirection: number) => void;
+    onColumnSort?: (index: number, sortDirection: 1 | -1) => void;
     getColumnPrefs?: () => { [dataKey in DataKey]: unknown };
     storeColumnPrefs?: (prefs: {
       [dataKey in DataKey]: unknown;

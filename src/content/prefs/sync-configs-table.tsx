@@ -32,10 +32,12 @@ type SyncConfigsTableRow = CollectionSyncConfig & {
   collectionFullName: string;
 };
 
+type SortDirection = 1 | -1;
+
 type RowSortCompareFn = (
   a: SyncConfigsTableRow,
   b: SyncConfigsTableRow,
-  sortDirection: number,
+  sortDirection: SortDirection,
 ) => number;
 
 type Props = {
@@ -49,13 +51,16 @@ const COLLATOR = new Intl.Collator(Zotero.locale, {
 });
 
 const COMPARATORS: Record<DataKey, RowSortCompareFn> = {
-  collectionFullName: (a, b, sortDirection) =>
-    sortDirection *
-    COLLATOR.compare(a.collectionFullName, b.collectionFullName),
-  syncEnabled: (a, b, sortDirection) => {
+  collectionFullName(a, b, sortDirection) {
+    return (
+      sortDirection *
+      COLLATOR.compare(a.collectionFullName, b.collectionFullName)
+    );
+  },
+  syncEnabled(a, b, sortDirection) {
     const result = Number(a.syncEnabled) - Number(b.syncEnabled);
     if (result !== 0) return result * sortDirection;
-    return COLLATOR.compare(a.collectionFullName, b.collectionFullName);
+    return this.collectionFullName(a, b, 1);
   },
 };
 
@@ -64,7 +69,7 @@ export class SyncConfigsTable extends React.Component<Props> {
   private _syncConfigs?: CollectionSyncConfigsRecord;
 
   private observer?: IntersectionObserver;
-  private sortDirection = 1;
+  private sortDirection: SortDirection = 1;
   private sortKey: DataKey = 'collectionFullName';
   private table: VirtualizedTable<DataKey> | null = null;
 
@@ -145,7 +150,7 @@ export class SyncConfigsTable extends React.Component<Props> {
     this.table?.invalidate();
   };
 
-  handleColumnSort = (columnIndex: number, sortDirection: number) => {
+  handleColumnSort = (columnIndex: number, sortDirection: SortDirection) => {
     this.sortDirection = sortDirection;
     this.sortKey = COLUMNS[columnIndex]?.['dataKey'] || 'collectionFullName';
     this.invalidateRows();

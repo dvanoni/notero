@@ -4,7 +4,7 @@ import VirtualizedTable, {
 } from 'components/virtualized-table';
 import React from 'react';
 
-import { buildCollectionFullName, getLocalizedString } from '../utils';
+import { buildCollectionFullName } from '../utils';
 
 import {
   CollectionSyncConfig,
@@ -16,18 +16,16 @@ import {
 const COLUMNS = [
   {
     dataKey: 'syncEnabled',
-    label: getLocalizedString('notero.preferences.syncEnabledColumn'),
     type: 'checkbox',
     fixedWidth: true,
     width: 100,
   },
   {
     dataKey: 'collectionFullName',
-    label: getLocalizedString('notero.preferences.collectionColumn'),
   },
 ] as const;
 
-type DataKey = (typeof COLUMNS)[number]['dataKey'];
+export type DataKey = (typeof COLUMNS)[number]['dataKey'];
 
 type SyncConfigsTableRow = CollectionSyncConfig & {
   collection: Zotero.Collection;
@@ -39,6 +37,11 @@ type RowSortCompareFn = (
   b: SyncConfigsTableRow,
   sortDirection: number,
 ) => number;
+
+type Props = {
+  columnLabels: Record<DataKey, string>;
+  container: Element;
+};
 
 const COLLATOR = new Intl.Collator(Zotero.locale, {
   numeric: true,
@@ -54,10 +57,6 @@ const COMPARATORS: Record<DataKey, RowSortCompareFn> = {
     if (result !== 0) return result * sortDirection;
     return COLLATOR.compare(a.collectionFullName, b.collectionFullName);
   },
-};
-
-type Props = {
-  container: Element;
 };
 
 export class SyncConfigsTable extends React.Component<Props> {
@@ -161,10 +160,15 @@ export class SyncConfigsTable extends React.Component<Props> {
   };
 
   render() {
+    const columns = COLUMNS.map((column) => ({
+      ...column,
+      label: this.props.columnLabels[column.dataKey],
+    }));
+
     return (
       <VirtualizedTable
         id="notero-syncConfigsTable"
-        columns={COLUMNS}
+        columns={columns}
         getRowCount={this.getRowCount}
         getRowString={this.getRowString}
         ref={this.setTableRef}

@@ -14,7 +14,7 @@ import {
   registerNoteroPrefObserver,
   unregisterNoteroPrefObserver,
 } from './notero-pref';
-import { SyncConfigsTable } from './sync-configs-table';
+import { DataKey, SyncConfigsTable } from './sync-configs-table';
 
 type MenuItem = {
   disabled?: boolean;
@@ -75,8 +75,13 @@ class Preferences {
       void this.refreshNotionDatabaseMenu();
     }, 100);
 
+    const columnLabels = await this.getSyncTableColumnLabels();
+
     ReactDOM.render(
-      <SyncConfigsTable container={syncConfigsTableContainer} />,
+      <SyncConfigsTable
+        columnLabels={columnLabels}
+        container={syncConfigsTableContainer}
+      />,
       syncConfigsTableContainer,
     );
   }
@@ -160,6 +165,19 @@ class Preferences {
       logger.error(error);
       throw error;
     }
+  }
+
+  private async getSyncTableColumnLabels(): Promise<Record<DataKey, string>> {
+    const collection = await document.l10n.formatValue(
+      'notero-preferences-collection-column',
+    );
+    const syncEnabled = await document.l10n.formatValue(
+      'notero-preferences-sync-enabled-column',
+    );
+    return {
+      collectionFullName: collection || 'Collection',
+      syncEnabled: syncEnabled || 'Sync Enabled',
+    };
   }
 }
 

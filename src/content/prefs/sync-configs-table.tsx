@@ -3,7 +3,6 @@ import VirtualizedTable, {
   // eslint-disable-next-line import/no-unresolved
 } from 'components/virtualized-table';
 import React from 'react';
-import { IntlProvider } from 'react-intl';
 
 import { buildCollectionFullName, getLocalizedString } from '../utils';
 
@@ -163,20 +162,18 @@ export class SyncConfigsTable extends React.Component<Props> {
 
   render() {
     return (
-      <IntlProvider locale={Zotero.locale}>
-        <VirtualizedTable
-          id="notero-syncConfigsTable"
-          columns={COLUMNS}
-          getRowCount={this.getRowCount}
-          getRowString={this.getRowString}
-          ref={this.setTableRef}
-          renderItem={this.renderItem}
-          multiSelect
-          showHeader
-          onActivate={this.handleActivate}
-          onColumnSort={this.handleColumnSort}
-        />
-      </IntlProvider>
+      <VirtualizedTable
+        id="notero-syncConfigsTable"
+        columns={COLUMNS}
+        getRowCount={this.getRowCount}
+        getRowString={this.getRowString}
+        ref={this.setTableRef}
+        renderItem={this.renderItem}
+        multiSelect
+        showHeader
+        onActivate={this.handleActivate}
+        onColumnSort={this.handleColumnSort}
+      />
     );
   }
 }

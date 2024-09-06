@@ -201,7 +201,10 @@ export class SyncManager implements Service {
    * @param items the Zotero items to sync to Notion
    */
   private enqueueItemsToSync(items: readonly Zotero.Item[]) {
-    if (!items.length) return;
+    if (!items.length) {
+      logger.debug('No valid items to sync');
+      return;
+    }
 
     const idsToSync = items.map(({ id }) => id);
 

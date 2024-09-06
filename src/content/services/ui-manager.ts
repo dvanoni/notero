@@ -46,6 +46,7 @@ export class UIManager implements Service {
         const collection =
           Zotero.getActiveZoteroPane()?.getSelectedCollection(false);
         if (collection) {
+          logger.log('Request sync for collection:', collection.name);
           this.eventManager.emit('request-sync-collection', collection);
         }
       },
@@ -60,6 +61,12 @@ export class UIManager implements Service {
       onCommand: () => {
         const items = Zotero.getActiveZoteroPane()?.getSelectedItems(false);
         if (items) {
+          logger.groupCollapsed(
+            `Request sync for ${items.length} item(s) with IDs`,
+            items.map((item) => item.id),
+          );
+          logger.table(items, ['_id', '_displayTitle']);
+          logger.groupEnd();
           this.eventManager.emit('request-sync-items', items);
         }
       },

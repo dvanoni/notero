@@ -2,6 +2,7 @@ import { isFullDatabase } from '@notionhq/client';
 import type { DatabaseObjectResponse } from '@notionhq/client/build/src/api-endpoints';
 import React from 'react';
 import ReactDOM from 'react-dom';
+import type { createRoot } from 'react-dom/client';
 
 import { getNotionClient } from '../sync/notion-client';
 import {
@@ -19,6 +20,8 @@ import {
   unregisterNoteroPrefObserver,
 } from './notero-pref';
 import { DataKey, SyncConfigsTable } from './sync-configs-table';
+
+type ReactDOMClient = typeof ReactDOM & { createRoot: typeof createRoot };
 
 type MenuItem = {
   disabled?: boolean;
@@ -81,13 +84,14 @@ class Preferences {
 
     const columnLabels = await this.getSyncTableColumnLabels();
 
-    ReactDOM.render(
-      <SyncConfigsTable
-        columnLabels={columnLabels}
-        container={syncConfigsTableContainer}
-      />,
-      syncConfigsTableContainer,
-    );
+    (ReactDOM as ReactDOMClient)
+      .createRoot(syncConfigsTableContainer)
+      .render(
+        <SyncConfigsTable
+          columnLabels={columnLabels}
+          container={syncConfigsTableContainer}
+        />,
+      );
   }
 
   private deinit(): void {

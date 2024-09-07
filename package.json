@@ -4,7 +4,7 @@
   "description": "Sync Zotero items and notes into Notion",
   "scripts": {
     "build": "tsx scripts/build.ts",
-    "clean": "rm -r build gen xpi",
+    "clean": "rm -r .eslintcache build gen xpi",
     "create-xpi": "tsx scripts/create-xpi.ts",
     "generate-update-manifest": "tsx scripts/generate-update-manifest.ts",
     "lint": "eslint --cache --ignore-path .gitignore .",

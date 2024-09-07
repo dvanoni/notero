@@ -1,4 +1,4 @@
-import { getLocalizedString } from '../utils';
+import { MissingPrefError } from '../errors';
 
 export enum NoteroPref {
   collectionSyncConfigs = 'collectionSyncConfigs',
@@ -106,7 +106,7 @@ export function getRequiredNoteroPref<P extends NoteroPref>(
 
   if (value) return value;
 
-  throw new Error(`Missing ${getLocalizedString(pref)}`);
+  throw new MissingPrefError(pref);
 }
 
 export function setNoteroPref<P extends NoteroPref>(

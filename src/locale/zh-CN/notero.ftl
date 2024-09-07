@@ -52,3 +52,9 @@ notero-preferences-sync-on-modify-items =
     .label = 当修改条目时同步
 notero-preferences-sync-notes =
     .label = 同步笔记
+
+## Errors
+
+notero-error-missing-notion-database = No Notion database selected. Please select your database in Notero preferences.
+notero-error-missing-notion-token = No Notion integration token provided. Please enter your token in Notero preferences.
+notero-error-missing-pref = Missing value for { $pref }. Please enter in Notero preferences.

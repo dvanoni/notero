@@ -16,7 +16,7 @@ import {
   getNoteroPref,
   getRequiredNoteroPref,
 } from '../prefs/notero-pref';
-import { logger } from '../utils';
+import { getLocalizedErrorMessage, logger } from '../utils';
 
 import { getNotionClient } from './notion-client';
 import type { DatabaseProperties } from './notion-types';
@@ -59,7 +59,10 @@ export async function performSyncJob(
       failedItem = error.item;
     }
 
-    const errorMessage = String(cause);
+    const errorMessage = await getLocalizedErrorMessage(
+      cause,
+      window.document.l10n,
+    );
 
     logger.error(error, failedItem?.getDisplayTitle());
 

@@ -5,7 +5,12 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 
 import { getNotionClient } from '../sync/notion-client';
-import { createXULElement, getXULElementById, logger } from '../utils';
+import {
+  createXULElement,
+  getLocalizedErrorMessage,
+  getXULElementById,
+  logger,
+} from '../utils';
 
 import {
   NoteroPref,
@@ -139,8 +144,10 @@ class Preferences {
     } catch (error) {
       this.notionDatabaseMenu.disabled = true;
       this.notionDatabaseError.hidden = false;
-      this.notionDatabaseError.value =
-        error instanceof Error ? error.message : String(error);
+      this.notionDatabaseError.value = await getLocalizedErrorMessage(
+        error,
+        document.l10n,
+      );
     }
 
     setMenuItems(this.notionDatabaseMenu, menuItems);

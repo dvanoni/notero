@@ -1,4 +1,4 @@
-import { getLocalizedString } from '../utils';
+import { MissingPrefError } from '../errors';
 
 export enum NoteroPref {
   collectionSyncConfigs = 'collectionSyncConfigs',
@@ -17,6 +17,19 @@ export enum PageTitleFormat {
   itemShortTitle = 'itemShortTitle',
   itemTitle = 'itemTitle',
 }
+
+export const PAGE_TITLE_FORMAT_L10N_IDS: Record<PageTitleFormat, string> = {
+  [PageTitleFormat.itemAuthorDateCitation]:
+    'notero-page-title-format-item-author-date-citation',
+  [PageTitleFormat.itemCitationKey]:
+    'notero-page-title-format-item-citation-key',
+  [PageTitleFormat.itemFullCitation]:
+    'notero-page-title-format-item-full-citation',
+  [PageTitleFormat.itemInTextCitation]:
+    'notero-page-title-format-item-in-text-citation',
+  [PageTitleFormat.itemShortTitle]: 'notero-page-title-format-item-short-title',
+  [PageTitleFormat.itemTitle]: 'notero-page-title-format-item-title',
+};
 
 type NoteroPrefValue = Partial<{
   [NoteroPref.collectionSyncConfigs]: string;
@@ -93,7 +106,7 @@ export function getRequiredNoteroPref<P extends NoteroPref>(
 
   if (value) return value;
 
-  throw new Error(`Missing ${getLocalizedString(pref)}`);
+  throw new MissingPrefError(pref);
 }
 
 export function setNoteroPref<P extends NoteroPref>(

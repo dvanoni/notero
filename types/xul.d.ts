@@ -18,6 +18,8 @@ declare namespace XUL {
 
   interface MenuItemElement extends XULElement {
     disabled: boolean;
+    label: string;
+    value: string;
   }
 
   interface MenuListElement extends XULElement {
@@ -27,10 +29,20 @@ declare namespace XUL {
       description?: string,
     ): MenuItemElement;
     disabled: boolean;
+    readonly menupopup: MenuPopupElement;
     removeAllItems(): void;
     selectedIndex: number;
     selectedItem: MenuItemElement | null;
     value: string;
+  }
+
+  type MenuPopupElement = XULElement;
+
+  /**
+   * @see https://searchfox.org/mozilla-esr102/source/toolkit/content/customElements.js
+   */
+  interface MozXULElement extends XULElement {
+    insertFTLIfNeeded(path: string): void;
   }
 
   interface PreferenceElement extends XULElement {

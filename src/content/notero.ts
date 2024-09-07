@@ -2,7 +2,6 @@ import type { Client } from '@notionhq/client';
 
 import type { PluginInfo } from './plugin-info';
 import {
-  ChromeManager,
   EventManager,
   PreferencePaneManager,
   Service,
@@ -23,7 +22,6 @@ class Notero {
     this.preferencePaneManager = new PreferencePaneManager();
 
     this.services = [
-      new ChromeManager(),
       this.eventManager,
       this.preferencePaneManager,
       new SyncManager(),

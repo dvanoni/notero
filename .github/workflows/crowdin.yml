@@ -1,10 +1,9 @@
 name: Crowdin Translations
 
+# FIXME: Remove `crowdin-action` branch
 on:
   push:
-    branches: [main]
-  # FIXME: Remove this
-  workflow_dispatch:
+    branches: [main, crowdin-action]
 
 jobs:
   crowdin:

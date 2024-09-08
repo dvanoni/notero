@@ -1,3 +1,5 @@
+preserve_hierarchy: true
+
 files:
   - source: /src/locale/en-US/*
     translation: /src/locale/%locale%/%original_file_name%

@@ -1,0 +1,26 @@
+name: Crowdin Translations
+
+on:
+  push:
+    branches: [main]
+  # FIXME: Remove this
+  workflow_dispatch:
+
+jobs:
+  crowdin:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: crowdin/github-action@v2
+        with:
+          project_id: ${{ vars.CROWDIN_PROJECT_ID }}
+          token: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}
+          upload_sources: true
+          upload_translations: true
+          download_translations: true
+          create_pull_request: true
+          commit_message: 'feat(localization): New Crowdin translations'
+          pull_request_title: 'feat(localization): New Crowdin translations'

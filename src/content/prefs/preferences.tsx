@@ -127,6 +127,9 @@ class Preferences {
   private async refreshNotionDatabaseMenu(): Promise<void> {
     let menuItems: MenuItem[] = [];
 
+    this.notionDatabaseMenu.disabled = true;
+    this.notionDatabaseError.hidden = true;
+
     try {
       const databases = await this.retrieveNotionDatabases();
 
@@ -143,7 +146,6 @@ class Preferences {
       });
 
       this.notionDatabaseMenu.disabled = false;
-      this.notionDatabaseError.hidden = true;
     } catch (error) {
       this.notionDatabaseMenu.disabled = true;
       this.notionDatabaseError.hidden = false;

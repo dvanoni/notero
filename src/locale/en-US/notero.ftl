@@ -49,6 +49,6 @@ notero-preferences-sync-notes =
 
 ## Errors
 
-notero-error-missing-notion-database = No Notion database selected. Please select your database in Notero preferences.
-notero-error-missing-notion-token = No Notion integration token provided. Please enter your token in Notero preferences.
-notero-error-missing-pref = Missing value for { $pref }. Please enter in Notero preferences.
+notero-error-missing-notion-database = Notion database not selected. Please select your database in Notero preferences.
+notero-error-missing-notion-token = Notion integration token not provided. Please enter your token in Notero preferences.
+notero-error-missing-pref = Missing value for { $pref }. Please enter it in Notero preferences.

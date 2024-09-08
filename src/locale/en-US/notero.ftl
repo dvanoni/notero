@@ -11,8 +11,7 @@ notero-tools-menu-preferences =
 
 notero-preferences-notion-groupbox-heading = Notion Preferences
 notero-preferences-notion-groupbox-description =
-  For instructions on obtaining these values, view the
-  <label data-l10n-name="notero-preferences-readme">README</label>.
+  For instructions on obtaining these values, view the <label data-l10n-name="notero-preferences-readme">README</label>.
 
 notero-preferences-notion-token = Integration Token
 notero-preferences-notion-database = Database
@@ -44,9 +43,7 @@ notero-page-title-format-item-title =
 
 notero-preferences-sync-groupbox-heading = Sync Preferences
 notero-preferences-sync-groupbox-description1 =
-  Notero will monitor the collections enabled below.
-  Items in the enabled collections will sync to Notion when added
-  to that collection and whenever the items are modified.
+  Notero will monitor the collections enabled below. Items in the enabled collections will sync to Notion when added to that collection and whenever the items are modified.
 notero-preferences-sync-groupbox-description2 =
   To enable/disable a collection, either select the row and press the
   {"[Enter]"} key or double-click the row. To select multiple rows,
@@ -62,10 +59,8 @@ notero-preferences-sync-notes =
 ## Errors
 
 notero-error-missing-notion-database =
-  No Notion database selected.
-  Please select your database in Notero preferences.
+  No Notion database selected. Please select your database in Notero preferences.
 notero-error-missing-notion-token =
-  No Notion integration token provided.
-  Please enter your token in Notero preferences.
+  No Notion integration token provided. Please enter your token in Notero preferences.
 notero-error-missing-pref =
   Missing value for { $pref }. Please enter in Notero preferences.

@@ -1,9 +1,8 @@
 name: Crowdin Translations
 
-# FIXME: Remove `crowdin-action` branch
 on:
   push:
-    branches: [main, crowdin-action]
+    branches: [main]
 
 jobs:
   crowdin:

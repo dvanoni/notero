@@ -3,6 +3,9 @@ name: Crowdin Translations
 on:
   push:
     branches: [main]
+  schedule:
+    - cron: '34 12 * * *' # Run every day at 12:34 UTC
+  workflow_dispatch:
 
 jobs:
   crowdin:

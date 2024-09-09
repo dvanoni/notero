@@ -50,6 +50,7 @@ class Preferences {
   private notionDatabaseError!: XUL.DescriptionElement;
   private notionDatabaseMenu!: XUL.MenuListElement;
   private notionTokenInput!: HTMLInputElement;
+  private notionTokenVisibilityToggle!: XUL.ButtonElement;
   private pageTitleFormatMenu!: XUL.MenuListElement;
   private prefObserverSymbol!: symbol;
 
@@ -60,6 +61,9 @@ class Preferences {
       'notero-notionToken',
     ) as HTMLInputElement;
     /* eslint-disable @typescript-eslint/no-non-null-assertion */
+    this.notionTokenVisibilityToggle = getXULElementById(
+      'notero-notionToken-visibility',
+    )!;
     this.notionDatabaseError = getXULElementById('notero-notionDatabaseError')!;
     this.notionDatabaseMenu = getXULElementById('notero-notionDatabase')!;
     this.pageTitleFormatMenu = getXULElementById('notero-pageTitleFormat')!;
@@ -76,7 +80,6 @@ class Preferences {
       this.deinit();
     });
 
-    this.initNotionTokenInput();
     await this.initPageTitleFormatMenu();
     await this.initSyncConfigsTable();
 
@@ -88,23 +91,6 @@ class Preferences {
 
   private deinit(): void {
     unregisterNoteroPrefObserver(this.prefObserverSymbol);
-  }
-
-  private initNotionTokenInput(): void {
-    const clickListener = (event: MouseEvent) => {
-      if (!this.notionTokenInput.contains(event.target as Node)) {
-        this.notionTokenInput.blur();
-      }
-    };
-
-    this.notionTokenInput.addEventListener('blur', () => {
-      this.notionTokenInput.type = 'password';
-      document.removeEventListener('click', clickListener);
-    });
-    this.notionTokenInput.addEventListener('focus', () => {
-      this.notionTokenInput.type = 'text';
-      document.addEventListener('click', clickListener);
-    });
   }
 
   private async initPageTitleFormatMenu(): Promise<void> {
@@ -212,6 +198,18 @@ class Preferences {
       logger.error(error);
       throw error;
     }
+  }
+
+  public toggleNotionTokenVisibility(): void {
+    const isVisible = this.notionTokenInput.type !== 'password';
+    this.notionTokenInput.type = isVisible ? 'password' : 'text';
+    this.notionTokenVisibilityToggle.image = isVisible
+      ? 'chrome://zotero/skin/16/universal/view.svg'
+      : 'chrome://zotero/skin/16/universal/hide.svg';
+    this.notionTokenVisibilityToggle.setAttribute(
+      'tooltiptext',
+      isVisible ? 'Reveal token' : 'Conceal token',
+    );
   }
 }
 

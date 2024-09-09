@@ -6,6 +6,7 @@
 declare namespace XUL {
   interface ButtonElement extends XULElement {
     disabled: boolean;
+    image: string;
   }
 
   interface CheckboxElement extends XULElement {

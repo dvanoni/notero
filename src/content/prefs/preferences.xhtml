@@ -15,7 +15,7 @@
     />
   </label>
   <separator class="thin" />
-  <hbox align="center">
+  <hbox align="center" id="notero-notionToken-container">
     <label
       control="notero-notionToken"
       data-l10n-id="notero-preferences-notion-token"
@@ -24,6 +24,12 @@
       id="notero-notionToken"
       preference="extensions.notero.notionToken"
       type="password"
+    />
+    <button
+      id="notero-notionToken-visibility"
+      image="chrome://zotero/skin/16/universal/view.svg"
+      oncommand="notero.preferences.toggleNotionTokenVisibility();"
+      tooltiptext="Reveal token"
     />
   </hbox>
   <hbox align="center">

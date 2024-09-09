@@ -49,12 +49,16 @@ function setMenuItems(menuList: XUL.MenuListElement, items: MenuItem[]): void {
 class Preferences {
   private notionDatabaseError!: XUL.DescriptionElement;
   private notionDatabaseMenu!: XUL.MenuListElement;
+  private notionTokenInput!: HTMLInputElement;
   private pageTitleFormatMenu!: XUL.MenuListElement;
   private prefObserverSymbol!: symbol;
 
   public async init(): Promise<void> {
     await Zotero.uiReadyPromise;
 
+    this.notionTokenInput = document.getElementById(
+      'notero-notionToken',
+    ) as HTMLInputElement;
     /* eslint-disable @typescript-eslint/no-non-null-assertion */
     this.notionDatabaseError = getXULElementById('notero-notionDatabaseError')!;
     this.notionDatabaseMenu = getXULElementById('notero-notionDatabase')!;
@@ -72,6 +76,7 @@ class Preferences {
       this.deinit();
     });
 
+    this.initNotionTokenInput();
     await this.initPageTitleFormatMenu();
     await this.initSyncConfigsTable();
 
@@ -83,6 +88,23 @@ class Preferences {
 
   private deinit(): void {
     unregisterNoteroPrefObserver(this.prefObserverSymbol);
+  }
+
+  private initNotionTokenInput(): void {
+    const clickListener = (event: MouseEvent) => {
+      if (!this.notionTokenInput.contains(event.target as Node)) {
+        this.notionTokenInput.blur();
+      }
+    };
+
+    this.notionTokenInput.addEventListener('blur', () => {
+      this.notionTokenInput.type = 'password';
+      document.removeEventListener('click', clickListener);
+    });
+    this.notionTokenInput.addEventListener('focus', () => {
+      this.notionTokenInput.type = 'text';
+      document.addEventListener('click', clickListener);
+    });
   }
 
   private async initPageTitleFormatMenu(): Promise<void> {

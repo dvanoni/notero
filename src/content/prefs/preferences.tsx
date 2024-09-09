@@ -206,10 +206,9 @@ class Preferences {
     this.notionTokenVisibilityToggle.image = isVisible
       ? 'chrome://zotero/skin/16/universal/view.svg'
       : 'chrome://zotero/skin/16/universal/hide.svg';
-    this.notionTokenVisibilityToggle.setAttribute(
-      'tooltiptext',
-      isVisible ? 'Reveal token' : 'Conceal token',
-    );
+    document.l10n.setArgs(this.notionTokenVisibilityToggle, {
+      action: isVisible ? 'reveal' : 'conceal',
+    });
   }
 }
 

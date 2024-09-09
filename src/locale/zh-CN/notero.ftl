@@ -11,14 +11,14 @@ notero-tools-menu-preferences =
 
 notero-preferences-notion-groupbox-heading = Notion 首选项
 notero-preferences-notion-groupbox-description = 有关获取这些值的说明，请查看 <label data-l10n-name="notero-preferences-readme">README</label>.
-notero-preferences-notion-token = 内部集成令牌
-notero-preferences-notion-database = 数据库
+notero-preferences-notion-token = 内部集成令牌:
+notero-preferences-notion-database = 数据库:
 
 ## Property preferences
 
 notero-preferences-properties-groupbox-heading = 属性偏好
 notero-preferences-properties-groupbox-description = 自定义项目属性如何同步到 Notion。
-notero-preferences-page-title-format = 概念页面标题
+notero-preferences-page-title-format = 概念页面标题:
 
 ## Page title format options
 

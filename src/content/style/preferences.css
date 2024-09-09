@@ -1,3 +1,11 @@
+#notero-notionToken {
+  flex: 1;
+}
+
+#notero-notionDatabase {
+  overflow: hidden;
+}
+
 #notero-notionDatabaseError {
   color: darkred;
 }

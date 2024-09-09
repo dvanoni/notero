@@ -11,14 +11,14 @@ notero-tools-menu-preferences =
 
 notero-preferences-notion-groupbox-heading = Notion Preferences
 notero-preferences-notion-groupbox-description = For instructions on obtaining these values, view the <label data-l10n-name="notero-preferences-readme">README</label>.
-notero-preferences-notion-token = Integration Token
-notero-preferences-notion-database = Database
+notero-preferences-notion-token = Integration Token:
+notero-preferences-notion-database = Database:
 
 ## Property preferences
 
 notero-preferences-properties-groupbox-heading = Property Preferences
 notero-preferences-properties-groupbox-description = Customize how item properties sync to Notion.
-notero-preferences-page-title-format = Notion Page Title
+notero-preferences-page-title-format = Notion Page Title:
 
 ## Page title format options
 

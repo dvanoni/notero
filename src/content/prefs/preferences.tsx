@@ -19,7 +19,7 @@ import {
   registerNoteroPrefObserver,
   unregisterNoteroPrefObserver,
 } from './notero-pref';
-import { DataKey, SyncConfigsTable } from './sync-configs-table';
+import { SyncConfigsTable } from './sync-configs-table';
 
 type ReactDOMClient = typeof ReactDOM & { createRoot: typeof createRoot };
 
@@ -49,19 +49,24 @@ function setMenuItems(menuList: XUL.MenuListElement, items: MenuItem[]): void {
 class Preferences {
   private notionDatabaseError!: XUL.DescriptionElement;
   private notionDatabaseMenu!: XUL.MenuListElement;
+  private notionTokenInput!: HTMLInputElement;
+  private notionTokenVisibilityToggle!: XUL.ButtonElement;
   private pageTitleFormatMenu!: XUL.MenuListElement;
   private prefObserverSymbol!: symbol;
 
   public async init(): Promise<void> {
     await Zotero.uiReadyPromise;
 
+    this.notionTokenInput = document.getElementById(
+      'notero-notionToken',
+    ) as HTMLInputElement;
     /* eslint-disable @typescript-eslint/no-non-null-assertion */
+    this.notionTokenVisibilityToggle = getXULElementById(
+      'notero-notionToken-visibility',
+    )!;
     this.notionDatabaseError = getXULElementById('notero-notionDatabaseError')!;
     this.notionDatabaseMenu = getXULElementById('notero-notionDatabase')!;
     this.pageTitleFormatMenu = getXULElementById('notero-pageTitleFormat')!;
-    const syncConfigsTableContainer = document.getElementById(
-      'notero-syncConfigsTable-container',
-    )!;
     /* eslint-enable @typescript-eslint/no-non-null-assertion */
 
     this.prefObserverSymbol = registerNoteroPrefObserver(
@@ -76,22 +81,12 @@ class Preferences {
     });
 
     await this.initPageTitleFormatMenu();
+    await this.initSyncConfigsTable();
 
     // Don't block window from loading while waiting for network response
     setTimeout(() => {
       void this.refreshNotionDatabaseMenu();
     }, 100);
-
-    const columnLabels = await this.getSyncTableColumnLabels();
-
-    (ReactDOM as ReactDOMClient)
-      .createRoot(syncConfigsTableContainer)
-      .render(
-        <SyncConfigsTable
-          columnLabels={columnLabels}
-          container={syncConfigsTableContainer}
-        />,
-      );
   }
 
   private deinit(): void {
@@ -114,6 +109,32 @@ class Preferences {
     this.pageTitleFormatMenu.disabled = false;
   }
 
+  private async initSyncConfigsTable(): Promise<void> {
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    const syncConfigsTableContainer = document.getElementById(
+      'notero-syncConfigsTable-container',
+    )!;
+    const collection = await document.l10n.formatValue(
+      'notero-preferences-collection-column',
+    );
+    const syncEnabled = await document.l10n.formatValue(
+      'notero-preferences-sync-enabled-column',
+    );
+    const columnLabels = {
+      collectionFullName: collection || 'Collection',
+      syncEnabled: syncEnabled || 'Sync Enabled',
+    };
+
+    (ReactDOM as ReactDOMClient)
+      .createRoot(syncConfigsTableContainer)
+      .render(
+        <SyncConfigsTable
+          columnLabels={columnLabels}
+          container={syncConfigsTableContainer}
+        />,
+      );
+  }
+
   private async isBetterBibTeXActive(): Promise<boolean> {
     const { AddonManager } = ChromeUtils.import(
       'resource://gre/modules/AddonManager.jsm',
@@ -126,6 +147,9 @@ class Preferences {
 
   private async refreshNotionDatabaseMenu(): Promise<void> {
     let menuItems: MenuItem[] = [];
+
+    this.notionDatabaseMenu.disabled = true;
+    this.notionDatabaseError.hidden = true;
 
     try {
       const databases = await this.retrieveNotionDatabases();
@@ -143,7 +167,6 @@ class Preferences {
       });
 
       this.notionDatabaseMenu.disabled = false;
-      this.notionDatabaseError.hidden = true;
     } catch (error) {
       this.notionDatabaseMenu.disabled = true;
       this.notionDatabaseError.hidden = false;
@@ -177,17 +200,15 @@ class Preferences {
     }
   }
 
-  private async getSyncTableColumnLabels(): Promise<Record<DataKey, string>> {
-    const collection = await document.l10n.formatValue(
-      'notero-preferences-collection-column',
-    );
-    const syncEnabled = await document.l10n.formatValue(
-      'notero-preferences-sync-enabled-column',
-    );
-    return {
-      collectionFullName: collection || 'Collection',
-      syncEnabled: syncEnabled || 'Sync Enabled',
-    };
+  public toggleNotionTokenVisibility(): void {
+    const isVisible = this.notionTokenInput.type !== 'password';
+    this.notionTokenInput.type = isVisible ? 'password' : 'text';
+    this.notionTokenVisibilityToggle.image = isVisible
+      ? 'chrome://zotero/skin/16/universal/view.svg'
+      : 'chrome://zotero/skin/16/universal/hide.svg';
+    document.l10n.setArgs(this.notionTokenVisibilityToggle, {
+      action: isVisible ? 'reveal' : 'conceal',
+    });
   }
 }
 

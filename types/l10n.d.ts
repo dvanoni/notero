@@ -25,7 +25,7 @@ declare namespace L10n {
   }
 
   /**
-   * @see https://searchfox.org/mozilla-esr102/source/dom/webidl/Localization.webidl
+   * @see https://searchfox.org/mozilla-esr115/source/dom/webidl/Localization.webidl
    */
   interface Localization {
     (
@@ -55,7 +55,7 @@ declare namespace L10n {
   }
 
   /**
-   * @see https://searchfox.org/mozilla-esr102/source/dom/webidl/DOMLocalization.webidl
+   * @see https://searchfox.org/mozilla-esr115/source/dom/webidl/DOMLocalization.webidl
    */
   interface DOMLocalization extends Localization {
     connectRoot(element: Node): void;
@@ -69,6 +69,8 @@ declare namespace L10n {
     setAttributes(element: Element, id: string, args?: object): void;
 
     getAttributes(element: Element): L10nIdArgs;
+
+    setArgs(element: Element, args?: object): void;
 
     translateFragment(node: Node): Promise<unknown>;
 

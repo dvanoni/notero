@@ -6,6 +6,7 @@
 declare namespace XUL {
   interface ButtonElement extends XULElement {
     disabled: boolean;
+    image: string;
   }
 
   interface CheckboxElement extends XULElement {
@@ -39,7 +40,7 @@ declare namespace XUL {
   type MenuPopupElement = XULElement;
 
   /**
-   * @see https://searchfox.org/mozilla-esr102/source/toolkit/content/customElements.js
+   * @see https://searchfox.org/mozilla-esr115/source/toolkit/content/customElements.js
    */
   interface MozXULElement extends XULElement {
     insertFTLIfNeeded(path: string): void;

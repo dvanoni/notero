@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.6.3](https://github.com/dvanoni/notero/compare/v0.6.2...v0.6.3) (2024-09-11)
+
+
+### Features
+
+* Improve error messages for missing preferences ([#569](https://github.com/dvanoni/notero/issues/569)) ([86c4589](https://github.com/dvanoni/notero/commit/86c45894b98aaa1fc13ebb95de084f8109e2972c))
+* Improve preferences UI ([#570](https://github.com/dvanoni/notero/issues/570)) ([ef6ff2b](https://github.com/dvanoni/notero/commit/ef6ff2be2e8d8e84fb03507c8ea6b00268c5c557))
+* **localization:** New Crowdin translations ([#567](https://github.com/dvanoni/notero/issues/567)) ([d242cd4](https://github.com/dvanoni/notero/commit/d242cd45aca843c61b9893783414e13839db1bcd))
+* **localization:** New Crowdin translations ([#572](https://github.com/dvanoni/notero/issues/572)) ([66423d0](https://github.com/dvanoni/notero/commit/66423d0f6e6a16a75740349fabf48a92336b0b8b))
+* Log UI menu interactions and when enqueueing no items ([#549](https://github.com/dvanoni/notero/issues/549)) ([af52ebd](https://github.com/dvanoni/notero/commit/af52ebd79696070258813dedc8ee11fb510ab007))
+
 ## [0.6.2](https://github.com/dvanoni/notero/compare/v0.6.1...v0.6.2) (2024-09-01)
 
 

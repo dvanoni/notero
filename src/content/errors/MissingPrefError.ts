@@ -1,8 +1,8 @@
 import type { NoteroPref } from '../prefs/notero-pref';
 
-import { LocalizableError } from './LocalizableError';
+import { ErrorL10nId, LocalizableError } from './LocalizableError';
 
-const L10N_IDS: Partial<Record<NoteroPref, string>> = {
+const L10N_IDS: Partial<Record<NoteroPref, ErrorL10nId>> = {
   notionDatabaseID: 'notero-error-missing-notion-database',
   notionToken: 'notero-error-missing-notion-token',
 };

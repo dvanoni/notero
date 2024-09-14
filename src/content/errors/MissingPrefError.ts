@@ -14,7 +14,7 @@ export class MissingPrefError extends LocalizableError {
     super(
       `Missing pref: ${pref}`,
       L10N_IDS[pref] || 'notero-error-missing-pref',
-      { pref },
+      { l10nArgs: { pref } },
     );
   }
 }

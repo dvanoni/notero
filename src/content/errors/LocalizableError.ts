@@ -11,11 +11,11 @@ export class LocalizableError extends Error {
   public constructor(
     rawMessage: string,
     l10nId: ErrorL10nId,
-    l10nArgs?: L10n.L10nArgs,
+    options?: ErrorOptions & { l10nArgs?: L10n.L10nArgs },
   ) {
-    super(rawMessage);
+    super(rawMessage, options);
     this.l10nId = l10nId;
-    this.l10nArgs = l10nArgs;
+    this.l10nArgs = options?.l10nArgs;
   }
 
   public getLocalizedMessage(l10n: L10n.Localization): Promise<string | null> {

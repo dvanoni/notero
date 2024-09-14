@@ -52,6 +52,11 @@ notero-preferences-sync-on-modify-items =
 notero-preferences-sync-notes =
     .label = Sync notes
 
+## Progress window
+
+notero-progress-headline = Syncing items to Notion…
+notero-progress-item = Item { $step } of { $total }
+
 ## Errors
 
 notero-error-missing-notion-database = Notion database not selected. Please select your database in Notero preferences.

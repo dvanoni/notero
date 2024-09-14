@@ -1,3 +1,4 @@
+import { FluentMessageId } from '../../locale/fluent-types';
 import { createXULElement, logger } from '../utils';
 
 import type { EventManager } from './event-manager';
@@ -103,7 +104,7 @@ export class UIManager implements Service {
     parentId,
     window,
   }: {
-    l10nId: string;
+    l10nId: FluentMessageId;
     onCommand: (event: Event) => void;
     parentId: string;
     window: Zotero.ZoteroWindow;

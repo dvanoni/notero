@@ -7,12 +7,12 @@ declare namespace L10n {
     [key: string]: string | number;
   }
 
-  interface L10nIdArgs {
-    id: string | null;
+  interface L10nIdArgs<I extends string> {
+    id: I | null;
     args?: L10nArgs | null;
   }
 
-  type L10nKey = string | L10nIdArgs;
+  type L10nKey<I extends string> = I | L10nIdArgs<I>;
 
   interface AttributeNameValue {
     name: string;
@@ -27,7 +27,7 @@ declare namespace L10n {
   /**
    * @see https://searchfox.org/mozilla-esr115/source/dom/webidl/Localization.webidl
    */
-  interface Localization {
+  interface Localization<I extends string = string> {
     (
       resourceIds: L10nResourceId[],
       sync?: boolean,
@@ -39,25 +39,25 @@ declare namespace L10n {
 
     removeResourceIds(resourceIds: L10nResourceId[]): number;
 
-    formatValue(id: string, args?: L10nArgs): Promise<string | null>;
+    formatValue(id: I, args?: L10nArgs): Promise<string | null>;
 
-    formatValues(keys: L10nKey[]): Promise<(string | null)[]>;
+    formatValues(keys: L10nKey<I>[]): Promise<(string | null)[]>;
 
-    formatMessages(keys: L10nKey[]): Promise<(L10nMessage | null)[]>;
+    formatMessages(keys: L10nKey<I>[]): Promise<(L10nMessage | null)[]>;
 
     setAsync(): void;
 
-    formatValueSync(id: string, args?: L10nArgs): string | null;
+    formatValueSync(id: I, args?: L10nArgs): string | null;
 
-    formatValuesSync(keys: L10nKey[]): (string | null)[];
+    formatValuesSync(keys: L10nKey<I>[]): (string | null)[];
 
-    formatMessagesSync(keys: L10nKey[]): (L10nMessage | null)[];
+    formatMessagesSync(keys: L10nKey<I>[]): (L10nMessage | null)[];
   }
 
   /**
    * @see https://searchfox.org/mozilla-esr115/source/dom/webidl/DOMLocalization.webidl
    */
-  interface DOMLocalization extends Localization {
+  interface DOMLocalization<I extends string = string> extends Localization<I> {
     connectRoot(element: Node): void;
 
     disconnectRoot(element: Node): void;
@@ -66,9 +66,9 @@ declare namespace L10n {
 
     resumeObserving(): void;
 
-    setAttributes(element: Element, id: string, args?: object): void;
+    setAttributes(element: Element, id: I, args?: object): void;
 
-    getAttributes(element: Element): L10nIdArgs;
+    getAttributes(element: Element): L10nIdArgs<I>;
 
     setArgs(element: Element, args?: object): void;
 

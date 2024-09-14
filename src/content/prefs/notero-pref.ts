@@ -1,3 +1,4 @@
+import { FluentMessageId } from '../../locale/fluent-types';
 import { MissingPrefError } from '../errors';
 
 export enum NoteroPref {
@@ -18,7 +19,10 @@ export enum PageTitleFormat {
   itemTitle = 'itemTitle',
 }
 
-export const PAGE_TITLE_FORMAT_L10N_IDS: Record<PageTitleFormat, string> = {
+export const PAGE_TITLE_FORMAT_L10N_IDS: Record<
+  PageTitleFormat,
+  FluentMessageId
+> = {
   [PageTitleFormat.itemAuthorDateCitation]:
     'notero-page-title-format-item-author-date-citation',
   [PageTitleFormat.itemCitationKey]:

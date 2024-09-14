@@ -43,7 +43,8 @@ export async function performSyncJob(
   const items = Zotero.Items.get(Array.from(itemIDs));
   if (!items.length) return;
 
-  const progressWindow = new ProgressWindow(items.length);
+  const progressWindow = new ProgressWindow(items.length, window);
+  await progressWindow.show();
 
   try {
     const syncJob = await prepareSyncJob({ items, progressWindow, window });
@@ -161,7 +162,7 @@ class SyncJob {
       );
       logger.debug(item.getDisplayTitle());
 
-      this.progressWindow.updateText(step);
+      await this.progressWindow.updateText(step);
 
       try {
         if (item.isNote()) {

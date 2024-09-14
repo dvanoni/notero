@@ -4,6 +4,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import type { createRoot } from 'react-dom/client';
 
+import { FluentMessageId } from '../../locale/fluent-types';
 import { LocalizableError } from '../errors';
 import { getNotionClient } from '../sync/notion-client';
 import {
@@ -26,7 +27,7 @@ type ReactDOMClient = typeof ReactDOM & { createRoot: typeof createRoot };
 
 type MenuItem = {
   disabled?: boolean;
-  l10nId?: string;
+  l10nId?: FluentMessageId;
   label?: string;
   value: string;
 };

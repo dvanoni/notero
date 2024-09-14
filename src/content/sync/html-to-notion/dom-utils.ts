@@ -1,5 +1,3 @@
-import { getDOMParser } from '../../utils';
-
 export type HTMLElementTagName = Uppercase<keyof HTMLElementTagNameMap>;
 
 /** https://developer.mozilla.org/en-US/docs/Web/API/Node/nodeType */
@@ -26,7 +24,7 @@ export function isHTMLElement(node: Node): node is HTMLElement {
 }
 
 export function getRootElement(htmlString: string): Element | null {
-  const domParser = getDOMParser();
+  const domParser = new DOMParser();
   const { body } = domParser.parseFromString(htmlString, 'text/html');
   const containerDiv = body.querySelector('div[data-schema-version]');
   return containerDiv || body;

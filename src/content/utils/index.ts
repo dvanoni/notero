@@ -6,7 +6,6 @@ export {
   getXULElementById,
 } from './elements';
 export { getAllCollectionItems } from './get-all-collection-items';
-export { getDOMParser } from './get-dom-parser';
 export { getItemURL } from './get-item-url';
 export { getLocalizedErrorMessage } from './get-localized-error-message';
 export { isObject } from './is-object';

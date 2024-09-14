@@ -1,9 +1,9 @@
 ## Menus
 
 notero-collection-menu-sync = 
-    .label = 同步条目至Notion
+    .label = 同步条目至 Notion
 notero-item-menu-sync = 
-    .label = 同步到Notion
+    .label = 同步到 Notion
 notero-tools-menu-preferences = 
     .label = Notero 首选项…
 
@@ -53,8 +53,18 @@ notero-preferences-sync-on-modify-items =
 notero-preferences-sync-notes = 
     .label = 同步笔记
 
+## Progress window
+
+notero-progress-headline = 将项目同步到 Notion…
+notero-progress-item = 项目 { $step } / { $total }
+
 ## Errors
 
 notero-error-missing-notion-database = 未选择 Notion 数据库。请在 Notero 偏好设置中选择您的数据库。
 notero-error-missing-notion-token = 未提供 Notion 集成令牌。请在 Notero 偏好设置中输入您的令牌。
 notero-error-missing-pref = { $pref } 缺少值。请在 Notero 偏好设置中输入该值。
+notero-error-no-notion-databases = 没有可访问的 Notion 数据库。
+notero-error-note-conversion-failed = 无法将笔记内容转换为 Notion 块。
+notero-error-note-parent-not-synced = 无法同步未同步的项目的注释。
+notero-error-note-sync-failed = 无法将笔记同步到 Notion。
+notero-error-notion-link-attachment = 无法创建 Notion 链接附件。这将导致重复的 Notion 页面。请确保在 www.notion.so/my-integrations 上为 Notero 集成启用了“读取内容”功能。

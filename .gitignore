@@ -1,9 +1,10 @@
 build
 gen
 node_modules
+src/locale/fluent-types.ts
+zotero.config.json
 .env
 .eslintcache
-zotero.config.json
 *~
 *.cache
 *.debug

@@ -10,6 +10,7 @@ import {
   saveNotionLinkAttachment,
   saveNotionTag,
 } from '../data/item-data';
+import { LocalizableError } from '../errors';
 import {
   NoteroPref,
   PageTitleFormat,
@@ -187,11 +188,9 @@ class SyncJob {
       const appURL = convertWebURLToAppURL(response.url);
       await saveNotionLinkAttachment(item, appURL);
     } else {
-      throw new Error(
-        'Failed to create Notion link attachment. ' +
-          'This will result in duplicate Notion pages. ' +
-          'Please ensure that the "read content" capability is enabled ' +
-          'for the Notero integration at www.notion.so/my-integrations.',
+      throw new LocalizableError(
+        'Failed to create Notion link attachment',
+        'notero-error-notion-link-attachment',
       );
     }
   }

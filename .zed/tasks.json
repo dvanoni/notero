@@ -22,40 +22,36 @@
     "label": "Build with source maps",
     "command": "npm",
     "args": ["run", "build", "--", "--sourcemap"],
-    "use_new_terminal": false,
-    "allow_concurrent_runs": false,
+    "reveal": "never"
+  },
+  {
+    "label": "Generate Fluent types",
+    "command": "npm",
+    "args": ["run", "generate-fluent-types"],
     "reveal": "never"
   },
   {
     "label": "Start Zotero",
     "command": "npm",
     "args": ["run", "start"],
-    "use_new_terminal": false,
-    "allow_concurrent_runs": false,
     "reveal": "never"
   },
   {
     "label": "Start Zotero Beta",
     "command": "npm",
     "args": ["run", "start:beta"],
-    "use_new_terminal": false,
-    "allow_concurrent_runs": false,
     "reveal": "never"
   },
   {
     "label": "Test",
     "command": "npm",
     "args": ["run", "test"],
-    "use_new_terminal": false,
-    "allow_concurrent_runs": false,
     "reveal": "always"
   },
   {
     "label": "Test watch",
     "command": "npm",
     "args": ["run", "test:watch"],
-    "use_new_terminal": false,
-    "allow_concurrent_runs": false,
     "reveal": "always"
   }
 ]

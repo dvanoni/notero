@@ -6,6 +6,7 @@ import {
   getSyncedNotes,
   saveSyncedNote,
 } from '../data/item-data';
+import { LocalizableError } from '../errors';
 
 import { convertHtmlToBlocks } from './html-to-notion';
 import { LIMITS } from './notion-limits';
@@ -45,7 +46,10 @@ export async function syncNote(
   const pageID = getNotionPageID(regularItem);
 
   if (!pageID) {
-    throw new Error('Cannot sync note for item that is not synced.');
+    throw new LocalizableError(
+      'Cannot sync note for item that is not synced',
+      'notero-error-note-parent-not-synced',
+    );
   }
 
   const syncedNotes = getSyncedNotes(regularItem);
@@ -105,7 +109,12 @@ async function createContainerBlock(
     ],
   });
 
-  if (!results[0]) throw new Error('Failed to create container block');
+  if (!results[0]) {
+    throw new LocalizableError(
+      'Failed to create container block',
+      'notero-error-note-sync-failed',
+    );
+  }
 
   return results[0].id;
 }
@@ -127,7 +136,12 @@ async function createNoteBlock(
     ],
   });
 
-  if (!results[0]) throw new Error('Failed to create note block');
+  if (!results[0]) {
+    throw new LocalizableError(
+      'Failed to create note block',
+      'notero-error-note-sync-failed',
+    );
+  }
 
   return results[0].id;
 }
@@ -148,7 +162,16 @@ async function addNoteBlockContent(
 }
 
 function buildNoteBlockBatches(noteItem: Zotero.Item): BlockObjectRequest[][] {
-  const blocks = convertHtmlToBlocks(noteItem.getNote());
+  let blocks;
+  try {
+    blocks = convertHtmlToBlocks(noteItem.getNote());
+  } catch (error) {
+    throw new LocalizableError(
+      'Failed to convert note content to Notion blocks',
+      'notero-error-note-conversion-failed',
+      { cause: error },
+    );
+  }
 
   const numBatches = Math.ceil(blocks.length / LIMITS.BLOCK_ARRAY_ELEMENTS);
   const batches = new Array<ChildBlock[]>(numBatches);

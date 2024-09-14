@@ -4,6 +4,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import type { createRoot } from 'react-dom/client';
 
+import { LocalizableError } from '../errors';
 import { getNotionClient } from '../sync/notion-client';
 import {
   createXULElement,
@@ -190,7 +191,10 @@ class Preferences {
       const databases = response.results.filter(isFullDatabase);
 
       if (databases.length === 0) {
-        throw new Error('No databases are accessible');
+        throw new LocalizableError(
+          'No Notion databases are accessible',
+          'notero-error-no-notion-databases',
+        );
       }
 
       return databases;

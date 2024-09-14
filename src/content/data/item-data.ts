@@ -1,7 +1,7 @@
 import { NOTION_TAG_NAME } from '../constants';
 import { NoteroPref, getNoteroPref } from '../prefs/notero-pref';
 import { getPageIDFromURL, isNotionURL } from '../sync/notion-utils';
-import { getDOMParser, isObject } from '../utils';
+import { isObject } from '../utils';
 
 const SYNCED_NOTES_ID = 'notero-synced-notes';
 
@@ -70,7 +70,8 @@ export async function saveNotionLinkAttachment(
 }
 
 function getSyncedNotesJSON(attachment: Zotero.Item): string | undefined {
-  const doc = getDOMParser().parseFromString(attachment.getNote(), 'text/html');
+  const domParser = new DOMParser();
+  const doc = domParser.parseFromString(attachment.getNote(), 'text/html');
 
   return doc.getElementById(SYNCED_NOTES_ID)?.innerHTML;
 }

@@ -1,20 +1,28 @@
 export class ProgressWindow {
   private readonly itemCount: number;
-  private readonly itemProgress: Zotero.ProgressWindow.ItemProgress;
+  private itemProgress!: Zotero.ProgressWindow.ItemProgress;
+  private readonly l10n: L10n.DOMLocalization;
   private readonly progressWindow: Zotero.ProgressWindow;
 
-  public constructor(itemCount: number) {
+  public constructor(itemCount: number, window: Window) {
     this.itemCount = itemCount;
+    this.l10n = window.document.l10n;
+    this.progressWindow = new Zotero.ProgressWindow({ window });
+  }
 
-    this.progressWindow = new Zotero.ProgressWindow();
-    this.progressWindow.changeHeadline('Syncing items to Notion…');
+  public async show() {
+    const headline = await this.l10n.formatValue('notero-progress-headline');
+    this.progressWindow.changeHeadline(headline || 'Syncing items to Notion…');
     this.progressWindow.show();
-
     this.itemProgress = new this.progressWindow.ItemProgress('document', '');
   }
 
-  public updateText(step: number) {
-    this.itemProgress.setText(`Item ${step} of ${this.itemCount}`);
+  public async updateText(step: number) {
+    const args = { step, total: this.itemCount };
+    const message =
+      (await this.l10n.formatValue('notero-progress-item', args)) ||
+      `Item ${step} of ${this.itemCount}`;
+    this.itemProgress.setText(message);
   }
 
   public updateProgress(step: number) {

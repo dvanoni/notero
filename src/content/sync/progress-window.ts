@@ -1,7 +1,9 @@
+import { FluentMessageId } from '../../locale/fluent-types';
+
 export class ProgressWindow {
   private readonly itemCount: number;
   private itemProgress!: Zotero.ProgressWindow.ItemProgress;
-  private readonly l10n: L10n.DOMLocalization;
+  private readonly l10n: L10n.Localization<FluentMessageId>;
   private readonly progressWindow: Zotero.ProgressWindow;
 
   public constructor(itemCount: number, window: Window) {

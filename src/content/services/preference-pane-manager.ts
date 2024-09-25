@@ -14,6 +14,6 @@ export class PreferencePaneManager implements Service {
   }
 
   public openPreferences() {
-    Zotero.Utilities.Internal.openPreferences(this.paneID);
+    return Zotero.Utilities.Internal.openPreferences(this.paneID);
   }
 }

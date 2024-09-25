@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.6.4](https://github.com/dvanoni/notero/compare/v0.6.3...v0.6.4) (2024-09-14)
+
+
+### Features
+
+* **localization:** New Crowdin translations ([#575](https://github.com/dvanoni/notero/issues/575)) ([5439051](https://github.com/dvanoni/notero/commit/543905131e16670e38538f24ae557b970d624ac1))
+* Localize remaining error messages ([#573](https://github.com/dvanoni/notero/issues/573)) ([f9c40a2](https://github.com/dvanoni/notero/commit/f9c40a29281393d53328f27af130dc1443881798))
+* Localize sync progress window ([#576](https://github.com/dvanoni/notero/issues/576)) ([13462bd](https://github.com/dvanoni/notero/commit/13462bd8fd39a3a9dac2b2fa12f8d959203d7df6))
+
 ## [0.6.3](https://github.com/dvanoni/notero/compare/v0.6.2...v0.6.3) (2024-09-11)
 
 

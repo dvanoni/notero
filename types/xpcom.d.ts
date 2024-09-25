@@ -30,6 +30,7 @@ declare namespace XPCOM {
 
   interface nsIIOService {
     newURI(spec: string, originCharset?: string, baseURI?: nsIURI): nsIURI;
+    getProtocolHandler(scheme: string): nsIProtocolHandler;
   }
 
   interface nsIJSCID {
@@ -51,6 +52,8 @@ declare namespace XPCOM {
     getDefaultBranch(prefRoot: string): nsIPrefBranch;
   }
 
+  type nsIProtocolHandler = nsISupports;
+
   interface nsISimpleEnumerator {
     getNext(): nsISupports;
     hasMoreElements(): boolean;
@@ -66,6 +69,7 @@ declare namespace XPCOM {
 
   interface nsISupports extends Record<string, unknown> {
     QueryInterface<I extends Interfaces[keyof Interfaces]>(uuid: I): I;
+    wrappedJSObject?: object;
   }
 
   interface nsITreeBoxObject {
@@ -130,6 +134,11 @@ declare namespace XPCOM {
   }
 
   interface nsIURI {
+    filePath: string;
+    hasRef: boolean;
+    pathQueryRef: string;
+    query: string;
+    ref: string;
     spec: string;
   }
 

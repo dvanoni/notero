@@ -4,6 +4,7 @@ import type { PluginInfo } from './plugin-info';
 import {
   EventManager,
   PreferencePaneManager,
+  ProtocolHandlerExtension,
   Service,
   SyncManager,
   UIManager,
@@ -24,6 +25,7 @@ class Notero {
     this.services = [
       this.eventManager,
       this.preferencePaneManager,
+      new ProtocolHandlerExtension(),
       new SyncManager(),
       new UIManager(),
     ];

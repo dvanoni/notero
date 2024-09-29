@@ -1,7 +1,7 @@
 # Notero
 
 [![Latest release](https://img.shields.io/github/v/release/dvanoni/notero)](https://github.com/dvanoni/notero/releases/latest)
-[![Total downloads](https://img.shields.io/github/downloads/dvanoni/notero/latest/total?sort=semver)](https://github.com/dvanoni/notero/releases/latest)
+[![Total downloads](https://img.shields.io/github/downloads/dvanoni/notero/latest/total?sort=semver)][download]
 [![Works with Zotero](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2Fdvanoni%2Fnotero%2Fmain%2Fpackage.json&query=%24.xpi.zoteroMinVersion&prefix=v&suffix=%2B&logo=zotero&label=Works%20with%20Zotero&color=%23CC2936)](https://www.zotero.org/)
 [![Buy me a coffee](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fapp.buymeacoffee.com%2Fapi%2Fcreators%2Fslug%2Fdvanoni&query=%24.data.public_supporters_count&prefix=%F0%9F%92%9C%20&style=social&logo=buymeacoffee&label=Buy%20me%20a%20coffee)](https://www.buymeacoffee.com/dvanoni)
 
@@ -17,7 +17,7 @@ items and notes into [Notion](https://www.notion.so/product). To use it:
 ![Notero in action](docs/notero.gif)
 
 Concept by [@arhoff](https://github.com/arhoff) 👩🏻‍🔬 |
-Built with ❤️ by [@dvanoni](https://github.com/dvanoni)
+Built with 💜 by [@dvanoni](https://github.com/dvanoni)
 
 ## Table of Contents
 
@@ -101,10 +101,8 @@ extract them into a Zotero note:
 
 ## Installation and Setup
 
-The [latest release][] of the plugin is available on GitHub.
-See the [changelog](CHANGELOG.md) for release notes.
-
-Detailed setup instructions are below.
+Using Notero requires setting up a Notion database, connecting it to Notero, and
+installing the Notero plugin in Zotero. Detailed setup instructions are below.
 
 ### Configure Notion
 
@@ -195,10 +193,13 @@ see issue [#355](https://github.com/dvanoni/notero/issues/355).
 >
 > - The latest release of Notero requires Zotero 7.0 or above.
 > - Support for Zotero 6.0.27 and above is available in Notero [v0.5.17][].
+> - See the [changelog](CHANGELOG.md) for all release notes.
 
-1. Download the [latest release][] of the `.xpi` file.
-   - Note for Firefox users: You'll need to right-click the `.xpi` file link and
-     choose **Save Link As...** in order to properly download the file.
+1. [Download][] the latest release of the `.xpi` file.
+   - Note for Firefox users: You'll need to right-click the above download link
+     and choose **Save Link As...** in order to properly download the file.
+   - If the above download link does not work, you can download the `.xpi` file
+     from the **Assets** section of the [latest release][] page.
 2. Open the Zotero Plugins Manager via the **Tools → Plugins** menu item.
 3. Install the `.xpi` file by either:
    - dragging and dropping it into the Plugins Manager window _or_
@@ -209,6 +210,7 @@ see issue [#355](https://github.com/dvanoni/notero/issues/355).
    - Note for Zotero 7 users: The Notero preferences have moved into a section
      in the main Zotero preferences window.
 
+[download]: https://download.notero.vanoni.dev
 [latest release]: https://github.com/dvanoni/notero/releases/latest
 [v0.5.17]: https://github.com/dvanoni/notero/releases/tag/v0.5.17
 

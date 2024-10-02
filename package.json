@@ -72,7 +72,7 @@
     "@typescript-eslint/parser": "^8.8.0",
     "adm-zip": "^0.5.16",
     "concurrently": "^9.0.1",
-    "esbuild": "^0.23.1",
+    "esbuild": "^0.24.0",
     "eslint": "^8.57.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-import-resolver-typescript": "^3.6.3",

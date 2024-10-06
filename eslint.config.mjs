@@ -1,4 +1,5 @@
 import eslint from '@eslint/js';
+import configPrettier from 'eslint-config-prettier';
 import pluginImport from 'eslint-plugin-import';
 import pluginJest from 'eslint-plugin-jest';
 import globals from 'globals';
@@ -13,6 +14,7 @@ export default tseslint.config(
   pluginImport.flatConfigs.typescript,
   // eslint-disable-next-line import/no-named-as-default-member
   ...tseslint.configs.strictTypeChecked,
+  configPrettier,
   {
     languageOptions: {
       ecmaVersion: 2022,

@@ -24,7 +24,7 @@ import type { DatabaseProperties } from './notion-types';
 import { convertWebURLToAppURL, isNotionErrorWithCode } from './notion-utils';
 import { ProgressWindow } from './progress-window';
 import { buildProperties } from './property-builder';
-import { syncNote } from './sync-note';
+import { syncNoteItem } from './sync-note-item';
 
 type SyncJobParams = {
   citationFormat: string;
@@ -227,6 +227,6 @@ class SyncJob {
   }
 
   private async syncNoteItem(item: Zotero.Item) {
-    await syncNote(this.notion, item);
+    await syncNoteItem(this.notion, item);
   }
 }

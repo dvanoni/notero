@@ -65,6 +65,7 @@
     "@total-typescript/ts-reset": "^0.6.1",
     "@types/adm-zip": "^0.5.5",
     "@types/eslint__js": "^8.42.3",
+    "@types/eslint-config-prettier": "^6.11.3",
     "@types/fs-extra": "^11.0.4",
     "@types/jest": "^29.5.13",
     "@types/react": "^18.3.5",

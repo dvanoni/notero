@@ -1,5 +1,3 @@
-/* eslint-disable id-blacklist */
-
 declare namespace Zotero {
   interface Attachments {
     /**

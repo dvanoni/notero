@@ -19,7 +19,7 @@ describe('getItemURL', () => {
       );
       zoteroMock.Users.getCurrentUsername.mockReturnValueOnce(undefined);
 
-      expect(getItemURL(itemMock)).toStrictEqual(
+      expect(getItemURL(itemMock)).toBe(
         'https://zotero.org/users/local/ZswAJ4Qe/items/WGAMSPG3',
       );
     });
@@ -32,7 +32,7 @@ describe('getItemURL', () => {
         'SOME  user-name',
       );
 
-      expect(getItemURL(itemMock)).toStrictEqual(
+      expect(getItemURL(itemMock)).toBe(
         'https://zotero.org/some__user-name/items/DE9YUFJ9',
       );
     });
@@ -47,7 +47,7 @@ describe('getItemURL', () => {
         'SOME  user-name',
       );
 
-      expect(getItemURL(itemMock)).toStrictEqual(
+      expect(getItemURL(itemMock)).toBe(
         'https://zotero.org/groups/4873137/items/8XLITSYN',
       );
     });
@@ -62,7 +62,7 @@ describe('getItemURL', () => {
         'SOME  user-name',
       );
 
-      expect(getItemURL(itemMock)).toStrictEqual(
+      expect(getItemURL(itemMock)).toBe(
         'https://zotero.org/users/local/eHZqskJE/feeds/4/items/3R3PSB8X',
       );
     });

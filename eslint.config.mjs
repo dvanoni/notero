@@ -1,5 +1,6 @@
 import eslint from '@eslint/js';
 import pluginImport from 'eslint-plugin-import';
+import pluginJest from 'eslint-plugin-jest';
 import globals from 'globals';
 import tseslint from 'typescript-eslint';
 
@@ -29,6 +30,14 @@ export default tseslint.config(
         typescript: true,
       },
     },
+  },
+  {
+    files: ['**/__tests__/**', '**/*.spec.*'],
+    ...pluginJest.configs['flat/recommended'],
+  },
+  {
+    files: ['**/__tests__/**', '**/*.spec.*'],
+    ...pluginJest.configs['flat/style'],
   },
   {
     rules: {

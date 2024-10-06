@@ -9,16 +9,23 @@
     "importHelpers": true,
     "jsx": "react",
     "lib": ["ES2022", "dom"],
-    "module": "commonjs",
+    "module": "preserve",
+    "moduleResolution": "bundler",
     "noUncheckedIndexedAccess": true,
     "preserveConstEnums": false,
     "removeComments": false,
-    "resolveJsonModule": true,
     "sourceMap": true,
     "strict": true,
     "target": "ES2022",
     "typeRoots": ["./types", "./node_modules/@types"]
   },
-  "include": ["scripts/**/*", "src/**/*", "test/**/*", "types/**/*", "*.ts"],
+  "include": [
+    "scripts/**/*",
+    "src/**/*",
+    "test/**/*",
+    "types/**/*",
+    "*.mjs",
+    "*.ts"
+  ],
   "exclude": ["node_modules"]
 }

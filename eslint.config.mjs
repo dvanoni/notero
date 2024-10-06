@@ -1,5 +1,3 @@
-// @ts-check
-
 import eslint from '@eslint/js';
 import pluginImport from 'eslint-plugin-import';
 import globals from 'globals';

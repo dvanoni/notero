@@ -1,5 +1,5 @@
-import { Client, isFullBlock } from '@notionhq/client';
-import { BlockObjectRequest } from '@notionhq/client/build/src/api-endpoints';
+import { type Client, isFullBlock } from '@notionhq/client';
+import type { BlockObjectRequest } from '@notionhq/client/build/src/api-endpoints';
 
 import {
   getNotionPageID,
@@ -38,7 +38,7 @@ import { isArchivedOrNotFoundError } from './notion-utils';
  * @param notion an initialized Notion `Client` instance
  * @param noteItem the Zotero note item to sync to Notion
  */
-export async function syncNote(
+export async function syncNoteItem(
   notion: Client,
   noteItem: Zotero.Item,
 ): Promise<void> {

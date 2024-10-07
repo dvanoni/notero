@@ -1,6 +1,7 @@
 import { type Client } from '@notionhq/client';
 
 import { APA_STYLE } from '../constants';
+import { ItemSyncError } from '../errors';
 import {
   NoteroPref,
   PageTitleFormat,
@@ -81,18 +82,6 @@ async function retrieveDatabaseProperties(
   });
 
   return database.properties;
-}
-
-class ItemSyncError extends Error {
-  public readonly item: Zotero.Item;
-  public readonly name = 'ItemSyncError';
-
-  public constructor(cause: unknown, item: Zotero.Item) {
-    super(`Failed to sync item with ID ${item.id} due to ${String(cause)}`, {
-      cause,
-    });
-    this.item = item;
-  }
 }
 
 async function syncItems(

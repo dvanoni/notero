@@ -35,12 +35,12 @@ import { isArchivedOrNotFoundError } from './notion-utils';
  *      supports notes within synced blocks as the synced block is used as the
  *      container rather than the top-level container.
  *
- * @param notion an initialized Notion `Client` instance
  * @param noteItem the Zotero note item to sync to Notion
+ * @param notion an initialized Notion `Client` instance
  */
 export async function syncNoteItem(
-  notion: Client,
   noteItem: Zotero.Item,
+  notion: Client,
 ): Promise<void> {
   if (noteItem.isTopLevelItem()) {
     throw new LocalizableError(

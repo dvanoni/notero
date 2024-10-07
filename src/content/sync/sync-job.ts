@@ -15,14 +15,12 @@ import { ProgressWindow } from './progress-window';
 import { syncNoteItem } from './sync-note-item';
 import { syncRegularItem } from './sync-regular-item';
 
-type SyncJobParams = {
+export type SyncJobParams = {
   citationFormat: string;
   databaseID: string;
   databaseProperties: DatabaseProperties;
-  items: Zotero.Item[];
   notion: Client;
   pageTitleFormat: PageTitleFormat;
-  progressWindow: ProgressWindow;
 };
 
 export async function performSyncJob(
@@ -36,38 +34,14 @@ export async function performSyncJob(
   await progressWindow.show();
 
   try {
-    const syncJob = await prepareSyncJob({ items, progressWindow, window });
-
-    await syncJob.perform();
-
-    progressWindow.complete();
+    const params = await prepareSyncJob(window);
+    await syncItems(items, progressWindow, params);
   } catch (error) {
-    let cause = error;
-    let failedItem: Zotero.Item | undefined;
-
-    if (error instanceof ItemSyncError) {
-      cause = error.cause;
-      failedItem = error.item;
-    }
-
-    const errorMessage = await getLocalizedErrorMessage(
-      cause,
-      window.document.l10n,
-    );
-
-    logger.error(error, failedItem?.getDisplayTitle());
-
-    progressWindow.fail(errorMessage, failedItem);
+    await handleError(error, progressWindow, window);
   }
 }
 
-async function prepareSyncJob({
-  items,
-  progressWindow,
-  window,
-}: Pick<SyncJobParams, 'items' | 'progressWindow'> & {
-  window: Window;
-}): Promise<SyncJob> {
+async function prepareSyncJob(window: Window): Promise<SyncJobParams> {
   const notion = getNotionClient(window);
   const databaseID = getRequiredNoteroPref(NoteroPref.notionDatabaseID);
   const databaseProperties = await retrieveDatabaseProperties(
@@ -77,15 +51,13 @@ async function prepareSyncJob({
   const citationFormat = getCitationFormat();
   const pageTitleFormat = getPageTitleFormat();
 
-  return new SyncJob({
+  return {
     citationFormat,
     databaseID,
     databaseProperties,
-    items,
     notion,
     pageTitleFormat,
-    progressWindow,
-  });
+  };
 }
 
 function getCitationFormat(): string {
@@ -123,49 +95,58 @@ class ItemSyncError extends Error {
   }
 }
 
-class SyncJob {
-  public readonly citationFormat: string;
-  public readonly databaseID: string;
-  public readonly databaseProperties: DatabaseProperties;
-  public readonly items: Zotero.Item[];
-  public readonly notion: Client;
-  public readonly pageTitleFormat: PageTitleFormat;
-  public readonly progressWindow: ProgressWindow;
+async function syncItems(
+  items: Zotero.Item[],
+  progressWindow: ProgressWindow,
+  params: SyncJobParams,
+) {
+  for (const [index, item] of items.entries()) {
+    const step = index + 1;
+    logger.groupCollapsed(
+      `Syncing item ${step} of ${items.length} with ID`,
+      item.id,
+    );
+    logger.debug(item.getDisplayTitle());
 
-  public constructor(params: SyncJobParams) {
-    this.citationFormat = params.citationFormat;
-    this.databaseID = params.databaseID;
-    this.databaseProperties = params.databaseProperties;
-    this.items = params.items;
-    this.notion = params.notion;
-    this.pageTitleFormat = params.pageTitleFormat;
-    this.progressWindow = params.progressWindow;
-  }
+    await progressWindow.updateText(step);
 
-  public async perform() {
-    for (const [index, item] of this.items.entries()) {
-      const step = index + 1;
-      logger.groupCollapsed(
-        `Syncing item ${step} of ${this.items.length} with ID`,
-        item.id,
-      );
-      logger.debug(item.getDisplayTitle());
-
-      await this.progressWindow.updateText(step);
-
-      try {
-        if (item.isNote()) {
-          await syncNoteItem(this.notion, item);
-        } else {
-          await syncRegularItem({ ...this, item });
-        }
-      } catch (error) {
-        throw new ItemSyncError(error, item);
-      } finally {
-        logger.groupEnd();
+    try {
+      if (item.isNote()) {
+        await syncNoteItem(item, params.notion);
+      } else {
+        await syncRegularItem(item, params);
       }
-
-      this.progressWindow.updateProgress(step);
+    } catch (error) {
+      throw new ItemSyncError(error, item);
+    } finally {
+      logger.groupEnd();
     }
+
+    progressWindow.updateProgress(step);
   }
+
+  progressWindow.complete();
+}
+
+async function handleError(
+  error: unknown,
+  progressWindow: ProgressWindow,
+  window: Window,
+) {
+  let cause = error;
+  let failedItem: Zotero.Item | undefined;
+
+  if (error instanceof ItemSyncError) {
+    cause = error.cause;
+    failedItem = error.item;
+  }
+
+  const errorMessage = await getLocalizedErrorMessage(
+    cause,
+    window.document.l10n,
+  );
+
+  logger.error(error, failedItem?.getDisplayTitle());
+
+  progressWindow.fail(errorMessage, failedItem);
 }

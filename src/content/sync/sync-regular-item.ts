@@ -1,4 +1,4 @@
-import { APIErrorCode, type Client, isFullPage } from '@notionhq/client';
+import { APIErrorCode, isFullPage } from '@notionhq/client';
 import type {
   CreatePageResponse,
   UpdatePageResponse,
@@ -13,23 +13,20 @@ import { LocalizableError } from '../errors';
 import { logger } from '../utils';
 
 import { convertWebURLToAppURL, isNotionErrorWithCode } from './notion-utils';
-import { buildProperties, PropertyBuilderParams } from './property-builder';
-
-type SyncRegularItemParams = PropertyBuilderParams & {
-  databaseID: string;
-  notion: Client;
-};
+import { buildProperties } from './property-builder';
+import type { SyncJobParams } from './sync-job';
 
 export async function syncRegularItem(
-  params: SyncRegularItemParams,
+  item: Zotero.Item,
+  params: SyncJobParams,
 ): Promise<void> {
-  const response = await saveItemToDatabase(params);
+  const response = await saveItemToDatabase(item, params);
 
-  await saveNotionTag(params.item);
+  await saveNotionTag(item);
 
   if (isFullPage(response)) {
     const appURL = convertWebURLToAppURL(response.url);
-    await saveNotionLinkAttachment(params.item, appURL);
+    await saveNotionLinkAttachment(item, appURL);
   } else {
     throw new LocalizableError(
       'Failed to create Notion link attachment',
@@ -39,12 +36,12 @@ export async function syncRegularItem(
 }
 
 async function saveItemToDatabase(
-  params: SyncRegularItemParams,
+  item: Zotero.Item,
+  { databaseID, notion, ...params }: SyncJobParams,
 ): Promise<CreatePageResponse & UpdatePageResponse> {
-  const { databaseID, item, notion } = params;
   const pageID = getNotionPageID(item);
 
-  const properties = await buildProperties(params);
+  const properties = await buildProperties({ item, ...params });
 
   if (pageID) {
     try {

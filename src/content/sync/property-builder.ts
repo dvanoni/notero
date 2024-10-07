@@ -17,7 +17,7 @@ import type {
 } from './notion-types';
 import { buildDate, buildRichText } from './notion-utils';
 
-export type PropertyBuilderParams = {
+type PropertyBuilderParams = {
   citationFormat: string;
   databaseProperties: DatabaseProperties;
   item: Zotero.Item;

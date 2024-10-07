@@ -1,16 +1,6 @@
-import { isFullPage, type Client, APIErrorCode } from '@notionhq/client';
-import type {
-  CreatePageResponse,
-  UpdatePageResponse,
-} from '@notionhq/client/build/src/api-endpoints';
+import { type Client } from '@notionhq/client';
 
 import { APA_STYLE } from '../constants';
-import {
-  getNotionPageID,
-  saveNotionLinkAttachment,
-  saveNotionTag,
-} from '../data/item-data';
-import { LocalizableError } from '../errors';
 import {
   NoteroPref,
   PageTitleFormat,
@@ -21,10 +11,9 @@ import { getLocalizedErrorMessage, logger } from '../utils';
 
 import { getNotionClient } from './notion-client';
 import type { DatabaseProperties } from './notion-types';
-import { convertWebURLToAppURL, isNotionErrorWithCode } from './notion-utils';
 import { ProgressWindow } from './progress-window';
-import { buildProperties } from './property-builder';
 import { syncNoteItem } from './sync-note-item';
+import { syncRegularItem } from './sync-regular-item';
 
 type SyncJobParams = {
   citationFormat: string;
@@ -135,13 +124,13 @@ class ItemSyncError extends Error {
 }
 
 class SyncJob {
-  private readonly citationFormat: string;
-  private readonly databaseID: string;
-  private readonly databaseProperties: DatabaseProperties;
-  private readonly items: Zotero.Item[];
-  private readonly notion: Client;
-  private readonly pageTitleFormat: PageTitleFormat;
-  private readonly progressWindow: ProgressWindow;
+  public readonly citationFormat: string;
+  public readonly databaseID: string;
+  public readonly databaseProperties: DatabaseProperties;
+  public readonly items: Zotero.Item[];
+  public readonly notion: Client;
+  public readonly pageTitleFormat: PageTitleFormat;
+  public readonly progressWindow: ProgressWindow;
 
   public constructor(params: SyncJobParams) {
     this.citationFormat = params.citationFormat;
@@ -166,9 +155,9 @@ class SyncJob {
 
       try {
         if (item.isNote()) {
-          await this.syncNoteItem(item);
+          await syncNoteItem(this.notion, item);
         } else {
-          await this.syncRegularItem(item);
+          await syncRegularItem({ ...this, item });
         }
       } catch (error) {
         throw new ItemSyncError(error, item);
@@ -178,55 +167,5 @@ class SyncJob {
 
       this.progressWindow.updateProgress(step);
     }
-  }
-
-  private async syncRegularItem(item: Zotero.Item) {
-    const response = await this.saveItemToDatabase(item);
-
-    await saveNotionTag(item);
-
-    if (isFullPage(response)) {
-      const appURL = convertWebURLToAppURL(response.url);
-      await saveNotionLinkAttachment(item, appURL);
-    } else {
-      throw new LocalizableError(
-        'Failed to create Notion link attachment',
-        'notero-error-notion-link-attachment',
-      );
-    }
-  }
-
-  private async saveItemToDatabase(
-    item: Zotero.Item,
-  ): Promise<CreatePageResponse & UpdatePageResponse> {
-    const pageID = getNotionPageID(item);
-
-    const properties = await buildProperties({
-      citationFormat: this.citationFormat,
-      databaseProperties: this.databaseProperties,
-      item,
-      pageTitleFormat: this.pageTitleFormat,
-    });
-
-    if (pageID) {
-      try {
-        logger.debug('Update page', pageID, properties);
-        return await this.notion.pages.update({ page_id: pageID, properties });
-      } catch (error) {
-        if (!isNotionErrorWithCode(error, APIErrorCode.ObjectNotFound)) {
-          throw error;
-        }
-      }
-    }
-
-    logger.debug('Create page', properties);
-    return await this.notion.pages.create({
-      parent: { database_id: this.databaseID },
-      properties,
-    });
-  }
-
-  private async syncNoteItem(item: Zotero.Item) {
-    await syncNoteItem(this.notion, item);
   }
 }

@@ -52,6 +52,7 @@ export default tseslint.config(
         { allowNumber: true },
       ],
       '@typescript-eslint/unbound-method': ['error', { ignoreStatic: true }],
+      'import/no-extraneous-dependencies': 'error',
       'import/no-default-export': 'error',
       'import/order': [
         'error',

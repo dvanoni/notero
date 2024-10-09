@@ -80,7 +80,7 @@
     "eslint-import-resolver-typescript": "^3.6.3",
     "eslint-plugin-import": "^2.31.0",
     "fs-extra": "^11.2.0",
-    "globals": "^15.10.0",
+    "globals": "^15.11.0",
     "husky": "^9.1.6",
     "jsdom": "^25.0.1",
     "json5": "^2.2.3",
@@ -91,8 +91,8 @@
     "semver": "^7.6.3",
     "tslib": "^2.7.0",
     "tsx": "^4.19.1",
-    "typescript": "^5.6.2",
-    "typescript-eslint": "^8.8.0",
+    "typescript": "^5.6.3",
+    "typescript-eslint": "^8.8.1",
     "vitest": "^2.1.2",
     "vitest-mock-extended": "^2.0.2"
   }

@@ -25,6 +25,7 @@
     "test/**/*",
     "types/**/*",
     "*.mjs",
+    "*.mts",
     "*.ts"
   ],
   "exclude": ["node_modules"]

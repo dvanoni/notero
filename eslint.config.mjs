@@ -1,7 +1,7 @@
 import eslint from '@eslint/js';
+import pluginVitest from '@vitest/eslint-plugin';
 import configPrettier from 'eslint-config-prettier';
 import pluginImport from 'eslint-plugin-import';
-import pluginVitest from 'eslint-plugin-vitest';
 import globals from 'globals';
 import tseslint from 'typescript-eslint';
 

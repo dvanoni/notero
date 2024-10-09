@@ -1,4 +1,5 @@
-import { any, mock } from 'jest-mock-extended';
+import { describe, expect, it, vi } from 'vitest';
+import { any, mock } from 'vitest-mock-extended';
 
 import { createZoteroCollectionMock, zoteroMock } from '../../../../test/utils';
 import { PageTitleFormat } from '../../prefs/notero-pref';
@@ -10,7 +11,7 @@ import type {
 } from '../notion-types';
 import { buildProperties } from '../property-builder';
 
-jest.mock('../../utils/get-item-url');
+vi.mock('../../utils/get-item-url');
 
 const fakeCollectionName = 'Fake Collection';
 const fakeItemType = 'Journal Article';
@@ -163,7 +164,7 @@ function setup() {
   item.getField.calledWith('year').mockReturnValue(String(fakeYear));
   item.getTags.mockReturnValue([{ tag: fakeTag, type: 1 }]);
 
-  jest.mocked(getItemURL).mockReturnValue(fakeURI);
+  vi.mocked(getItemURL).mockReturnValue(fakeURI);
 
   return { collection, item };
 }

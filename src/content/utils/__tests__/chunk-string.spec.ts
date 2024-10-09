@@ -1,3 +1,5 @@
+import { describe, expect, it } from 'vitest';
+
 import { chunkString } from '../chunk-string';
 
 describe('chunkString', () => {

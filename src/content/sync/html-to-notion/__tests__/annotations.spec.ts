@@ -1,3 +1,5 @@
+import { describe, expect, it } from 'vitest';
+
 import type { Color } from '../../notion-types';
 import { getNotionColor } from '../annotations';
 

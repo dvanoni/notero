@@ -1,3 +1,5 @@
+import { describe, expect, it } from 'vitest';
+
 import { createZoteroCollectionMock } from '../../../../test/utils';
 import { buildCollectionFullName } from '../build-collection-full-name';
 

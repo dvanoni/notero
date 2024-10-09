@@ -1,6 +1,7 @@
 import { TextEncoder, TextDecoder } from 'util';
 
-import { mockDeep } from 'jest-mock-extended';
+import { vi } from 'vitest';
+import { mockDeep } from 'vitest-mock-extended';
 
 import type { logger } from '../src/content/utils/logger';
 
@@ -29,6 +30,6 @@ mockedGlobal.TextEncoder = TextEncoder;
 // @ts-expect-error The types don't match
 mockedGlobal.TextDecoder = TextDecoder;
 
-jest.mock('../src/content/utils/logger', () => ({
+vi.mock('../src/content/utils/logger', () => ({
   logger: mockDeep<typeof logger>(),
 }));

@@ -1,7 +1,7 @@
 import eslint from '@eslint/js';
+import pluginVitest from '@vitest/eslint-plugin';
 import configPrettier from 'eslint-config-prettier';
 import pluginImport from 'eslint-plugin-import';
-import pluginJest from 'eslint-plugin-jest';
 import globals from 'globals';
 import tseslint from 'typescript-eslint';
 
@@ -35,11 +35,7 @@ export default tseslint.config(
   },
   {
     files: ['**/__tests__/**', '**/*.spec.*'],
-    ...pluginJest.configs['flat/recommended'],
-  },
-  {
-    files: ['**/__tests__/**', '**/*.spec.*'],
-    ...pluginJest.configs['flat/style'],
+    ...pluginVitest.configs.recommended,
   },
   {
     rules: {
@@ -56,6 +52,7 @@ export default tseslint.config(
         { allowNumber: true },
       ],
       '@typescript-eslint/unbound-method': ['error', { ignoreStatic: true }],
+      'import/no-extraneous-dependencies': 'error',
       'import/no-default-export': 'error',
       'import/order': [
         'error',

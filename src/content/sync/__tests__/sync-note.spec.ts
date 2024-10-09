@@ -3,7 +3,8 @@ import {
   PartialBlockObjectResponse,
   type AppendBlockChildrenResponse,
 } from '@notionhq/client/build/src/api-endpoints';
-import { mockDeep, objectContainsValue } from 'jest-mock-extended';
+import { describe, expect, it, vi } from 'vitest';
+import { mockDeep, objectContainsValue } from 'vitest-mock-extended';
 
 import { createZoteroItemMock } from '../../../../test/utils';
 import {
@@ -14,7 +15,7 @@ import {
 } from '../../data/item-data';
 import { syncNote } from '../sync-note';
 
-jest.mock('../../data/item-data');
+vi.mock('../../data/item-data');
 
 const containerHeadingBlock = {
   heading_1: {
@@ -43,7 +44,7 @@ function createResponseMock(response: Partial<PartialBlockObjectResponse>) {
 }
 
 function setup({ syncedNotes }: { syncedNotes: SyncedNotes }) {
-  jest.clearAllMocks();
+  vi.clearAllMocks();
 
   const noteItem = createZoteroItemMock({
     getNoteTitle: () => fakeNoteTitle,
@@ -56,8 +57,8 @@ function setup({ syncedNotes }: { syncedNotes: SyncedNotes }) {
   const regularItem = createZoteroItemMock();
   noteItem.topLevelItem = regularItem;
 
-  jest.mocked(getNotionPageID).mockReturnValue(fakePageID);
-  jest.mocked(getSyncedNotes).mockReturnValue(syncedNotes);
+  vi.mocked(getNotionPageID).mockReturnValue(fakePageID);
+  vi.mocked(getSyncedNotes).mockReturnValue(syncedNotes);
 
   notion.blocks.children.append
     .calledWith(objectContainsValue(fakePageID))

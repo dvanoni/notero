@@ -1,3 +1,5 @@
+import { describe, expect, it } from 'vitest';
+
 import { createZoteroItemMock } from '../../../../test/utils';
 import { getSyncedNotesFromAttachment } from '../item-data';
 

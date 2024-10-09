@@ -1,3 +1,5 @@
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+
 import {
   createWindowMock,
   createZoteroCollectionMock,
@@ -12,14 +14,14 @@ import { performSyncJob } from '../../sync/sync-job';
 import { parseItemDate } from '../../utils';
 import { EventManager, SyncManager } from '../index';
 
-jest.mock('../../data/item-data');
-jest.mock('../../sync/sync-job');
-jest.mock('../../utils/parse-item-date');
+vi.mock('../../data/item-data');
+vi.mock('../../sync/sync-job');
+vi.mock('../../utils/parse-item-date');
 
-jest.mocked(parseItemDate).mockImplementation((date) => new Date(date));
+vi.mocked(parseItemDate).mockImplementation((date) => new Date(date));
 
-const mockedGetSyncedNotes = jest.mocked(getSyncedNotes);
-const mockedPerformSyncJob = jest.mocked(performSyncJob);
+const mockedGetSyncedNotes = vi.mocked(getSyncedNotes);
+const mockedPerformSyncJob = vi.mocked(performSyncJob);
 
 const pluginInfo = {
   pluginID: 'test',
@@ -151,12 +153,12 @@ function setup({
 }
 
 beforeEach(() => {
-  jest.useFakeTimers();
+  vi.useFakeTimers();
 });
 
 afterEach(() => {
-  jest.runOnlyPendingTimers();
-  jest.useRealTimers();
+  vi.runOnlyPendingTimers();
+  vi.useRealTimers();
 });
 
 describe('SyncManager', () => {
@@ -167,7 +169,7 @@ describe('SyncManager', () => {
 
     eventManager.emit('request-sync-items', [regularItem]);
 
-    jest.runAllTimers();
+    vi.runAllTimers();
 
     expect(performSyncJob).toHaveBeenCalledTimes(0);
   });
@@ -178,7 +180,7 @@ describe('SyncManager', () => {
     const firstWindow = zoteroMock.getMainWindow();
 
     eventManager.emit('request-sync-items', [regularItem]);
-    await jest.runAllTimersAsync();
+    await vi.runAllTimersAsync();
 
     expect(mockedPerformSyncJob.mock.lastCall?.[1]).toBe(firstWindow);
 
@@ -186,7 +188,7 @@ describe('SyncManager', () => {
     zoteroMock.getMainWindow.mockReturnValue(secondWindow);
 
     eventManager.emit('request-sync-items', [regularItem]);
-    await jest.runAllTimersAsync();
+    await vi.runAllTimersAsync();
 
     expect(mockedPerformSyncJob).toHaveBeenCalledTimes(2);
     expect(mockedPerformSyncJob.mock.lastCall?.[1]).toBe(secondWindow);
@@ -198,7 +200,7 @@ describe('SyncManager', () => {
 
       eventManager.emit('request-sync-collection', collection);
 
-      jest.runAllTimers();
+      vi.runAllTimers();
 
       expect(mockedPerformSyncJob.mock.lastCall?.[0]).not.toContain(
         deletedItem.id,
@@ -210,7 +212,7 @@ describe('SyncManager', () => {
 
       eventManager.emit('request-sync-collection', collection);
 
-      jest.runAllTimers();
+      vi.runAllTimers();
 
       expect(mockedPerformSyncJob.mock.lastCall?.[0]).toStrictEqual(
         new Set([regularItem.id]),
@@ -222,7 +224,7 @@ describe('SyncManager', () => {
 
       eventManager.emit('request-sync-collection', collection);
 
-      jest.runAllTimers();
+      vi.runAllTimers();
 
       expect(mockedPerformSyncJob.mock.lastCall?.[0]).toStrictEqual(
         new Set([regularItem.id, outOfSyncNoteItem.id, unsyncedNoteItem.id]),
@@ -242,7 +244,7 @@ describe('SyncManager', () => {
         noteItemNotInCollection,
       ]);
 
-      jest.runAllTimers();
+      vi.runAllTimers();
 
       expect(mockedPerformSyncJob.mock.lastCall?.[0]).toStrictEqual(
         new Set([
@@ -262,7 +264,7 @@ describe('SyncManager', () => {
         regularItemNotInCollection,
       ]);
 
-      jest.runAllTimers();
+      vi.runAllTimers();
 
       expect(mockedPerformSyncJob.mock.lastCall?.[0]).toStrictEqual(
         new Set([
@@ -282,7 +284,7 @@ describe('SyncManager', () => {
 
       eventManager.emit('notifier-event', 'collection.delete', [collection.id]);
 
-      jest.runAllTimers();
+      vi.runAllTimers();
 
       expect(performSyncJob).toHaveBeenCalledTimes(0);
     });
@@ -292,7 +294,7 @@ describe('SyncManager', () => {
 
       eventManager.emit('notifier-event', 'collection.delete', [collection.id]);
 
-      jest.runAllTimers();
+      vi.runAllTimers();
 
       expect(performSyncJob).toHaveBeenCalledTimes(0);
     });
@@ -302,7 +304,7 @@ describe('SyncManager', () => {
 
       eventManager.emit('notifier-event', 'collection.delete', [collection.id]);
 
-      jest.runAllTimers();
+      vi.runAllTimers();
 
       expect(mockedPerformSyncJob.mock.lastCall?.[0]).toStrictEqual(
         new Set([regularItem.id]),
@@ -316,7 +318,7 @@ describe('SyncManager', () => {
 
       eventManager.emit('notifier-event', 'collection.modify', [collection.id]);
 
-      jest.runAllTimers();
+      vi.runAllTimers();
 
       expect(performSyncJob).toHaveBeenCalledTimes(0);
     });
@@ -326,7 +328,7 @@ describe('SyncManager', () => {
 
       eventManager.emit('notifier-event', 'collection.modify', [collection.id]);
 
-      jest.runAllTimers();
+      vi.runAllTimers();
 
       expect(performSyncJob).toHaveBeenCalledTimes(0);
     });
@@ -336,7 +338,7 @@ describe('SyncManager', () => {
 
       eventManager.emit('notifier-event', 'collection.modify', [collection.id]);
 
-      jest.runAllTimers();
+      vi.runAllTimers();
 
       expect(mockedPerformSyncJob.mock.lastCall?.[0]).toStrictEqual(
         new Set([regularItem.id]),
@@ -352,7 +354,7 @@ describe('SyncManager', () => {
         [1234, regularItemNotInCollection.id],
       ]);
 
-      jest.runAllTimers();
+      vi.runAllTimers();
 
       expect(performSyncJob).toHaveBeenCalledTimes(0);
     });
@@ -364,7 +366,7 @@ describe('SyncManager', () => {
         [collection.id, regularItem.id],
       ]);
 
-      jest.runAllTimers();
+      vi.runAllTimers();
 
       expect(mockedPerformSyncJob.mock.lastCall?.[0]).toStrictEqual(
         new Set([regularItem.id, outOfSyncNoteItem.id, unsyncedNoteItem.id]),
@@ -378,7 +380,7 @@ describe('SyncManager', () => {
         [collection.id, regularItem.id],
       ]);
 
-      jest.runAllTimers();
+      vi.runAllTimers();
 
       expect(mockedPerformSyncJob.mock.lastCall?.[0]).toStrictEqual(
         new Set([regularItem.id, outOfSyncNoteItem.id, unsyncedNoteItem.id]),
@@ -392,7 +394,7 @@ describe('SyncManager', () => {
 
       eventManager.emit('notifier-event', 'item.modify', [regularItem.id]);
 
-      jest.runAllTimers();
+      vi.runAllTimers();
 
       expect(performSyncJob).toHaveBeenCalledTimes(0);
     });
@@ -404,7 +406,7 @@ describe('SyncManager', () => {
         regularItemNotInCollection.id,
       ]);
 
-      jest.runAllTimers();
+      vi.runAllTimers();
 
       expect(performSyncJob).toHaveBeenCalledTimes(0);
     });
@@ -416,7 +418,7 @@ describe('SyncManager', () => {
         noteItemNotInCollection.id,
       ]);
 
-      jest.runAllTimers();
+      vi.runAllTimers();
 
       expect(performSyncJob).toHaveBeenCalledTimes(0);
     });
@@ -426,7 +428,7 @@ describe('SyncManager', () => {
 
       eventManager.emit('notifier-event', 'item.modify', [deletedItem.id]);
 
-      jest.runAllTimers();
+      vi.runAllTimers();
 
       expect(performSyncJob).toHaveBeenCalledTimes(0);
     });
@@ -436,7 +438,7 @@ describe('SyncManager', () => {
 
       eventManager.emit('notifier-event', 'item.modify', [regularItem.id]);
 
-      jest.runAllTimers();
+      vi.runAllTimers();
 
       expect(mockedPerformSyncJob.mock.lastCall?.[0]).toStrictEqual(
         new Set([regularItem.id]),
@@ -448,7 +450,7 @@ describe('SyncManager', () => {
 
       eventManager.emit('notifier-event', 'item.modify', [regularItem.id]);
 
-      jest.runAllTimers();
+      vi.runAllTimers();
 
       expect(mockedPerformSyncJob.mock.lastCall?.[0]).toStrictEqual(
         new Set([regularItem.id, outOfSyncNoteItem.id, unsyncedNoteItem.id]),
@@ -460,7 +462,7 @@ describe('SyncManager', () => {
 
       eventManager.emit('notifier-event', 'item.modify', [syncedNoteItem.id]);
 
-      jest.runAllTimers();
+      vi.runAllTimers();
 
       expect(mockedPerformSyncJob.mock.lastCall?.[0]).toStrictEqual(
         new Set([syncedNoteItem.id]),
@@ -476,7 +478,7 @@ describe('SyncManager', () => {
         [regularItem.id, fakeTagID],
       ]);
 
-      jest.runAllTimers();
+      vi.runAllTimers();
 
       expect(performSyncJob).toHaveBeenCalledTimes(0);
     });
@@ -488,7 +490,7 @@ describe('SyncManager', () => {
         [regularItemNotInCollection.id, fakeTagID],
       ]);
 
-      jest.runAllTimers();
+      vi.runAllTimers();
 
       expect(performSyncJob).toHaveBeenCalledTimes(0);
     });
@@ -500,7 +502,7 @@ describe('SyncManager', () => {
         [deletedItem.id, fakeTagID],
       ]);
 
-      jest.runAllTimers();
+      vi.runAllTimers();
 
       expect(performSyncJob).toHaveBeenCalledTimes(0);
     });
@@ -512,7 +514,7 @@ describe('SyncManager', () => {
         [regularItem.id, fakeTagID],
       ]);
 
-      jest.runAllTimers();
+      vi.runAllTimers();
 
       expect(mockedPerformSyncJob.mock.lastCall?.[0]).toStrictEqual(
         new Set([regularItem.id]),
@@ -528,7 +530,7 @@ describe('SyncManager', () => {
         [regularItem.id, fakeTagID],
       ]);
 
-      jest.runAllTimers();
+      vi.runAllTimers();
 
       expect(performSyncJob).toHaveBeenCalledTimes(0);
     });
@@ -540,7 +542,7 @@ describe('SyncManager', () => {
         [regularItemNotInCollection.id, fakeTagID],
       ]);
 
-      jest.runAllTimers();
+      vi.runAllTimers();
 
       expect(performSyncJob).toHaveBeenCalledTimes(0);
     });
@@ -552,7 +554,7 @@ describe('SyncManager', () => {
         [deletedItem.id, fakeTagID],
       ]);
 
-      jest.runAllTimers();
+      vi.runAllTimers();
 
       expect(performSyncJob).toHaveBeenCalledTimes(0);
     });
@@ -564,7 +566,7 @@ describe('SyncManager', () => {
         [regularItem.id, fakeTagID],
       ]);
 
-      jest.runAllTimers();
+      vi.runAllTimers();
 
       expect(mockedPerformSyncJob.mock.lastCall?.[0]).toStrictEqual(
         new Set([regularItem.id]),

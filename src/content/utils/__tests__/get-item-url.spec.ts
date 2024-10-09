@@ -1,3 +1,5 @@
+import { describe, expect, it } from 'vitest';
+
 import { createZoteroItemMock, zoteroMock } from '../../../../test/utils';
 import { getItemURL } from '../get-item-url';
 

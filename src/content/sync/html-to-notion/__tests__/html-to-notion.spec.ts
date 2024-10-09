@@ -1,3 +1,5 @@
+import { describe, expect, it } from 'vitest';
+
 import { convertHtmlToBlocks } from '../html-to-notion';
 
 import { htmlTestCases } from './fixtures';

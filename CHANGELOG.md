@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.6.5](https://github.com/dvanoni/notero/compare/v0.6.4...v0.6.5) (2024-10-12)
+
+
+### Features
+
+* **localization:** New Crowdin translations ([#601](https://github.com/dvanoni/notero/issues/601)) ([d7a5603](https://github.com/dvanoni/notero/commit/d7a5603da583a9a74379a213e6845582814d86ea))
+
+
+### Bug Fixes
+
+* **sync:** Improve warning when trying to sync note item without parent ([#599](https://github.com/dvanoni/notero/issues/599)) ([086905b](https://github.com/dvanoni/notero/commit/086905bd97681f3a275f200c9abf023be983a913))
+
 ## [0.6.4](https://github.com/dvanoni/notero/compare/v0.6.3...v0.6.4) (2024-09-14)
 
 

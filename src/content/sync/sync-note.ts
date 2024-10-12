@@ -42,12 +42,19 @@ export async function syncNote(
   notion: Client,
   noteItem: Zotero.Item,
 ): Promise<void> {
+  if (noteItem.isTopLevelItem()) {
+    throw new LocalizableError(
+      'Cannot sync note without a parent item',
+      'notero-error-note-without-parent',
+    );
+  }
+
   const regularItem = noteItem.topLevelItem;
   const pageID = getNotionPageID(regularItem);
 
   if (!pageID) {
     throw new LocalizableError(
-      'Cannot sync note for item that is not synced',
+      'Cannot sync note because its parent item is not synced',
       'notero-error-note-parent-not-synced',
     );
   }

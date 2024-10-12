@@ -55,6 +55,7 @@ function setup({ syncedNotes }: { syncedNotes: SyncedNotes }) {
     },
   });
   const regularItem = createZoteroItemMock();
+  noteItem.isTopLevelItem.mockReturnValue(false);
   noteItem.topLevelItem = regularItem;
 
   vi.mocked(getNotionPageID).mockReturnValue(fakePageID);
@@ -74,6 +75,25 @@ function setup({ syncedNotes }: { syncedNotes: SyncedNotes }) {
 }
 
 describe('syncNote', () => {
+  it('throws an error when note has no parent', async () => {
+    const { noteItem, notion } = setup({ syncedNotes: {} });
+    noteItem.isTopLevelItem.mockReturnValue(true);
+    noteItem.topLevelItem = noteItem;
+
+    await expect(syncNote(notion, noteItem)).rejects.toThrow(
+      'Cannot sync note without a parent item',
+    );
+  });
+
+  it('throws an error when parent item is not synced', async () => {
+    const { noteItem, notion } = setup({ syncedNotes: {} });
+    vi.mocked(getNotionPageID).mockReturnValue(undefined);
+
+    await expect(syncNote(notion, noteItem)).rejects.toThrow(
+      'Cannot sync note because its parent item is not synced',
+    );
+  });
+
   it('creates a container block when item does not already have one', async () => {
     const { noteItem, notion } = setup({ syncedNotes: {} });
 

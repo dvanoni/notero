@@ -197,6 +197,8 @@ declare namespace Zotero {
 
     isRegularItem(): boolean;
 
+    isTopLevelItem(): boolean;
+
     setField(field: number | string, value: unknown, loadIn?: boolean): boolean;
 
     setNote(text: string): boolean;

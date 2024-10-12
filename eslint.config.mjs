@@ -62,6 +62,13 @@ export default tseslint.config(
           warnOnUnassignedImports: true,
         },
       ],
+      'no-console': 'error',
+    },
+  },
+  {
+    files: ['scripts/**'],
+    rules: {
+      'no-console': 'off',
     },
   },
 );

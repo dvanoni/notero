@@ -43,15 +43,26 @@
     "reveal": "never"
   },
   {
-    "label": "Test",
+    "label": "Test all (once)",
     "command": "npm",
     "args": ["run", "test"],
     "reveal": "always"
   },
   {
-    "label": "Test watch",
+    "label": "Test all (watch)",
     "command": "npm",
     "args": ["run", "test:watch"],
     "reveal": "always"
+  },
+  {
+    "label": "Test $ZED_STEM",
+    "command": "npx vitest related",
+    "args": ["\"$ZED_RELATIVE_FILE\""]
+  },
+  {
+    "label": "Test $ZED_SYMBOL",
+    "command": "npx vitest",
+    "args": ["\"$ZED_RELATIVE_FILE\"", "--testNamePattern", "\"$ZED_SYMBOL\""],
+    "tags": ["ts-test", "tsx-test"]
   }
 ]

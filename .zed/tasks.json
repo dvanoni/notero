@@ -2,9 +2,9 @@
 [
   {
     "label": "Build",
-    "command": "npm",
+    "command": "npm run build",
     // rest of the parameters are optional
-    "args": ["run", "build"],
+    // "args": [],
     // Env overrides for the command, will be appended to the terminal's environment from the settings.
     // "env": { "foo": "bar" },
     // Current working directory to spawn the command into, defaults to current project root.
@@ -20,49 +20,45 @@
   },
   {
     "label": "Build with source maps",
-    "command": "npm",
-    "args": ["run", "build", "--", "--sourcemap"],
+    "command": "npm run build -- --sourcemap",
     "reveal": "never"
   },
   {
     "label": "Generate Fluent types",
-    "command": "npm",
-    "args": ["run", "generate-fluent-types"],
+    "command": "npm run generate-fluent-types",
     "reveal": "never"
   },
   {
     "label": "Start Zotero",
-    "command": "npm",
-    "args": ["run", "start"],
+    "command": "npm run start",
     "reveal": "never"
   },
   {
     "label": "Start Zotero Beta",
-    "command": "npm",
-    "args": ["run", "start:beta"],
+    "command": "npm run start:beta",
     "reveal": "never"
   },
   {
     "label": "Test all (once)",
-    "command": "npm",
-    "args": ["run", "test"],
+    "command": "npm run test",
     "reveal": "always"
   },
   {
     "label": "Test all (watch)",
-    "command": "npm",
-    "args": ["run", "test:watch"],
+    "command": "npm run test:watch",
     "reveal": "always"
   },
   {
     "label": "Test $ZED_STEM",
     "command": "npx vitest related",
-    "args": ["\"$ZED_RELATIVE_FILE\""]
+    "args": ["\"$ZED_RELATIVE_FILE\""],
+    "reveal": "always"
   },
   {
     "label": "Test $ZED_SYMBOL",
     "command": "npx vitest",
     "args": ["\"$ZED_RELATIVE_FILE\"", "--testNamePattern", "\"$ZED_SYMBOL\""],
+    "reveal": "always",
     "tags": ["ts-test", "tsx-test"]
   }
 ]

@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.6.6](https://github.com/dvanoni/notero/compare/v0.6.5...v0.6.6) (2024-10-16)
+
+
+### Bug Fixes
+
+* **sync:** Support changing destination Notion database ([#604](https://github.com/dvanoni/notero/issues/604)) ([95b6d3c](https://github.com/dvanoni/notero/commit/95b6d3cb528536f120cdb4e99e62f514d10a21b2)), closes [#241](https://github.com/dvanoni/notero/issues/241)
+
 ## [0.6.5](https://github.com/dvanoni/notero/compare/v0.6.4...v0.6.5) (2024-10-12)
 
 

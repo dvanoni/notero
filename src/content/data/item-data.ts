@@ -1,5 +1,4 @@
 import { NOTION_TAG_NAME } from '../constants';
-import { NoteroPref, getNoteroPref } from '../prefs/notero-pref';
 import { getPageIDFromURL, isNotionURL } from '../sync/notion-utils';
 import { isObject } from '../utils';
 
@@ -172,14 +171,12 @@ so that it can properly update the Notion page for this item.</p>
 <p>Last synced: ${new Date().toLocaleString()}</p>
 `;
 
-  if (getNoteroPref(NoteroPref.syncNotes)) {
-    const syncedNotesJSON = syncedNotes
-      ? JSON.stringify(syncedNotes)
-      : getSyncedNotesJSON(attachment);
+  const syncedNotesJSON = syncedNotes
+    ? JSON.stringify(syncedNotes)
+    : getSyncedNotesJSON(attachment);
 
-    if (syncedNotesJSON) {
-      note += `<pre id="${SYNCED_NOTES_ID}">${syncedNotesJSON}</pre>`;
-    }
+  if (syncedNotesJSON) {
+    note += `<pre id="${SYNCED_NOTES_ID}">${syncedNotesJSON}</pre>`;
   }
 
   attachment.setNote(note);

@@ -56,6 +56,27 @@ describe('getSyncedNotesFromAttachment', () => {
 });
 
 describe('saveNotionLinkAttachment', () => {
+  it('preserves synced notes when `syncNotes` is disabled', async () => {
+    mockZoteroPrefs();
+    setNoteroPref(NoteroPref.syncNotes, false);
+    const pageURL =
+      'notion://www.notion.so/page-00000000000000000000000000000000';
+    const syncedNotes =
+      '<pre id="notero-synced-notes">{"existing":"notes"}</pre>';
+    const item = createZoteroItemMock();
+    const attachment = createZoteroItemMock();
+    item.getAttachments.mockReturnValue([attachment.id]);
+    attachment.getField.calledWith('url').mockReturnValue(pageURL);
+    attachment.getNote.mockReturnValue(syncedNotes);
+
+    await saveNotionLinkAttachment(item, pageURL);
+
+    // eslint-disable-next-line @typescript-eslint/unbound-method
+    expect(attachment.setNote).toHaveBeenCalledWith(
+      expect.stringContaining(syncedNotes),
+    );
+  });
+
   it('preserves synced notes when page ID does not change', async () => {
     mockZoteroPrefs();
     setNoteroPref(NoteroPref.syncNotes, true);

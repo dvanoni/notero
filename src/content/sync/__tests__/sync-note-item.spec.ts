@@ -1,7 +1,7 @@
 import { APIErrorCode, APIResponseError, type Client } from '@notionhq/client';
-import {
+import type {
+  AppendBlockChildrenResponse,
   PartialBlockObjectResponse,
-  type AppendBlockChildrenResponse,
 } from '@notionhq/client/build/src/api-endpoints';
 import { describe, expect, it, vi } from 'vitest';
 import { mockDeep, objectContainsValue } from 'vitest-mock-extended';
@@ -13,7 +13,7 @@ import {
   getSyncedNotes,
   saveSyncedNote,
 } from '../../data/item-data';
-import { syncNote } from '../sync-note';
+import { syncNoteItem } from '../sync-note-item';
 
 vi.mock('../../data/item-data');
 
@@ -74,13 +74,13 @@ function setup({ syncedNotes }: { syncedNotes: SyncedNotes }) {
   return { noteItem, notion, regularItem };
 }
 
-describe('syncNote', () => {
+describe('syncNoteItem', () => {
   it('throws an error when note has no parent', async () => {
     const { noteItem, notion } = setup({ syncedNotes: {} });
     noteItem.isTopLevelItem.mockReturnValue(true);
     noteItem.topLevelItem = noteItem;
 
-    await expect(syncNote(notion, noteItem)).rejects.toThrow(
+    await expect(() => syncNoteItem(noteItem, notion)).rejects.toThrow(
       'Cannot sync note without a parent item',
     );
   });
@@ -89,7 +89,7 @@ describe('syncNote', () => {
     const { noteItem, notion } = setup({ syncedNotes: {} });
     vi.mocked(getNotionPageID).mockReturnValue(undefined);
 
-    await expect(syncNote(notion, noteItem)).rejects.toThrow(
+    await expect(() => syncNoteItem(noteItem, notion)).rejects.toThrow(
       'Cannot sync note because its parent item is not synced',
     );
   });
@@ -97,7 +97,7 @@ describe('syncNote', () => {
   it('creates a container block when item does not already have one', async () => {
     const { noteItem, notion } = setup({ syncedNotes: {} });
 
-    await syncNote(notion, noteItem);
+    await syncNoteItem(noteItem, notion);
 
     expect(notion.blocks.children.append).toHaveBeenCalledWith({
       block_id: fakePageID,
@@ -108,7 +108,7 @@ describe('syncNote', () => {
   it('saves the containerBlockID to the regular item', async () => {
     const { noteItem, notion, regularItem } = setup({ syncedNotes: {} });
 
-    await syncNote(notion, noteItem);
+    await syncNoteItem(noteItem, notion);
 
     expect(saveSyncedNote).toHaveBeenCalledWith(
       regularItem,
@@ -124,7 +124,7 @@ describe('syncNote', () => {
         syncedNotes: { containerBlockID: fakeContainerID },
       });
 
-      await syncNote(notion, noteItem);
+      await syncNoteItem(noteItem, notion);
 
       expect(notion.blocks.children.append).not.toHaveBeenCalledWith({
         block_id: fakePageID,
@@ -142,7 +142,7 @@ describe('syncNote', () => {
         .mockRejectedValueOnce(objectNotFoundError)
         .mockResolvedValueOnce(createResponseMock({ id: fakeNoteBlockID }));
 
-      await syncNote(notion, noteItem);
+      await syncNoteItem(noteItem, notion);
 
       expect(notion.blocks.children.append).toHaveBeenCalledWith({
         block_id: fakePageID,
@@ -160,7 +160,7 @@ describe('syncNote', () => {
       .calledWith(objectContainsValue(fakeContainerID))
       .mockRejectedValue(new Error('Failed to append children'));
 
-    await expect(() => syncNote(notion, noteItem)).rejects.toThrow();
+    await expect(() => syncNoteItem(noteItem, notion)).rejects.toThrow();
 
     expect(saveSyncedNote).toHaveBeenCalledWith(
       regularItem,
@@ -179,7 +179,7 @@ describe('syncNote', () => {
       .calledWith(objectContainsValue(fakeNoteBlockID))
       .mockRejectedValue(new Error('Failed to append children'));
 
-    await expect(() => syncNote(notion, noteItem)).rejects.toThrow();
+    await expect(() => syncNoteItem(noteItem, notion)).rejects.toThrow();
 
     expect(saveSyncedNote).toHaveBeenCalledWith(
       regularItem,

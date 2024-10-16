@@ -49,9 +49,13 @@ export async function saveNotionLinkAttachment(
     await Zotero.Items.erase(attachmentIDs);
   }
 
-  let attachment = attachments.length ? attachments[0] : null;
+  let attachment = attachments[0];
+  let pageIDChanged = false;
 
   if (attachment) {
+    const currentURL = attachment.getField('url');
+    pageIDChanged =
+      !currentURL || getPageIDFromURL(currentURL) !== getPageIDFromURL(appURL);
     attachment.setField('url', appURL);
   } else {
     attachment = await Zotero.Attachments.linkFromURL({
@@ -64,7 +68,8 @@ export async function saveNotionLinkAttachment(
     });
   }
 
-  updateNotionLinkAttachmentNote(attachment);
+  const syncedNotes = pageIDChanged ? {} : undefined;
+  updateNotionLinkAttachmentNote(attachment, syncedNotes);
 
   await attachment.saveTx();
 }
@@ -157,7 +162,7 @@ export async function saveSyncedNote(
 
 function updateNotionLinkAttachmentNote(
   attachment: Zotero.Item,
-  syncedNotes?: Required<SyncedNotes>,
+  syncedNotes?: SyncedNotes,
 ) {
   let note = `
 <h2 style="background-color: #ff666680;">Do not modify or delete!</h2>

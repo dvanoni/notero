@@ -7,6 +7,7 @@ import type { createRoot } from 'react-dom/client';
 import { FluentMessageId } from '../../locale/fluent-types';
 import { LocalizableError } from '../errors';
 import { getNotionClient } from '../sync/notion-client';
+import { normalizeID } from '../sync/notion-utils';
 import {
   createXULElement,
   getLocalizedErrorMessage,
@@ -157,14 +158,13 @@ class Preferences {
       const databases = await this.retrieveNotionDatabases();
 
       menuItems = databases.map<MenuItem>((database) => {
-        const idWithoutDashes = database.id.replace(/-/g, '');
         const title = database.title.map((t) => t.plain_text).join('');
         const icon =
           database.icon?.type === 'emoji' ? database.icon.emoji : null;
 
         return {
           label: icon ? `${icon} ${title}` : title,
-          value: idWithoutDashes,
+          value: normalizeID(database.id),
         };
       });
 

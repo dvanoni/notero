@@ -423,6 +423,18 @@ describe('SyncManager', () => {
       expect(performSyncJob).toHaveBeenCalledTimes(0);
     });
 
+    it('does not perform sync of note item when `syncNotes` is disabled', () => {
+      const { eventManager } = setup({ syncNotes: false });
+
+      eventManager.emit('notifier-event', 'item.modify', [
+        outOfSyncNoteItem.id,
+      ]);
+
+      vi.runAllTimers();
+
+      expect(performSyncJob).toHaveBeenCalledTimes(0);
+    });
+
     it('does not perform sync when item is deleted', () => {
       const { eventManager } = setup();
 

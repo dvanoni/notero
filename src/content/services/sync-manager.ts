@@ -100,6 +100,7 @@ export class SyncManager implements Service {
     ...[event, ids]: NotifierEventParams
   ): Zotero.Item[] {
     const syncOnModifyItems = getNoteroPref(NoteroPref.syncOnModifyItems);
+    const syncNotes = getNoteroPref(NoteroPref.syncNotes);
 
     if (!syncOnModifyItems && event !== 'collection-item.add') {
       return [];
@@ -115,7 +116,9 @@ export class SyncManager implements Service {
         return items.concat(notes);
       }
       case 'item.modify': {
-        const items = Zotero.Items.get(ids);
+        const items = Zotero.Items.get(ids).filter(
+          (item) => item.isRegularItem() || (item.isNote() && syncNotes),
+        );
         const notes = this.getNotesToSync(items);
         return items.concat(notes);
       }

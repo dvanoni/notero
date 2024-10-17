@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.6.7](https://github.com/dvanoni/notero/compare/v0.6.6...v0.6.7) (2024-10-17)
+
+
+### Bug Fixes
+
+* **sync:** Do not sync note items when "sync notes" is disabled ([#608](https://github.com/dvanoni/notero/issues/608)) ([715e5a3](https://github.com/dvanoni/notero/commit/715e5a353bf3cdf075aab1ce7e9c297a7a99aa65)), closes [#509](https://github.com/dvanoni/notero/issues/509)
+* **sync:** Prevent duplicate notes due to unsaved sync data ([#606](https://github.com/dvanoni/notero/issues/606)) ([cc34ad6](https://github.com/dvanoni/notero/commit/cc34ad6d74202f05186b02105b99b1c204fc8f9a))
+
 ## [0.6.6](https://github.com/dvanoni/notero/compare/v0.6.5...v0.6.6) (2024-10-16)
 
 

@@ -131,7 +131,7 @@ installing the Notero plugin in Zotero. Detailed setup instructions are below.
 
     > 1. Go to the database page in your workspace.
     > 2. Click on the **•••** More menu in the top-right corner of the page.
-    > 3. Scroll down to and click **+ Add Connections**.
+    > 3. Scroll down to and click **Connect to**.
     > 4. Search for and select your integration in the **Search for connections...** menu.
 
       <details>

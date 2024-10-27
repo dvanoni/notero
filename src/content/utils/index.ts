@@ -4,6 +4,8 @@ export {
   createHTMLElement,
   createXULElement,
   getXULElementById,
+  isXULElement,
+  isXULElementOfType,
 } from './elements';
 export { getAllCollectionItems } from './get-all-collection-items';
 export { getItemURL } from './get-item-url';

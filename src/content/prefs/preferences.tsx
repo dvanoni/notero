@@ -7,11 +7,13 @@ import type { createRoot } from 'react-dom/client';
 import { FluentMessageId } from '../../locale/fluent-types';
 import { LocalizableError } from '../errors';
 import { getNotionClient } from '../sync/notion-client';
+import { startNotionOauthSession } from '../sync/notion-oauth';
 import { normalizeID } from '../sync/notion-utils';
 import {
   createXULElement,
   getLocalizedErrorMessage,
   getXULElementById,
+  isXULElementOfType,
   logger,
 } from '../utils';
 
@@ -203,6 +205,15 @@ class Preferences {
       logger.error(error);
       throw error;
     }
+  }
+
+  public async openNotionLogin(event: XUL.CommandEvent): Promise<void> {
+    if (!event.target || !isXULElementOfType(event.target, 'button')) return;
+
+    event.target.disabled = true;
+    const notionOauthSession = await startNotionOauthSession();
+    await notionOauthSession.openLogin();
+    event.target.disabled = false;
   }
 
   public toggleNotionTokenVisibility(): void {

@@ -1,21 +1,16 @@
-import type { OauthTokenResponse } from '@notionhq/client/build/src/api-endpoints';
+import { getNotionOauthSession } from '../sync/notion-oauth';
+import { logger } from '../utils';
 
-import { isObject, logger } from '../utils';
-
-import type { PreferencePaneManager, Service, ServiceParams } from '.';
+import type { Service } from './service';
 
 const ZOTERO_SCHEME = 'zotero';
 const NOTERO_PATH = '//notero';
 const EXTENSION_SPEC = `${ZOTERO_SCHEME}:${NOTERO_PATH}`;
 
 export class ProtocolHandlerExtension implements Service {
-  private preferencesPaneManager!: PreferencePaneManager;
   private zoteroProtocolHandler?: Zotero.ZoteroProtocolHandler;
 
-  public startup({
-    dependencies: { preferencePaneManager },
-  }: ServiceParams<'preferencePaneManager'>) {
-    this.preferencesPaneManager = preferencePaneManager;
+  public startup() {
     this.registerExtension();
   }
 
@@ -45,46 +40,40 @@ export class ProtocolHandlerExtension implements Service {
   }
 
   private extension: Zotero.ZoteroProtocolHandlerExtension = {
-    doAction: (uri) => {
+    doAction: async (uri) => {
       logger.debug('Protocol extension received URI:', uri.spec);
       const url = new URL(uri.spec);
 
       const matches = url.pathname.match(`${NOTERO_PATH}/(.+)`);
-      if (!matches?.[1]) return;
+      const handlerName = matches?.[1];
+      if (!handlerName) return;
 
-      const handler = this.handlers[matches[1]];
+      const handler = this.handlers[handlerName];
       if (!handler) return;
 
-      logger.debug('Invoking handler:', matches[1]);
-      handler(url);
+      logger.debug('Invoking handler:', handlerName);
+      try {
+        await handler(url);
+      } catch (error) {
+        logger.error(`Error in ${handlerName} handler:`, error);
+      }
     },
     newChannel: (uri) => {
-      this.extension.doAction(uri);
+      void this.extension.doAction(uri);
     },
     noContent: true,
   };
 
-  private handlers: Record<string, (url: URL) => void> = {
-    'notion-auth': (url) => {
-      const tokenResponse = this.getTokenResponse(url);
-
-      const preferencesWindow = this.preferencesPaneManager.openPreferences();
-      if (preferencesWindow) {
-        preferencesWindow.alert(
-          `Connected to Notion workspace: ${tokenResponse.workspace_name}`,
-        );
+  private handlers: Record<string, (url: URL) => void | Promise<void>> = {
+    'notion-auth': async (url) => {
+      const key = url.searchParams.get('key');
+      const iv = url.searchParams.get('iv');
+      const tokenResponse = url.searchParams.get('tokenResponse');
+      if (!key || !iv || !tokenResponse) {
+        throw new Error('Invalid access token parameters');
       }
+      const encryptedTokenResponse = { key, iv, tokenResponse };
+      await getNotionOauthSession().handleTokenResponse(encryptedTokenResponse);
     },
   };
-
-  private getTokenResponse(url: URL): OauthTokenResponse {
-    const param = url.searchParams.get('tokenResponse');
-    if (!param) throw new Error('No token response in URL');
-
-    const parsedValue = JSON.parse(window.atob(param));
-    if (isObject(parsedValue) && parsedValue.access_token) {
-      return parsedValue as OauthTokenResponse;
-    }
-    throw new Error('Invalid token response');
-  }
 }

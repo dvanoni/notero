@@ -464,7 +464,7 @@ declare namespace Zotero {
   }
 
   type ZoteroProtocolHandlerExtension = {
-    doAction(uri: XPCOM.nsIURI): void;
+    doAction(uri: XPCOM.nsIURI): void | Promise<void>;
     newChannel(uri: XPCOM.nsIURI, loadInfo: unknown): unknown;
     noContent: boolean;
   };

@@ -1,5 +1,6 @@
 import type { Client } from '@notionhq/client';
 
+import { NotionOauthManager } from './auth';
 import type { PluginInfo } from './plugin-info';
 import {
   EventManager,
@@ -13,12 +14,16 @@ import { findDuplicates } from './sync/find-duplicates';
 import { getNotionClient } from './sync/notion-client';
 import { logger } from './utils';
 
-class Notero {
+export class Notero {
+  public readonly notionOauthManager: NotionOauthManager;
+
   private readonly eventManager: EventManager;
   private readonly preferencePaneManager: PreferencePaneManager;
   private readonly services: Service[];
 
   public constructor() {
+    this.notionOauthManager = new NotionOauthManager();
+
     this.eventManager = new EventManager();
     this.preferencePaneManager = new PreferencePaneManager();
 

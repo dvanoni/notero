@@ -1,5 +1,4 @@
-import { getNotionOauthSession } from '../sync/notion-oauth';
-import { logger } from '../utils';
+import { getGlobalNotero, logger } from '../utils';
 
 import type { Service } from './service';
 
@@ -73,7 +72,9 @@ export class ProtocolHandlerExtension implements Service {
         throw new Error('Invalid access token parameters');
       }
       const encryptedTokenResponse = { key, iv, tokenResponse };
-      await getNotionOauthSession().handleTokenResponse(encryptedTokenResponse);
+      await getGlobalNotero().notionOauthManager.handleTokenResponse(
+        encryptedTokenResponse,
+      );
     },
   };
 }

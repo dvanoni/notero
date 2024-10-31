@@ -9,6 +9,7 @@ export {
   isXULElementOfType,
 } from './elements';
 export { getAllCollectionItems } from './get-all-collection-items';
+export { getGlobalNotero } from './get-global-notero';
 export { getItemURL } from './get-item-url';
 export { getLocalizedErrorMessage } from './get-localized-error-message';
 export { getMainWindow } from './get-main-window';

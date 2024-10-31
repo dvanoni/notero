@@ -7,10 +7,10 @@ import type { createRoot } from 'react-dom/client';
 import { FluentMessageId } from '../../locale/fluent-types';
 import { LocalizableError } from '../errors';
 import { getNotionClient } from '../sync/notion-client';
-import { startNotionOauthSession } from '../sync/notion-oauth';
 import { normalizeID } from '../sync/notion-utils';
 import {
   createXULElement,
+  getGlobalNotero,
   getLocalizedErrorMessage,
   getXULElementById,
   isXULElementOfType,
@@ -211,8 +211,7 @@ class Preferences {
     if (!event.target || !isXULElementOfType(event.target, 'button')) return;
 
     event.target.disabled = true;
-    const notionOauthSession = await startNotionOauthSession();
-    await notionOauthSession.openLogin();
+    await getGlobalNotero().notionOauthManager.openLogin();
     event.target.disabled = false;
   }
 

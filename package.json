@@ -60,10 +60,10 @@
   "devDependencies": {
     "@commitlint/cli": "^19.5.0",
     "@commitlint/config-conventional": "^19.5.0",
-    "@eslint/js": "^9.12.0",
+    "@eslint/js": "^9.14.0",
     "@fluent/syntax": "^0.19.0",
     "@total-typescript/ts-reset": "^0.6.1",
-    "@types/adm-zip": "^0.5.5",
+    "@types/adm-zip": "^0.5.6",
     "@types/eslint__js": "^8.42.3",
     "@types/eslint-config-prettier": "^6.11.3",
     "@types/fs-extra": "^11.0.4",
@@ -75,7 +75,7 @@
     "adm-zip": "^0.5.16",
     "concurrently": "^9.0.1",
     "esbuild": "^0.24.0",
-    "eslint": "^9.12.0",
+    "eslint": "^9.14.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-import-resolver-typescript": "^3.6.3",
     "eslint-plugin-import": "^2.31.0",
@@ -89,11 +89,11 @@
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "semver": "^7.6.3",
-    "tslib": "^2.7.0",
-    "tsx": "^4.19.1",
+    "tslib": "^2.8.1",
+    "tsx": "^4.19.2",
     "typescript": "^5.6.3",
-    "typescript-eslint": "^8.8.1",
-    "vitest": "^2.1.2",
+    "typescript-eslint": "^8.12.2",
+    "vitest": "^2.1.4",
     "vitest-mock-extended": "^2.0.2"
   }
 }

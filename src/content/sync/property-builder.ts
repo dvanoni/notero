@@ -1,5 +1,6 @@
 import { NOTION_TAG_NAME } from '../constants';
 import { PageTitleFormat } from '../prefs/notero-pref';
+import { propertyMappings} from '../prefs/propertyMapping
 import {
   buildCollectionFullName,
   getItemURL,

@@ -14,3 +14,5 @@ zotero.config.json
 *.swp
 *.tmp
 *.xpi
+*.Rhistory
+*.DS_Store

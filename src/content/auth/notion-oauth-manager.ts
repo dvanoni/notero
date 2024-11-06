@@ -1,7 +1,6 @@
 import type { OauthTokenResponse } from '@notionhq/client/build/src/api-endpoints';
 
 import {
-  getMainWindow,
   isObject,
   logger,
   urlSafeBase64Decode,
@@ -9,6 +8,11 @@ import {
 } from '../utils';
 
 import { decrypt, exportKey, generateKeyPair, unwrapKey } from './crypto';
+import {
+  getAllTokenResponses,
+  removeTokenResponse,
+  saveTokenResponse,
+} from './storage';
 
 type EncryptedTokenResponse = {
   key: string;
@@ -48,9 +52,18 @@ export class NotionOauthManager {
       encryptedTokenResponse,
     );
     logger.debug(tokenResponse);
-    getMainWindow().alert(
-      `Connected to Notion workspace: ${tokenResponse.workspace_name}`,
-    );
+
+    await saveTokenResponse(tokenResponse);
+
+    this.currentSession = null;
+  }
+
+  public getAllTokenResponses(): Promise<OauthTokenResponse[]> {
+    return getAllTokenResponses();
+  }
+
+  public removeTokenResponse(botId: string): Promise<void> {
+    return removeTokenResponse(botId);
   }
 
   private async decryptTokenResponse(

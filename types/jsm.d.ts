@@ -17,6 +17,7 @@ declare namespace jsm {
 
   interface Services {
     io: XPCOM.nsIIOService;
+    logins: XPCOM.nsILoginManager;
     prefs: XPCOM.nsIPrefService;
     scriptloader: XPCOM.mozIJSSubScriptLoader;
     strings: XPCOM.nsIStringBundleService;

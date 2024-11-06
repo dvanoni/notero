@@ -1,1 +1,1 @@
-export { NotionOauthManager } from './notion-oauth-manager';
+export { NotionAuthManager } from './notion-auth-manager';

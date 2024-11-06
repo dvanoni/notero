@@ -72,7 +72,7 @@ export class ProtocolHandlerExtension implements Service {
         throw new Error('Invalid access token parameters');
       }
       const encryptedTokenResponse = { key, iv, tokenResponse };
-      await getGlobalNotero().notionOauthManager.handleTokenResponse(
+      await getGlobalNotero().notionAuthManager.handleTokenResponse(
         encryptedTokenResponse,
       );
     },

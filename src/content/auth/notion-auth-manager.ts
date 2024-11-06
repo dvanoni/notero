@@ -26,7 +26,7 @@ type OauthSession = {
 
 const OAUTH_LOGIN_URL = 'https://localhost:8787/login';
 
-export class NotionOauthManager {
+export class NotionAuthManager {
   private currentSession: OauthSession | null = null;
 
   public async openLogin(): Promise<void> {

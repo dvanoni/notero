@@ -211,7 +211,7 @@ class Preferences {
     if (!event.target || !isXULElementOfType(event.target, 'button')) return;
 
     event.target.disabled = true;
-    await getGlobalNotero().notionOauthManager.openLogin();
+    await getGlobalNotero().notionAuthManager.openLogin();
     event.target.disabled = false;
   }
 

@@ -12,6 +12,7 @@ import {
   getAllTokenResponses,
   removeTokenResponse,
   saveTokenResponse,
+  TokenResponse,
 } from './storage';
 
 type EncryptedTokenResponse = {
@@ -58,7 +59,7 @@ export class NotionAuthManager {
     this.currentSession = null;
   }
 
-  public getAllTokenResponses(): Promise<OauthTokenResponse[]> {
+  public getAllTokenResponses(): Promise<TokenResponse[]> {
     return getAllTokenResponses();
   }
 

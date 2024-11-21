@@ -1,9 +1,21 @@
 import type { OauthTokenResponse } from '@notionhq/client/build/src/api-endpoints';
+import { z } from 'zod';
 
-import { isObject, logger } from '../utils';
+import { logger } from '../utils';
 
 const NOTION_API_DOMAIN = 'api.notion.com';
 const NOTION_API_ORIGIN = `https://${NOTION_API_DOMAIN}`;
+
+const tokenResponseSchema = z.object({
+  access_token: z.string(),
+  bot_id: z.string(),
+  duplicated_template_id: z.string().nullable(),
+  workspace_icon: z.string().nullable(),
+  workspace_id: z.string(),
+  workspace_name: z.string().nullable(),
+}) satisfies z.ZodType<Omit<OauthTokenResponse, 'owner' | 'token_type'>>;
+
+export type TokenResponse = z.infer<typeof tokenResponseSchema>;
 
 function getHttpRealm(botId: string): string {
   return `notero/${botId}@${NOTION_API_DOMAIN}`;
@@ -24,26 +36,35 @@ function buildLoginInfo(tokenResponse: OauthTokenResponse): XPCOM.nsILoginInfo {
   );
 }
 
-async function findLogin(botId: string): Promise<XPCOM.nsILoginInfo | null> {
+async function findLogin(
+  botId: string,
+): Promise<XPCOM.nsILoginInfo | undefined> {
   const logins = await Services.logins.searchLoginsAsync({
     origin: NOTION_API_ORIGIN,
     httpRealm: getHttpRealm(botId),
   });
-  return logins[0] || null;
+  return logins[0];
 }
 
-export async function getAllTokenResponses(): Promise<OauthTokenResponse[]> {
+export async function getAllTokenResponses(): Promise<TokenResponse[]> {
   const logins = await Services.logins.searchLoginsAsync({
     origin: NOTION_API_ORIGIN,
   });
 
   return logins
-    .map((login) => JSON.parse(login.password))
-    .filter(isTokenResponse);
-}
-
-function isTokenResponse(value: unknown): value is OauthTokenResponse {
-  return isObject(value) && 'bot_id' in value && Boolean(value.bot_id);
+    .map((login) => {
+      try {
+        return tokenResponseSchema.parse(JSON.parse(login.password));
+      } catch (error) {
+        logger.warn(
+          'Encountered invalid login with HTTP realm:',
+          login.httpRealm,
+          error,
+        );
+        return null;
+      }
+    })
+    .filter(Boolean);
 }
 
 export async function saveTokenResponse(tokenResponse: OauthTokenResponse) {

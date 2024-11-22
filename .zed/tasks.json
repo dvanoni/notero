@@ -41,24 +41,24 @@
   {
     "label": "Test all (once)",
     "command": "npm run test",
-    "reveal": "always"
+    "reveal": "no_focus"
   },
   {
     "label": "Test all (watch)",
     "command": "npm run test:watch",
-    "reveal": "always"
+    "reveal": "no_focus"
   },
   {
     "label": "Test $ZED_STEM",
     "command": "npx vitest related",
     "args": ["\"$ZED_RELATIVE_FILE\""],
-    "reveal": "always"
+    "reveal": "no_focus"
   },
   {
     "label": "Test $ZED_SYMBOL",
     "command": "npx vitest",
     "args": ["\"$ZED_RELATIVE_FILE\"", "--testNamePattern", "\"$ZED_SYMBOL\""],
-    "reveal": "always",
+    "reveal": "no_focus",
     "tags": ["ts-test", "tsx-test"]
   }
 ]

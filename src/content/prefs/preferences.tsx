@@ -13,7 +13,6 @@ import {
   getGlobalNotero,
   getLocalizedErrorMessage,
   getXULElementById,
-  isXULElementOfType,
   logger,
 } from '../utils';
 
@@ -208,11 +207,19 @@ class Preferences {
   }
 
   public async openNotionLogin(event: XUL.CommandEvent): Promise<void> {
-    if (!event.target || !isXULElementOfType(event.target, 'button')) return;
+    const button = event.target as XUL.ButtonElement;
 
-    event.target.disabled = true;
+    button.disabled = true;
+
+    window.addEventListener(
+      'blur',
+      () => {
+        button.disabled = false;
+      },
+      { once: true },
+    );
+
     await getGlobalNotero().notionAuthManager.openLogin();
-    event.target.disabled = false;
   }
 
   public toggleNotionTokenVisibility(): void {

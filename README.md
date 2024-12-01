@@ -217,7 +217,12 @@ see issue [#355](https://github.com/dvanoni/notero/issues/355).
 ## Usage Guides
 
 For more visual guides of setting up and using Notero, see the following
-resources made by wonderful members of the community:
+resources made by wonderful members of the community.
+
+> [!NOTE]
+>
+> Some aspects of these resources may be out of date, so be sure to refer to
+> this README for the latest information.
 
 - [Using Notion and Zotero to build a literature tracker](https://sciquest.netlify.app/posts/notion_literature/)
   (blog post) by [Jewel Johnson](https://jeweljohnsonj.github.io/jewel_resume/)

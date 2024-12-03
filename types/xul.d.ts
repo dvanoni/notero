@@ -20,6 +20,10 @@ declare namespace XUL {
     value: string;
   }
 
+  interface LabelElement extends XULElement {
+    value: string;
+  }
+
   interface MenuItemElement extends XULElement {
     disabled: boolean;
     label: string;
@@ -70,6 +74,7 @@ declare namespace XUL {
   type XULElementTagNameMap = {
     button: ButtonElement;
     checkbox: CheckboxElement;
+    label: LabelElement;
     menuitem: MenuItemElement;
     menulist: MenuListElement;
     preference: PreferenceElement;

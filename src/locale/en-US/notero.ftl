@@ -9,14 +9,15 @@ notero-tools-menu-preferences =
 
 ## Notion preferences
 
-notero-preferences-notion-groupbox-heading = Notion Preferences
-notero-preferences-notion-groupbox-description = For instructions on obtaining these values, view the <label data-l10n-name="notero-preferences-readme">README</label>.
-notero-preferences-notion-token = Integration Token:
-notero-preferences-notion-token-visibility =
-    .tooltiptext = { $action ->
-        [conceal] Conceal token
-       *[reveal] Reveal token
-    }
+notero-preferences-notion-groupbox-heading = Notion Connection
+notero-preferences-notion-connect-button = Connect to Notion
+notero-preferences-notion-disconnect-button = Disconnect…
+notero-preferences-notion-disconnect-dialog-title = Disconnect Notion Workspace
+notero-preferences-notion-disconnect-dialog-text = Disconnecting your Notion workspace will prevent further syncing. It will not remove any content that has already been synced.
+notero-preferences-notion-upgrade-button = Upgrade Connection…
+notero-preferences-notion-upgrade-dialog-title = Upgrade Notion Connection
+notero-preferences-notion-upgrade-dialog-text = Notero has evolved into a Notion public integration, enabling enhanced features and security. To upgrade, click OK and you'll be redirected to Notion to authorize the new Notero integration. This one-time process enables new capabilities like multi-workspace support. After completing the upgrade, you can safely remove your previous internal integration.
+notero-preferences-notion-workspace = Workspace: { $workspace-name }
 notero-preferences-notion-database = Database:
 
 ## Property preferences

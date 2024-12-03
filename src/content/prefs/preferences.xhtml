@@ -3,62 +3,55 @@
 </linkset>
 
 <!-- The `notero` variable used below is defined in `scripts/build.ts` -->
-<groupbox onload="notero.preferences.init();">
+<groupbox class="notero-groupbox" onload="notero.preferences.init();">
   <label>
     <html:h2 data-l10n-id="notero-preferences-notion-groupbox-heading" />
   </label>
-  <label data-l10n-id="notero-preferences-notion-groupbox-description">
-    <label
-      data-l10n-name="notero-preferences-readme"
-      is="zotero-text-link"
-      href="https://github.com/dvanoni/notero#readme"
-    />
-  </label>
-  <separator class="thin" />
   <hbox>
     <button
-      id="notero-notionLogin"
-      label="Log in with Notion"
-      oncommand="notero.preferences.openNotionLogin(event);"
+      data-l10n-id="notero-preferences-notion-connect-button"
+      hidden="true"
+      id="notero-notionConnect"
+      oncommand="notero.preferences.connectNotion(event);"
     />
   </hbox>
-  <separator class="thin" />
-  <hbox align="center" id="notero-notionToken-container">
-    <label
-      control="notero-notionToken"
-      data-l10n-id="notero-preferences-notion-token"
-    />
-    <html:input
-      id="notero-notionToken"
-      preference="extensions.notero.notionToken"
-      type="password"
-    />
-    <button
-      data-l10n-id="notero-preferences-notion-token-visibility"
-      data-l10n-args='{"action":"reveal"}'
-      id="notero-notionToken-visibility"
-      image="chrome://zotero/skin/16/universal/view.svg"
-      oncommand="notero.preferences.toggleNotionTokenVisibility();"
-    />
-  </hbox>
-  <hbox align="center">
-    <label
-      control="notero-notionDatabase"
-      data-l10n-id="notero-preferences-notion-database"
-    />
-    <menulist
-      id="notero-notionDatabase"
-      disabled="true"
-      native="true"
-      preference="extensions.notero.notionDatabaseID"
-    >
-      <menupopup />
-    </menulist>
-  </hbox>
-  <label id="notero-notionDatabaseError" hidden="true" />
+  <image class="zotero-spinner-16" id="notero-notionConnection-spinner" />
+  <vbox align="start" hidden="true" id="notero-notionConnection-container">
+    <hbox align="center">
+      <label
+        data-l10n-id="notero-preferences-notion-workspace"
+        id="notero-notionWorkspace"
+      />
+      <button
+        data-l10n-id="notero-preferences-notion-upgrade-button"
+        id="notero-notionUpgradeConnection"
+        oncommand="notero.preferences.upgradeNotionConnection(event);"
+      />
+      <button
+        data-l10n-id="notero-preferences-notion-disconnect-button"
+        oncommand="notero.preferences.disconnectNotion();"
+      />
+    </hbox>
+    <separator class="thin" />
+    <hbox align="center">
+      <label
+        control="notero-notionDatabase"
+        data-l10n-id="notero-preferences-notion-database"
+      />
+      <menulist
+        id="notero-notionDatabase"
+        disabled="true"
+        native="true"
+        preference="extensions.notero.notionDatabaseID"
+      >
+        <menupopup />
+      </menulist>
+    </hbox>
+  </vbox>
+  <label class="notero-error" hidden="true" id="notero-notionError" />
 </groupbox>
 
-<groupbox>
+<groupbox class="notero-groupbox">
   <label>
     <html:h2 data-l10n-id="notero-preferences-properties-groupbox-heading" />
   </label>
@@ -80,7 +73,7 @@
   </hbox>
 </groupbox>
 
-<groupbox>
+<groupbox class="notero-groupbox">
   <label>
     <html:h2 data-l10n-id="notero-preferences-sync-groupbox-heading" />
   </label>

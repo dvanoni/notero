@@ -96,6 +96,14 @@ declare namespace XPCOM {
     getDefaultBranch(prefRoot: string): nsIPrefBranch;
   }
 
+  interface nsIPromptService {
+    confirm(
+      parent: nsIDOMWindow | null,
+      dialogTitle: string,
+      text: string,
+    ): boolean;
+  }
+
   type nsIProtocolHandler = nsISupports;
 
   interface nsISimpleEnumerator {

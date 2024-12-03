@@ -18,9 +18,6 @@ import {
 } from '../utils';
 
 import {
-  clearNoteroPref,
-  getNoteroPref,
-  NoteroPref,
   PAGE_TITLE_FORMAT_L10N_IDS,
   PageTitleFormat,
   unregisterNoteroPrefObserver,
@@ -166,11 +163,10 @@ class Preferences {
   }
 
   private async refreshNotionConnectionSection(): Promise<void> {
-    const tokenResponses = await this.notionAuthManager.getAllTokenResponses();
-    const tokenResponse = tokenResponses[0];
-    const legacyToken = getNoteroPref(NoteroPref.notionToken);
+    const connection = await this.notionAuthManager.getFirstConnection();
+    const legacyToken = this.notionAuthManager.getLegacyAuthToken();
 
-    const authToken = tokenResponse?.access_token || legacyToken;
+    const authToken = connection?.access_token || legacyToken;
 
     this.notionError.hidden = true;
 
@@ -194,7 +190,7 @@ class Preferences {
       });
 
       this.notionConnectButton.hidden = true;
-      this.notionUpgradeConnectionButton.hidden = Boolean(tokenResponse);
+      this.notionUpgradeConnectionButton.hidden = Boolean(connection);
       this.notionConnectionContainer.hidden = false;
       this.notionConnectionSpinner.removeAttribute('status');
 
@@ -288,14 +284,7 @@ class Preferences {
     const confirmed = Services.prompt.confirm(null, dialogTitle, dialogText);
     if (!confirmed) return;
 
-    clearNoteroPref(NoteroPref.notionToken);
-
-    const tokenResponses = await this.notionAuthManager.getAllTokenResponses();
-    if (tokenResponses[0]) {
-      await this.notionAuthManager.removeTokenResponse(
-        tokenResponses[0].bot_id,
-      );
-    }
+    await this.notionAuthManager.removeAllConnections();
 
     await this.refreshNotionConnectionSection();
   }

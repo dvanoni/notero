@@ -1,6 +1,11 @@
 import type { OauthTokenResponse } from '@notionhq/client/build/src/api-endpoints';
 
 import {
+  clearNoteroPref,
+  getNoteroPref,
+  NoteroPref,
+} from '../prefs/notero-pref';
+import {
   isObject,
   logger,
   urlSafeBase64Decode,
@@ -9,10 +14,10 @@ import {
 
 import { decrypt, exportKey, generateKeyPair, unwrapKey } from './crypto';
 import {
-  getAllTokenResponses,
-  removeTokenResponse,
-  saveTokenResponse,
-  TokenResponse,
+  getAllConnections,
+  removeConnection,
+  saveConnection,
+  NotionConnection,
 } from './storage';
 
 type EncryptedTokenResponse = {
@@ -54,17 +59,33 @@ export class NotionAuthManager {
     );
     logger.debug(tokenResponse);
 
-    await saveTokenResponse(tokenResponse);
+    await saveConnection(tokenResponse);
 
     this.currentSession = null;
   }
 
-  public getAllTokenResponses(): Promise<TokenResponse[]> {
-    return getAllTokenResponses();
+  public getAllConnections(): Promise<NotionConnection[]> {
+    return getAllConnections();
   }
 
-  public removeTokenResponse(botId: string): Promise<void> {
-    return removeTokenResponse(botId);
+  public async getFirstConnection(): Promise<NotionConnection | undefined> {
+    return (await this.getAllConnections())[0];
+  }
+
+  public getLegacyAuthToken(): string | undefined {
+    return getNoteroPref(NoteroPref.notionToken);
+  }
+
+  public async removeAllConnections(): Promise<void> {
+    clearNoteroPref(NoteroPref.notionToken);
+
+    for (const connection of await this.getAllConnections()) {
+      await this.removeConnection(connection);
+    }
+  }
+
+  public removeConnection(connection: NotionConnection): Promise<void> {
+    return removeConnection(connection.bot_id);
   }
 
   private async decryptTokenResponse(

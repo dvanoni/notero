@@ -6,7 +6,7 @@ import { logger } from '../utils';
 const NOTION_API_DOMAIN = 'api.notion.com';
 const NOTION_API_ORIGIN = `https://${NOTION_API_DOMAIN}`;
 
-const tokenResponseSchema = z.object({
+const notionConnectionSchema = z.object({
   access_token: z.string(),
   bot_id: z.string(),
   duplicated_template_id: z.string().nullable(),
@@ -15,7 +15,7 @@ const tokenResponseSchema = z.object({
   workspace_name: z.string().nullable(),
 }) satisfies z.ZodType<Omit<OauthTokenResponse, 'owner' | 'token_type'>>;
 
-export type TokenResponse = z.infer<typeof tokenResponseSchema>;
+export type NotionConnection = z.infer<typeof notionConnectionSchema>;
 
 function getHttpRealm(botId: string): string {
   return `notero/${botId}@${NOTION_API_DOMAIN}`;
@@ -46,7 +46,7 @@ async function findLogin(
   return logins[0];
 }
 
-export async function getAllTokenResponses(): Promise<TokenResponse[]> {
+export async function getAllConnections(): Promise<NotionConnection[]> {
   const logins = await Services.logins.searchLoginsAsync({
     origin: NOTION_API_ORIGIN,
   });
@@ -54,7 +54,7 @@ export async function getAllTokenResponses(): Promise<TokenResponse[]> {
   return logins
     .map((login) => {
       try {
-        return tokenResponseSchema.parse(JSON.parse(login.password));
+        return notionConnectionSchema.parse(JSON.parse(login.password));
       } catch (error) {
         logger.warn(
           'Encountered invalid login with HTTP realm:',
@@ -67,7 +67,7 @@ export async function getAllTokenResponses(): Promise<TokenResponse[]> {
     .filter(Boolean);
 }
 
-export async function saveTokenResponse(tokenResponse: OauthTokenResponse) {
+export async function saveConnection(tokenResponse: OauthTokenResponse) {
   const loginInfo = buildLoginInfo(tokenResponse);
   const existingLogin = await findLogin(tokenResponse.bot_id);
 
@@ -80,7 +80,7 @@ export async function saveTokenResponse(tokenResponse: OauthTokenResponse) {
   }
 }
 
-export async function removeTokenResponse(botId: string) {
+export async function removeConnection(botId: string) {
   const login = await findLogin(botId);
 
   if (login) {

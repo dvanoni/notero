@@ -7,8 +7,8 @@ type Dependencies = {
   preferencePaneManager: PreferencePaneManager;
 };
 
-export type ServiceParams<D extends keyof Dependencies = never> = {
-  dependencies: Pick<Dependencies, D>;
+export type ServiceParams = {
+  dependencies: Dependencies;
   pluginInfo: PluginInfo;
 };
 

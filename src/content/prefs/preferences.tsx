@@ -57,9 +57,6 @@ class Preferences {
   private notionUpgradeConnectionButton!: XUL.ButtonElement;
   private notionDatabaseMenu!: XUL.MenuListElement;
   private notionError!: XUL.LabelElement;
-  // TODO: Remove notion token
-  private notionTokenInput!: HTMLInputElement;
-  private notionTokenVisibilityToggle!: XUL.ButtonElement;
   private notionWorkspaceLabel!: XUL.LabelElement;
   private pageTitleFormatMenu!: XUL.MenuListElement;
   private prefObserverSymbol!: symbol;
@@ -81,12 +78,6 @@ class Preferences {
       'notero-notionUpgradeConnection',
     )!;
     this.notionWorkspaceLabel = getXULElementById('notero-notionWorkspace')!;
-    this.notionTokenInput = document.getElementById(
-      'notero-notionToken',
-    ) as HTMLInputElement;
-    this.notionTokenVisibilityToggle = getXULElementById(
-      'notero-notionToken-visibility',
-    )!;
     this.notionDatabaseMenu = getXULElementById('notero-notionDatabase')!;
     this.notionError = getXULElementById('notero-notionError')!;
     this.pageTitleFormatMenu = getXULElementById('notero-pageTitleFormat')!;
@@ -306,17 +297,6 @@ class Preferences {
     setTimeout(() => {
       void this.connectNotion(event);
     }, 100);
-  }
-
-  public toggleNotionTokenVisibility(): void {
-    const isVisible = this.notionTokenInput.type !== 'password';
-    this.notionTokenInput.type = isVisible ? 'password' : 'text';
-    this.notionTokenVisibilityToggle.image = isVisible
-      ? 'chrome://zotero/skin/16/universal/view.svg'
-      : 'chrome://zotero/skin/16/universal/hide.svg';
-    document.l10n.setArgs(this.notionTokenVisibilityToggle, {
-      action: isVisible ? 'reveal' : 'conceal',
-    });
   }
 }
 

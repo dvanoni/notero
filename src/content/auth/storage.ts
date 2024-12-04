@@ -67,7 +67,9 @@ export async function getAllConnections(): Promise<NotionConnection[]> {
     .filter(Boolean);
 }
 
-export async function saveConnection(tokenResponse: OauthTokenResponse) {
+export async function saveConnection(
+  tokenResponse: OauthTokenResponse,
+): Promise<void> {
   const loginInfo = buildLoginInfo(tokenResponse);
   const existingLogin = await findLogin(tokenResponse.bot_id);
 
@@ -80,7 +82,7 @@ export async function saveConnection(tokenResponse: OauthTokenResponse) {
   }
 }
 
-export async function removeConnection(botId: string) {
+export async function removeConnection(botId: string): Promise<void> {
   const login = await findLogin(botId);
 
   if (login) {

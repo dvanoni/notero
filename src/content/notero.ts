@@ -15,20 +15,20 @@ import { getNotionClient } from './sync/notion-client';
 import { logger } from './utils';
 
 export class Notero {
+  public readonly eventManager: EventManager;
   public readonly notionAuthManager: NotionAuthManager;
 
-  private readonly eventManager: EventManager;
   private readonly preferencePaneManager: PreferencePaneManager;
   private readonly services: Service[];
 
   public constructor() {
-    this.notionAuthManager = new NotionAuthManager();
-
     this.eventManager = new EventManager();
+    this.notionAuthManager = new NotionAuthManager();
     this.preferencePaneManager = new PreferencePaneManager();
 
     this.services = [
       this.eventManager,
+      this.notionAuthManager,
       this.preferencePaneManager,
       new ProtocolHandlerExtension(),
       new SyncManager(),

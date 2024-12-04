@@ -7,6 +7,7 @@ import type { createRoot } from 'react-dom/client';
 import type { FluentMessageId } from '../../locale/fluent-types';
 import type { NotionAuthManager } from '../auth';
 import { LocalizableError } from '../errors';
+import type { EventManager } from '../services';
 import { getNotionClient } from '../sync/notion-client';
 import { isNotionErrorWithCode, normalizeID } from '../sync/notion-utils';
 import {
@@ -17,11 +18,7 @@ import {
   logger,
 } from '../utils';
 
-import {
-  PAGE_TITLE_FORMAT_L10N_IDS,
-  PageTitleFormat,
-  unregisterNoteroPrefObserver,
-} from './notero-pref';
+import { PAGE_TITLE_FORMAT_L10N_IDS, PageTitleFormat } from './notero-pref';
 import { SyncConfigsTable } from './sync-configs-table';
 
 type ReactDOMClient = typeof ReactDOM & { createRoot: typeof createRoot };
@@ -50,6 +47,7 @@ function setMenuItems(menuList: XUL.MenuListElement, items: MenuItem[]): void {
 }
 
 class Preferences {
+  private eventManager!: EventManager;
   private notionAuthManager!: NotionAuthManager;
   private notionConnectionContainer!: XUL.XULElement;
   private notionConnectionSpinner!: XUL.XULElement;
@@ -59,11 +57,11 @@ class Preferences {
   private notionError!: XUL.LabelElement;
   private notionWorkspaceLabel!: XUL.LabelElement;
   private pageTitleFormatMenu!: XUL.MenuListElement;
-  private prefObserverSymbol!: symbol;
 
   public async init(): Promise<void> {
     await Zotero.uiReadyPromise;
 
+    this.eventManager = getGlobalNotero().eventManager;
     this.notionAuthManager = getGlobalNotero().notionAuthManager;
 
     /* eslint-disable @typescript-eslint/no-non-null-assertion */
@@ -94,11 +92,18 @@ class Preferences {
     setTimeout(() => {
       void this.refreshNotionConnectionSection();
     }, 100);
+
+    this.eventManager.addListener(
+      'notion-connection.add',
+      this.handleNotionConnectionAdd,
+    );
   }
 
   private deinit(): void {
-    // TODO: Remove this
-    unregisterNoteroPrefObserver(this.prefObserverSymbol);
+    this.eventManager.removeListener(
+      'notion-connection.add',
+      this.handleNotionConnectionAdd,
+    );
   }
 
   private async initPageTitleFormatMenu(): Promise<void> {
@@ -152,6 +157,10 @@ class Preferences {
     );
     return Boolean(addon?.isActive);
   }
+
+  private handleNotionConnectionAdd = () => {
+    void this.refreshNotionConnectionSection();
+  };
 
   private async refreshNotionConnectionSection(): Promise<void> {
     const connection = await this.notionAuthManager.getFirstConnection();

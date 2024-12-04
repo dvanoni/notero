@@ -5,6 +5,7 @@ import {
   getNoteroPref,
   NoteroPref,
 } from '../prefs/notero-pref';
+import type { EventManager, Service, ServiceParams } from '../services';
 import {
   isObject,
   logger,
@@ -32,8 +33,13 @@ type OauthSession = {
 
 const OAUTH_LOGIN_URL = 'https://localhost:8787/login';
 
-export class NotionAuthManager {
+export class NotionAuthManager implements Service {
   private currentSession: OauthSession | null = null;
+  private eventManager!: EventManager;
+
+  public startup({ dependencies }: ServiceParams) {
+    this.eventManager = dependencies.eventManager;
+  }
 
   public async openLogin(): Promise<void> {
     if (this.currentSession) {
@@ -57,11 +63,13 @@ export class NotionAuthManager {
       this.currentSession.keyPair.privateKey,
       encryptedTokenResponse,
     );
-    logger.debug(tokenResponse);
 
     await saveConnection(tokenResponse);
 
+    clearNoteroPref(NoteroPref.notionToken);
+
     this.currentSession = null;
+    this.eventManager.emit('notion-connection.add', tokenResponse);
   }
 
   public getAllConnections(): Promise<NotionConnection[]> {
@@ -84,8 +92,9 @@ export class NotionAuthManager {
     }
   }
 
-  public removeConnection(connection: NotionConnection): Promise<void> {
-    return removeConnection(connection.bot_id);
+  public async removeConnection(connection: NotionConnection): Promise<void> {
+    await removeConnection(connection.bot_id);
+    this.eventManager.emit('notion-connection.remove', connection);
   }
 
   private async decryptTokenResponse(

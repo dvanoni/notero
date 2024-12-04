@@ -13,9 +13,7 @@ export class UIManager implements Service {
 
   private managedWindows = new Map<Zotero.ZoteroWindow, Set<Element>>();
 
-  public startup({
-    dependencies,
-  }: ServiceParams<'eventManager' | 'preferencePaneManager'>) {
+  public startup({ dependencies }: ServiceParams) {
     this.eventManager = dependencies.eventManager;
     this.preferencePaneManager = dependencies.preferencePaneManager;
   }

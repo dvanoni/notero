@@ -21,7 +21,7 @@ export class SyncManager implements Service {
 
   private syncInProgress = false;
 
-  public startup({ dependencies }: ServiceParams) {
+  public startup({ dependencies }: ServiceParams<'eventManager'>) {
     this.eventManager = dependencies.eventManager;
 
     const { addListener } = this.eventManager;

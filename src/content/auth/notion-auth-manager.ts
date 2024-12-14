@@ -43,7 +43,9 @@ export class NotionAuthManager implements Service {
   private eventManager!: EventManager;
   private preferencePaneManager!: PreferencePaneManager;
 
-  public startup({ dependencies }: ServiceParams) {
+  public startup({
+    dependencies,
+  }: ServiceParams<'eventManager' | 'preferencePaneManager'>) {
     this.eventManager = dependencies.eventManager;
     this.preferencePaneManager = dependencies.preferencePaneManager;
   }

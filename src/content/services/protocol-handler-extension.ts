@@ -11,7 +11,7 @@ export class ProtocolHandlerExtension implements Service {
   private notionAuthManager!: NotionAuthManager;
   private zoteroProtocolHandler?: Zotero.ZoteroProtocolHandler;
 
-  public startup({ dependencies }: ServiceParams) {
+  public startup({ dependencies }: ServiceParams<'notionAuthManager'>) {
     this.notionAuthManager = dependencies.notionAuthManager;
     this.registerExtension();
   }

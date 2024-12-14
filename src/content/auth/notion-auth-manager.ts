@@ -5,7 +5,12 @@ import {
   getNoteroPref,
   NoteroPref,
 } from '../prefs/notero-pref';
-import type { EventManager, Service, ServiceParams } from '../services';
+import type {
+  EventManager,
+  PreferencePaneManager,
+  Service,
+  ServiceParams,
+} from '../services';
 import {
   isObject,
   logger,
@@ -36,9 +41,11 @@ const OAUTH_LOGIN_URL = 'https://localhost:8787/login';
 export class NotionAuthManager implements Service {
   private currentSession: OauthSession | null = null;
   private eventManager!: EventManager;
+  private preferencePaneManager!: PreferencePaneManager;
 
   public startup({ dependencies }: ServiceParams) {
     this.eventManager = dependencies.eventManager;
+    this.preferencePaneManager = dependencies.preferencePaneManager;
   }
 
   public async openLogin(): Promise<void> {
@@ -69,6 +76,7 @@ export class NotionAuthManager implements Service {
     clearNoteroPref(NoteroPref.notionToken);
 
     this.currentSession = null;
+    this.preferencePaneManager.openPreferences();
     this.eventManager.emit('notion-connection.add', tokenResponse);
   }
 

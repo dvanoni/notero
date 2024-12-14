@@ -7,6 +7,7 @@ import {
   PreferencePaneManager,
   ProtocolHandlerExtension,
   Service,
+  ServiceParams,
   SyncManager,
   UIManager,
 } from './services';
@@ -49,8 +50,9 @@ export class Notero {
   }
 
   private async startServices(pluginInfo: PluginInfo) {
-    const dependencies = {
+    const dependencies: ServiceParams['dependencies'] = {
       eventManager: this.eventManager,
+      notionAuthManager: this.notionAuthManager,
       preferencePaneManager: this.preferencePaneManager,
     };
 

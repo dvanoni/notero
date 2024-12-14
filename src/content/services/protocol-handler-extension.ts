@@ -1,15 +1,18 @@
-import { getGlobalNotero, logger } from '../utils';
+import type { NotionAuthManager } from '../auth';
+import { logger } from '../utils';
 
-import type { Service } from './service';
+import type { Service, ServiceParams } from './service';
 
 const ZOTERO_SCHEME = 'zotero';
 const NOTERO_PATH = '//notero';
 const EXTENSION_SPEC = `${ZOTERO_SCHEME}:${NOTERO_PATH}`;
 
 export class ProtocolHandlerExtension implements Service {
+  private notionAuthManager!: NotionAuthManager;
   private zoteroProtocolHandler?: Zotero.ZoteroProtocolHandler;
 
-  public startup() {
+  public startup({ dependencies }: ServiceParams) {
+    this.notionAuthManager = dependencies.notionAuthManager;
     this.registerExtension();
   }
 
@@ -72,9 +75,7 @@ export class ProtocolHandlerExtension implements Service {
         throw new Error('Invalid access token parameters');
       }
       const encryptedTokenResponse = { key, iv, tokenResponse };
-      await getGlobalNotero().notionAuthManager.handleTokenResponse(
-        encryptedTokenResponse,
-      );
+      await this.notionAuthManager.handleTokenResponse(encryptedTokenResponse);
     },
   };
 }

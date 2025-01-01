@@ -74,7 +74,7 @@
     "@vitest/eslint-plugin": "^1.1.13",
     "adm-zip": "^0.5.16",
     "concurrently": "^9.1.0",
-    "esbuild": "^0.24.0",
+    "esbuild": "^0.24.2",
     "eslint": "^9.16.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-import-resolver-typescript": "^3.6.3",

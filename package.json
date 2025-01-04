@@ -47,7 +47,7 @@
     "name": "Notero",
     "updateURL": "https://github.com/dvanoni/notero/releases/download/release/updates.json",
     "zoteroMinVersion": "7.0",
-    "zoteroMaxVersion": "7.0.*",
+    "zoteroMaxVersion": "7.1.*",
     "zotero6": {
       "version": "0.5.17",
       "updateLink": "https://github.com/dvanoni/notero/releases/download/v0.5.17/notero-0.5.17.xpi"

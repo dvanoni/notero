@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.6.8](https://github.com/dvanoni/notero/compare/v0.6.7...v0.6.8) (2025-01-04)
+
+
+### Features
+
+* Mark as compatible with Zotero 7.1 ([#628](https://github.com/dvanoni/notero/issues/628)) ([92fd2f7](https://github.com/dvanoni/notero/commit/92fd2f78f267a29067dc065571b29685f95dff23))
+
 ## [0.6.7](https://github.com/dvanoni/notero/compare/v0.6.6...v0.6.7) (2024-10-17)
 
 

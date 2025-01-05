@@ -19,7 +19,7 @@ import {
   urlSafeBase64Encode,
 } from '../utils';
 
-import { decrypt, exportKey, generateKeyPair, unwrapKey } from './crypto';
+import { decrypt, exportPublicKey, generateKeyPair, unwrapKey } from './crypto';
 import {
   getAllConnections,
   removeConnection,
@@ -57,7 +57,9 @@ export class NotionAuthManager implements Service {
     }
     this.currentSession = { keyPair: await generateKeyPair() };
 
-    const publicKey = await exportKey(this.currentSession.keyPair.publicKey);
+    const publicKey = await exportPublicKey(
+      this.currentSession.keyPair.publicKey,
+    );
     const base64Key = urlSafeBase64Encode(publicKey);
     Zotero.launchURL(`${OAUTH_LOGIN_URL}?state=${base64Key}`);
   }

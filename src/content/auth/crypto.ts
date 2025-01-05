@@ -20,11 +20,13 @@ export function decrypt(
 }
 
 /**
- * Export the provided key in `SubjectPublicKeyInfo` format.
- * @param key The key to export
+ * Export the provided public key in `SubjectPublicKeyInfo` format.
+ * @param key The public key to export
  * @returns A promise that resolves to the exported key
  */
-export function exportKey(key: CryptoKey): Promise<ArrayBuffer> {
+export function exportPublicKey(key: CryptoKey): Promise<ArrayBuffer> {
+  if (key.type !== 'public') throw new Error('Key must be a public key');
+
   return getMainWindow().crypto.subtle.exportKey('spki', key);
 }
 

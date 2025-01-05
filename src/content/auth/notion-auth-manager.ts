@@ -37,7 +37,7 @@ type OauthSession = {
   keyPair: CryptoKeyPair;
 };
 
-const OAUTH_LOGIN_URL = 'https://localhost:8787/login';
+const OAUTH_LOGIN_URL = 'https://auth.notero.vanoni.dev/login';
 
 export class NotionAuthManager implements Service {
   private currentSession: OauthSession | null = null;

@@ -1,6 +1,5 @@
 import { Client, Logger, LogLevel } from '@notionhq/client';
 
-import { getRequiredNoteroPref, NoteroPref } from '../prefs/notero-pref';
 import { logger } from '../utils';
 
 const notionLogger: Logger = (level, message, extraInfo) => {
@@ -8,10 +7,9 @@ const notionLogger: Logger = (level, message, extraInfo) => {
   logger[level](message, extraInfo);
 };
 
-// TODO: Require auth token
-export function getNotionClient(window: Window, authToken?: string) {
+export function getNotionClient(authToken: string, window: Window) {
   return new Client({
-    auth: authToken || getRequiredNoteroPref(NoteroPref.notionToken),
+    auth: authToken,
     fetch: window.fetch.bind(window),
     logger: notionLogger,
     logLevel: LogLevel.DEBUG,

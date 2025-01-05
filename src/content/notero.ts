@@ -113,15 +113,19 @@ export class Notero {
     logger.groupEnd();
   }
 
-  public getNotionClient(): Client {
+  public async getNotionClient(): Promise<Client> {
     const mainWindow = Zotero.getMainWindow();
     if (!mainWindow) throw new Error('No window available');
 
-    return getNotionClient(mainWindow);
+    const authToken = await this.notionAuthManager.getRequiredAuthToken();
+
+    return getNotionClient(authToken, mainWindow);
   }
 
-  public findDuplicates(propertyName: string = 'title'): Promise<Set<string>> {
-    return findDuplicates(this.getNotionClient(), propertyName);
+  public async findDuplicates(
+    propertyName: string = 'title',
+  ): Promise<Set<string>> {
+    return findDuplicates(await this.getNotionClient(), propertyName);
   }
 }
 

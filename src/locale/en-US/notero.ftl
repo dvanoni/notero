@@ -61,7 +61,7 @@ notero-progress-item = Item { $step } of { $total }
 ## Errors
 
 notero-error-missing-notion-database = Notion database not selected. Please select your database in Notero preferences.
-notero-error-missing-notion-token = Notion integration token not provided. Please enter your token in Notero preferences.
+notero-error-missing-notion-token = Not authorized with Notion. Please connect to Notion in Notero preferences.
 notero-error-missing-pref = Missing value for { $pref }. Please enter it in Notero preferences.
 notero-error-no-notion-databases = No Notion databases are accessible.
 notero-error-note-conversion-failed = Failed to convert note content to Notion blocks.

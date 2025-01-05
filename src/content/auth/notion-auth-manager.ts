@@ -1,5 +1,6 @@
 import type { OauthTokenResponse } from '@notionhq/client/build/src/api-endpoints';
 
+import { LocalizableError } from '../errors';
 import {
   clearNoteroPref,
   getNoteroPref,
@@ -92,6 +93,21 @@ export class NotionAuthManager implements Service {
 
   public getLegacyAuthToken(): string | undefined {
     return getNoteroPref(NoteroPref.notionToken);
+  }
+
+  public async getOptionalAuthToken(): Promise<string | undefined> {
+    const tokenResponses = await this.getAllConnections();
+    return tokenResponses[0]?.access_token || this.getLegacyAuthToken();
+  }
+
+  public async getRequiredAuthToken(): Promise<string> {
+    const authToken = await this.getOptionalAuthToken();
+    if (authToken) return authToken;
+
+    throw new LocalizableError(
+      'Notion auth token not available',
+      'notero-error-missing-notion-token',
+    );
   }
 
   public async removeAllConnections(): Promise<void> {

@@ -179,7 +179,7 @@ class Preferences {
     this.notionConnectionSpinner.setAttribute('status', 'animate');
 
     try {
-      const notion = getNotionClient(window, authToken);
+      const notion = getNotionClient(authToken, window);
 
       const user = await notion.users.me({});
       const workspaceName =

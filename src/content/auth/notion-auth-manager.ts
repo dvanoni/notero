@@ -19,7 +19,13 @@ import {
   urlSafeBase64Encode,
 } from '../utils';
 
-import { decrypt, exportPublicKey, generateKeyPair, unwrapKey } from './crypto';
+import {
+  decrypt,
+  exportPublicKey,
+  generateKeyPair,
+  generateNonce,
+  unwrapKey,
+} from './crypto';
 import {
   getAllConnections,
   removeConnection,
@@ -35,6 +41,7 @@ type EncryptedTokenResponse = {
 
 type OauthSession = {
   keyPair: CryptoKeyPair;
+  nonce: string;
 };
 
 const OAUTH_LOGIN_URL = 'https://auth.notero.vanoni.dev/login';
@@ -55,22 +62,27 @@ export class NotionAuthManager implements Service {
     if (this.currentSession) {
       logger.warn('Cancelling existing Notion OAuth session');
     }
-    this.currentSession = { keyPair: await generateKeyPair() };
 
-    const publicKey = await exportPublicKey(
-      this.currentSession.keyPair.publicKey,
-    );
-    const base64Key = urlSafeBase64Encode(publicKey);
-    Zotero.launchURL(`${OAUTH_LOGIN_URL}?state=${base64Key}`);
+    const keyPair = await generateKeyPair();
+    const nonce = urlSafeBase64Encode(generateNonce());
+
+    this.currentSession = { keyPair, nonce };
+
+    const publicKey = await exportPublicKey(keyPair.publicKey);
+
+    const state = `${urlSafeBase64Encode(publicKey)}.${nonce}`;
+    Zotero.launchURL(`${OAUTH_LOGIN_URL}?state=${state}`);
   }
 
-  public async handleTokenResponse(
-    encryptedTokenResponse: EncryptedTokenResponse,
-  ): Promise<void> {
+  public async handleTokenResponse(params: URLSearchParams): Promise<void> {
     if (!this.currentSession) {
       throw new Error('Notion OAuth session not started');
     }
+    if (params.get('nonce') !== this.currentSession.nonce) {
+      throw new Error('Invalid Notion OAuth nonce');
+    }
 
+    const encryptedTokenResponse = this.getEncryptedTokenResponse(params);
     const tokenResponse = await this.decryptTokenResponse(
       this.currentSession.keyPair.privateKey,
       encryptedTokenResponse,
@@ -123,6 +135,18 @@ export class NotionAuthManager implements Service {
   public async removeConnection(connection: NotionConnection): Promise<void> {
     await removeConnection(connection.bot_id);
     this.eventManager.emit('notion-connection.remove', connection);
+  }
+
+  private getEncryptedTokenResponse(
+    params: URLSearchParams,
+  ): EncryptedTokenResponse {
+    const key = params.get('key');
+    const iv = params.get('iv');
+    const tokenResponse = params.get('tokenResponse');
+    if (!key || !iv || !tokenResponse) {
+      throw new Error('Invalid access token parameters');
+    }
+    return { key, iv, tokenResponse };
   }
 
   private async decryptTokenResponse(

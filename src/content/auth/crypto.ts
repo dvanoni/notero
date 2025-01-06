@@ -48,6 +48,14 @@ export function generateKeyPair(): Promise<CryptoKeyPair> {
 }
 
 /**
+ * Generate a new nonce for use with OAuth.
+ * @returns A Uint8Array containing the generated nonce
+ */
+export function generateNonce(): Uint8Array {
+  return getMainWindow().crypto.getRandomValues(new Uint8Array(16));
+}
+
+/**
  * Unwrap an AES-GCM key using the provided RSA private unwrapping key.
  * @param wrappedKey The AES-GCM key (in raw format) to unwrap
  * @param unwrappingKey The RSA private key to use for unwrapping

@@ -68,14 +68,7 @@ export class ProtocolHandlerExtension implements Service {
 
   private handlers: Record<string, (url: URL) => void | Promise<void>> = {
     'notion-auth': async (url) => {
-      const key = url.searchParams.get('key');
-      const iv = url.searchParams.get('iv');
-      const tokenResponse = url.searchParams.get('tokenResponse');
-      if (!key || !iv || !tokenResponse) {
-        throw new Error('Invalid access token parameters');
-      }
-      const encryptedTokenResponse = { key, iv, tokenResponse };
-      await this.notionAuthManager.handleTokenResponse(encryptedTokenResponse);
+      await this.notionAuthManager.handleTokenResponse(url.searchParams);
     },
   };
 }

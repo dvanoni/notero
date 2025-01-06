@@ -1,47 +1,18 @@
-#notero-notionToken-container {
-  position: relative;
+.notero-error {
+  color: var(--accent-red);
+  white-space: normal;
 }
 
-#notero-notionToken {
-  flex: 1;
-  font-family: monospace;
-  padding-inline-end: 22px;
+.notero-groupbox hbox > :not(:last-child) {
+  margin-inline-end: 5px;
 }
 
-#notero-notionToken-visibility {
-  appearance: none;
-  background-color: transparent;
-  border: none;
-  border-radius: 5px;
-  height: 20px;
-  inset-inline-end: 7px;
-  margin: 0;
-  min-width: 20px;
-  padding: 2px;
-  position: absolute;
-}
-
-#notero-notionToken-visibility:hover {
-  background-color: var(--fill-quinary);
-}
-
-#notero-notionToken-visibility .button-text {
-  margin: 0;
-}
-
-@media (prefers-color-scheme: dark) {
-  #notero-notionToken-visibility .button-icon {
-    filter: invert(1);
-  }
+.notero-groupbox vbox > * {
+  max-width: 100%;
 }
 
 #notero-notionDatabase {
   overflow: hidden;
-}
-
-#notero-notionDatabaseError {
-  color: var(--accent-red);
-  white-space: normal;
 }
 
 #notero-syncConfigsTable-container {

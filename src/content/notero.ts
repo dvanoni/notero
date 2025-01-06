@@ -1,10 +1,13 @@
 import type { Client } from '@notionhq/client';
 
+import { NotionAuthManager } from './auth';
 import type { PluginInfo } from './plugin-info';
 import {
   EventManager,
   PreferencePaneManager,
+  ProtocolHandlerExtension,
   Service,
+  ServiceParams,
   SyncManager,
   UIManager,
 } from './services';
@@ -12,18 +15,23 @@ import { findDuplicates } from './sync/find-duplicates';
 import { getNotionClient } from './sync/notion-client';
 import { logger } from './utils';
 
-class Notero {
-  private readonly eventManager: EventManager;
+export class Notero {
+  public readonly eventManager: EventManager;
+  public readonly notionAuthManager: NotionAuthManager;
+
   private readonly preferencePaneManager: PreferencePaneManager;
   private readonly services: Service[];
 
   public constructor() {
     this.eventManager = new EventManager();
+    this.notionAuthManager = new NotionAuthManager();
     this.preferencePaneManager = new PreferencePaneManager();
 
     this.services = [
       this.eventManager,
+      this.notionAuthManager,
       this.preferencePaneManager,
+      new ProtocolHandlerExtension(),
       new SyncManager(),
       new UIManager(),
     ];
@@ -42,8 +50,9 @@ class Notero {
   }
 
   private async startServices(pluginInfo: PluginInfo) {
-    const dependencies = {
+    const dependencies: ServiceParams['dependencies'] = {
       eventManager: this.eventManager,
+      notionAuthManager: this.notionAuthManager,
       preferencePaneManager: this.preferencePaneManager,
     };
 
@@ -104,15 +113,19 @@ class Notero {
     logger.groupEnd();
   }
 
-  public getNotionClient(): Client {
+  public async getNotionClient(): Promise<Client> {
     const mainWindow = Zotero.getMainWindow();
     if (!mainWindow) throw new Error('No window available');
 
-    return getNotionClient(mainWindow);
+    const authToken = await this.notionAuthManager.getRequiredAuthToken();
+
+    return getNotionClient(authToken, mainWindow);
   }
 
-  public findDuplicates(propertyName: string = 'title'): Promise<Set<string>> {
-    return findDuplicates(this.getNotionClient(), propertyName);
+  public async findDuplicates(
+    propertyName: string = 'title',
+  ): Promise<Set<string>> {
+    return findDuplicates(await this.getNotionClient(), propertyName);
   }
 }
 

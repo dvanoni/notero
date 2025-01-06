@@ -1,13 +1,15 @@
+import type { NotionAuthManager } from '../auth';
 import type { PluginInfo } from '../plugin-info';
 
 import type { EventManager, PreferencePaneManager } from '.';
 
 type Dependencies = {
   eventManager: EventManager;
+  notionAuthManager: NotionAuthManager;
   preferencePaneManager: PreferencePaneManager;
 };
 
-export type ServiceParams<D extends keyof Dependencies = never> = {
+export type ServiceParams<D extends keyof Dependencies = keyof Dependencies> = {
   dependencies: Pick<Dependencies, D>;
   pluginInfo: PluginInfo;
 };

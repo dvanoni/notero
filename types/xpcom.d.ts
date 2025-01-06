@@ -8,6 +8,8 @@ declare namespace XPCOM {
     nsIDOMWindow: nsIDOMWindow;
     nsIDOMWindowInternal: nsIDOMWindow;
     nsIInterfaceRequestor: nsIInterfaceRequestor;
+    nsILoginInfo: nsILoginInfo;
+    nsILoginManager: nsILoginManager;
   };
 
   interface amIAddonManagerStartup {
@@ -30,6 +32,7 @@ declare namespace XPCOM {
 
   interface nsIIOService {
     newURI(spec: string, originCharset?: string, baseURI?: nsIURI): nsIURI;
+    getProtocolHandler(scheme: string): nsIProtocolHandler;
   }
 
   interface nsIJSCID {
@@ -41,6 +44,48 @@ declare namespace XPCOM {
     destruct(): void;
   }
 
+  interface nsILoginInfo {
+    readonly displayOrigin: string;
+    origin: string;
+    formActionOrigin: string | null;
+    httpRealm: string | null;
+    username: string;
+    password: string;
+    init(
+      origin: string,
+      formActionOrigin: string | null,
+      httpRealm: string | null,
+      username: string,
+      password: string,
+      usernameField?: string,
+      passwordField?: string,
+    ): void;
+    matches(loginInfo: nsILoginInfo, ignorePassword: boolean): boolean;
+  }
+
+  interface nsILoginManager {
+    addLoginAsync(
+      login: nsILoginInfo | Partial<nsILoginMetaInfo>,
+    ): Promise<nsILoginInfo | nsILoginMetaInfo>;
+    modifyLogin(
+      oldLogin: nsILoginInfo,
+      newLoginData: nsILoginInfo | Partial<nsILoginInfo | nsILoginMetaInfo>,
+    ): void;
+    removeLogin(login: nsILoginInfo): void;
+    searchLoginsAsync(
+      matchData: Pick<nsILoginInfo, 'origin'> &
+        Partial<Omit<nsILoginInfo, 'username' | 'password'> | nsILoginMetaInfo>,
+    ): Promise<nsILoginInfo[]>;
+  }
+
+  interface nsILoginMetaInfo {
+    guid: string;
+    timeCreated: number;
+    timeLastUsed: number;
+    timePasswordChanged: number;
+    timesUsed: number;
+  }
+
   interface nsIPrefBranch {
     setBoolPref(prefName: string, value: boolean): void;
     setIntPref(prefName: string, value: number): void;
@@ -50,6 +95,16 @@ declare namespace XPCOM {
   interface nsIPrefService {
     getDefaultBranch(prefRoot: string): nsIPrefBranch;
   }
+
+  interface nsIPromptService {
+    confirm(
+      parent: nsIDOMWindow | null,
+      dialogTitle: string,
+      text: string,
+    ): boolean;
+  }
+
+  type nsIProtocolHandler = nsISupports;
 
   interface nsISimpleEnumerator {
     getNext(): nsISupports;
@@ -66,6 +121,7 @@ declare namespace XPCOM {
 
   interface nsISupports extends Record<string, unknown> {
     QueryInterface<I extends Interfaces[keyof Interfaces]>(uuid: I): I;
+    wrappedJSObject?: object;
   }
 
   interface nsITreeBoxObject {
@@ -130,6 +186,11 @@ declare namespace XPCOM {
   }
 
   interface nsIURI {
+    filePath: string;
+    hasRef: boolean;
+    pathQueryRef: string;
+    query: string;
+    ref: string;
     spec: string;
   }
 
@@ -157,6 +218,19 @@ declare const Components: {
   utils: {
     import(url: string, scope?: object): unknown;
     importGlobalProperties(properties: string[]): void;
+  };
+  Constructor<
+    I extends XPCOM.Interfaces[keyof XPCOM.Interfaces],
+    K extends FunctionProperties<I>,
+  >(
+    contractID: string,
+    interfaceName?: I,
+    initializer?: K,
+  ): {
+    new (
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      ...args: Parameters<I[K] extends (...args: any) => any ? I[K] : never>
+    ): I;
   };
 };
 

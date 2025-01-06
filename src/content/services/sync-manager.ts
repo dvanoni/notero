@@ -17,12 +17,19 @@ type QueuedSync = {
 export class SyncManager implements Service {
   private eventManager!: EventManager;
 
+  private getNotionAuthToken!: () => Promise<string>;
+
   private queuedSync?: QueuedSync;
 
   private syncInProgress = false;
 
-  public startup({ dependencies }: ServiceParams<'eventManager'>) {
-    this.eventManager = dependencies.eventManager;
+  public startup({
+    dependencies: { eventManager, notionAuthManager },
+  }: ServiceParams<'eventManager' | 'notionAuthManager'>) {
+    this.eventManager = eventManager;
+
+    this.getNotionAuthToken =
+      notionAuthManager.getRequiredAuthToken.bind(notionAuthManager);
 
     const { addListener } = this.eventManager;
 
@@ -252,7 +259,7 @@ export class SyncManager implements Service {
     this.queuedSync = undefined as QueuedSync | undefined;
     this.syncInProgress = true;
 
-    await performSyncJob(itemIDs, mainWindow);
+    await performSyncJob(itemIDs, this.getNotionAuthToken, mainWindow);
 
     if (this.queuedSync && !this.queuedSync.timeoutID) {
       await this.performSync();

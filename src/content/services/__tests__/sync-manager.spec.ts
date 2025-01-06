@@ -7,6 +7,7 @@ import {
   mockZoteroPrefs,
   zoteroMock,
 } from '../../../../test/utils';
+import { NotionAuthManager } from '../../auth';
 import { getSyncedNotes } from '../../data/item-data';
 import { saveSyncConfigs } from '../../prefs/collection-sync-config';
 import { NoteroPref, setNoteroPref } from '../../prefs/notero-pref';
@@ -136,9 +137,10 @@ function setup({
   mockZoteroPrefs();
 
   const eventManager = new EventManager();
+  const notionAuthManager = new NotionAuthManager();
   const syncManager = new SyncManager();
 
-  const dependencies = { eventManager };
+  const dependencies = { eventManager, notionAuthManager };
 
   syncManager.startup({ dependencies, pluginInfo });
 
@@ -182,7 +184,7 @@ describe('SyncManager', () => {
     eventManager.emit('request-sync-items', [regularItem]);
     await vi.runAllTimersAsync();
 
-    expect(mockedPerformSyncJob.mock.lastCall?.[1]).toBe(firstWindow);
+    expect(mockedPerformSyncJob.mock.lastCall?.[2]).toBe(firstWindow);
 
     const secondWindow = createWindowMock();
     zoteroMock.getMainWindow.mockReturnValue(secondWindow);
@@ -191,7 +193,7 @@ describe('SyncManager', () => {
     await vi.runAllTimersAsync();
 
     expect(mockedPerformSyncJob).toHaveBeenCalledTimes(2);
-    expect(mockedPerformSyncJob.mock.lastCall?.[1]).toBe(secondWindow);
+    expect(mockedPerformSyncJob.mock.lastCall?.[2]).toBe(secondWindow);
   });
 
   describe('receiving `request-sync-collection` event', () => {

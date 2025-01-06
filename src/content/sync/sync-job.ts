@@ -26,6 +26,7 @@ export type SyncJobParams = {
 
 export async function performSyncJob(
   itemIDs: Set<Zotero.Item['id']>,
+  getNotionAuthToken: () => Promise<string>,
   window: Window,
 ): Promise<void> {
   const items = Zotero.Items.get(Array.from(itemIDs));
@@ -35,15 +36,19 @@ export async function performSyncJob(
   await progressWindow.show();
 
   try {
-    const params = await prepareSyncJob(window);
+    const params = await prepareSyncJob(getNotionAuthToken, window);
     await syncItems(items, progressWindow, params);
   } catch (error) {
     await handleError(error, progressWindow, window);
   }
 }
 
-async function prepareSyncJob(window: Window): Promise<SyncJobParams> {
-  const notion = getNotionClient(window);
+async function prepareSyncJob(
+  getNotionAuthToken: () => Promise<string>,
+  window: Window,
+): Promise<SyncJobParams> {
+  const authToken = await getNotionAuthToken();
+  const notion = getNotionClient(authToken, window);
   const databaseID = getRequiredNoteroPref(NoteroPref.notionDatabaseID);
   const databaseProperties = await retrieveDatabaseProperties(
     notion,

@@ -1,27 +1,24 @@
-import { isFullDatabase } from '@notionhq/client';
+import { APIErrorCode, type Client, isFullDatabase } from '@notionhq/client';
 import type { DatabaseObjectResponse } from '@notionhq/client/build/src/api-endpoints';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import type { createRoot } from 'react-dom/client';
 
-import { FluentMessageId } from '../../locale/fluent-types';
+import type { FluentMessageId } from '../../locale/fluent-types';
+import type { NotionAuthManager } from '../auth';
 import { LocalizableError } from '../errors';
+import type { EventManager } from '../services';
 import { getNotionClient } from '../sync/notion-client';
-import { normalizeID } from '../sync/notion-utils';
+import { isNotionErrorWithCode, normalizeID } from '../sync/notion-utils';
 import {
   createXULElement,
+  getGlobalNotero,
   getLocalizedErrorMessage,
   getXULElementById,
   logger,
 } from '../utils';
 
-import {
-  NoteroPref,
-  PAGE_TITLE_FORMAT_L10N_IDS,
-  PageTitleFormat,
-  registerNoteroPrefObserver,
-  unregisterNoteroPrefObserver,
-} from './notero-pref';
+import { PAGE_TITLE_FORMAT_L10N_IDS, PageTitleFormat } from './notero-pref';
 import { SyncConfigsTable } from './sync-configs-table';
 
 type ReactDOMClient = typeof ReactDOM & { createRoot: typeof createRoot };
@@ -50,34 +47,39 @@ function setMenuItems(menuList: XUL.MenuListElement, items: MenuItem[]): void {
 }
 
 class Preferences {
-  private notionDatabaseError!: XUL.DescriptionElement;
+  private eventManager!: EventManager;
+  private notionAuthManager!: NotionAuthManager;
+  private notionConnectionContainer!: XUL.XULElement;
+  private notionConnectionSpinner!: XUL.XULElement;
+  private notionConnectButton!: XUL.ButtonElement;
+  private notionUpgradeConnectionButton!: XUL.ButtonElement;
   private notionDatabaseMenu!: XUL.MenuListElement;
-  private notionTokenInput!: HTMLInputElement;
-  private notionTokenVisibilityToggle!: XUL.ButtonElement;
+  private notionError!: XUL.LabelElement;
+  private notionWorkspaceLabel!: XUL.LabelElement;
   private pageTitleFormatMenu!: XUL.MenuListElement;
-  private prefObserverSymbol!: symbol;
 
   public async init(): Promise<void> {
     await Zotero.uiReadyPromise;
 
-    this.notionTokenInput = document.getElementById(
-      'notero-notionToken',
-    ) as HTMLInputElement;
+    this.eventManager = getGlobalNotero().eventManager;
+    this.notionAuthManager = getGlobalNotero().notionAuthManager;
+
     /* eslint-disable @typescript-eslint/no-non-null-assertion */
-    this.notionTokenVisibilityToggle = getXULElementById(
-      'notero-notionToken-visibility',
+    this.notionConnectionContainer = getXULElementById(
+      'notero-notionConnection-container',
     )!;
-    this.notionDatabaseError = getXULElementById('notero-notionDatabaseError')!;
+    this.notionConnectionSpinner = getXULElementById(
+      'notero-notionConnection-spinner',
+    )!;
+    this.notionConnectButton = getXULElementById('notero-notionConnect')!;
+    this.notionUpgradeConnectionButton = getXULElementById(
+      'notero-notionUpgradeConnection',
+    )!;
+    this.notionWorkspaceLabel = getXULElementById('notero-notionWorkspace')!;
     this.notionDatabaseMenu = getXULElementById('notero-notionDatabase')!;
+    this.notionError = getXULElementById('notero-notionError')!;
     this.pageTitleFormatMenu = getXULElementById('notero-pageTitleFormat')!;
     /* eslint-enable @typescript-eslint/no-non-null-assertion */
-
-    this.prefObserverSymbol = registerNoteroPrefObserver(
-      NoteroPref.notionToken,
-      () => {
-        void this.refreshNotionDatabaseMenu();
-      },
-    );
 
     window.addEventListener('unload', () => {
       this.deinit();
@@ -86,14 +88,22 @@ class Preferences {
     await this.initPageTitleFormatMenu();
     await this.initSyncConfigsTable();
 
-    // Don't block window from loading while waiting for network response
+    // Don't block window from loading while waiting for network responses
     setTimeout(() => {
-      void this.refreshNotionDatabaseMenu();
+      void this.refreshNotionConnectionSection();
     }, 100);
+
+    this.eventManager.addListener(
+      'notion-connection.add',
+      this.handleNotionConnectionAdd,
+    );
   }
 
   private deinit(): void {
-    unregisterNoteroPrefObserver(this.prefObserverSymbol);
+    this.eventManager.removeListener(
+      'notion-connection.add',
+      this.handleNotionConnectionAdd,
+    );
   }
 
   private async initPageTitleFormatMenu(): Promise<void> {
@@ -148,14 +158,66 @@ class Preferences {
     return Boolean(addon?.isActive);
   }
 
-  private async refreshNotionDatabaseMenu(): Promise<void> {
+  private handleNotionConnectionAdd = () => {
+    void this.refreshNotionConnectionSection();
+  };
+
+  private async refreshNotionConnectionSection(): Promise<void> {
+    const connection = await this.notionAuthManager.getFirstConnection();
+    const legacyToken = this.notionAuthManager.getLegacyAuthToken();
+
+    const authToken = connection?.access_token || legacyToken;
+
+    this.notionError.hidden = true;
+
+    if (!authToken) {
+      this.notionConnectButton.hidden = false;
+      this.notionConnectionContainer.hidden = true;
+      return;
+    }
+
+    this.notionConnectionSpinner.setAttribute('status', 'animate');
+
+    try {
+      const notion = getNotionClient(authToken, window);
+
+      const user = await notion.users.me({});
+      const workspaceName =
+        (user.type === 'bot' && user.bot.workspace_name) || 'Connected';
+
+      document.l10n.setArgs(this.notionWorkspaceLabel, {
+        'workspace-name': workspaceName,
+      });
+
+      this.notionConnectButton.hidden = true;
+      this.notionUpgradeConnectionButton.hidden = Boolean(connection);
+      this.notionConnectionContainer.hidden = false;
+      this.notionConnectionSpinner.removeAttribute('status');
+
+      await this.refreshNotionDatabaseMenu(notion);
+    } catch (error) {
+      logger.error(error);
+
+      this.notionConnectionSpinner.removeAttribute('status');
+      this.notionError.hidden = false;
+      this.notionError.value = await getLocalizedErrorMessage(
+        error,
+        document.l10n,
+      );
+
+      if (isNotionErrorWithCode(error, APIErrorCode.Unauthorized)) {
+        this.notionConnectButton.hidden = false;
+      }
+    }
+  }
+
+  private async refreshNotionDatabaseMenu(notion: Client): Promise<void> {
     let menuItems: MenuItem[] = [];
 
     this.notionDatabaseMenu.disabled = true;
-    this.notionDatabaseError.hidden = true;
 
     try {
-      const databases = await this.retrieveNotionDatabases();
+      const databases = await this.retrieveNotionDatabases(notion);
 
       menuItems = databases.map<MenuItem>((database) => {
         const title = database.title.map((t) => t.plain_text).join('');
@@ -169,51 +231,81 @@ class Preferences {
       });
 
       this.notionDatabaseMenu.disabled = false;
-    } catch (error) {
-      this.notionDatabaseMenu.disabled = true;
-      this.notionDatabaseError.hidden = false;
-      this.notionDatabaseError.value = await getLocalizedErrorMessage(
-        error,
-        document.l10n,
+    } finally {
+      setMenuItems(this.notionDatabaseMenu, menuItems);
+    }
+  }
+
+  private async retrieveNotionDatabases(
+    notion: Client,
+  ): Promise<DatabaseObjectResponse[]> {
+    const response = await notion.search({
+      filter: { property: 'object', value: 'database' },
+    });
+
+    const databases = response.results.filter(isFullDatabase);
+
+    if (databases.length === 0) {
+      throw new LocalizableError(
+        'No Notion databases are accessible',
+        'notero-error-no-notion-databases',
       );
     }
 
-    setMenuItems(this.notionDatabaseMenu, menuItems);
+    return databases;
   }
 
-  private async retrieveNotionDatabases(): Promise<DatabaseObjectResponse[]> {
-    try {
-      const notion = getNotionClient(window);
+  public async connectNotion(event: XUL.CommandEvent): Promise<void> {
+    const button = event.target as XUL.ButtonElement;
 
-      const response = await notion.search({
-        filter: { property: 'object', value: 'database' },
-      });
+    button.disabled = true;
 
-      const databases = response.results.filter(isFullDatabase);
+    window.addEventListener(
+      'blur',
+      () => {
+        button.disabled = false;
+      },
+      { once: true },
+    );
 
-      if (databases.length === 0) {
-        throw new LocalizableError(
-          'No Notion databases are accessible',
-          'notero-error-no-notion-databases',
-        );
-      }
-
-      return databases;
-    } catch (error) {
-      logger.error(error);
-      throw error;
-    }
+    await this.notionAuthManager.openLogin();
   }
 
-  public toggleNotionTokenVisibility(): void {
-    const isVisible = this.notionTokenInput.type !== 'password';
-    this.notionTokenInput.type = isVisible ? 'password' : 'text';
-    this.notionTokenVisibilityToggle.image = isVisible
-      ? 'chrome://zotero/skin/16/universal/view.svg'
-      : 'chrome://zotero/skin/16/universal/hide.svg';
-    document.l10n.setArgs(this.notionTokenVisibilityToggle, {
-      action: isVisible ? 'reveal' : 'conceal',
-    });
+  public async disconnectNotion(): Promise<void> {
+    const dialogTitle =
+      (await document.l10n.formatValue(
+        'notero-preferences-notion-disconnect-dialog-title',
+      )) || 'Disconnect Notion Workspace';
+    const dialogText =
+      (await document.l10n.formatValue(
+        'notero-preferences-notion-disconnect-dialog-text',
+      )) || 'Disconnect workspace';
+
+    const confirmed = Services.prompt.confirm(null, dialogTitle, dialogText);
+    if (!confirmed) return;
+
+    await this.notionAuthManager.removeAllConnections();
+
+    await this.refreshNotionConnectionSection();
+  }
+
+  public async upgradeNotionConnection(event: XUL.CommandEvent): Promise<void> {
+    const dialogTitle =
+      (await document.l10n.formatValue(
+        'notero-preferences-notion-upgrade-dialog-title',
+      )) || 'Upgrade Notion Connection';
+    const dialogText =
+      (await document.l10n.formatValue(
+        'notero-preferences-notion-upgrade-dialog-text',
+      )) || 'Upgrade connection';
+
+    const confirmed = Services.prompt.confirm(null, dialogTitle, dialogText);
+    if (!confirmed) return;
+
+    // Ensure window blur listener works as expected
+    setTimeout(() => {
+      void this.connectNotion(event);
+    }, 100);
   }
 }
 

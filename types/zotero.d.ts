@@ -459,6 +459,16 @@ declare namespace Zotero {
     loadURI(uris: string | string[]): void;
   }
 
+  interface ZoteroProtocolHandler {
+    _extensions: Record<`zotero://${string}`, ZoteroProtocolHandlerExtension>;
+  }
+
+  type ZoteroProtocolHandlerExtension = {
+    doAction(uri: XPCOM.nsIURI): void | Promise<void>;
+    newChannel(uri: XPCOM.nsIURI, loadInfo: unknown): unknown;
+    noContent: boolean;
+  };
+
   interface ZoteroWindow extends XPCOM.nsIDOMWindow {
     ZoteroPane?: ZoteroPane;
   }

@@ -13,7 +13,14 @@ declare namespace XUL {
     checked: boolean;
   }
 
+  /** @see https://udn.realityripple.com/docs/Archive/Mozilla/XUL/Events/command */
+  type CommandEvent = Pick<Event, 'bubbles' | 'cancelable' | 'target' | 'type'>;
+
   interface DescriptionElement extends XULElement {
+    value: string;
+  }
+
+  interface LabelElement extends XULElement {
     value: string;
   }
 
@@ -67,6 +74,7 @@ declare namespace XUL {
   type XULElementTagNameMap = {
     button: ButtonElement;
     checkbox: CheckboxElement;
+    label: LabelElement;
     menuitem: MenuItemElement;
     menulist: MenuListElement;
     preference: PreferenceElement;

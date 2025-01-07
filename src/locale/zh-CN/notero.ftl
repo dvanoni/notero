@@ -9,15 +9,15 @@ notero-tools-menu-preferences =
 
 ## Notion preferences
 
-notero-preferences-notion-groupbox-heading = Notion 首选项
-notero-preferences-notion-groupbox-description = 有关获取这些值的说明，请查看 <label data-l10n-name="notero-preferences-readme">README</label>.
-notero-preferences-notion-token = 内部集成令牌:
-notero-preferences-notion-token-visibility = 
-    .tooltiptext =
-        { $action ->
-            [conceal] 隐藏标记
-           *[reveal] 显示标记
-        }
+notero-preferences-notion-groupbox-heading = Notion 连接
+notero-preferences-notion-connect-button = 连接到 Notion
+notero-preferences-notion-disconnect-button = 断开连接…
+notero-preferences-notion-disconnect-dialog-title = 断开 Notion 工作区
+notero-preferences-notion-disconnect-dialog-text = 断开 Notion 工作区连接将阻止进一步同步。它不会删除任何已同步的内容。
+notero-preferences-notion-upgrade-button = 升级连接…
+notero-preferences-notion-upgrade-dialog-title = 升级 Notion 连接
+notero-preferences-notion-upgrade-dialog-text = Notero 已发展成为 Notion 公共集成，从而增强了功能和安全性。要升级，请单击“确定”，您将被重定向到 Notion 以授权新的 Notero 集成。此一次性过程可启用新功能，例如多工作区支持。完成升级后，您可以安全地删除以前的内部集成。
+notero-preferences-notion-workspace = 工作区： { $workspace-name }
 notero-preferences-notion-database = 数据库:
 
 ## Property preferences
@@ -61,7 +61,7 @@ notero-progress-item = 项目 { $step } / { $total }
 ## Errors
 
 notero-error-missing-notion-database = 未选择 Notion 数据库。请在 Notero 偏好设置中选择您的数据库。
-notero-error-missing-notion-token = 未提供 Notion 集成令牌。请在 Notero 偏好设置中输入您的令牌。
+notero-error-missing-notion-token = 未获得 Notion 授权。请在 Notero 偏好设置中连接到 Notion。
 notero-error-missing-pref = { $pref } 缺少值。请在 Notero 偏好设置中输入该值。
 notero-error-no-notion-databases = 没有可访问的 Notion 数据库。
 notero-error-note-conversion-failed = 无法将笔记内容转换为 Notion 块。

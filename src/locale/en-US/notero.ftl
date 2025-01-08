@@ -19,6 +19,7 @@ notero-preferences-notion-upgrade-dialog-title = Upgrade Notion Connection
 notero-preferences-notion-upgrade-dialog-text = Notero has evolved into a Notion public integration, enabling enhanced features and security. To upgrade, click OK and you'll be redirected to Notion to authorize the new Notero integration. This one-time process enables new capabilities like multi-workspace support. After completing the upgrade, you can safely remove your previous internal integration.
 notero-preferences-notion-workspace = Workspace: { $workspace-name }
 notero-preferences-notion-database = Database:
+notero-preferences-notion-linked-database = Linked Database:
 
 ## Property preferences
 

@@ -180,6 +180,7 @@ describe('buildProperties', () => {
           databaseProperties: {},
           item,
           pageTitleFormat: format,
+          collectionRelationMap: {},
         });
 
         expect(result).toStrictEqual({
@@ -200,6 +201,7 @@ describe('buildProperties', () => {
         databaseProperties: {},
         item,
         pageTitleFormat: PageTitleFormat.itemCitationKey,
+        collectionRelationMap: {},
       });
 
       expect(result).toStrictEqual({
@@ -221,6 +223,7 @@ describe('buildProperties', () => {
       },
       item,
       pageTitleFormat: PageTitleFormat.itemTitle,
+      collectionRelationMap: {},
     });
 
     const expected: DatabaseRequestProperties = {
@@ -261,6 +264,7 @@ describe('buildProperties', () => {
       },
       item,
       pageTitleFormat: PageTitleFormat.itemTitle,
+      collectionRelationMap: {},
     });
 
     const expected: DatabaseRequestProperties = {
@@ -293,6 +297,7 @@ describe('buildProperties', () => {
       },
       item,
       pageTitleFormat: PageTitleFormat.itemCitationKey,
+      collectionRelationMap: {},
     });
 
     expect(result).toStrictEqual(
@@ -313,6 +318,7 @@ describe('buildProperties', () => {
       databaseProperties: propertyConfigs,
       item,
       pageTitleFormat: PageTitleFormat.itemTitle,
+      collectionRelationMap: {},
     });
 
     const expected: DatabaseRequestProperties = {

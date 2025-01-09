@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.0.0](https://github.com/dvanoni/notero/compare/v0.6.8...v1.0.0) (2025-01-09)
+
+
+### Features
+
+* **localization:** New Crowdin translations ([#631](https://github.com/dvanoni/notero/issues/631)) ([a04581c](https://github.com/dvanoni/notero/commit/a04581ce910627f3c5010c88b5626f1907cdbb49))
+* Upgrade to Notion public integration (OAuth) ([#630](https://github.com/dvanoni/notero/issues/630)) ([83aab6e](https://github.com/dvanoni/notero/commit/83aab6ed6787c030127993f72357fbb18d26ce65))
+
 ## [0.6.8](https://github.com/dvanoni/notero/compare/v0.6.7...v0.6.8) (2025-01-04)
 
 

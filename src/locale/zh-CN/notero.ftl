@@ -16,7 +16,7 @@ notero-preferences-notion-disconnect-dialog-title = 断开 Notion 工作区
 notero-preferences-notion-disconnect-dialog-text = 断开 Notion 工作区连接将阻止进一步同步。它不会删除任何已同步的内容。
 notero-preferences-notion-upgrade-button = 升级连接…
 notero-preferences-notion-upgrade-dialog-title = 升级 Notion 连接
-notero-preferences-notion-upgrade-dialog-text = Notero 已发展成为 Notion 公共集成，从而增强了功能和安全性。要升级，请单击“确定”，您将被重定向到 Notion 以授权新的 Notero 集成。此一次性过程可启用新功能，例如多工作区支持。完成升级后，您可以安全地删除以前的内部集成。
+notero-preferences-notion-upgrade-dialog-text = Notero 已发展成为 Notion 公共集成，从而实现了增强的功能和安全性。要升级，请单击“确定”，您将被重定向到 Notion 以授权新的 Notero 集成。完成此一次性过程后，您可以安全地删除之前的内部集成。有关更多详细信息，请参阅 Notero README。
 notero-preferences-notion-workspace = 工作区： { $workspace-name }
 notero-preferences-notion-database = 数据库:
 

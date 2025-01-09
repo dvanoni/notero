@@ -16,7 +16,7 @@ notero-preferences-notion-disconnect-dialog-title = Disconnect Notion Workspace
 notero-preferences-notion-disconnect-dialog-text = Disconnecting your Notion workspace will prevent further syncing. It will not remove any content that has already been synced.
 notero-preferences-notion-upgrade-button = Upgrade Connection…
 notero-preferences-notion-upgrade-dialog-title = Upgrade Notion Connection
-notero-preferences-notion-upgrade-dialog-text = Notero has evolved into a Notion public integration, enabling enhanced features and security. To upgrade, click OK and you'll be redirected to Notion to authorize the new Notero integration. This one-time process enables new capabilities like multi-workspace support. After completing the upgrade, you can safely remove your previous internal integration.
+notero-preferences-notion-upgrade-dialog-text = Notero has evolved into a Notion public integration, enabling enhanced features and security. To upgrade, click OK and you'll be redirected to Notion to authorize the new Notero integration. After completing this one-time process, you can safely delete your previous internal integration. See the Notero README for more details.
 notero-preferences-notion-workspace = Workspace: { $workspace-name }
 notero-preferences-notion-database = Database:
 

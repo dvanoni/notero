@@ -8,11 +8,14 @@
 Notero is a [Zotero plugin](https://www.zotero.org/support/plugins) for syncing
 items and notes into [Notion](https://www.notion.so/product). To use it:
 
-1. 📔 [Configure](#configure-notion) your Notion database.
-2. 💾 [Install](#install-and-configure-notero-plugin) the Notero plugin into Zotero.
+1. 💾 [Install][] the Notero plugin into Zotero.
+2. 📔 [Connect][] and configure your Notion database.
 3. 📁 Choose your Zotero collections to monitor.
 4. 📝 Add or update items in your collections.
 5. 🔄 Watch your items sync into Notion!
+
+[Install]: #install-and-configure-notero-plugin
+[Connect]: #connect-to-notion
 
 ![Notero in action](docs/notero.gif)
 
@@ -101,49 +104,93 @@ extract them into a Zotero note:
 
 ## Installation and Setup
 
-Using Notero requires setting up a Notion database, connecting it to Notero, and
-installing the Notero plugin in Zotero. Detailed setup instructions are below.
+Using Notero involves installing the plugin in Zotero and connecting it to a
+Notion database. Detailed setup instructions are below.
 
-### Configure Notion
+### Install and Configure Notero Plugin
 
-1.  Create the Notion database that you would like to sync Zotero items into.
+> [!IMPORTANT]
+>
+> - The latest release of Notero requires Zotero 7.0 or above.
+> - Support for Zotero 6.0.27 and above is available in Notero [v0.5.17][].
+> - See the [changelog](CHANGELOG.md) for all release notes.
 
-    See [examples](#example-notion-databases) below that you can duplicate into
-    your Notion workspace.
+1. [Download][] the latest release of the `.xpi` file.
+   - Note for Firefox users: You'll need to right-click the above download link
+     and choose **Save Link As...** in order to properly download the file.
+   - If the above download link does not work, you can download the `.xpi` file
+     from the **Assets** section of the [latest release][] page.
+2. Open the Zotero Plugins Manager via the **Tools → Plugins** menu item.
+3. Install the `.xpi` file by either:
+   - dragging and dropping it into the Plugins Manager window _or_
+   - selecting it using the **Install Plugin From File...** option in the
+     gear menu in the top-right corner of the window
+4. Open the Notero preferences from either the **Tools → Notero Preferences...**
+   menu item or the sidebar in the main Zotero preferences window.
+5. Configure the Notero preferences as desired.
 
-2.  Create a Notion [internal integration](https://developers.notion.com/docs/create-a-notion-integration)
-    at https://www.notion.com/my-integrations and enable _all_ of the
-    "content capabilities."
+[download]: https://download.notero.vanoni.dev
+[latest release]: https://github.com/dvanoni/notero/releases/latest
+[v0.5.17]: https://github.com/dvanoni/notero/releases/tag/v0.5.17
 
-    <details>
-      <summary>Example of integration capabilities settings</summary>
-      <img
-        alt="Notion integration capabilities settings"
-        src="docs/notion-capabilities.png"
-      />
-    </details>
+### Connect to Notion
 
-3.  Take note of the "internal integration secret" from the previous step.
+> [!NOTE]
+>
+> Prior to version 1.0.0, Notero required you to create your own Notion internal
+> integration and manually set the integration secret in the Notero preferences.
+> This is no longer necessary as Notero now uses a public integration with an
+> authentication flow provided by Notion.
+>
+> If you previously set up Notero with an internal integration, you can click
+> the **Upgrade Connection** button in the Notero preferences to switch to the
+> public integration as described below (starting at step 2). Once complete, you
+> can delete your internal integration from
+> https://www.notion.so/profile/integrations.
 
-4.  Give your integration access to your database.
+1. Start the Notion connection process by clicking the **Connect to Notion**
+   button in the Notero preferences. This will open the Notion connection page
+   in your default web browser.
+2. On the Notion connection page, select your desired workspace from the menu
+   at the top (if you have multiple). Then, click **Next**.
+3. On the next page, choose whether you want to use a template database or
+   connect to an existing database page.
+   - If you choose to use a template, the [basic example](#basic-example)
+     database will be duplicated into your workspace.
+   - If you choose to select an existing database, you can search for and
+     select the database you want to use on the next page. You can also select
+     no database and connect one later in Notion.
+4. Click **Allow access** to give Notero access to your Notion workspace and
+   database. You will then be redirected to a page that prompts you to open
+   Zotero.
+5. Click the **Open Zotero** button (or equivalent, depending on your web
+   browser) to return to Zotero. The Notero preferences should show that you
+   are connected to your Notion workspace.
 
-    From the [Notion developer docs](https://developers.notion.com/docs/create-a-notion-integration#give-your-integration-page-permissions):
+<details>
+  <summary>Example of connecting to Notion</summary>
+  <video src="TODO" />
+</details>
 
-    > 1. Go to the database page in your workspace.
-    > 2. Click on the **•••** More menu in the top-right corner of the page.
-    > 3. Scroll down to and click **Connect to**.
-    > 4. Search for and select your integration in the **Search for connections...** menu.
+### Configure Notion Database
 
-      <details>
-        <summary>Example of connection settings from the Notion documentation</summary>
-        <img
-          alt="Share database with integration"
-          src="https://files.readme.io/3e5cb5b-share-database-with-integration.gif"
-        />
-      </details>
+If you choose not to use the template database during the Notion connection
+process, you will need to create your own database. See
+[examples](#example-notion-databases) below that you can duplicate into
+your workspace, or create one from scratch with properties described in the
+[database properties](#notion-database-properties) section below.
 
-5.  Configure the database properties as desired. See the
-    [database properties](#notion-database-properties) section below for more details.
+To give Notero access to your database, follow these steps:
+
+1. Go to the database page in your workspace.
+2. Click on the **•••** More menu in the top-right corner of the page.
+3. Scroll down to and click **Connections**.
+4. Search for and select **Notero** in the **Search for connections...** menu.
+
+<details>
+  <summary>Example of connecting database to Notero</summary>
+  <video src="TODO" />
+</details>
 
 #### Notion Database Properties
 
@@ -187,42 +234,14 @@ see issue [#355](https://github.com/dvanoni/notero/issues/355).
 | `Year`              | Number        |                                                                                |
 | `Zotero URI`        | URL           | Opens items in web library if signed in to Zotero                              |
 
-### Install and Configure Notero Plugin
-
-> [!IMPORTANT]
->
-> - The latest release of Notero requires Zotero 7.0 or above.
-> - Support for Zotero 6.0.27 and above is available in Notero [v0.5.17][].
-> - See the [changelog](CHANGELOG.md) for all release notes.
-
-1. [Download][] the latest release of the `.xpi` file.
-   - Note for Firefox users: You'll need to right-click the above download link
-     and choose **Save Link As...** in order to properly download the file.
-   - If the above download link does not work, you can download the `.xpi` file
-     from the **Assets** section of the [latest release][] page.
-2. Open the Zotero Plugins Manager via the **Tools → Plugins** menu item.
-3. Install the `.xpi` file by either:
-   - dragging and dropping it into the Plugins Manager window _or_
-   - selecting it using the **Install Plugin From File...** option in the
-     gear menu in the top-right corner of the window
-4. Open the Notero preferences from the **Tools → Notero Preferences...** menu
-   item, and enter the required preferences.
-   - Note for Zotero 7 users: The Notero preferences have moved into a section
-     in the main Zotero preferences window.
-
-[download]: https://download.notero.vanoni.dev
-[latest release]: https://github.com/dvanoni/notero/releases/latest
-[v0.5.17]: https://github.com/dvanoni/notero/releases/tag/v0.5.17
-
 ## Usage Guides
 
 For more visual guides of setting up and using Notero, see the following
 resources made by wonderful members of the community.
 
 > [!NOTE]
->
-> Some aspects of these resources may be out of date, so be sure to refer to
-> this README for the latest information.
+> Some aspects of these resources may be outdated, so be sure to refer to this
+> README for the latest information.
 
 - [Using Notion and Zotero to build a literature tracker](https://sciquest.netlify.app/posts/notion_literature/)
   (blog post) by [Jewel Johnson](https://jeweljohnsonj.github.io/jewel_resume/)
@@ -280,14 +299,10 @@ If you receive the following error:
 > APIResponseError: Could not find database with ID: _xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx_
 
 This most likely means you have not given Notero access to your Notion database.
-Ensure you follow all the steps from the [Configure Notion](#configure-notion)
-section. Clicking the **•••** button in the top-right corner of your database
-should show a connection for the integration you've created for Notero.
-
-<details>
-  <summary>Example of connection settings</summary>
-  <img alt="Share with Notero" src="docs/share-with-notero.png" style="max-height:636px;" />
-</details>
+Ensure you follow the steps in the
+[Configure Notion Database](#configure-notion-database) section. Clicking the
+**•••** button in the top-right corner of your database should show a connection
+for the Notero integration.
 
 #### Can't update a page that is archived
 

@@ -8,6 +8,8 @@ function log(msg: string) {
   Zotero.debug(`${LOG_PREFIX}${msg}`);
   Zotero.log(`${LOG_PREFIX}${msg}`, 'info');
 }
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+let chromeHandle;
 
 /**
  *
@@ -40,7 +42,16 @@ async function startup(
 ) {
   log(`Starting v${version}`);
 
+  Zotero.log(rootURI);
   Services.scriptloader.loadSubScript(rootURI + 'content/notero.js');
+  // @ts-expect-error - `Zotero.Notero` is not defined in the Zotero namespace
+  const aomStartup = Components.classes[
+    '@mozilla.org/addons/addon-manager-startup;1'
+  ].getService(Components.interfaces.amIAddonManagerStartup);
+  const manifestURI = Services.io.newURI(rootURI + 'manifest.json');
+  chromeHandle = aomStartup.registerChrome(manifestURI, [
+    ['content', 'notero', rootURI + 'content/'],
+  ]);
 
   await Zotero.Notero?.startup({ pluginID: id, rootURI, version });
 }

@@ -4,47 +4,23 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import type { createRoot } from 'react-dom/client';
 
-import type { FluentMessageId } from '../../locale/fluent-types';
 import type { NotionAuthManager } from '../auth';
 import { LocalizableError } from '../errors';
 import type { EventManager } from '../services';
 import { getNotionClient } from '../sync/notion-client';
 import { isNotionErrorWithCode, normalizeID } from '../sync/notion-utils';
 import {
-  createXULElement,
   getGlobalNotero,
   getLocalizedErrorMessage,
   getXULElementById,
   logger,
 } from '../utils';
+import { MenuItem, setMenuItems } from '../utils/elements';
 
 import { PAGE_TITLE_FORMAT_L10N_IDS, PageTitleFormat } from './notero-pref';
 import { SyncConfigsTable } from './sync-configs-table';
 
 type ReactDOMClient = typeof ReactDOM & { createRoot: typeof createRoot };
-
-type MenuItem = {
-  disabled?: boolean;
-  l10nId?: FluentMessageId;
-  label?: string;
-  value: string;
-};
-
-function setMenuItems(menuList: XUL.MenuListElement, items: MenuItem[]): void {
-  menuList.menupopup.replaceChildren();
-
-  items.forEach(({ disabled, l10nId, label, value }) => {
-    const item = createXULElement(document, 'menuitem');
-    item.value = value;
-    item.disabled = Boolean(disabled);
-    if (l10nId) {
-      document.l10n.setAttributes(item, l10nId);
-    } else {
-      item.label = label || value;
-    }
-    menuList.menupopup.append(item);
-  });
-}
 
 class Preferences {
   private eventManager!: EventManager;
@@ -54,6 +30,7 @@ class Preferences {
   private notionConnectButton!: XUL.ButtonElement;
   private notionUpgradeConnectionButton!: XUL.ButtonElement;
   private notionDatabaseMenu!: XUL.MenuListElement;
+  private notionLinkedDatabaseMenu!: XUL.MenuListElement;
   private notionError!: XUL.LabelElement;
   private notionWorkspaceLabel!: XUL.LabelElement;
   private pageTitleFormatMenu!: XUL.MenuListElement;
@@ -77,6 +54,9 @@ class Preferences {
     )!;
     this.notionWorkspaceLabel = getXULElementById('notero-notionWorkspace')!;
     this.notionDatabaseMenu = getXULElementById('notero-notionDatabase')!;
+    this.notionLinkedDatabaseMenu = getXULElementById(
+      'notero-notionLinkedDatabase',
+    )!;
     this.notionError = getXULElementById('notero-notionError')!;
     this.pageTitleFormatMenu = getXULElementById('notero-pageTitleFormat')!;
     /* eslint-enable @typescript-eslint/no-non-null-assertion */
@@ -133,9 +113,13 @@ class Preferences {
     const syncEnabled = await document.l10n.formatValue(
       'notero-preferences-sync-enabled-column',
     );
+    const associatedLink = await document.l10n.formatValue(
+      'notero-preferences-associatedLink-column',
+    );
     const columnLabels = {
       collectionFullName: collection || 'Collection',
       syncEnabled: syncEnabled || 'Sync Enabled',
+      associatedLink: associatedLink || 'Associated Link',
     };
 
     (ReactDOM as ReactDOMClient)
@@ -215,6 +199,7 @@ class Preferences {
     let menuItems: MenuItem[] = [];
 
     this.notionDatabaseMenu.disabled = true;
+    this.notionLinkedDatabaseMenu.disabled = true;
 
     try {
       const databases = await this.retrieveNotionDatabases(notion);
@@ -231,8 +216,10 @@ class Preferences {
       });
 
       this.notionDatabaseMenu.disabled = false;
+      this.notionLinkedDatabaseMenu.disabled = false;
     } finally {
       setMenuItems(this.notionDatabaseMenu, menuItems);
+      setMenuItems(this.notionLinkedDatabaseMenu, menuItems);
     }
   }
 

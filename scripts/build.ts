@@ -29,6 +29,16 @@ const builds: (BuildOptions & { entryPoints: [string] })[] = [
     sourcemap,
     target,
   },
+  {
+    bundle: true,
+    entryPoints: ['src/content/prefs/dialog.tsx'],
+    external: ['components/*', 'react', 'react-dom'],
+    format: 'iife',
+    globalName: 'notero',
+    outdir: 'build/content/prefs',
+    sourcemap,
+    target,
+  },
 ];
 
 Promise.all(

@@ -1,4 +1,5 @@
 declare module 'components/virtualized-table' {
+  type WindowedList = unknown;
   type Column<DataKey extends string> = {
     /** Required, see use in ItemTree#_getRowData() */
     dataKey: DataKey;
@@ -153,7 +154,4 @@ declare module 'components/virtualized-table' {
 
   // eslint-disable-next-line import/no-default-export
   export default VirtualizedTable;
-
-  // eslint-disable-next-line @typescript-eslint/no-extraneous-class
-  class WindowedList {}
 }

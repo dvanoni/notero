@@ -137,7 +137,7 @@ Notion database. Detailed setup instructions are below.
 
 > [!NOTE]
 >
-> Prior to version 1.0.0, Notero required you to create your own Notion internal
+> Before version 1.0.0, Notero required you to create your own Notion internal
 > integration and manually set the integration secret in the Notero preferences.
 > This is no longer necessary as Notero now uses a public integration with an
 > authentication flow provided by Notion.
@@ -156,9 +156,9 @@ Notion database. Detailed setup instructions are below.
    connect to an existing database page.
    - If you choose to use a template, the [basic example](#basic-example)
      database will be duplicated into your workspace.
-   - If you choose to select an existing database, you can search for and
-     select the database you want to use on the next page. You can also select
-     no database and connect one later in Notion.
+   - If you choose to select an existing database, you can search for and select
+     your preferred database on the next page. You can also select no database
+     and connect one later in Notion.
 4. Click **Allow access** to give Notero access to your Notion workspace and
    database. You will then be redirected to a page that prompts you to open
    Zotero.

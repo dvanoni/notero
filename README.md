@@ -413,7 +413,7 @@ documentation and should allow you to build and run Notero yourself.
 
     Alternatively, you can start your desired beta version of Zotero:
 
-        npm run start-beta
+        npm run start:beta
 
     The `start` script performs a number of steps:
 

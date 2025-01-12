@@ -32,9 +32,8 @@ These values are transmitted to Notion for purposes of synchronization and are
 not transmitted anywhere else.
 
 As part of the synchronization process, user-generated Zotero item data may be
-transmitted to Notion. These may include but are not limited to: notes, tags,
-and custom fields. Data saved in Notion is subject to
-[Notion terms and privacy][].
+transmitted to Notion. These may include but are not limited to notes, tags, and
+custom fields. Data saved in Notion is subject to [Notion terms and privacy][].
 
 The Notero plugin does not communicate with any services other than Notion and
 the OAuth proxy service.

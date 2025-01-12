@@ -116,10 +116,10 @@ Notion database. Detailed setup instructions are below.
 > - See the [changelog](CHANGELOG.md) for all release notes.
 
 1. [Download][] the latest release of the `.xpi` file.
-   - Note for Firefox users: You'll need to right-click the above download link
-     and choose **Save Link As...** in order to properly download the file.
-   - If the above download link does not work, you can download the `.xpi` file
-     from the **Assets** section of the [latest release][] page.
+   - Alternatively, download the `.xpi` file from the **Assets** section of the
+     [latest release][] page.
+   - Firefox users: Right-click the download link and choose **Save Link As...**
+     in order to properly download the file.
 2. Open the Zotero Plugins Manager via the **Tools → Plugins** menu item.
 3. Install the `.xpi` file by either:
    - dragging and dropping it into the Plugins Manager window _or_
@@ -144,9 +144,8 @@ Notion database. Detailed setup instructions are below.
 >
 > If you previously set up Notero with an internal integration, you can click
 > the **Upgrade Connection** button in the Notero preferences to switch to the
-> public integration as described below (starting at step 2). Once complete, you
-> can delete your internal integration from
-> https://www.notion.so/profile/integrations.
+> public integration as described below. Once complete, you can delete your
+> internal integration from the [Notion integrations][] page.
 
 1. Start the Notion connection process by clicking the **Connect to Notion**
    button in the Notero preferences. This will open the Notion connection page
@@ -171,6 +170,8 @@ Notion database. Detailed setup instructions are below.
   <summary>Example of connecting to Notion</summary>
   <video src="https://github.com/user-attachments/assets/6c759c9d-f032-4060-bfd0-8da285ce0c2a" />
 </details>
+
+[Notion integrations]: https://www.notion.so/profile/integrations
 
 ### Configure Notion Database
 

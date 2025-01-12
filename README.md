@@ -119,7 +119,7 @@ Notion database. Detailed setup instructions are below.
    - Alternatively, download the `.xpi` file from the **Assets** section of the
      [latest release][] page.
    - Firefox users: Right-click the download link and choose **Save Link As...**
-     in order to properly download the file.
+     to download the file.
 2. Open the Zotero Plugins Manager via the **Tools → Plugins** menu item.
 3. Install the `.xpi` file by either:
    - dragging and dropping it into the Plugins Manager window _or_

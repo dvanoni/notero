@@ -17,7 +17,7 @@ service to keep the OAuth client secret secure. The OAuth proxy service is
 managed by the Notero developer and is [open source][notero-auth]. The proxy
 service does not store any user data other than logs of basic network request
 information (e.g., IP address and user agent) captured by the hosting provider,
-[Cloudflare Workers][].
+[Cloudflare][Cloudflare Trust Hub].
 
 When the user completes the Notion authorization flow, the Notero plugin
 receives a Notion access token and securely stores it using the
@@ -39,7 +39,7 @@ The Notero plugin does not communicate with any services other than Notion and
 the OAuth proxy service.
 
 [notero-auth]: https://github.com/dvanoni/notero-auth
-[Cloudflare Workers]: https://workers.cloudflare.com/
+[Cloudflare Trust Hub]: https://www.cloudflare.com/trust-hub/
 [Notion authorization guide]: https://developers.notion.com/docs/authorization
 [Notion terms and privacy]: https://www.notion.so/28ffdd083dc3473e9c2da6ec011b58ac
 [Zotero login manager]: https://udn.realityripple.com/docs/Mozilla/Tech/XPCOM/Reference/Interface/nsILoginManager/Using_nsILoginManager

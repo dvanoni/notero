@@ -75,6 +75,27 @@
 
 <groupbox class="notero-groupbox">
   <label>
+    <html:h2 data-l10n-id="notero-preferences-links-groupbox-heading" />
+  </label>
+  <label data-l10n-id="notero-preferences-links-groupbox-description" />
+  <separator class="thin" />
+  <hbox align="center">
+    <label
+      control="notero-urlSchema"
+      data-l10n-id="notero-preferences-links-url-schema"
+    />
+    <menulist
+      id="notero-urlSchema"
+      native="true"
+      preference="extensions.notero.urlSchema"
+    >
+      <menupopup />
+    </menulist>
+  </hbox>
+</groupbox>
+
+<groupbox class="notero-groupbox">
+  <label>
     <html:h2 data-l10n-id="notero-preferences-sync-groupbox-heading" />
   </label>
   <label data-l10n-id="notero-preferences-sync-groupbox-description1" />

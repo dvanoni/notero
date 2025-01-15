@@ -8,6 +8,7 @@ export enum NoteroPref {
   pageTitleFormat = 'pageTitleFormat',
   syncNotes = 'syncNotes',
   syncOnModifyItems = 'syncOnModifyItems',
+  urlSchema = 'urlSchema',
 }
 
 export enum PageTitleFormat {
@@ -17,6 +18,11 @@ export enum PageTitleFormat {
   itemInTextCitation = 'itemInTextCitation',
   itemShortTitle = 'itemShortTitle',
   itemTitle = 'itemTitle',
+}
+
+export enum UrlSchema {
+  notion = 'notion',
+  https = 'https',
 }
 
 export const PAGE_TITLE_FORMAT_L10N_IDS: Record<
@@ -42,6 +48,7 @@ type NoteroPrefValue = Partial<{
   [NoteroPref.pageTitleFormat]: PageTitleFormat;
   [NoteroPref.syncNotes]: boolean;
   [NoteroPref.syncOnModifyItems]: boolean;
+  [NoteroPref.urlSchema]: UrlSchema;
 }>;
 
 function buildFullPrefName(pref: NoteroPref): string {
@@ -54,6 +61,12 @@ function getBooleanPref(value: Zotero.Prefs.Value): boolean | undefined {
 
 function getStringPref(value: Zotero.Prefs.Value): string | undefined {
   return typeof value === 'string' && value ? value : undefined;
+}
+
+function getUrlSchemaPref(value: Zotero.Prefs.Value): UrlSchema | undefined {
+  return Object.values(UrlSchema).includes(value as UrlSchema)
+    ? (value as UrlSchema)
+    : undefined;
 }
 
 function isPageTitleFormat(
@@ -82,6 +95,9 @@ function convertRawPrefValue<P extends NoteroPref>(
     (pref === NoteroPref.pageTitleFormat && getPageTitleFormatPref(value)) ||
     undefined;
 
+  const urlSchemaPref =
+    (pref === NoteroPref.urlSchema && getUrlSchemaPref(value)) || undefined;
+
   return {
     [NoteroPref.collectionSyncConfigs]: stringPref,
     [NoteroPref.notionDatabaseID]: stringPref,
@@ -89,6 +105,7 @@ function convertRawPrefValue<P extends NoteroPref>(
     [NoteroPref.pageTitleFormat]: pageTitleFormatPref,
     [NoteroPref.syncNotes]: booleanPref,
     [NoteroPref.syncOnModifyItems]: booleanPref,
+    [NoteroPref.urlSchema]: urlSchemaPref,
   }[pref];
 }
 

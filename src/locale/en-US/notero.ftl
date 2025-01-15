@@ -26,6 +26,11 @@ notero-preferences-properties-groupbox-heading = Property Preferences
 notero-preferences-properties-groupbox-description = Customize how item properties sync to Notion.
 notero-preferences-page-title-format = Notion Page Title:
 
+## Link preferences
+notero-preferences-links-groupbox-heading = Link Preferences
+notero-preferences-links-groupbox-description = Define if links are saved as notion:// or https:// links. Note that notion:// links are only accessible if the desktop app is installed.
+notero-preferences-links-url-schema = URL Schema:
+
 ## Page title format options
 
 notero-page-title-format-item-author-date-citation =

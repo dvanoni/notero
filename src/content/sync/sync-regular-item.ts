@@ -7,6 +7,7 @@ import {
   saveNotionTag,
 } from '../data/item-data';
 import { LocalizableError } from '../errors';
+import { getNoteroPref, NoteroPref, UrlSchema } from '../prefs/notero-pref';
 import { logger } from '../utils';
 
 import type { DatabaseRequestProperties } from './notion-types';
@@ -28,8 +29,12 @@ export async function syncRegularItem(
   await saveNotionTag(item);
 
   if (isFullPage(response)) {
-    const appURL = convertWebURLToAppURL(response.url);
-    await saveNotionLinkAttachment(item, appURL);
+    // Decide link schema based on user preference
+    const notionURL =
+      getNoteroPref(NoteroPref.urlSchema) === UrlSchema.notion
+        ? convertWebURLToAppURL(response.url)
+        : response.url;
+    await saveNotionLinkAttachment(item, notionURL);
   } else {
     throw new LocalizableError(
       'Failed to create Notion link attachment',

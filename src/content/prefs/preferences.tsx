@@ -18,7 +18,11 @@ import {
   logger,
 } from '../utils';
 
-import { PAGE_TITLE_FORMAT_L10N_IDS, PageTitleFormat } from './notero-pref';
+import {
+  PAGE_TITLE_FORMAT_L10N_IDS,
+  PageTitleFormat,
+  UrlSchema,
+} from './notero-pref';
 import { SyncConfigsTable } from './sync-configs-table';
 
 type ReactDOMClient = typeof ReactDOM & { createRoot: typeof createRoot };
@@ -57,6 +61,7 @@ class Preferences {
   private notionError!: XUL.LabelElement;
   private notionWorkspaceLabel!: XUL.LabelElement;
   private pageTitleFormatMenu!: XUL.MenuListElement;
+  private urlSchemaMenu!: XUL.MenuListElement;
 
   public async init(): Promise<void> {
     await Zotero.uiReadyPromise;
@@ -79,6 +84,7 @@ class Preferences {
     this.notionDatabaseMenu = getXULElementById('notero-notionDatabase')!;
     this.notionError = getXULElementById('notero-notionError')!;
     this.pageTitleFormatMenu = getXULElementById('notero-pageTitleFormat')!;
+    this.urlSchemaMenu = getXULElementById('notero-urlSchema')!;
     /* eslint-enable @typescript-eslint/no-non-null-assertion */
 
     window.addEventListener('unload', () => {
@@ -87,6 +93,7 @@ class Preferences {
 
     await this.initPageTitleFormatMenu();
     await this.initSyncConfigsTable();
+    this.initUrlSchemaMenu();
 
     // Don't block window from loading while waiting for network responses
     setTimeout(() => {
@@ -104,6 +111,18 @@ class Preferences {
       'notion-connection.add',
       this.handleNotionConnectionAdd,
     );
+  }
+
+  private initUrlSchemaMenu(): void {
+    const menuItems = Object.values(UrlSchema).map<MenuItem>((schema) => ({
+      disabled: false,
+      label: `${schema}://`,
+      value: schema,
+    }));
+
+    setMenuItems(this.urlSchemaMenu, menuItems);
+    this.urlSchemaMenu.disabled = false;
+    this.urlSchemaMenu.value = UrlSchema.notion; // Set default value to Notion schema
   }
 
   private async initPageTitleFormatMenu(): Promise<void> {

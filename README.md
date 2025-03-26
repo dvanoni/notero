@@ -260,15 +260,10 @@ feel free to submit a PR or [contact me](https://github.com/dvanoni)!_
 
 Bidirectional sync between Notion and Zotero, while desirable, falls outside the
 scope of this plugin. Implementing this functionality would require developing a
-separate hosted service that could both listen for Notion webhooks and interact
+separate hosted service that could both listen for
+[Notion webhooks](https://developers.notion.com/reference/webhooks) and interact
 with the Zotero API to propagate changes. While technically feasible as a
 standalone project, this capability is not part of Notero's functionality.
-
-Notion's current [webhook actions](https://www.notion.com/help/webhook-actions)
-also impose some limitations that make this less practical:
-
-- Webhook actions are only available to Notion users on paid plans.
-- Actions are only triggered when editing page properties but not page content.
 
 ### How to sync attached files into Notion
 

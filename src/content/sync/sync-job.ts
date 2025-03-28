@@ -2,6 +2,7 @@ import { type Client } from '@notionhq/client';
 
 import { APA_STYLE } from '../constants';
 import { ItemSyncError } from '../errors';
+import { loadSyncConfigs } from '../prefs/collection-sync-config';
 import {
   NoteroPref,
   PageTitleFormat,
@@ -20,6 +21,7 @@ export type SyncJobParams = {
   citationFormat: string;
   databaseID: string;
   databaseProperties: DatabaseProperties;
+  collectionRelationMap: Record<string, string>;
   notion: Client;
   pageTitleFormat: PageTitleFormat;
 };
@@ -50,6 +52,12 @@ async function prepareSyncJob(
   const authToken = await getNotionAuthToken();
   const notion = getNotionClient(authToken, window);
   const databaseID = getRequiredNoteroPref(NoteroPref.notionDatabaseID);
+  const collectionRelationMap = Object.fromEntries(
+    Object.entries(loadSyncConfigs()).map(([collectionID, config]) => [
+      collectionID,
+      config?.associatedLink,
+    ]),
+  ) as Record<number, string>;
   const databaseProperties = await retrieveDatabaseProperties(
     notion,
     databaseID,
@@ -58,6 +66,7 @@ async function prepareSyncJob(
   const pageTitleFormat = getPageTitleFormat();
 
   return {
+    collectionRelationMap,
     citationFormat,
     databaseID,
     databaseProperties,

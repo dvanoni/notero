@@ -5,6 +5,7 @@ import { getNoteroPref, NoteroPref, setNoteroPref } from './notero-pref';
 export type CollectionSyncConfig = {
   notionOptionID?: string;
   syncEnabled: boolean;
+  associatedLink?: string;
 };
 
 export type CollectionSyncConfigsRecord = Record<

@@ -1,0 +1,48 @@
+<?xml version="1.0"?>
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?> <?xml-stylesheet
+href="chrome://zotero/skin/zotero.css" type="text/css"?> <?xml-stylesheet
+href="chrome://zotero-platform/content/zotero.css" type="text/css"?>
+
+<window
+  type="child"
+  xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+  xmlns:html="http://www.w3.org/1999/xhtml"
+  style="width: 100px; height: 100px"
+  buttons="cancel,accept"
+  onload="notero.dialog.init();"
+>
+  <script>
+    Services.scriptloader.loadSubScript(
+      'chrome://zotero/content/customElements.js',
+      this,
+    );
+
+    Services.scriptloader.loadSubScript(
+      'chrome://notero/content/prefs/dialog.js',
+      this,
+    );
+  </script>
+  <dialog
+    id="notero-collection-dialog"
+    title="Collection Properties"
+    onload="notero.dialog.init();"
+  >
+    <div>
+      <label>Collection Settings</label>
+      <grid>
+        <rows>
+          <row>
+            <label value="Associated Link:" />
+            <menulist id="notero-associatedLink">
+              <menupopup />
+            </menulist>
+          </row>
+          <row>
+            <label value="Sync Enabled:" />
+            <checkbox id="notero-syncEnabled" />
+          </row>
+        </rows>
+      </grid>
+    </div>
+  </dialog>
+</window>

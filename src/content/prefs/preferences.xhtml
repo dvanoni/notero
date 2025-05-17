@@ -9,12 +9,29 @@
   </label>
   <hbox>
     <button
+      class="notero-margin-block-end"
       data-l10n-id="notero-preferences-notion-connect-button"
       hidden="true"
       id="notero-notionConnect"
     />
   </hbox>
   <image class="zotero-spinner-16" id="notero-notionConnection-spinner" />
+  <hbox
+    align="center"
+    class="notero-margin-block-end"
+    hidden="true"
+    id="notero-notionToken-container"
+  >
+    <label
+      control="notero-notionToken"
+      data-l10n-id="notero-preferences-notion-token-label"
+    />
+    <html:input
+      data-l10n-id="notero-preferences-notion-token-input"
+      id="notero-notionToken"
+      type="text"
+    />
+  </hbox>
   <vbox align="start" hidden="true" id="notero-notionConnection-container">
     <hbox align="center">
       <label

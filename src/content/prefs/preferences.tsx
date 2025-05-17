@@ -56,6 +56,7 @@ class Preferences {
   private notionUpgradeConnectionButton!: XUL.ButtonElement;
   private notionDatabaseMenu!: XUL.MenuListElement;
   private notionError!: XUL.LabelElement;
+  private notionTokenContainer!: XUL.XULElement;
   private notionWorkspaceLabel!: XUL.LabelElement;
   private pageTitleFormatMenu!: XUL.MenuListElement;
 
@@ -77,9 +78,12 @@ class Preferences {
     this.notionUpgradeConnectionButton = getXULElementById(
       'notero-notionUpgradeConnection',
     )!;
-    this.notionWorkspaceLabel = getXULElementById('notero-notionWorkspace')!;
     this.notionDatabaseMenu = getXULElementById('notero-notionDatabase')!;
     this.notionError = getXULElementById('notero-notionError')!;
+    this.notionTokenContainer = getXULElementById(
+      'notero-notionToken-container',
+    )!;
+    this.notionWorkspaceLabel = getXULElementById('notero-notionWorkspace')!;
     this.pageTitleFormatMenu = getXULElementById('notero-pageTitleFormat')!;
     /* eslint-enable @typescript-eslint/no-non-null-assertion */
 
@@ -93,6 +97,7 @@ class Preferences {
       'command',
       this.upgradeNotionConnection,
     );
+    this.notionTokenContainer.addEventListener('input', this.handleTokenInput);
     /* eslint-enable @typescript-eslint/no-misused-promises */
 
     window.addEventListener('unload', () => {
@@ -117,6 +122,14 @@ class Preferences {
     this.eventManager.removeListener(
       'notion-connection.add',
       this.handleNotionConnectionAdd,
+    );
+  }
+
+  private async showError(error: unknown): Promise<void> {
+    this.notionError.hidden = false;
+    this.notionError.value = await getLocalizedErrorMessage(
+      error,
+      document.l10n,
     );
   }
 
@@ -191,6 +204,7 @@ class Preferences {
     }
 
     this.notionConnectionSpinner.setAttribute('status', 'animate');
+    this.notionTokenContainer.hidden = true;
 
     try {
       const notion = getNotionClient(authToken, window);
@@ -213,11 +227,7 @@ class Preferences {
       logger.error(error);
 
       this.notionConnectionSpinner.removeAttribute('status');
-      this.notionError.hidden = false;
-      this.notionError.value = await getLocalizedErrorMessage(
-        error,
-        document.l10n,
-      );
+      await this.showError(error);
 
       if (isNotionErrorWithCode(error, APIErrorCode.Unauthorized)) {
         this.notionConnectButton.hidden = false;
@@ -278,6 +288,7 @@ class Preferences {
       'blur',
       () => {
         button.disabled = false;
+        this.notionTokenContainer.hidden = false;
       },
       { once: true },
     );
@@ -322,6 +333,17 @@ class Preferences {
     setTimeout(() => {
       void this.connectNotion(event);
     }, 100);
+  };
+
+  private handleTokenInput = async (event: Event): Promise<void> => {
+    const tokenInput = (event.target as HTMLInputElement).value.trim();
+    const params = new URLSearchParams(tokenInput);
+    try {
+      await this.notionAuthManager.handleTokenResponse(params);
+    } catch (error) {
+      logger.error(error);
+      await this.showError(error);
+    }
   };
 }
 

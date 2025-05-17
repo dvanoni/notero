@@ -52,6 +52,7 @@ class Preferences {
   private notionConnectionContainer!: XUL.XULElement;
   private notionConnectionSpinner!: XUL.XULElement;
   private notionConnectButton!: XUL.ButtonElement;
+  private notionDisconnectButton!: XUL.ButtonElement;
   private notionUpgradeConnectionButton!: XUL.ButtonElement;
   private notionDatabaseMenu!: XUL.MenuListElement;
   private notionError!: XUL.LabelElement;
@@ -72,6 +73,7 @@ class Preferences {
       'notero-notionConnection-spinner',
     )!;
     this.notionConnectButton = getXULElementById('notero-notionConnect')!;
+    this.notionDisconnectButton = getXULElementById('notero-notionDisconnect')!;
     this.notionUpgradeConnectionButton = getXULElementById(
       'notero-notionUpgradeConnection',
     )!;
@@ -80,6 +82,18 @@ class Preferences {
     this.notionError = getXULElementById('notero-notionError')!;
     this.pageTitleFormatMenu = getXULElementById('notero-pageTitleFormat')!;
     /* eslint-enable @typescript-eslint/no-non-null-assertion */
+
+    /* eslint-disable @typescript-eslint/no-misused-promises */
+    this.notionConnectButton.addEventListener('command', this.connectNotion);
+    this.notionDisconnectButton.addEventListener(
+      'command',
+      this.disconnectNotion,
+    );
+    this.notionUpgradeConnectionButton.addEventListener(
+      'command',
+      this.upgradeNotionConnection,
+    );
+    /* eslint-enable @typescript-eslint/no-misused-promises */
 
     window.addEventListener('unload', () => {
       this.deinit();
@@ -255,7 +269,7 @@ class Preferences {
     return databases;
   }
 
-  public async connectNotion(event: XUL.CommandEvent): Promise<void> {
+  private connectNotion = async (event: XUL.CommandEvent): Promise<void> => {
     const button = event.target as XUL.ButtonElement;
 
     button.disabled = true;
@@ -269,9 +283,9 @@ class Preferences {
     );
 
     await this.notionAuthManager.openLogin();
-  }
+  };
 
-  public async disconnectNotion(): Promise<void> {
+  private disconnectNotion = async (): Promise<void> => {
     const dialogTitle =
       (await document.l10n.formatValue(
         'notero-preferences-notion-disconnect-dialog-title',
@@ -287,9 +301,11 @@ class Preferences {
     await this.notionAuthManager.removeAllConnections();
 
     await this.refreshNotionConnectionSection();
-  }
+  };
 
-  public async upgradeNotionConnection(event: XUL.CommandEvent): Promise<void> {
+  private upgradeNotionConnection = async (
+    event: XUL.CommandEvent,
+  ): Promise<void> => {
     const dialogTitle =
       (await document.l10n.formatValue(
         'notero-preferences-notion-upgrade-dialog-title',
@@ -306,7 +322,7 @@ class Preferences {
     setTimeout(() => {
       void this.connectNotion(event);
     }, 100);
-  }
+  };
 }
 
 module.exports = {

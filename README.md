@@ -162,9 +162,12 @@ Notion database. Detailed setup instructions are below.
 4. Click **Allow access** to give Notero access to your Notion workspace and
    database. You will then be redirected to a page that prompts you to open
    Zotero.
-5. Click the **Open Zotero** button (or equivalent, depending on your web
-   browser) to complete the connection process in Zotero. The Notero preferences
-   should show that you are connected to your Notion workspace.
+5. Click **Open Zotero** to complete the connection process in Zotero. The
+   Notero preferences should show that you are connected to your Notion
+   workspace.
+   - If Zotero does not open or successfully connect to Notion, copy the
+     connection token from the Notion connection page and paste it into the
+     **Connection Token** field in Notero preferences.
 
 <details>
   <summary>Example of connecting to Notion</summary>

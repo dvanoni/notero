@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.1.0](https://github.com/dvanoni/notero/compare/v1.0.0...v1.1.0) (2025-05-19)
+
+
+### Features
+
+* **localization:** New Crowdin translations ([#678](https://github.com/dvanoni/notero/issues/678)) ([4def531](https://github.com/dvanoni/notero/commit/4def531aebebc688fe326ccd8396036481ff3601))
+* **preferences:** Add input for pasting Notion connection token ([#676](https://github.com/dvanoni/notero/issues/676)) ([67f8672](https://github.com/dvanoni/notero/commit/67f867266964d4e7ef0a560a456cc361d48ddfb5))
+
 ## [1.0.0](https://github.com/dvanoni/notero/compare/v0.6.8...v1.0.0) (2025-01-09)
 
 

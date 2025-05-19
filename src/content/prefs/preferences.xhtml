@@ -9,13 +9,29 @@
   </label>
   <hbox>
     <button
+      class="notero-margin-block-end"
       data-l10n-id="notero-preferences-notion-connect-button"
       hidden="true"
       id="notero-notionConnect"
-      oncommand="notero.preferences.connectNotion(event);"
     />
   </hbox>
   <image class="zotero-spinner-16" id="notero-notionConnection-spinner" />
+  <hbox
+    align="center"
+    class="notero-margin-block-end"
+    hidden="true"
+    id="notero-notionToken-container"
+  >
+    <label
+      control="notero-notionToken"
+      data-l10n-id="notero-preferences-notion-token-label"
+    />
+    <html:input
+      data-l10n-id="notero-preferences-notion-token-input"
+      id="notero-notionToken"
+      type="text"
+    />
+  </hbox>
   <vbox align="start" hidden="true" id="notero-notionConnection-container">
     <hbox align="center">
       <label
@@ -25,15 +41,13 @@
       <button
         data-l10n-id="notero-preferences-notion-upgrade-button"
         id="notero-notionUpgradeConnection"
-        oncommand="notero.preferences.upgradeNotionConnection(event);"
       />
       <button
         data-l10n-id="notero-preferences-notion-disconnect-button"
-        oncommand="notero.preferences.disconnectNotion();"
+        id="notero-notionDisconnect"
       />
     </hbox>
-    <separator class="thin" />
-    <hbox align="center">
+    <hbox align="center" class="notero-margin-block-start">
       <label
         control="notero-notionDatabase"
         data-l10n-id="notero-preferences-notion-database"
@@ -56,8 +70,7 @@
     <html:h2 data-l10n-id="notero-preferences-properties-groupbox-heading" />
   </label>
   <label data-l10n-id="notero-preferences-properties-groupbox-description" />
-  <separator class="thin" />
-  <hbox align="center">
+  <hbox align="center" class="notero-margin-block-start">
     <label
       control="notero-pageTitleFormat"
       data-l10n-id="notero-preferences-page-title-format"
@@ -79,11 +92,12 @@
   </label>
   <label data-l10n-id="notero-preferences-sync-groupbox-description1" />
   <label data-l10n-id="notero-preferences-sync-groupbox-description2" />
-  <separator class="thin" />
-  <hbox class="virtualized-table-container" flex="1">
+  <hbox
+    class="notero-margin-block-start notero-margin-block-end virtualized-table-container"
+    flex="1"
+  >
     <html:div id="notero-syncConfigsTable-container" />
   </hbox>
-  <separator class="thin" />
   <checkbox
     data-l10n-id="notero-preferences-sync-on-modify-items"
     id="notero-syncOnModifyItems"

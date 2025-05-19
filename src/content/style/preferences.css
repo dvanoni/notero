@@ -11,6 +11,19 @@
   max-width: 100%;
 }
 
+.notero-margin-block-start {
+  margin-block-start: 0.5em;
+}
+
+.notero-margin-block-end {
+  margin-block-end: 0.5em;
+}
+
+#notero-notionToken {
+  flex: 1;
+  font-family: monospace;
+}
+
 #notero-notionDatabase {
   overflow: hidden;
 }

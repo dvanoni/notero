@@ -13,7 +13,7 @@ jobs:
       tag_name: ${{ steps.release-please.outputs.tag_name }}
     steps:
       - id: app-token
-        uses: actions/create-github-app-token@v1
+        uses: actions/create-github-app-token@v2
         with:
           app-id: ${{ vars.APP_ID }}
           private-key: ${{ secrets.PRIVATE_KEY }}

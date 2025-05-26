@@ -11,6 +11,7 @@
     "lib": ["ES2022", "dom"],
     "module": "preserve",
     "moduleResolution": "bundler",
+    "noEmit": true,
     "noUncheckedIndexedAccess": true,
     "preserveConstEnums": false,
     "removeComments": false,

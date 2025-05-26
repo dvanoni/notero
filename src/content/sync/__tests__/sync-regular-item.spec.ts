@@ -69,6 +69,7 @@ function setup({ pageID }: { pageID?: string }) {
   notion.pages.retrieve.mockResolvedValue(fakePageResponse);
 
   const params: SyncJobParams = {
+    collectionRelationMap: {},
     citationFormat: fakeCitationFormat,
     databaseID: fakeDatabaseID,
     databaseProperties: fakeDatabaseProperties,

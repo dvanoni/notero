@@ -22,7 +22,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "pretypecheck": "npm run generate-fluent-types",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "tsc",
     "preverify": "npm run generate-fluent-types",
     "verify": "concurrently -c auto -P npm:prettier 'npm:lint {@}' 'npm:typecheck {@}' 'npm:test {@}' -- --ignore-scripts"
   },

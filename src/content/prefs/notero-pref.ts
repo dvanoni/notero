@@ -3,6 +3,7 @@ import { MissingPrefError } from '../errors';
 
 export enum NoteroPref {
   collectionSyncConfigs = 'collectionSyncConfigs',
+  linkedCollectionID = 'linkedCollectionID',
   notionDatabaseID = 'notionDatabaseID',
   notionToken = 'notionToken',
   pageTitleFormat = 'pageTitleFormat',
@@ -37,6 +38,7 @@ export const PAGE_TITLE_FORMAT_L10N_IDS: Record<
 
 type NoteroPrefValue = Partial<{
   [NoteroPref.collectionSyncConfigs]: string;
+  [NoteroPref.linkedCollectionID]: string;
   [NoteroPref.notionDatabaseID]: string;
   [NoteroPref.notionToken]: string;
   [NoteroPref.pageTitleFormat]: PageTitleFormat;
@@ -84,6 +86,7 @@ function convertRawPrefValue<P extends NoteroPref>(
 
   return {
     [NoteroPref.collectionSyncConfigs]: stringPref,
+    [NoteroPref.linkedCollectionID]: stringPref,
     [NoteroPref.notionDatabaseID]: stringPref,
     [NoteroPref.notionToken]: stringPref,
     [NoteroPref.pageTitleFormat]: pageTitleFormatPref,

@@ -17,11 +17,14 @@ import type {
 } from './notion-types';
 import { buildDate, buildRichText } from './notion-utils';
 
+type CollectionRelationMap = Record<string, string>;
+
 type PropertyBuilderParams = {
   citationFormat: string;
   databaseProperties: DatabaseProperties;
   item: Zotero.Item;
   pageTitleFormat: PageTitleFormat;
+  collectionRelationMap: CollectionRelationMap;
 };
 
 type PropertyDefinition<T extends RequestPropertyType = RequestPropertyType> = {
@@ -65,11 +68,14 @@ class PropertyBuilder {
   private readonly item: Zotero.Item;
   private readonly pageTitleFormat: PageTitleFormat;
 
+  private readonly collectionRelationMap: CollectionRelationMap;
+
   public constructor(params: PropertyBuilderParams) {
     this.citationFormat = params.citationFormat;
     this.databaseProperties = params.databaseProperties;
     this.item = params.item;
     this.pageTitleFormat = params.pageTitleFormat;
+    this.collectionRelationMap = params.collectionRelationMap;
   }
 
   public async buildProperties(): Promise<DatabaseRequestProperties> {
@@ -227,6 +233,19 @@ class PropertyBuilder {
         ),
     },
     {
+      name: 'Link',
+      type: 'relation',
+      buildRequest: () =>
+        Zotero.Collections.get(this.item.getCollections())
+          .map(
+            (collection) =>
+              this.collectionRelationMap[collection.id] && {
+                id: this.collectionRelationMap[collection.id],
+              },
+          )
+          .filter((x) => x != undefined) as { id: string }[],
+    },
+    {
       name: 'Date',
       type: 'rich_text',
       buildRequest: () => buildRichText(this.item.getField('date')),
@@ -359,6 +378,13 @@ class PropertyBuilder {
       name: 'Zotero URI',
       type: 'url',
       buildRequest: () => getItemURL(this.item),
+    },
+    {
+      name: 'Zotero Direct Link',
+      type: 'url',
+      buildRequest: () => {
+        return `zotero://select/library/items/${Zotero.URI.getItemURI(this.item).split('/').pop()}`;
+      },
     },
   ];
 }

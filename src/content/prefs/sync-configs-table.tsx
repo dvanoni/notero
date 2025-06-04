@@ -4,7 +4,7 @@ import VirtualizedTable, {
 } from 'components/virtualized-table';
 import React from 'react';
 
-import { buildCollectionFullName } from '../utils';
+import { buildCollectionFullName, getMainWindow } from '../utils';
 
 import {
   CollectionSyncConfig,
@@ -22,6 +22,9 @@ const COLUMNS = [
   },
   {
     dataKey: 'collectionFullName',
+  },
+  {
+    dataKey: 'associatedLink',
   },
 ] as const;
 
@@ -51,6 +54,12 @@ const COLLATOR = new Intl.Collator(Zotero.locale, {
 });
 
 const COMPARATORS: Record<DataKey, RowSortCompareFn> = {
+  associatedLink(a, b, sortDirection) {
+    return (
+      sortDirection *
+      COLLATOR.compare(a.associatedLink || '', b.associatedLink || '')
+    );
+  },
   collectionFullName(a, b, sortDirection) {
     return (
       sortDirection *
@@ -95,6 +104,7 @@ export class SyncConfigsTable extends React.Component<Props> {
     return Zotero.Collections.getLoaded()
       .map((collection) => ({
         collection,
+        associatedLink: this.syncConfigs[collection.id]?.associatedLink,
         collectionFullName: buildCollectionFullName(collection),
         ...(this.syncConfigs[collection.id] || { syncEnabled: false }),
       }))
@@ -134,10 +144,42 @@ export class SyncConfigsTable extends React.Component<Props> {
       return {
         ...configs,
         [collection.id]: {
+          ...configs[collection.id],
           syncEnabled: enable,
         },
       };
     }, this.syncConfigs);
+  }
+
+  private openCollectionDialog(
+    collection: Zotero.Collection,
+    syncEnabled: boolean,
+    associatedLink: string | undefined,
+  ) {
+    const params = {
+      associatedLink: associatedLink || '',
+      syncEnabled,
+      accepted: false,
+      dataOut: null,
+    };
+
+    // create zotero window to add
+    const window = getMainWindow();
+    window.openDialog(
+      'chrome://notero/content/prefs/dialog.xhtml',
+      '',
+      'chrome,modal,centerscreen',
+      params,
+    );
+    const data = params.dataOut as unknown as
+      | { accepted: boolean; associatedLink: string; syncEnabled: boolean }
+      | undefined;
+
+    if (!data || !data.accepted) {
+      return null;
+    }
+
+    return data;
   }
 
   getRowCount = () => this.rows.length;
@@ -145,9 +187,29 @@ export class SyncConfigsTable extends React.Component<Props> {
   getRowString = (index: number) => this.rows[index]?.collectionFullName || '';
 
   handleActivate = (_event: KeyboardEvent | MouseEvent, indices: number[]) => {
-    this.toggleEnabled(indices);
-    this.invalidateRows();
-    this.table?.invalidate();
+    if (indices.length == 1 && indices[0] !== undefined) {
+      const index = indices[0];
+      const row = this.rows[index];
+      if (!row) return;
+
+      const result = this.openCollectionDialog(
+        row.collection,
+        row.syncEnabled,
+        row.associatedLink,
+      );
+
+      if (result) {
+        this.syncConfigs = {
+          ...this.syncConfigs,
+          [row.collection.id]: {
+            syncEnabled: result.syncEnabled,
+            associatedLink: result.associatedLink,
+          },
+        };
+      }
+      this.invalidateRows();
+      this.table?.invalidate();
+    }
   };
 
   handleColumnSort = (columnIndex: number, sortDirection: SortDirection) => {
@@ -169,7 +231,6 @@ export class SyncConfigsTable extends React.Component<Props> {
       ...column,
       label: this.props.columnLabels[column.dataKey],
     }));
-
     return (
       <VirtualizedTable
         id="notero-syncConfigsTable"

@@ -22,6 +22,7 @@ notero-preferences-notion-token-input =
     .placeholder = Paste your connection token here
 notero-preferences-notion-workspace = Workspace: { $workspace-name }
 notero-preferences-notion-database = Database:
+notero-preferences-notion-linked-database = Linked Database:
 
 ## Property preferences
 

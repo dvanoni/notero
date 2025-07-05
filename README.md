@@ -414,7 +414,6 @@ documentation and should allow you to build and run Notero yourself.
         npm run start:beta
 
     The `start` script performs a number of steps:
-
     1.  Execute `npm run build` to build the plugin into the `build` directory.
     2.  If defined, run the `scripts.prestart` command specified in
         `zotero.config.json`.

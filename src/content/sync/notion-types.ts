@@ -88,12 +88,11 @@ export type DatabasePropertyConfig<T extends RequestPropertyType> = Extract<
   { type: T }
 >;
 
-export type DatabaseRequestProperties = CreatePageParameters['properties'];
-
-export type DatabaseRequestProperty = Extract<
-  DatabaseRequestProperties[string],
-  { type?: string }
+export type DatabaseRequestProperties = NonNullable<
+  CreatePageParameters['properties']
 >;
+
+export type DatabaseRequestProperty = DatabaseRequestProperties[string];
 
 export type RequestPropertyType = NonNullable<DatabaseRequestProperty['type']>;
 

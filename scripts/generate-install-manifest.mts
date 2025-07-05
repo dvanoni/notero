@@ -2,10 +2,10 @@ import path from 'node:path';
 
 import fs from 'fs-extra';
 
-import pkg from '../package.json';
+import pkg from '../package.json' with { type: 'json' };
 
-import { buildDir, relativeToRoot } from './paths';
-import { version } from './version';
+import { buildDir, relativeToRoot } from './paths.mts';
+import { version } from './version.mts';
 
 const manifestJsonPath = path.join(buildDir, 'manifest.json');
 

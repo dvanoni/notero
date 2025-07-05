@@ -2,7 +2,7 @@ import path from 'node:path';
 
 import fs from 'fs-extra';
 
-import { buildDir, relativeToRoot, srcDir } from './paths';
+import { buildDir, relativeToRoot, srcDir } from './paths.mts';
 
 const IGNORED_EXTENSIONS = ['.json', '.ts', '.tsx'];
 const IGNORED_PATHS = /(\.DS_Store|__tests__)$/;

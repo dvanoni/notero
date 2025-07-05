@@ -1,4 +1,4 @@
-import esbuild, { BuildOptions } from 'esbuild';
+import esbuild, { type BuildOptions } from 'esbuild';
 
 const enableSourcemap = process.argv.slice(2).includes('--sourcemap');
 const sourcemap = enableSourcemap && 'inline';
@@ -37,11 +37,9 @@ Promise.all(
     return esbuild.build(buildOptions);
   }),
 )
-  .then(() => {
-    /* eslint-disable @typescript-eslint/no-require-imports */
-    require('./copy-assets');
-    require('./generate-install-manifest');
-    /* eslint-enable @typescript-eslint/no-require-imports */
+  .then(async () => {
+    await import('./copy-assets.mts');
+    await import('./generate-install-manifest.mts');
   })
   .catch((err: unknown) => {
     console.error(err);

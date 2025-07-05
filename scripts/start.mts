@@ -4,15 +4,15 @@
  * @see https://www.zotero.org/support/dev/client_coding/plugin_development
  */
 import assert from 'node:assert/strict';
-import child_process, { StdioOptions } from 'node:child_process';
+import child_process, { type StdioOptions } from 'node:child_process';
 import path from 'node:path';
 
 import fs from 'fs-extra';
 import JSON5 from 'json5';
 
-import pkg from '../package.json';
+import pkg from '../package.json' with { type: 'json' };
 
-import { buildDir, rootDir } from './paths';
+import { buildDir, rootDir } from './paths.mts';
 
 type Config = {
   profile?: {

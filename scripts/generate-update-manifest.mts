@@ -3,10 +3,10 @@ import path from 'node:path';
 
 import fs from 'fs-extra';
 
-import pkg from '../package.json';
+import pkg from '../package.json' with { type: 'json' };
 
-import { genDir, relativeToRoot } from './paths';
-import { version } from './version';
+import { genDir, relativeToRoot } from './paths.mts';
+import { version } from './version.mts';
 
 const updatesJsonPath = path.join(genDir, 'updates.json');
 const updateRdfPath = path.join(genDir, 'update.rdf');

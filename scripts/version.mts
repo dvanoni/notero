@@ -4,11 +4,11 @@ import path from 'node:path';
 import fs from 'fs-extra';
 import { inc as semverInc } from 'semver';
 
-import pkg from '../package.json';
+import pkg from '../package.json' with { type: 'json' };
 
-import { genDir, relativeToRoot } from './paths';
+import { genDir, relativeToRoot } from './paths.mts';
 
-const versionJsPath = path.join(genDir, 'version.js');
+const versionJsonPath = path.join(genDir, 'version.json');
 
 export let version: string;
 
@@ -37,16 +37,17 @@ function getPatchBumpVersion(): string {
   return semverInc(pkg.version, 'patch') || pkg.version;
 }
 
-if (fs.existsSync(versionJsPath)) {
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  version = require(versionJsPath) as string;
-  console.log(`Found ${relativeToRoot(versionJsPath)} with ${version}`);
+if (fs.existsSync(versionJsonPath)) {
+  const versionModule = (await import(versionJsonPath, {
+    with: { type: 'json' },
+  })) as { default: string };
+  version = versionModule.default;
+
+  console.log(`Found ${relativeToRoot(versionJsonPath)} with ${version}`);
 } else {
   version = getVersion();
-  console.log(`Writing ${relativeToRoot(versionJsPath)} with ${version}`);
 
-  fs.outputFileSync(
-    versionJsPath,
-    `module.exports = ${JSON.stringify(version)};\n`,
-  );
+  console.log(`Writing ${relativeToRoot(versionJsonPath)} with ${version}`);
+
+  fs.outputJsonSync(versionJsonPath, version);
 }

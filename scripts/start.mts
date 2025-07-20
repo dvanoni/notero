@@ -25,17 +25,18 @@ type Config = {
   };
   zotero?: {
     betaPath?: string;
+    devPath?: string;
     logFile?: string;
     path?: string;
     preserveLog?: boolean;
   };
 };
 
+type Version = 'beta' | 'dev' | null;
+
 const configFile = path.join(rootDir, 'zotero.config.json');
 const configJson = fs.readFileSync(configFile, 'utf8');
 const config = JSON5.parse<Config>(configJson);
-
-const isBetaRun = process.argv.slice(2).includes('--beta');
 
 function runScript(
   name: keyof Required<Config>['scripts'],
@@ -106,7 +107,14 @@ function getStdio(): StdioOptions {
   return ['ignore', out, err];
 }
 
-function getZoteroArgs(): string[] {
+function getVersion(): Version {
+  const args = process.argv.slice(2);
+  if (args.includes('--beta')) return 'beta';
+  if (args.includes('--dev')) return 'dev';
+  return null;
+}
+
+function getZoteroArgs(version: Version): string[] {
   const zoteroArgs = [
     '-purgecaches',
     '-ZoteroDebugText',
@@ -114,7 +122,7 @@ function getZoteroArgs(): string[] {
     'profile',
   ];
 
-  if (isBetaRun) {
+  if (version === 'beta' || version === 'dev') {
     zoteroArgs.push('-jsdebugger');
   } else {
     zoteroArgs.push('-jsconsole', '-debugger');
@@ -127,13 +135,11 @@ function getZoteroArgs(): string[] {
   return zoteroArgs;
 }
 
-function getZoteroPath(): string {
-  if (isBetaRun) {
-    assert.ok(
-      config.zotero?.betaPath && fs.existsSync(config.zotero.betaPath),
-      'Invalid path to Zotero beta',
-    );
-    return config.zotero.betaPath;
+function getZoteroPath(version: Version): string {
+  if (version === 'beta' || version === 'dev') {
+    const path = config.zotero?.[`${version}Path`];
+    assert.ok(path && fs.existsSync(path), `Invalid path to Zotero ${version}`);
+    return path;
   }
   if (config.zotero?.path) {
     assert.ok(fs.existsSync(config.zotero.path), 'Invalid path to Zotero');
@@ -153,10 +159,11 @@ function getZoteroPath(): string {
 }
 
 function startZotero(): number | undefined {
-  const zoteroPath = getZoteroPath();
-  const zoteroArgs = getZoteroArgs();
+  const version = getVersion();
+  const zoteroPath = getZoteroPath(version);
+  const zoteroArgs = getZoteroArgs(version);
 
-  console.group(`Starting Zotero${isBetaRun ? ' beta' : ''}`);
+  console.group(`Starting Zotero${version ? ` ${version}` : ''}`);
   console.log(`Command: ${zoteroPath}`);
   console.log(`Arguments: ${zoteroArgs.join(' ')}`);
 

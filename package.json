@@ -17,6 +17,7 @@
     "prestart": "npm run build -- --sourcemap",
     "start": "node scripts/start.mts",
     "start:beta": "npm start -- --beta",
+    "start:dev": "npm start -- --dev",
     "pretest": "npm run generate-fluent-types",
     "test": "vitest run",
     "test:watch": "vitest",

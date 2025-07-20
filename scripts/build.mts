@@ -24,7 +24,6 @@ const builds: (BuildOptions & { entryPoints: [string] })[] = [
     entryPoints: ['src/content/prefs/preferences.tsx'],
     external: ['components/*', 'react', 'react-dom'],
     format: 'iife',
-    globalName: 'notero',
     outdir: 'build/content/prefs',
     sourcemap,
     target,

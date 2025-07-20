@@ -347,6 +347,8 @@ class Preferences {
   };
 }
 
-module.exports = {
-  preferences: new Preferences(),
+type WindowWithNoteroPreferences = typeof window & {
+  Notero_Preferences: Preferences;
 };
+
+(window as WindowWithNoteroPreferences).Notero_Preferences = new Preferences();

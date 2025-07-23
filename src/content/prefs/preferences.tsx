@@ -177,7 +177,7 @@ class Preferences {
 
   private async isBetterBibTeXActive(): Promise<boolean> {
     const { AddonManager } = ChromeUtils.importESModule(
-      `resource://gre/modules/AddonManager.sys.mjs`,
+      'resource://gre/modules/AddonManager.sys.mjs',
     );
     const addon = await AddonManager.getAddonByID(
       'better-bibtex@iris-advies.com',

@@ -39,6 +39,11 @@
     "reveal": "never"
   },
   {
+    "label": "Start Zotero Dev",
+    "command": "npm run start:dev",
+    "reveal": "never"
+  },
+  {
     "label": "Test all (once)",
     "command": "npm run test",
     "reveal": "no_focus"

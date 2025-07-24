@@ -17,8 +17,11 @@
     // If omitted, default value is based on your operating system.
     "path": "/Applications/Zotero.app/Contents/MacOS/zotero",
     // (optional) Explicit path to executable for your beta Zotero version.
-    // Required when running `npm run start-beta`.
-    "betaPath": "/Applications/Zotero 7.app/Contents/MacOS/zotero",
+    // Required when running `npm run start:beta`.
+    "betaPath": "/Applications/Zotero beta.app/Contents/MacOS/zotero",
+    // (optional) Explicit path to executable for your dev Zotero version.
+    // Required when running `npm run start:dev`.
+    "devPath": "/Applications/Zotero dev.app/Contents/MacOS/zotero",
     // (optional) File name to write log output to. Disabled if omitted.
     "logFile": "zotero.log",
     // (optional) Whether to continuously append to log file. Default false.

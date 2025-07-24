@@ -17,6 +17,7 @@
     "prestart": "npm run build -- --sourcemap",
     "start": "node scripts/start.mts",
     "start:beta": "npm start -- --beta",
+    "start:dev": "npm start -- --dev",
     "pretest": "npm run generate-fluent-types",
     "test": "vitest run",
     "test:watch": "vitest",
@@ -46,7 +47,7 @@
     "name": "Notero",
     "updateURL": "https://github.com/dvanoni/notero/releases/download/release/updates.json",
     "zoteroMinVersion": "7.0",
-    "zoteroMaxVersion": "7.1.*",
+    "zoteroMaxVersion": "8.0.*",
     "zotero6": {
       "version": "0.5.17",
       "updateLink": "https://github.com/dvanoni/notero/releases/download/v0.5.17/notero-0.5.17.xpi"

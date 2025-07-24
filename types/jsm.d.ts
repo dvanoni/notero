@@ -3,8 +3,12 @@
  */
 declare namespace jsm {
   type ModuleURIMap = {
-    'resource://gre/modules/AddonManager.jsm': { AddonManager: AddonManager };
-    'resource://gre/modules/Services.jsm': { Services: Services };
+    'resource://gre/modules/AddonManager.sys.mjs': {
+      AddonManager: AddonManager;
+    };
+    'resource://gre/modules/Services.sys.mjs': {
+      Services: Services;
+    };
   };
 
   interface Addon {
@@ -27,12 +31,12 @@ declare namespace jsm {
 }
 
 /**
- * @see https://searchfox.org/mozilla-central/source/dom/chrome-webidl/ChromeUtils.webidl
+ * @see https://searchfox.org/mozilla-esr115/source/dom/chrome-webidl/ChromeUtils.webidl
  */
 declare const ChromeUtils: {
-  import<URI extends keyof jsm.ModuleURIMap>(
+  importESModule<URI extends keyof jsm.ModuleURIMap>(
     aResourceURI: URI,
-    aTargetObj?: object,
+    options?: object,
   ): jsm.ModuleURIMap[URI];
 };
 

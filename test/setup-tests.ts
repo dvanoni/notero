@@ -1,4 +1,4 @@
-import { TextEncoder, TextDecoder } from 'util';
+import { TextEncoder, TextDecoder } from 'node:util';
 
 import { vi } from 'vitest';
 import { mockDeep } from 'vitest-mock-extended';
@@ -26,6 +26,7 @@ mockedGlobal.Services = mockDeep<typeof Services>();
 mockedGlobal.Zotero = mockDeep<typeof Zotero>();
 
 // Workaround for https://github.com/jsdom/jsdom/issues/2524
+// @ts-expect-error The types don't match
 mockedGlobal.TextEncoder = TextEncoder;
 // @ts-expect-error The types don't match
 mockedGlobal.TextDecoder = TextDecoder;

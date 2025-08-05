@@ -49,10 +49,10 @@ export function generateKeyPair(): Promise<CryptoKeyPair> {
 
 /**
  * Generate a new nonce for use with OAuth.
- * @returns A Uint8Array containing the generated nonce
+ * @returns An ArrayBuffer containing the generated nonce
  */
-export function generateNonce(): Uint8Array {
-  return getMainWindow().crypto.getRandomValues(new Uint8Array(16));
+export function generateNonce(): ArrayBuffer {
+  return getMainWindow().crypto.getRandomValues(new Uint8Array(16)).buffer;
 }
 
 /**

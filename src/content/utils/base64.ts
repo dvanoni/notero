@@ -1,6 +1,8 @@
 import { getMainWindow } from './get-main-window';
 
 export function urlSafeBase64Decode(urlSafeBase64: string): ArrayBuffer {
+  // TODO: If dropping support for Zotero 7, replace with
+  // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array/fromBase64
   let base64 = urlSafeBase64.replace(/-/g, '+').replace(/_/g, '/');
   while (base64.length % 4) {
     base64 += '=';
@@ -11,6 +13,8 @@ export function urlSafeBase64Decode(urlSafeBase64: string): ArrayBuffer {
 }
 
 export function urlSafeBase64Encode(data: string | ArrayBuffer): string {
+  // TODO: If dropping support for Zotero 7, replace with
+  // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array/toBase64
   const dataString =
     typeof data === 'string'
       ? data

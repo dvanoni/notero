@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.2.1](https://github.com/dvanoni/notero/compare/v1.2.0...v1.2.1) (2025-08-07)
+
+
+### Bug Fixes
+
+* **preferences:** Fix Notion connection URL handler in Zotero 8 ([#718](https://github.com/dvanoni/notero/issues/718)) ([0502d06](https://github.com/dvanoni/notero/commit/0502d069586ca5f885e656ce87fd52ec126f91d8))
+
 ## [1.2.0](https://github.com/dvanoni/notero/compare/v1.1.0...v1.2.0) (2025-07-24)
 
 

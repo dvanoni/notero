@@ -4,8 +4,28 @@ import { logger } from '../utils';
 import type { Service, ServiceParams } from './service';
 
 const ZOTERO_SCHEME = 'zotero';
-const NOTERO_PATH = '//notero';
-const EXTENSION_SPEC = `${ZOTERO_SCHEME}:${NOTERO_PATH}`;
+const NOTERO_HOST = '//notero';
+const EXTENSION_SPEC = `${ZOTERO_SCHEME}:${NOTERO_HOST}`;
+
+/**
+ * Parse the handler name from the pathname of a URL.
+ *
+ * Note: Zotero 7 and Zotero 8 parse URLs differently.
+ * For example, the URL `zotero://notero/notion-auth` results in the following:
+ * - Zotero 7: `{ host: '', pathname: '//notero/notion-auth' }`
+ * - Zotero 8: `{ host: 'notero', pathname: '/notion-auth' }`
+ *
+ * @param pathname The pathname of the URL.
+ * @returns The handler name or undefined if the pathname is empty.
+ *
+ * @todo Simplify regex if dropping support for Zotero 7.
+ */
+export function parseHandlerNameFromPathname(
+  pathname: string,
+): string | undefined {
+  const matches = pathname.match(`^(?:${NOTERO_HOST}/|/)([^/]+)`);
+  return matches?.[1];
+}
 
 export class ProtocolHandlerExtension implements Service {
   private notionAuthManager!: NotionAuthManager;
@@ -43,28 +63,35 @@ export class ProtocolHandlerExtension implements Service {
 
   private extension: Zotero.ZoteroProtocolHandlerExtension = {
     doAction: async (uri) => {
-      logger.debug('Protocol extension received URI:', uri.spec);
-      const url = new URL(uri.spec);
-
-      const matches = url.pathname.match(`${NOTERO_PATH}/(.+)`);
-      const handlerName = matches?.[1];
-      if (!handlerName) return;
-
-      const handler = this.handlers[handlerName];
-      if (!handler) return;
-
-      logger.debug('Invoking handler:', handlerName);
-      try {
-        await handler(url);
-      } catch (error) {
-        logger.error(`Error in ${handlerName} handler:`, error);
-      }
+      logger.debug('Protocol handler extension received URI:', uri.spec);
+      await this.invokeHandlerForURL(new URL(uri.spec));
     },
     newChannel: (uri) => {
       void this.extension.doAction(uri);
     },
     noContent: true,
   };
+
+  private async invokeHandlerForURL(url: URL): Promise<void> {
+    const handlerName = parseHandlerNameFromPathname(url.pathname);
+    if (!handlerName) {
+      logger.warn('Failed to parse handler name from URL');
+      return;
+    }
+
+    const handler = this.handlers[handlerName];
+    if (!handler) {
+      logger.warn('No handler with name:', handlerName);
+      return;
+    }
+
+    logger.debug('Invoking handler:', handlerName);
+    try {
+      await handler(url);
+    } catch (error) {
+      logger.error(`Error in ${handlerName} handler:`, error);
+    }
+  }
 
   private handlers: Record<string, (url: URL) => void | Promise<void>> = {
     'notion-auth': async (url) => {

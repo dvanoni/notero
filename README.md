@@ -343,12 +343,12 @@ properties synced by Notero.
 Once you've opened one of the examples, click the **Duplicate** button in the
 top-right corner of the page to duplicate it into your Notion workspace.
 
-### [Basic Example](https://dvanoni.notion.site/5ba9956716ac4218be77d2b4655911f5)
+### [Basic Example](https://dvanoni.notion.site/25128626a44f80f79295d1dec1ab5910)
 
 An empty database that contains only the properties synced by Notero.
 Useful if you want to start from scratch and customize it yourself.
 
-### [Advanced Example](https://dvanoni.notion.site/79b17005bc374209b0f373b1a3cde0ae)
+### [Advanced Example](https://dvanoni.notion.site/24d28626a44f800ea459dcce841443ff)
 
 A database with multiple views and some sample entries.
 See below for descriptions of how you can use the different views.

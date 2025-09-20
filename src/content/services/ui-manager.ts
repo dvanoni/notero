@@ -8,6 +8,7 @@ import type { Service, ServiceParams } from './service';
 const FTL_FILE = 'notero.ftl';
 
 export class UIManager implements Service {
+  private pluginID!: string;
   private eventManager!: EventManager;
   private preferencePaneManager!: PreferencePaneManager;
 
@@ -15,9 +16,75 @@ export class UIManager implements Service {
 
   public startup({
     dependencies,
+    pluginInfo: { pluginID },
   }: ServiceParams<'eventManager' | 'preferencePaneManager'>) {
+    this.pluginID = pluginID;
     this.eventManager = dependencies.eventManager;
     this.preferencePaneManager = dependencies.preferencePaneManager;
+
+    Zotero.MenuManager.registerMenu({
+      menuID: 'test',
+      pluginID: this.pluginID,
+      target: 'main/library/item',
+      menus: [
+        {
+          menuType: 'menuitem',
+          l10nID: 'menu-print',
+          onShowing: (event, context) => {
+            const enabled = Math.random() > 0.5;
+            logger.log('setting enabled to', enabled);
+            context.setEnabled(enabled);
+          },
+          onCommand: (event, context) => {
+            logger.log('onCommand', event, context);
+          },
+        },
+        {
+          menuType: 'submenu',
+          l10nID: 'menu-print',
+          menus: [
+            {
+              menuType: 'menuitem',
+              l10nID: 'menu-print',
+              onShowing: (event, context) => {
+                logger.log('onShowing submenu', event, context);
+              },
+              onCommand: (event, context) => {
+                logger.log('onCommand submenu', event, context);
+              },
+            },
+          ],
+        },
+      ],
+    });
+
+    // Zotero.MenuManager.registerMenu({
+    //   menuID: 'notero-collection-menu',
+    //   pluginID: this.pluginID,
+    //   target: 'main/library/collection',
+    //   menus: [
+    //     {
+    //       menuType: 'menuitem',
+    //       // l10nID: 'notero-item-menu-sync',
+    //       l10nID: 'menu-print',
+    //       onShowing: (event, context) => {
+    //         logger.log('onShowing', event, context);
+    //       },
+    //       onShown: (event, context) => {
+    //         logger.log('onShown', event, context);
+    //       },
+    //       onHiding: (event, context) => {
+    //         logger.log('onHiding', event, context);
+    //       },
+    //       onHidden: (event, context) => {
+    //         logger.log('onHidden', event, context);
+    //       },
+    //       onCommand: (event, context) => {
+    //         logger.log('onCommand', event, context);
+    //       },
+    //     },
+    //   ],
+    // });
   }
 
   public addToWindow(window: Zotero.ZoteroWindow) {
@@ -68,23 +135,23 @@ export class UIManager implements Service {
   }
 
   private initItemMenuItem(window: Zotero.ZoteroWindow) {
-    this.createMenuItem({
-      window,
-      l10nId: 'notero-item-menu-sync',
-      parentId: 'zotero-itemmenu',
-      onCommand: () => {
-        const items = Zotero.getActiveZoteroPane()?.getSelectedItems(false);
-        if (items) {
-          logger.groupCollapsed(
-            `Request sync for ${items.length} item(s) with IDs`,
-            items.map((item) => item.id),
-          );
-          logger.table(items, ['_id', '_displayTitle']);
-          logger.groupEnd();
-          this.eventManager.emit('request-sync-items', items);
-        }
-      },
-    });
+    // this.createMenuItem({
+    //   window,
+    //   l10nId: 'notero-item-menu-sync',
+    //   parentId: 'zotero-itemmenu',
+    //   onCommand: () => {
+    //     const items = Zotero.getActiveZoteroPane()?.getSelectedItems(false);
+    //     if (items) {
+    //       logger.groupCollapsed(
+    //         `Request sync for ${items.length} item(s) with IDs`,
+    //         items.map((item) => item.id),
+    //       );
+    //       logger.table(items, ['_id', '_displayTitle']);
+    //       logger.groupEnd();
+    //       this.eventManager.emit('request-sync-items', items);
+    //     }
+    //   },
+    // });
   }
 
   private initToolsMenuItem(window: Zotero.ZoteroWindow) {

@@ -14,7 +14,6 @@
     "prepare": "husky",
     "prettier": "prettier --check .",
     "prettier:fix": "prettier --write .",
-    "prestart": "npm run build -- --sourcemap",
     "start": "node scripts/start.mts",
     "start:beta": "npm start -- --beta",
     "start:dev": "npm start -- --dev",

@@ -9,8 +9,6 @@ import { version } from './version.mts';
 
 const manifestJsonPath = path.join(buildDir, 'manifest.json');
 
-console.log(`Generating ${relativeToRoot(manifestJsonPath)}`);
-
 const manifestJson = {
   author: pkg.author.name,
   description: pkg.description,
@@ -29,4 +27,7 @@ const manifestJson = {
   },
 };
 
-fs.outputJsonSync(manifestJsonPath, manifestJson, { spaces: 2 });
+export function generateInstallManifest() {
+  console.log(`Generating ${relativeToRoot(manifestJsonPath)}`);
+  fs.outputJsonSync(manifestJsonPath, manifestJson, { spaces: 2 });
+}

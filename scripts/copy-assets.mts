@@ -25,18 +25,22 @@ function removeEmptyDirectories(dirPath: string) {
   }
 }
 
-console.group('Copying assets');
+export function copyAssets() {
+  console.group('Copying assets');
 
-fs.copySync(srcDir, buildDir, {
-  filter(src) {
-    const include =
-      !IGNORED_EXTENSIONS.includes(path.extname(src).toLowerCase()) &&
-      !IGNORED_PATHS.test(src);
-    if (include) console.log(relativeToRoot(src));
-    return include;
-  },
-});
+  fs.copySync(srcDir, buildDir, {
+    filter(src) {
+      const include =
+        !IGNORED_EXTENSIONS.includes(path.extname(src).toLowerCase()) &&
+        !IGNORED_PATHS.test(src);
+      if (include && fs.statSync(src).isFile()) {
+        console.log(relativeToRoot(src));
+      }
+      return include;
+    },
+  });
 
-console.groupEnd();
+  console.groupEnd();
 
-removeEmptyDirectories(buildDir);
+  removeEmptyDirectories(buildDir);
+}

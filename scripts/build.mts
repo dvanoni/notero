@@ -1,46 +1,52 @@
-import esbuild, { type BuildOptions } from 'esbuild';
+import esbuild from 'esbuild';
 
-const enableSourcemap = process.argv.slice(2).includes('--sourcemap');
-const sourcemap = enableSourcemap && 'inline';
-const target = 'firefox115';
+import { copyAssets } from './copy-assets.mts';
+import { generateInstallManifest } from './generate-install-manifest.mts';
 
-const builds: (BuildOptions & { entryPoints: [string] })[] = [
-  {
+const OUTDIR = 'build';
+const TARGET = 'firefox115';
+
+type BuildOptions = {
+  enableSourcemap?: boolean;
+};
+
+export async function build({ enableSourcemap = false }: BuildOptions = {}) {
+  generateInstallManifest();
+  copyAssets();
+
+  console.log('Building src/bootstrap.ts');
+
+  await esbuild.build({
     entryPoints: ['src/bootstrap.ts'],
     keepNames: true,
-    outdir: 'build',
-    target,
-  },
-  {
+    outdir: OUTDIR,
+    target: TARGET,
+  });
+
+  console.log(
+    'Building src/content/notero.ts and src/content/prefs/preferences.tsx',
+  );
+
+  const ctx = await esbuild.context({
     bundle: true,
-    entryPoints: ['src/content/notero.ts'],
-    format: 'iife',
-    outdir: 'build/content',
-    sourcemap,
-    target,
-  },
-  {
-    bundle: true,
-    entryPoints: ['src/content/prefs/preferences.tsx'],
+    entryPoints: ['src/content/notero.ts', 'src/content/prefs/preferences.tsx'],
     external: ['components/*', 'react', 'react-dom'],
     format: 'iife',
-    outdir: 'build/content/prefs',
-    sourcemap,
-    target,
-  },
-];
-
-Promise.all(
-  builds.map((buildOptions) => {
-    console.log(`Building ${buildOptions.entryPoints[0]}`);
-    return esbuild.build(buildOptions);
-  }),
-)
-  .then(async () => {
-    await import('./copy-assets.mts');
-    await import('./generate-install-manifest.mts');
-  })
-  .catch((err: unknown) => {
-    console.error(err);
-    process.exit(1);
+    outbase: 'src',
+    outdir: OUTDIR,
+    sourcemap: enableSourcemap && 'inline',
+    target: TARGET,
   });
+
+  await ctx.watch();
+
+  return ctx;
+}
+
+// @ts-expect-error Type for `main` is not available yet
+if (import.meta.main) {
+  const args = process.argv.slice(2);
+  const enableSourcemap = args.includes('--sourcemap');
+  const ctx = await build({ enableSourcemap });
+  await ctx.dispose();
+}

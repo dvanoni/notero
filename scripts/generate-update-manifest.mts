@@ -5,8 +5,8 @@ import fs from 'fs-extra';
 
 import pkg from '../package.json' with { type: 'json' };
 
-import { genDir, relativeToRoot } from './paths.mts';
-import { version } from './version.mts';
+import { genDir, relativeToRoot } from './utils/paths.mts';
+import { getVersion } from './utils/version.mts';
 
 const updatesJsonPath = path.join(genDir, 'updates.json');
 const updateRdfPath = path.join(genDir, 'update.rdf');
@@ -14,6 +14,8 @@ const updateRdfPath = path.join(genDir, 'update.rdf');
 const [, , updateLink] = process.argv;
 
 assert.ok(updateLink, 'Update link must be provided as first argument');
+
+const version = await getVersion();
 
 console.log(
   `Generating ${relativeToRoot(

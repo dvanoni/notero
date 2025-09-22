@@ -1,7 +1,7 @@
 import esbuild from 'esbuild';
 
-import { copyAssets } from './copy-assets.mts';
-import { generateInstallManifest } from './generate-install-manifest.mts';
+import { copyAssets } from './utils/copy-assets.mts';
+import { generateInstallManifest } from './utils/generate-install-manifest.mts';
 
 const OUTDIR = 'build';
 const TARGET = 'firefox115';
@@ -11,7 +11,7 @@ type BuildOptions = {
 };
 
 export async function build({ enableSourcemap = false }: BuildOptions = {}) {
-  generateInstallManifest();
+  await generateInstallManifest();
   copyAssets();
 
   console.log('Building src/bootstrap.ts');

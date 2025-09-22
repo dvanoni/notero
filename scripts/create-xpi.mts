@@ -6,11 +6,12 @@ import fs from 'fs-extra';
 
 import pkg from '../package.json' with { type: 'json' };
 
-import { buildDir, relativeToRoot, xpiDir } from './paths.mts';
-import { version } from './version.mts';
+import { buildDir, relativeToRoot, xpiDir } from './utils/paths.mts';
+import { getVersion } from './utils/version.mts';
 
 assert.ok(fs.existsSync(buildDir), '`build` directory does not exist');
 
+const version = await getVersion();
 const xpiPath = path.join(xpiDir, `${pkg.name}-${version}.xpi`);
 
 console.log(`Creating ${relativeToRoot(xpiPath)}`);

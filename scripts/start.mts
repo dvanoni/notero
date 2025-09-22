@@ -12,7 +12,7 @@ import JSON5 from 'json5';
 import { cmd, type MultiExtensionRunner } from 'web-ext';
 
 import { build } from './build.mts';
-import { buildDir, rootDir } from './paths.mts';
+import { buildDir, rootDir } from './utils/paths.mts';
 
 type Config = {
   profile?: {

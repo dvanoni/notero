@@ -1,5 +1,6 @@
 import os from 'node:os';
 import path from 'node:path';
+import { pathToFileURL } from 'node:url';
 
 import fs from 'fs-extra';
 import { inc as semverInc } from 'semver';
@@ -12,7 +13,8 @@ const versionJsonPath = path.join(genDir, 'version.json');
 
 export async function getVersion(): Promise<string> {
   if (fs.existsSync(versionJsonPath)) {
-    const versionModule = (await import(versionJsonPath, {
+    const versionJsonURL = pathToFileURL(versionJsonPath).href;
+    const versionModule = (await import(versionJsonURL, {
       with: { type: 'json' },
     })) as { default: string };
     const version = versionModule.default;

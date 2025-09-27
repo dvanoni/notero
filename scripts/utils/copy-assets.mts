@@ -1,46 +1,76 @@
 import path from 'node:path';
 
+import { watch, FSWatcher } from 'chokidar';
 import fs from 'fs-extra';
 
 import { buildDir, relativeToRoot, srcDir } from './paths.mts';
 
-const IGNORED_EXTENSIONS = ['.json', '.ts', '.tsx'];
-const IGNORED_PATHS = /(\.DS_Store|__tests__)$/;
+type CleanupFunction = () => Promise<void>;
 
-// https://gist.github.com/jakub-g/5903dc7e4028133704a4
-function removeEmptyDirectories(dirPath: string) {
-  if (!fs.statSync(dirPath).isDirectory()) return;
+const IGNORE_PATTERNS = [/\.(json|ts|tsx)$/, /\.DS_Store$/, /__tests__/];
 
-  let files = fs.readdirSync(dirPath);
-
-  if (files.length > 0) {
-    files.forEach((file) => {
-      removeEmptyDirectories(path.join(dirPath, file));
-    });
-    files = fs.readdirSync(dirPath);
-  }
-
-  if (files.length === 0) {
-    fs.rmdirSync(dirPath);
-  }
+function srcPathToBuildPath(srcPath: string): string {
+  return path.join(buildDir, path.relative(srcDir, srcPath));
 }
 
-export function copyAssets() {
-  console.group('Copying assets');
+function createWatcher(persistent: boolean): {
+  close: () => Promise<void>;
+  ready: Promise<void>;
+  watcher: FSWatcher;
+} {
+  const watcher = watch(srcDir, { ignored: IGNORE_PATTERNS, persistent });
 
-  fs.copySync(srcDir, buildDir, {
-    filter(src) {
-      const include =
-        !IGNORED_EXTENSIONS.includes(path.extname(src).toLowerCase()) &&
-        !IGNORED_PATHS.test(src);
-      if (include && fs.statSync(src).isFile()) {
-        console.log(relativeToRoot(src));
-      }
-      return include;
-    },
+  watcher
+    .on('add', (srcPath) => {
+      const destPath = srcPathToBuildPath(srcPath);
+      console.log(`Copying asset: ${relativeToRoot(srcPath)}`);
+      fs.copySync(srcPath, destPath);
+    })
+    .on('error', (error) => {
+      console.error('Asset watcher error:', error);
+    });
+
+  const close = () =>
+    watcher.close().catch((error) => {
+      console.warn('Error closing asset watcher:', error);
+    });
+
+  const ready = new Promise<void>((resolve, reject) => {
+    watcher.on('ready', resolve).on('error', reject);
   });
 
-  console.groupEnd();
+  return { close, ready, watcher };
+}
 
-  removeEmptyDirectories(buildDir);
+export function copyAssets(): Promise<void> {
+  const { close, ready } = createWatcher(false);
+
+  return ready.then(close);
+}
+
+export async function copyAndWatchAssets(): Promise<CleanupFunction> {
+  const { close, ready, watcher } = createWatcher(true);
+
+  watcher
+    .on('change', (srcPath) => {
+      const destPath = srcPathToBuildPath(srcPath);
+      console.log(`Copying updated asset: ${relativeToRoot(srcPath)}`);
+      fs.copySync(srcPath, destPath);
+    })
+    .on('unlink', (srcPath) => {
+      const destPath = srcPathToBuildPath(srcPath);
+      console.log(`Removing deleted asset: ${relativeToRoot(srcPath)}`);
+      fs.removeSync(destPath);
+    });
+
+  await ready;
+
+  console.log('Watching assets for changes');
+
+  const cleanup: CleanupFunction = async () => {
+    console.log('Stopping asset watcher');
+    await close();
+  };
+
+  return cleanup;
 }

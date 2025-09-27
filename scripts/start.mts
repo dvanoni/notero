@@ -94,7 +94,7 @@ async function startZotero(): Promise<void> {
   const zoteroArgs = getZoteroArgs(version);
 
   console.group('Starting build watcher');
-  const ctx = await build({ enableSourcemap: true });
+  const cleanup = await build({ sourcemap: true, watch: true });
   console.groupEnd();
 
   console.group(`Starting Zotero${version ? ` ${version}` : ''}`);
@@ -114,10 +114,11 @@ async function startZotero(): Promise<void> {
     },
   );
 
-  extensionRunner.registerCleanup(() => {
-    console.log('Stopping build watcher');
-    void ctx.dispose();
-  });
+  if (cleanup) {
+    extensionRunner.registerCleanup(() => {
+      void cleanup();
+    });
+  }
 
   writeToLogIfRequested(extensionRunner);
 }

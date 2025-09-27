@@ -1,52 +1,91 @@
-import esbuild from 'esbuild';
+import esbuild, { type Plugin } from 'esbuild';
 
-import { copyAssets } from './utils/copy-assets.mts';
+import { copyAndWatchAssets, copyAssets } from './utils/copy-assets.mts';
 import { generateInstallManifest } from './utils/generate-install-manifest.mts';
+
+type BuildOptions = {
+  sourcemap?: boolean;
+  watch?: boolean;
+};
+
+type CleanupFunction = () => Promise<void>;
 
 const OUTDIR = 'build';
 const TARGET = 'firefox115';
 
-type BuildOptions = {
-  enableSourcemap?: boolean;
+const buildPlugin: Plugin = {
+  name: 'notero-build-plugin',
+  setup(build) {
+    build.onStart(() => {
+      console.log(
+        `Building ${JSON.stringify(build.initialOptions.entryPoints)}`,
+      );
+    });
+  },
 };
 
-export async function build({ enableSourcemap = false }: BuildOptions = {}) {
+export async function build({
+  sourcemap = false,
+  watch = false,
+}: BuildOptions = {}): Promise<CleanupFunction | undefined> {
   await generateInstallManifest();
-  copyAssets();
 
-  console.log('Building src/bootstrap.ts');
-
-  await esbuild.build({
+  const bootstrapContext = await esbuild.context({
     entryPoints: ['src/bootstrap.ts'],
     keepNames: true,
     outdir: OUTDIR,
+    plugins: [buildPlugin],
     target: TARGET,
   });
 
-  console.log(
-    'Building src/content/notero.ts and src/content/prefs/preferences.tsx',
-  );
-
-  const ctx = await esbuild.context({
+  const contentContext = await esbuild.context({
     bundle: true,
     entryPoints: ['src/content/notero.ts', 'src/content/prefs/preferences.tsx'],
     external: ['components/*', 'react', 'react-dom'],
     format: 'iife',
     outbase: 'src',
     outdir: OUTDIR,
-    sourcemap: enableSourcemap && 'inline',
+    plugins: [buildPlugin],
+    sourcemap: sourcemap && 'inline',
     target: TARGET,
   });
 
-  await ctx.watch();
+  if (!watch) {
+    await bootstrapContext.rebuild();
+    await bootstrapContext.dispose();
+    await contentContext.rebuild();
+    await contentContext.dispose();
+    await copyAssets();
+    return;
+  }
 
-  return ctx;
+  await bootstrapContext.watch();
+  await contentContext.watch();
+  const cleanupAssetWatcher = await copyAndWatchAssets();
+
+  const cleanup: CleanupFunction = async () => {
+    console.log('Stopping build watcher');
+    await bootstrapContext.dispose();
+    await contentContext.dispose();
+    await cleanupAssetWatcher();
+  };
+
+  return cleanup;
 }
 
 // @ts-expect-error Type for `main` is not available yet
 if (import.meta.main) {
   const args = process.argv.slice(2);
-  const enableSourcemap = args.includes('--sourcemap');
-  const ctx = await build({ enableSourcemap });
-  await ctx.dispose();
+  const sourcemap = args.includes('--sourcemap');
+  const watch = args.includes('--watch');
+
+  const cleanup = await build({ sourcemap, watch });
+
+  if (cleanup) {
+    await new Promise<void>((resolve) => {
+      process.on('SIGINT', resolve);
+    });
+    console.log('\nReceived SIGINT - shutting down gracefully...');
+    await cleanup();
+  }
 }

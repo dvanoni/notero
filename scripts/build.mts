@@ -2,6 +2,7 @@ import esbuild, { type Plugin } from 'esbuild';
 
 import { copyAndWatchAssets, copyAssets } from './utils/copy-assets.mts';
 import { generateInstallManifest } from './utils/generate-install-manifest.mts';
+import { buildDir } from './utils/paths.mts';
 
 type BuildOptions = {
   sourcemap?: boolean;
@@ -10,7 +11,6 @@ type BuildOptions = {
 
 type CleanupFunction = () => Promise<void>;
 
-const OUTDIR = 'build';
 const TARGET = 'firefox115';
 
 const buildPlugin: Plugin = {
@@ -33,7 +33,7 @@ export async function build({
   const bootstrapContext = await esbuild.context({
     entryPoints: ['src/bootstrap.ts'],
     keepNames: true,
-    outdir: OUTDIR,
+    outdir: buildDir,
     plugins: [buildPlugin],
     target: TARGET,
   });
@@ -44,7 +44,7 @@ export async function build({
     external: ['components/*', 'react', 'react-dom'],
     format: 'iife',
     outbase: 'src',
-    outdir: OUTDIR,
+    outdir: buildDir,
     plugins: [buildPlugin],
     sourcemap: sourcemap && 'inline',
     target: TARGET,

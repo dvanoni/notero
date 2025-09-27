@@ -12,7 +12,9 @@ import { genDir, relativeToRoot } from './paths.mts';
 const versionJsonPath = path.join(genDir, 'version.json');
 
 export async function getVersion(): Promise<string> {
-  if (fs.existsSync(versionJsonPath)) {
+  const versionJsonExists = await fs.exists(versionJsonPath);
+
+  if (versionJsonExists) {
     const versionJsonURL = pathToFileURL(versionJsonPath).href;
     const versionModule = (await import(versionJsonURL, {
       with: { type: 'json' },
@@ -24,7 +26,7 @@ export async function getVersion(): Promise<string> {
 
   const version = computeVersion();
   console.log(`Writing ${relativeToRoot(versionJsonPath)} with ${version}`);
-  fs.outputJsonSync(versionJsonPath, version);
+  await fs.outputJson(versionJsonPath, version);
   return version;
 }
 

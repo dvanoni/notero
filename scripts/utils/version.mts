@@ -12,7 +12,7 @@ import { genDir, relativeToRoot } from './paths.mts';
 const versionJsonPath = path.join(genDir, 'version.json');
 
 export async function getVersion(): Promise<string> {
-  const versionJsonExists = await fs.exists(versionJsonPath);
+  const versionJsonExists = await fs.pathExists(versionJsonPath);
 
   if (versionJsonExists) {
     const versionJsonURL = pathToFileURL(versionJsonPath).href;

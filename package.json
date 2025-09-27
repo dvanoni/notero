@@ -38,6 +38,9 @@
     "url": "https://github.com/dvanoni/notero/issues"
   },
   "homepage": "https://github.com/dvanoni/notero",
+  "engines": {
+    "node": ">=24.3.0"
+  },
   "xpi": {
     "icons": {
       "48": "content/style/notero-48.png",

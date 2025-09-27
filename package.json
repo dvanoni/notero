@@ -4,6 +4,7 @@
   "description": "Sync Zotero items and notes into Notion",
   "scripts": {
     "build": "node scripts/build.mts",
+    "build:watch": "npm run build -- --watch",
     "clean": "rm -r .eslintcache build gen xpi src/locale/fluent-types.ts",
     "create-xpi": "node scripts/create-xpi.mts",
     "generate-fluent-types": "node scripts/generate-fluent-types.mts",
@@ -72,6 +73,7 @@
     "@types/semver": "^7.7.0",
     "@vitest/eslint-plugin": "^1.3.6",
     "adm-zip": "^0.5.16",
+    "chokidar": "^4.0.3",
     "concurrently": "^9.2.1",
     "esbuild": "^0.25.9",
     "eslint": "^9.34.0",

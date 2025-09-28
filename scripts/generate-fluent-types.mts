@@ -3,7 +3,7 @@ import path from 'node:path';
 import { parse } from '@fluent/syntax';
 import fs from 'fs-extra';
 
-import { relativeToRoot, srcDir } from './paths.mts';
+import { relativeToRoot, srcDir } from './utils/paths.mts';
 
 const localeDir = path.join(srcDir, 'locale');
 const ftlFile = path.join(localeDir, 'en-US/notero.ftl');

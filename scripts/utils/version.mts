@@ -4,15 +4,28 @@ import path from 'node:path';
 import fs from 'fs-extra';
 import { inc as semverInc } from 'semver';
 
-import pkg from '../package.json' with { type: 'json' };
+import pkg from '../../package.json' with { type: 'json' };
 
 import { genDir, relativeToRoot } from './paths.mts';
 
 const versionJsonPath = path.join(genDir, 'version.json');
 
-export let version: string;
+export async function getVersion(): Promise<string> {
+  const versionJsonExists = await fs.pathExists(versionJsonPath);
 
-function getVersion(): string {
+  if (versionJsonExists) {
+    const version = (await fs.readJson(versionJsonPath)) as string;
+    console.log(`Found ${relativeToRoot(versionJsonPath)} with ${version}`);
+    return version;
+  }
+
+  const version = computeVersion();
+  console.log(`Writing ${relativeToRoot(versionJsonPath)} with ${version}`);
+  await fs.outputJson(versionJsonPath, version);
+  return version;
+}
+
+function computeVersion(): string {
   const { GITHUB_ACTIONS, GITHUB_HEAD_REF, GITHUB_JOB } = process.env;
 
   if (!GITHUB_ACTIONS) return getLocalVersion();
@@ -35,19 +48,4 @@ function getPrereleaseVersion(baseVersion: string): string {
 
 function getPatchBumpVersion(): string {
   return semverInc(pkg.version, 'patch') || pkg.version;
-}
-
-if (fs.existsSync(versionJsonPath)) {
-  const versionModule = (await import(versionJsonPath, {
-    with: { type: 'json' },
-  })) as { default: string };
-  version = versionModule.default;
-
-  console.log(`Found ${relativeToRoot(versionJsonPath)} with ${version}`);
-} else {
-  version = getVersion();
-
-  console.log(`Writing ${relativeToRoot(versionJsonPath)} with ${version}`);
-
-  fs.outputJsonSync(versionJsonPath, version);
 }

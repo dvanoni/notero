@@ -1,27 +1,22 @@
 /**
- * Set up environment for plugin development and start Zotero with plugin.
+ * Start Zotero with plugin temporarily installed using web-ext.
  *
+ * @see https://github.com/mozilla/web-ext
  * @see https://www.zotero.org/support/dev/client_coding/plugin_development
  */
 import assert from 'node:assert/strict';
-import child_process, { type StdioOptions } from 'node:child_process';
 import path from 'node:path';
 
 import fs from 'fs-extra';
 import JSON5 from 'json5';
+import { cmd, type MultiExtensionRunner } from 'web-ext';
 
-import pkg from '../package.json' with { type: 'json' };
-
-import { buildDir, rootDir } from './paths.mts';
+import { build } from './build.mts';
+import { buildDir, rootDir } from './utils/paths.mts';
 
 type Config = {
   profile?: {
-    name?: string;
     path?: string;
-  };
-  scripts?: {
-    prestart?: string;
-    poststart?: string;
   };
   zotero?: {
     betaPath?: string;
@@ -38,52 +33,6 @@ const configFile = path.join(rootDir, 'zotero.config.json');
 const configJson = fs.readFileSync(configFile, 'utf8');
 const config = JSON5.parse<Config>(configJson);
 
-function runScript(
-  name: keyof Required<Config>['scripts'],
-  zoteroPID?: number,
-): void {
-  const script = config.scripts?.[name];
-  if (!script) return;
-
-  const command = zoteroPID ? `ZOTERO_PID=${zoteroPID}; ${script}` : script;
-
-  console.group(`Running ${name} script`);
-  console.log(`Command: ${command}`);
-
-  try {
-    child_process.execSync(command);
-  } catch (err) {
-    console.warn(String(err));
-  }
-
-  console.groupEnd();
-}
-
-function writePluginProxyFile(): void {
-  const proxyFile = path.join(getProfilePath(), 'extensions', pkg.xpi.id);
-
-  console.group('Writing plugin source path to proxy file');
-  console.log(`Source path: ${buildDir}`);
-  console.log(`Proxy file path: ${proxyFile}`);
-  console.groupEnd();
-
-  fs.outputFileSync(proxyFile, buildDir);
-}
-
-function resetPrefs(): void {
-  const prefsFile = path.join(getProfilePath(), 'prefs.js');
-  if (!fs.existsSync(prefsFile)) return;
-
-  console.log('Resetting prefs.js');
-
-  const prefsContent = fs
-    .readFileSync(prefsFile, 'utf8')
-    .replace(/user_pref\(.extensions\.lastAppBuildId.+$/m, '')
-    .replace(/user_pref\(.extensions\.lastAppVersion.+$/m, '');
-
-  fs.writeFileSync(prefsFile, prefsContent);
-}
-
 function getProfilePath(): string {
   assert.ok(
     config.profile?.path && fs.existsSync(config.profile.path),
@@ -92,19 +41,8 @@ function getProfilePath(): string {
   return config.profile.path;
 }
 
-function getStdio(): StdioOptions {
-  const { logFile, preserveLog } = config.zotero || {};
-  if (!logFile) return 'ignore';
-
-  console.log(
-    `${preserveLog ? 'Appending' : 'Writing'} to log file: ${logFile}`,
-  );
-
-  const flags = preserveLog ? 'a' : 'w';
-  const out = fs.openSync(logFile, flags);
-  const err = fs.openSync(logFile, flags);
-
-  return ['ignore', out, err];
+function getValidatedManifest(sourceDir: string): Promise<unknown> {
+  return fs.readJson(path.join(sourceDir, 'manifest.json'));
 }
 
 function getVersion(): Version {
@@ -115,21 +53,12 @@ function getVersion(): Version {
 }
 
 function getZoteroArgs(version: Version): string[] {
-  const zoteroArgs = [
-    '-purgecaches',
-    '-ZoteroDebugText',
-    '-datadir',
-    'profile',
-  ];
+  const zoteroArgs = ['-ZoteroDebugText', '-datadir', 'profile'];
 
   if (version === 'beta' || version === 'dev') {
     zoteroArgs.push('-jsdebugger');
   } else {
     zoteroArgs.push('-jsconsole', '-debugger');
-  }
-
-  if (config.profile?.name) {
-    zoteroArgs.push('-p', config.profile.name);
   }
 
   return zoteroArgs;
@@ -158,34 +87,73 @@ function getZoteroPath(version: Version): string {
   throw new Error('Unrecognized platform');
 }
 
-function startZotero(): number | undefined {
+async function startZotero(): Promise<void> {
+  const profilePath = getProfilePath();
   const version = getVersion();
   const zoteroPath = getZoteroPath(version);
   const zoteroArgs = getZoteroArgs(version);
 
+  console.group('Starting build watcher');
+  const cleanup = await build({ sourcemap: true, watch: true });
+  console.groupEnd();
+
   console.group(`Starting Zotero${version ? ` ${version}` : ''}`);
   console.log(`Command: ${zoteroPath}`);
   console.log(`Arguments: ${zoteroArgs.join(' ')}`);
-
-  const subprocess = child_process.spawn(zoteroPath, zoteroArgs, {
-    detached: true,
-    stdio: getStdio(),
-  });
-
-  subprocess.on('error', (err) => {
-    console.error('Failed to start Zotero');
-    console.error(err);
-  });
-
-  subprocess.unref();
-
   console.groupEnd();
 
-  return subprocess.pid;
+  const extensionRunner = await cmd.run(
+    {
+      args: zoteroArgs,
+      firefox: zoteroPath,
+      firefoxProfile: profilePath,
+      sourceDir: buildDir,
+    },
+    {
+      getValidatedManifest,
+    },
+  );
+
+  if (cleanup) {
+    extensionRunner.registerCleanup(() => {
+      void cleanup();
+    });
+  }
+
+  writeToLogIfRequested(extensionRunner);
 }
 
-runScript('prestart');
-writePluginProxyFile();
-resetPrefs();
-const zoteroPID = startZotero();
-runScript('poststart', zoteroPID);
+function writeToLogIfRequested(extensionRunner: MultiExtensionRunner): void {
+  const { logFile, preserveLog } = config.zotero || {};
+  if (!logFile) return;
+
+  const { stderr, stdout } =
+    extensionRunner.extensionRunners[0]?.runningInfo?.firefox || {};
+
+  if (!stderr || !stdout) {
+    console.warn('No stderr or stdout available for logging');
+    return;
+  }
+
+  console.log(
+    `${preserveLog ? 'Appending' : 'Writing'} to log file: ${logFile}`,
+  );
+
+  const flags = preserveLog ? 'a' : 'w';
+  const logStream = fs.createWriteStream(logFile, { flags });
+
+  const writeToLog = (data: unknown) => {
+    const timestamp = new Date().toISOString();
+    logStream.write(`[${timestamp}] ${String(data)}`);
+  };
+
+  stderr.on('data', writeToLog);
+  stdout.on('data', writeToLog);
+
+  extensionRunner.registerCleanup(() => {
+    console.log('Closing log file');
+    logStream.end();
+  });
+}
+
+await startZotero();

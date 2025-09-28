@@ -1,16 +1,7 @@
 {
   "profile": {
-    // (optional) Name of your Zotero profile. If omitted and you have multiple
-    // Zotero profiles, the profile picker will appear when Zotero starts.
-    "name": "dev",
     // (required) Absolute path to your Zotero profile.
     "path": "/Users/dvanoni/Library/Application Support/Zotero/Profiles/sekg0jb3.dev"
-  },
-  "scripts": {
-    // (optional) Command to run before Zotero starts.
-    "prestart": "pkill zotero",
-    // (optional) Command to run after Zotero starts.
-    "poststart": "sleep 3 && osascript -e \"tell application \\\"System Events\\\" to set frontmost of first application process whose unix id is $ZOTERO_PID to true\""
   },
   "zotero": {
     // (optional) Explicit path to executable for your default Zotero version.

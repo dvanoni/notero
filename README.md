@@ -409,30 +409,25 @@ documentation and should allow you to build and run Notero yourself.
 
         npm start
 
-    Alternatively, you can start your desired beta version of Zotero:
+    Alternatively, you can start your desired beta or dev version of Zotero:
 
         npm run start:beta
+        npm run start:dev
 
     The `start` script performs a number of steps:
-    1.  Execute `npm run build` to build the plugin into the `build` directory.
-    2.  If defined, run the `scripts.prestart` command specified in
+    1.  Run `scripts/build.mts` to build the plugin into the `build` directory
+        and watch for changes, rebuilding when necessary.
+    2.  Use [web-ext][] to start Zotero with the profile specified in
+        `zotero.config.json` and install the plugin as temporary, reloading when
+        the plugin is rebuilt.
+    3.  Write Zotero debug output to the `logFile` if specified in
         `zotero.config.json`.
-    3.  Write a file containing the absolute path to the `build` directory into
-        the `extensions` directory in the Zotero profile directory.
-    4.  Remove the `extensions.lastAppBuildId` and `extensions.lastAppVersion`
-        lines from `prefs.js` in the Zotero profile directory.
-    5.  Start Zotero with the profile specified in `zotero.config.json` and the
-        following command line arguments:
-
-            -purgecaches -ZoteroDebugText -jsdebugger -datadir profile
-
-    6.  If defined, run the `scripts.poststart` command specified in
-        `zotero.config.json`, providing it with a `ZOTERO_PID` environment variable.
 
 [generator-zotero-plugin]: https://github.com/retorquere/generator-zotero-plugin
 [zotero-plugin]: https://github.com/retorquere/zotero-plugin
 [plugin-development]: https://www.zotero.org/support/dev/client_coding/plugin_development
 [zotero-profiles]: https://www.zotero.org/support/kb/multiple_profiles
+[web-ext]: https://github.com/mozilla/web-ext
 
 ### Releasing a New Version
 

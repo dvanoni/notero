@@ -1,6 +1,5 @@
 import os from 'node:os';
 import path from 'node:path';
-import { pathToFileURL } from 'node:url';
 
 import fs from 'fs-extra';
 import { inc as semverInc } from 'semver';
@@ -15,11 +14,7 @@ export async function getVersion(): Promise<string> {
   const versionJsonExists = await fs.pathExists(versionJsonPath);
 
   if (versionJsonExists) {
-    const versionJsonURL = pathToFileURL(versionJsonPath).href;
-    const versionModule = (await import(versionJsonURL, {
-      with: { type: 'json' },
-    })) as { default: string };
-    const version = versionModule.default;
+    const version = (await fs.readJson(versionJsonPath)) as string;
     console.log(`Found ${relativeToRoot(versionJsonPath)} with ${version}`);
     return version;
   }

@@ -1,6 +1,6 @@
 import VirtualizedTable, {
   makeRowRenderer,
-  // eslint-disable-next-line import/no-unresolved
+  // eslint-disable-next-line import-x/no-unresolved
 } from 'components/virtualized-table';
 import React from 'react';
 
@@ -64,6 +64,7 @@ const COMPARATORS: Record<DataKey, RowSortCompareFn> = {
   },
 };
 
+// eslint-disable-next-line import-x/no-named-as-default-member
 export class SyncConfigsTable extends React.Component<Props> {
   private _rows?: SyncConfigsTableRow[];
   private _syncConfigs?: CollectionSyncConfigsRecord;

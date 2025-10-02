@@ -151,7 +151,7 @@ declare module 'components/virtualized-table' {
     getRowData: (index: number) => { [dataKey: string]: unknown },
   ): RenderItem<DataKey>;
 
-  // eslint-disable-next-line import/no-default-export
+  // eslint-disable-next-line import-x/no-default-export
   export default VirtualizedTable;
 
   // eslint-disable-next-line @typescript-eslint/no-extraneous-class

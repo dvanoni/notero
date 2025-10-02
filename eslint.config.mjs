@@ -2,18 +2,19 @@ import eslint from '@eslint/js';
 import pluginVitest from '@vitest/eslint-plugin';
 import { defineConfig } from 'eslint/config';
 import configPrettier from 'eslint-config-prettier';
-import pluginImport from 'eslint-plugin-import';
+import { importX } from 'eslint-plugin-import-x';
 import globals from 'globals';
 import tseslint from 'typescript-eslint';
 
-// eslint-disable-next-line import/no-default-export
+// eslint-disable-next-line import-x/no-default-export
 export default defineConfig(
-  { files: ['**/*.{js,mjs,cjs,ts}'] },
+  { files: ['**/*.{js,cjs,mjs,ts,mts,tsx}'] },
   { ignores: ['build', 'gen'] },
   eslint.configs.recommended,
-  pluginImport.flatConfigs.recommended,
-  pluginImport.flatConfigs.typescript,
-  // eslint-disable-next-line import/no-named-as-default-member
+  // @ts-expect-error https://github.com/typescript-eslint/typescript-eslint/issues/11543
+  importX.flatConfigs.recommended,
+  importX.flatConfigs.typescript,
+  // eslint-disable-next-line import-x/no-named-as-default-member
   ...tseslint.configs.strictTypeChecked,
   configPrettier,
   {
@@ -53,9 +54,9 @@ export default defineConfig(
         { allowNumber: true },
       ],
       '@typescript-eslint/unbound-method': ['error', { ignoreStatic: true }],
-      'import/no-extraneous-dependencies': 'error',
-      'import/no-default-export': 'error',
-      'import/order': [
+      'import-x/no-extraneous-dependencies': 'error',
+      'import-x/no-default-export': 'error',
+      'import-x/order': [
         'error',
         {
           alphabetize: { order: 'asc' },
@@ -69,6 +70,7 @@ export default defineConfig(
   {
     files: ['scripts/**'],
     rules: {
+      'import-x/no-named-as-default-member': 'off',
       'no-console': 'off',
     },
   },

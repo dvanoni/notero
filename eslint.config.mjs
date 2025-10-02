@@ -1,12 +1,13 @@
 import eslint from '@eslint/js';
 import pluginVitest from '@vitest/eslint-plugin';
+import { defineConfig } from 'eslint/config';
 import configPrettier from 'eslint-config-prettier';
 import pluginImport from 'eslint-plugin-import';
 import globals from 'globals';
 import tseslint from 'typescript-eslint';
 
 // eslint-disable-next-line import/no-default-export
-export default tseslint.config(
+export default defineConfig(
   { files: ['**/*.{js,mjs,cjs,ts}'] },
   { ignores: ['build', 'gen'] },
   eslint.configs.recommended,

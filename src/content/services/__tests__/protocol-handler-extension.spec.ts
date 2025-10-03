@@ -83,7 +83,10 @@ describe('ProtocolHandlerExtension', () => {
 
     zoteroProtocolHandler._extensions['zotero://notero']?.newChannel(uri, {});
 
-    expect(logger.warn).toHaveBeenCalledWith('No handler with name:', 'bogus');
+    expect(logger.warn).toHaveBeenCalledExactlyOnceWith(
+      'No handler with name:',
+      'bogus',
+    );
   });
 
   it('calls NotionAuthManager.handleTokenResponse with provided URI params', () => {
@@ -97,9 +100,9 @@ describe('ProtocolHandlerExtension', () => {
 
     const expectedParams = new URLSearchParams({ key1: 'val1', key2: 'val2' });
 
-    // eslint-disable-next-line @typescript-eslint/unbound-method
-    expect(notionAuthManager.handleTokenResponse).toHaveBeenCalledWith(
-      expectedParams,
-    );
+    expect(
+      // eslint-disable-next-line @typescript-eslint/unbound-method
+      notionAuthManager.handleTokenResponse,
+    ).toHaveBeenCalledExactlyOnceWith(expectedParams);
   });
 });

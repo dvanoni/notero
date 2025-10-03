@@ -85,7 +85,7 @@ describe('syncRegularItem', () => {
 
     await syncRegularItem(regularItem, params);
 
-    expect(notion.pages.create).toHaveBeenCalledWith({
+    expect(notion.pages.create).toHaveBeenCalledExactlyOnceWith({
       parent: { database_id: fakeDatabaseID },
       properties: fakePageProperties,
     });
@@ -97,7 +97,7 @@ describe('syncRegularItem', () => {
 
     await syncRegularItem(regularItem, params);
 
-    expect(notion.pages.update).toHaveBeenCalledWith({
+    expect(notion.pages.update).toHaveBeenCalledExactlyOnceWith({
       page_id: fakePageID,
       properties: fakePageProperties,
     });
@@ -110,11 +110,11 @@ describe('syncRegularItem', () => {
 
     await syncRegularItem(regularItem, params);
 
-    expect(notion.pages.update).toHaveBeenCalledWith({
+    expect(notion.pages.update).toHaveBeenCalledExactlyOnceWith({
       page_id: fakePageID,
       properties: fakePageProperties,
     });
-    expect(notion.pages.create).toHaveBeenCalledWith({
+    expect(notion.pages.create).toHaveBeenCalledExactlyOnceWith({
       parent: { database_id: fakeDatabaseID },
       properties: fakePageProperties,
     });
@@ -129,11 +129,11 @@ describe('syncRegularItem', () => {
 
     await syncRegularItem(regularItem, params);
 
-    expect(notion.pages.update).toHaveBeenCalledWith({
+    expect(notion.pages.update).toHaveBeenCalledExactlyOnceWith({
       page_id: fakePageID,
       properties: fakePageProperties,
     });
-    expect(notion.pages.create).toHaveBeenCalledWith({
+    expect(notion.pages.create).toHaveBeenCalledExactlyOnceWith({
       parent: { database_id: fakeDatabaseID },
       properties: fakePageProperties,
     });
@@ -149,11 +149,11 @@ describe('syncRegularItem', () => {
 
     await syncRegularItem(regularItem, params);
 
-    expect(notion.pages.update).toHaveBeenCalledWith({
+    expect(notion.pages.update).toHaveBeenCalledExactlyOnceWith({
       page_id: fakePageID,
       properties: fakePageProperties,
     });
-    expect(notion.pages.create).toHaveBeenCalledWith({
+    expect(notion.pages.create).toHaveBeenCalledExactlyOnceWith({
       parent: { database_id: fakeDatabaseID },
       properties: fakePageProperties,
     });

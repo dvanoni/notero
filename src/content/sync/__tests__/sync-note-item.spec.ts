@@ -99,7 +99,7 @@ describe('syncNoteItem', () => {
 
     await syncNoteItem(noteItem, notion);
 
-    expect(notion.blocks.children.append).toHaveBeenCalledWith({
+    expect(notion.blocks.children.append).toHaveBeenNthCalledWith(1, {
       block_id: fakePageID,
       children: [containerHeadingBlock],
     });
@@ -110,7 +110,7 @@ describe('syncNoteItem', () => {
 
     await syncNoteItem(noteItem, notion);
 
-    expect(saveSyncedNote).toHaveBeenCalledWith(
+    expect(saveSyncedNote).toHaveBeenCalledExactlyOnceWith(
       regularItem,
       fakeContainerID,
       expect.anything(),
@@ -126,10 +126,12 @@ describe('syncNoteItem', () => {
 
       await syncNoteItem(noteItem, notion);
 
-      expect(notion.blocks.children.append).not.toHaveBeenCalledWith({
-        block_id: fakePageID,
-        children: [containerHeadingBlock],
-      });
+      expect(notion.blocks.children.append).not.toHaveBeenCalledExactlyOnceWith(
+        {
+          block_id: fakePageID,
+          children: [containerHeadingBlock],
+        },
+      );
     });
 
     it('creates a new container block if existing one is not found', async () => {
@@ -144,7 +146,7 @@ describe('syncNoteItem', () => {
 
       await syncNoteItem(noteItem, notion);
 
-      expect(notion.blocks.children.append).toHaveBeenCalledWith({
+      expect(notion.blocks.children.append).toHaveBeenNthCalledWith(2, {
         block_id: fakePageID,
         children: [containerHeadingBlock],
       });
@@ -162,7 +164,7 @@ describe('syncNoteItem', () => {
 
     await expect(() => syncNoteItem(noteItem, notion)).rejects.toThrow();
 
-    expect(saveSyncedNote).toHaveBeenCalledWith(
+    expect(saveSyncedNote).toHaveBeenCalledExactlyOnceWith(
       regularItem,
       fakeContainerID,
       undefined,
@@ -181,7 +183,7 @@ describe('syncNoteItem', () => {
 
     await expect(() => syncNoteItem(noteItem, notion)).rejects.toThrow();
 
-    expect(saveSyncedNote).toHaveBeenCalledWith(
+    expect(saveSyncedNote).toHaveBeenCalledExactlyOnceWith(
       regularItem,
       expect.anything(),
       fakeNoteBlockID,

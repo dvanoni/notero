@@ -72,7 +72,7 @@ describe('saveNotionLinkAttachment', () => {
     await saveNotionLinkAttachment(item, pageURL);
 
     // eslint-disable-next-line @typescript-eslint/unbound-method
-    expect(attachment.setNote).toHaveBeenCalledWith(
+    expect(attachment.setNote).toHaveBeenCalledExactlyOnceWith(
       expect.stringContaining(syncedNotes),
     );
   });
@@ -93,7 +93,7 @@ describe('saveNotionLinkAttachment', () => {
     await saveNotionLinkAttachment(item, pageURL);
 
     // eslint-disable-next-line @typescript-eslint/unbound-method
-    expect(attachment.setNote).toHaveBeenCalledWith(
+    expect(attachment.setNote).toHaveBeenCalledExactlyOnceWith(
       expect.stringContaining(syncedNotes),
     );
   });
@@ -116,7 +116,7 @@ describe('saveNotionLinkAttachment', () => {
     await saveNotionLinkAttachment(item, newPageURL);
 
     // eslint-disable-next-line @typescript-eslint/unbound-method
-    expect(attachment.setNote).toHaveBeenCalledWith(
+    expect(attachment.setNote).toHaveBeenCalledExactlyOnceWith(
       expect.stringContaining('<pre id="notero-synced-notes">{}</pre>'),
     );
   });

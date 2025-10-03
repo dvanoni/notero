@@ -59,7 +59,7 @@
   "dependencies": {
     "@notionhq/client": "^4.0.1",
     "eventemitter3": "^5.0.1",
-    "zod": "^4.1.8"
+    "zod": "^4.1.11"
   },
   "devDependencies": {
     "@commitlint/cli": "^20.1.0",

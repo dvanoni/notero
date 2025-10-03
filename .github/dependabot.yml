@@ -22,9 +22,6 @@ updates:
       commitlint:
         patterns:
           - '@commitlint*'
-      typescript-eslint:
-        patterns:
-          - '@typescript-eslint*'
     ignore:
       # Ignore major React versions to follow Zotero
       - dependency-name: 'react*'

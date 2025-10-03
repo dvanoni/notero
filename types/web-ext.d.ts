@@ -164,7 +164,7 @@ declare module 'web-ext' {
 
   // Default export
   const webext: WebExtInterface;
-  // eslint-disable-next-line import/no-default-export
+  // eslint-disable-next-line import-x/no-default-export
   export default webext;
 
   // Named exports

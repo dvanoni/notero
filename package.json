@@ -78,7 +78,7 @@
     "adm-zip": "^0.5.16",
     "chokidar": "^4.0.3",
     "concurrently": "^9.2.1",
-    "esbuild": "^0.25.9",
+    "esbuild": "^0.25.10",
     "eslint": "^9.36.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-import-resolver-typescript": "^4.4.4",

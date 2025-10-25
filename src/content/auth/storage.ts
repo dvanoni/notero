@@ -13,7 +13,7 @@ const notionConnectionSchema = z.object({
   workspace_icon: z.string().nullable(),
   workspace_id: z.string(),
   workspace_name: z.string().nullable(),
-}) satisfies z.ZodType<Omit<OauthTokenResponse, 'owner' | 'token_type'>>;
+}) satisfies z.ZodType<Partial<OauthTokenResponse>>;
 
 export type NotionConnection = z.infer<typeof notionConnectionSchema>;
 

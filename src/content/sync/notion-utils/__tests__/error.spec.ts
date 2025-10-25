@@ -21,6 +21,8 @@ describe('isNotionErrorWithCode', () => {
       message: 'Fake error',
       rawBodyText: 'Fake error',
       status: 500,
+      additional_data: undefined,
+      request_id: undefined,
     });
 
     expect(isNotionErrorWithCode(error, APIErrorCode.ObjectNotFound)).toBe(
@@ -35,6 +37,8 @@ describe('isNotionErrorWithCode', () => {
       message: 'Fake error',
       rawBodyText: 'Fake error',
       status: 404,
+      additional_data: undefined,
+      request_id: undefined,
     });
 
     expect(isNotionErrorWithCode(error, APIErrorCode.ObjectNotFound)).toBe(
@@ -57,6 +61,8 @@ describe('isArchivedOrNotFoundError', () => {
       message: 'Fake error',
       rawBodyText: 'Fake error',
       status: 500,
+      additional_data: undefined,
+      request_id: undefined,
     });
 
     expect(isArchivedOrNotFoundError(error)).toBe(false);
@@ -69,6 +75,8 @@ describe('isArchivedOrNotFoundError', () => {
       message: 'Fake error',
       rawBodyText: 'Fake error',
       status: 404,
+      additional_data: undefined,
+      request_id: undefined,
     });
 
     expect(isArchivedOrNotFoundError(error)).toBe(true);
@@ -82,6 +90,8 @@ describe('isArchivedOrNotFoundError', () => {
         "Can't edit page on block with an archived ancestor. You must unarchive the ancestor before editing page.",
       rawBodyText: 'Fake error',
       status: 400,
+      additional_data: undefined,
+      request_id: undefined,
     });
 
     expect(isArchivedOrNotFoundError(error)).toBe(true);

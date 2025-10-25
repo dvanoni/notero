@@ -9,7 +9,7 @@ import {
 import { LocalizableError } from '../errors';
 import { logger } from '../utils';
 
-import type { DatabaseRequestProperties } from './notion-types';
+import type { PageRequestProperties } from './notion-types';
 import {
   convertWebURLToAppURL,
   isArchivedOrNotFoundError,
@@ -56,7 +56,7 @@ async function saveItemToDatabase(
 function createPage(
   notion: Client,
   databaseID: string,
-  properties: DatabaseRequestProperties,
+  properties: PageRequestProperties,
 ): Promise<CreatePageResponse> {
   logger.debug('Creating page in database', databaseID, properties);
   return notion.pages.create({
@@ -69,7 +69,7 @@ async function updatePage(
   notion: Client,
   databaseID: string,
   pageID: string,
-  properties: DatabaseRequestProperties,
+  properties: PageRequestProperties,
 ): Promise<CreatePageResponse> {
   logger.debug('Updating page', pageID, 'in database', databaseID, properties);
   try {
@@ -106,7 +106,7 @@ async function updatePage(
 async function recreatePageIfDatabaseDiffers(
   notion: Client,
   desiredDatabaseID: string,
-  properties: DatabaseRequestProperties,
+  properties: PageRequestProperties,
   response: CreatePageResponse,
 ): Promise<CreatePageResponse> {
   if (!isFullPage(response) || response.parent.type !== 'database_id') {

@@ -1,7 +1,7 @@
 import type {
   BlockObjectRequest,
   CreatePageParameters,
-  DatabaseObjectResponse,
+  DataSourceObjectResponse,
   PageObjectResponse,
 } from '@notionhq/client/build/src/api-endpoints';
 
@@ -79,29 +79,31 @@ export function isBlockType<T extends BlockType>(
   return type in value;
 }
 
-/// Databases ///
+/// Data sources ///
 
-export type DatabaseProperties = DatabaseObjectResponse['properties'];
+export type DataSourceProperties = DataSourceObjectResponse['properties'];
 
-export type DatabasePropertyConfig<T extends RequestPropertyType> = Extract<
-  DatabaseProperties[string],
+export type DataSourceProperty = DataSourceProperties[string];
+
+export type DataSourcePropertyConfig<T extends RequestPropertyType> = Extract<
+  DataSourceProperty,
   { type: T }
 >;
 
-export type DatabaseRequestProperties = NonNullable<
+/// Pages ///
+
+export type PageRequestProperties = NonNullable<
   CreatePageParameters['properties']
 >;
 
-export type DatabaseRequestProperty = DatabaseRequestProperties[string];
+export type PageRequestProperty = PageRequestProperties[string];
 
-export type RequestPropertyType = NonNullable<DatabaseRequestProperty['type']>;
+export type RequestPropertyType = NonNullable<PageRequestProperty['type']>;
 
 export type PropertyRequest<T extends RequestPropertyType> = Extract<
-  DatabaseRequestProperty,
+  PageRequestProperty,
   { [P in T]: unknown }
 >[T];
-
-/// Pages ///
 
 export type PageResponseProperty = PageObjectResponse['properties'][string];
 
@@ -112,7 +114,9 @@ export type PropertyResponse<T extends ResponsePropertyType> = Extract<
   { type: T }
 >;
 
-export function isPropertyOfType<T extends ResponsePropertyType>(type: T[]) {
-  return (property: PageResponseProperty): property is PropertyResponse<T> =>
-    (type as ResponsePropertyType[]).includes(property.type);
+export function isPropertyOfType<T extends ResponsePropertyType>(type: Set<T>) {
+  return <P extends DataSourceProperty | PageResponseProperty>(
+    property: P,
+  ): property is P & { type: T } =>
+    (type as Set<ResponsePropertyType>).has(property.type);
 }

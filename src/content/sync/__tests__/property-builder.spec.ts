@@ -5,9 +5,9 @@ import { createZoteroCollectionMock, zoteroMock } from '../../../../test/utils';
 import { PageTitleFormat } from '../../prefs/notero-pref';
 import { getItemURL, keyValue } from '../../utils';
 import type {
-  DatabaseProperties,
-  DatabasePropertyConfig,
-  DatabaseRequestProperties,
+  DataSourceProperties,
+  DataSourcePropertyConfig,
+  PageRequestProperties,
 } from '../notion-types';
 import { buildProperties } from '../property-builder';
 
@@ -87,13 +87,13 @@ const propertyConfigs = {
   ...propertyConfig('URL', 'url'),
   ...propertyConfig('Year', 'number'),
   ...propertyConfig('Zotero URI', 'url'),
-} satisfies DatabaseProperties;
+} satisfies DataSourceProperties;
 
 function propertyConfig<N extends string>(
   name: N,
   type: 'date' | 'multi_select' | 'number' | 'rich_text' | 'select' | 'url',
-): Record<N, DatabasePropertyConfig<typeof type>> {
-  type SelectOptions = DatabasePropertyConfig<'select'>['select']['options'];
+): Record<N, DataSourcePropertyConfig<typeof type>> {
+  type SelectOptions = DataSourcePropertyConfig<'select'>['select']['options'];
 
   const idNameDescription = { id: 'id', name, description: null };
 
@@ -223,7 +223,7 @@ describe('buildProperties', () => {
       pageTitleFormat: PageTitleFormat.itemTitle,
     });
 
-    const expected: DatabaseRequestProperties = {
+    const expected: PageRequestProperties = {
       title: {
         title: [{ text: { content: fakeTitle } }],
       },
@@ -263,7 +263,7 @@ describe('buildProperties', () => {
       pageTitleFormat: PageTitleFormat.itemTitle,
     });
 
-    const expected: DatabaseRequestProperties = {
+    const expected: PageRequestProperties = {
       title: {
         title: [{ text: { content: fakeTitle } }],
       },
@@ -315,7 +315,7 @@ describe('buildProperties', () => {
       pageTitleFormat: PageTitleFormat.itemTitle,
     });
 
-    const expected: DatabaseRequestProperties = {
+    const expected: PageRequestProperties = {
       title: {
         title: [{ text: { content: fakeTitle } }],
       },

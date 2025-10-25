@@ -6,7 +6,7 @@ import { mockDeep } from 'vitest-mock-extended';
 import { createZoteroItemMock } from '../../../../test/utils';
 import { getNotionPageID } from '../../data/item-data';
 import { PageTitleFormat } from '../../prefs/notero-pref';
-import type { DatabaseRequestProperties } from '../notion-types';
+import type { PageRequestProperties } from '../notion-types';
 import { buildProperties } from '../property-builder';
 import type { SyncJobParams } from '../sync-job';
 import { syncRegularItem } from '../sync-regular-item';
@@ -20,6 +20,8 @@ const objectNotFoundError = new APIResponseError({
   message: 'Not found',
   headers: {},
   rawBodyText: 'Not found',
+  additional_data: undefined,
+  request_id: undefined,
 });
 
 const validationError = new APIResponseError({
@@ -28,13 +30,15 @@ const validationError = new APIResponseError({
   message: 'Validation error',
   headers: {},
   rawBodyText: 'Validation error',
+  additional_data: undefined,
+  request_id: undefined,
 });
 
 const fakeCitationFormat = 'fake-style';
 const fakeDatabaseID = 'fake-database-id';
 const fakeDatabaseProperties = {};
 const fakePageID = 'fake-page-id';
-const fakePageProperties: DatabaseRequestProperties = { title: { title: [] } };
+const fakePageProperties: PageRequestProperties = { title: { title: [] } };
 const fakePageTitleFormat = PageTitleFormat.itemAuthorDateCitation;
 const fakePageResponse: PageObjectResponse = {
   archived: false,
@@ -44,6 +48,7 @@ const fakePageResponse: PageObjectResponse = {
   icon: null,
   id: fakePageID,
   in_trash: false,
+  is_locked: false,
   last_edited_by: { id: '', object: 'user' },
   last_edited_time: '',
   object: 'page',
@@ -176,6 +181,8 @@ describe('syncRegularItem', () => {
       message: 'Internal server error',
       headers: {},
       rawBodyText: 'Internal server error',
+      additional_data: undefined,
+      request_id: undefined,
     });
     notion.pages.update.mockRejectedValue(unexpectedError);
 

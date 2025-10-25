@@ -123,9 +123,11 @@ export class Notero {
   }
 
   public async findDuplicates(
+    dataSourceId: string,
     propertyName: string = 'title',
   ): Promise<Set<string>> {
-    return findDuplicates(await this.getNotionClient(), propertyName);
+    const notion = await this.getNotionClient();
+    return findDuplicates(notion, dataSourceId, propertyName);
   }
 }
 

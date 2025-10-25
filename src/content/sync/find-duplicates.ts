@@ -1,6 +1,4 @@
-import { collectPaginatedAPI, type Client, isFullPage } from '@notionhq/client';
-
-import { NoteroPref, getRequiredNoteroPref } from '../prefs/notero-pref';
+import { iteratePaginatedAPI, type Client, isFullPage } from '@notionhq/client';
 
 import {
   PropertyResponse,
@@ -8,39 +6,41 @@ import {
   isPropertyOfType,
 } from './notion-types';
 
-const VALID_PROPERTY_TYPES = [
+const VALID_PROPERTY_TYPES = new Set([
   'rich_text',
   'title',
   'url',
-] satisfies ResponsePropertyType[];
+]) satisfies Set<ResponsePropertyType>;
 
-type ValidPropertyType = (typeof VALID_PROPERTY_TYPES)[number];
+type ValidPropertyType = Parameters<(typeof VALID_PROPERTY_TYPES)['add']>[0];
 
 const isValidProperty = isPropertyOfType(VALID_PROPERTY_TYPES);
 
 export async function findDuplicates(
   notion: Client,
+  dataSourceId: string,
   propertyName: string,
 ): Promise<Set<string>> {
-  const databaseID = getRequiredNoteroPref(NoteroPref.notionDatabaseID);
-
-  const propertyID = await getPropertyID(notion, databaseID, propertyName);
-
-  const pages = await collectPaginatedAPI(notion.databases.query, {
-    database_id: databaseID,
-    filter_properties: [propertyID],
-    sorts: [{ direction: 'ascending', property: propertyName }],
-  });
+  const propertyId = await getPropertyId(notion, dataSourceId, propertyName);
 
   const comparisonValues = new Set<string>();
   const duplicates = new Set<string>();
 
-  for (const page of pages) {
+  const args = {
+    data_source_id: dataSourceId,
+    filter_properties: [propertyId],
+    sorts: [{ direction: 'ascending', property: propertyName } as const],
+  };
+
+  for await (const page of iteratePaginatedAPI(
+    notion.dataSources.query,
+    args,
+  )) {
     if (!isFullPage(page)) continue;
 
     const property = Object.values(page.properties)
       .filter(isValidProperty)
-      .find(({ id }) => id === propertyID);
+      .find(({ id }) => id === propertyId);
     if (!property) continue;
 
     const textValue = getPropertyTextValue(property);
@@ -56,21 +56,23 @@ export async function findDuplicates(
   return duplicates;
 }
 
-async function getPropertyID(
+async function getPropertyId(
   notion: Client,
-  databaseID: string,
+  dataSourceId: string,
   propertyName: string,
 ): Promise<string> {
   if (propertyName === 'title') return 'title';
 
-  const database = await notion.databases.retrieve({ database_id: databaseID });
+  const dataSource = await notion.dataSources.retrieve({
+    data_source_id: dataSourceId,
+  });
 
-  const property = database.properties[propertyName];
+  const property = dataSource.properties[propertyName];
 
   if (!property) {
     throw new Error(`Could not find property "${propertyName}"`);
   }
-  if (!VALID_PROPERTY_TYPES.includes(property.type)) {
+  if (!isValidProperty(property)) {
     throw new Error(
       `Property "${propertyName}" has invalid type "${property.type}"`,
     );

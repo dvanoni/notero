@@ -30,6 +30,8 @@ const objectNotFoundError = new APIResponseError({
   message: 'Not found',
   headers: {},
   rawBodyText: 'Not found',
+  additional_data: undefined,
+  request_id: undefined,
 });
 
 const fakeNoteTitle = 'Fake Note Title';

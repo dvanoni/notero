@@ -29,7 +29,7 @@ jobs:
           script: return `notero-${require('./gen/version')}`
       - id: upload-artifact
         name: Upload xpi artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: ${{ steps.artifact-name.outputs.result }}
           path: build/

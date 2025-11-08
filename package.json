@@ -64,7 +64,7 @@
   "devDependencies": {
     "@commitlint/cli": "^20.1.0",
     "@commitlint/config-conventional": "^20.0.0",
-    "@eslint/js": "^9.39.0",
+    "@eslint/js": "^9.39.1",
     "@fluent/syntax": "^0.19.0",
     "@total-typescript/ts-reset": "^0.6.1",
     "@types/adm-zip": "^0.5.7",
@@ -79,7 +79,7 @@
     "chokidar": "^4.0.3",
     "concurrently": "^9.2.1",
     "esbuild": "^0.25.10",
-    "eslint": "^9.39.0",
+    "eslint": "^9.39.1",
     "eslint-config-prettier": "^10.1.8",
     "eslint-import-resolver-typescript": "^4.4.4",
     "eslint-plugin-import-x": "^4.16.1",

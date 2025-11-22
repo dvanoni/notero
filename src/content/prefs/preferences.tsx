@@ -1,5 +1,5 @@
-import { APIErrorCode, type Client, isFullDatabase } from '@notionhq/client';
-import type { DatabaseObjectResponse } from '@notionhq/client/build/src/api-endpoints';
+import { APIErrorCode, type Client, isFullDataSource } from '@notionhq/client';
+import type { DataSourceObjectResponse } from '@notionhq/client/build/src/api-endpoints';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import type { createRoot } from 'react-dom/client';
@@ -241,16 +241,20 @@ class Preferences {
     this.notionDatabaseMenu.disabled = true;
 
     try {
-      const databases = await this.retrieveNotionDatabases(notion);
+      const dataSources = await this.retrieveNotionDataSources(notion);
 
-      menuItems = databases.map<MenuItem>((database) => {
-        const title = database.title.map((t) => t.plain_text).join('');
+      menuItems = dataSources.map<MenuItem>((dataSource) => {
+        const title = dataSource.title.map((t) => t.plain_text).join('');
         const icon =
-          database.icon?.type === 'emoji' ? database.icon.emoji : null;
+          dataSource.icon?.type === 'emoji' ? dataSource.icon.emoji : null;
 
         return {
           label: icon ? `${icon} ${title}` : title,
-          value: normalizeID(database.id),
+          value: normalizeID(
+            dataSource.parent.type === 'database_id'
+              ? dataSource.parent.database_id
+              : dataSource.parent.data_source_id,
+          ),
         };
       });
 
@@ -260,23 +264,23 @@ class Preferences {
     }
   }
 
-  private async retrieveNotionDatabases(
+  private async retrieveNotionDataSources(
     notion: Client,
-  ): Promise<DatabaseObjectResponse[]> {
+  ): Promise<DataSourceObjectResponse[]> {
     const response = await notion.search({
-      filter: { property: 'object', value: 'database' },
+      filter: { property: 'object', value: 'data_source' },
     });
 
-    const databases = response.results.filter(isFullDatabase);
+    const dataSources = response.results.filter(isFullDataSource);
 
-    if (databases.length === 0) {
+    if (dataSources.length === 0) {
       throw new LocalizableError(
         'No Notion databases are accessible',
         'notero-error-no-notion-databases',
       );
     }
 
-    return databases;
+    return dataSources;
   }
 
   private connectNotion = async (event: XUL.CommandEvent): Promise<void> => {

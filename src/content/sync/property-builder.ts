@@ -9,9 +9,9 @@ import {
 
 import { LIMITS } from './notion-limits';
 import type {
-  DatabaseProperties,
-  DatabaseRequestProperties,
-  DatabaseRequestProperty,
+  DataSourceProperties,
+  PageRequestProperties,
+  PageRequestProperty,
   PropertyRequest,
   RequestPropertyType,
 } from './notion-types';
@@ -19,7 +19,7 @@ import { buildDate, buildRichText } from './notion-utils';
 
 type PropertyBuilderParams = {
   citationFormat: string;
-  databaseProperties: DatabaseProperties;
+  databaseProperties: DataSourceProperties;
   item: Zotero.Item;
   pageTitleFormat: PageTitleFormat;
 };
@@ -34,7 +34,7 @@ type PropertyDefinition<T extends RequestPropertyType = RequestPropertyType> = {
 
 export function buildProperties(
   params: PropertyBuilderParams,
-): Promise<DatabaseRequestProperties> {
+): Promise<PageRequestProperties> {
   const propertyBuilder = new PropertyBuilder(params);
   return propertyBuilder.buildProperties();
 }
@@ -61,7 +61,7 @@ class PropertyBuilder {
   private readonly cachedCitations = new Map<string, string | null>();
 
   private readonly citationFormat: string;
-  private readonly databaseProperties: DatabaseProperties;
+  private readonly databaseProperties: DataSourceProperties;
   private readonly item: Zotero.Item;
   private readonly pageTitleFormat: PageTitleFormat;
 
@@ -72,8 +72,8 @@ class PropertyBuilder {
     this.pageTitleFormat = params.pageTitleFormat;
   }
 
-  public async buildProperties(): Promise<DatabaseRequestProperties> {
-    const properties: DatabaseRequestProperties = {
+  public async buildProperties(): Promise<PageRequestProperties> {
+    const properties: PageRequestProperties = {
       title: {
         title: buildRichText(await this.getPageTitle()),
       },
@@ -89,7 +89,7 @@ class PropertyBuilder {
       properties[name] = {
         type,
         [type]: request,
-      } as DatabaseRequestProperty;
+      } as PageRequestProperty;
     }
 
     return properties;

@@ -11,7 +11,7 @@ import {
 import { getLocalizedErrorMessage, logger } from '../utils';
 
 import { getNotionClient } from './notion-client';
-import type { DatabaseProperties } from './notion-types';
+import type { DataSourceProperties } from './notion-types';
 import { ProgressWindow } from './progress-window';
 import { syncNoteItem } from './sync-note-item';
 import { syncRegularItem } from './sync-regular-item';
@@ -19,7 +19,7 @@ import { syncRegularItem } from './sync-regular-item';
 export type SyncJobParams = {
   citationFormat: string;
   databaseID: string;
-  databaseProperties: DatabaseProperties;
+  databaseProperties: DataSourceProperties;
   notion: Client;
   pageTitleFormat: PageTitleFormat;
 };
@@ -80,13 +80,14 @@ function getPageTitleFormat(): PageTitleFormat {
 
 async function retrieveDatabaseProperties(
   notion: Client,
-  databaseID: string,
-): Promise<DatabaseProperties> {
-  const database = await notion.databases.retrieve({
-    database_id: databaseID,
+  dataSourceId: string,
+): Promise<DataSourceProperties> {
+  // FIXME
+  const dataSource = await notion.dataSources.retrieve({
+    data_source_id: dataSourceId,
   });
 
-  return database.properties;
+  return dataSource.properties;
 }
 
 async function syncItems(

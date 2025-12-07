@@ -62,8 +62,8 @@
     "zod": "^4.1.13"
   },
   "devDependencies": {
-    "@commitlint/cli": "^20.1.0",
-    "@commitlint/config-conventional": "^20.0.0",
+    "@commitlint/cli": "^20.2.0",
+    "@commitlint/config-conventional": "^20.2.0",
     "@eslint/js": "^9.39.1",
     "@fluent/syntax": "^0.19.0",
     "@total-typescript/ts-reset": "^0.6.1",
@@ -74,7 +74,7 @@
     "@types/react": "^18.3.5",
     "@types/react-dom": "^18.3.0",
     "@types/semver": "^7.7.1",
-    "@vitest/eslint-plugin": "^1.4.1",
+    "@vitest/eslint-plugin": "^1.5.1",
     "adm-zip": "^0.5.16",
     "chokidar": "^5.0.0",
     "concurrently": "^9.2.1",
@@ -86,17 +86,17 @@
     "fs-extra": "^11.3.2",
     "globals": "^16.5.0",
     "husky": "^9.1.7",
-    "jsdom": "^27.1.0",
+    "jsdom": "^27.2.0",
     "json5": "^2.2.3",
-    "prettier": "3.6.2",
+    "prettier": "3.7.4",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "semver": "^7.7.3",
     "tslib": "^2.8.1",
     "typescript": "^5.9.3",
-    "typescript-eslint": "^8.46.3",
-    "vitest": "^4.0.8",
+    "typescript-eslint": "^8.48.1",
+    "vitest": "^4.0.15",
     "vitest-mock-extended": "^3.1.0",
-    "web-ext": "^9.1.0"
+    "web-ext": "^9.2.0"
   }
 }

@@ -53,7 +53,7 @@ function getVersion(): Version {
 }
 
 function getZoteroArgs(version: Version): string[] {
-  const zoteroArgs = ['-ZoteroDebugText', '-datadir', 'profile'];
+  const zoteroArgs = ['-ZoteroDebugText'];
 
   if (version === 'beta' || version === 'dev') {
     zoteroArgs.push('-jsdebugger');

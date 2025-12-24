@@ -94,6 +94,7 @@ export class SyncConfigsTable extends React.Component<Props> {
 
   private buildRows(): SyncConfigsTableRow[] {
     return Zotero.Collections.getLoaded()
+      .filter((collection) => !collection.deleted)
       .map((collection) => ({
         collection,
         collectionFullName: buildCollectionFullName(collection),

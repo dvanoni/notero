@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.2.2](https://github.com/dvanoni/notero/compare/v1.2.1...v1.2.2) (2025-12-29)
+
+
+### Bug Fixes
+
+* **preferences:** Do not show deleted collections in sync table ([#778](https://github.com/dvanoni/notero/issues/778)) ([df5c72c](https://github.com/dvanoni/notero/commit/df5c72c4d4dd432ce9563d44cd334073c5f24804)), closes [#775](https://github.com/dvanoni/notero/issues/775)
+
 ## [1.2.1](https://github.com/dvanoni/notero/compare/v1.2.0...v1.2.1) (2025-08-07)
 
 

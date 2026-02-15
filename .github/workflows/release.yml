@@ -68,6 +68,10 @@ jobs:
           DOWNLOAD_URL: ${{ needs.publish-artifacts.outputs.download_url }}
         run: |
           echo "Target URL: ${DOWNLOAD_URL}"
+          if [ -z "${DOWNLOAD_URL}" ]; then
+            echo "❌ DOWNLOAD_URL is empty!"
+            exit 1
+          fi
           PAYLOAD=$(jq --null-input \
             --arg download_url "${DOWNLOAD_URL}" \
             '{

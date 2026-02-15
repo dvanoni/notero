@@ -23,24 +23,39 @@ jobs:
           echo "Testing Cloudflare redirect update..."
           echo "Target URL: ${DOWNLOAD_URL}"
 
-          curl -X PATCH "https://api.cloudflare.com/client/v4/zones/${CLOUDFLARE_ZONE_ID}/rulesets/${CLOUDFLARE_RULESET_ID}/rules/${CLOUDFLARE_RULE_ID}" \
-            -H "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" \
-            -H "Content-Type: application/json" \
-            --fail-with-body \
-            --data '{
+          # Build JSON payload safely using jq
+          PAYLOAD=$(jq --null-input \
+            --arg download_url "${DOWNLOAD_URL}" \
+            '{
               "action": "redirect",
               "action_parameters": {
                 "from_value": {
                   "preserve_query_string": false,
                   "status_code": 302,
                   "target_url": {
-                    "value": "'"${DOWNLOAD_URL}"'"
+                    "value": $download_url
                   }
                 }
               },
               "description": "Notero download",
               "enabled": true,
               "expression": "(http.host eq \"notero.vanoni.dev\" and starts_with(http.request.uri.path, \"/download\"))"
-            }'
+            }')
+
+          # Make API request and capture response
+          RESPONSE=$(curl --silent --show-error --fail-with-body --request PATCH \
+            "https://api.cloudflare.com/client/v4/zones/${CLOUDFLARE_ZONE_ID}/rulesets/${CLOUDFLARE_RULESET_ID}/rules/${CLOUDFLARE_RULE_ID}" \
+            --header "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" \
+            --header "Content-Type: application/json" \
+            --data "${PAYLOAD}")
+
+          # Parse and verify the response
+          SUCCESS=$(echo "${RESPONSE}" | jq --raw-output '.success')
+
+          if [ "${SUCCESS}" != "true" ]; then
+            echo "❌ Cloudflare API request failed!"
+            echo "Response: ${RESPONSE}"
+            exit 1
+          fi
 
           echo "✅ Redirect updated successfully!"

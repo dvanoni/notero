@@ -129,7 +129,7 @@ Notion database. Detailed setup instructions are below.
    menu item or the sidebar in the main Zotero preferences window.
 5. Configure the Notero preferences as desired.
 
-[download]: https://download.notero.vanoni.dev
+[download]: https://notero.vanoni.dev/download
 [latest release]: https://github.com/dvanoni/notero/releases/latest
 [v0.5.17]: https://github.com/dvanoni/notero/releases/tag/v0.5.17
 

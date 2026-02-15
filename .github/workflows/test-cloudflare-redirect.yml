@@ -1,0 +1,46 @@
+name: Test Cloudflare Redirect
+
+on:
+  workflow_dispatch:
+    inputs:
+      download_url:
+        description: 'Test download URL to redirect to'
+        required: true
+        type: string
+
+jobs:
+  test-redirect:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Update Cloudflare redirect
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ZONE_ID: ${{ secrets.CLOUDFLARE_ZONE_ID }}
+          CLOUDFLARE_RULESET_ID: ${{ secrets.CLOUDFLARE_RULESET_ID }}
+          CLOUDFLARE_RULE_ID: ${{ secrets.CLOUDFLARE_RULE_ID }}
+          DOWNLOAD_URL: ${{ inputs.download_url }}
+        run: |
+          echo "Testing Cloudflare redirect update..."
+          echo "Target URL: ${DOWNLOAD_URL}"
+
+          curl -X PATCH "https://api.cloudflare.com/client/v4/zones/${CLOUDFLARE_ZONE_ID}/rulesets/${CLOUDFLARE_RULESET_ID}/rules/${CLOUDFLARE_RULE_ID}" \
+            -H "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" \
+            -H "Content-Type: application/json" \
+            --fail-with-body \
+            --data '{
+              "action": "redirect",
+              "action_parameters": {
+                "from_value": {
+                  "preserve_query_string": false,
+                  "status_code": 302,
+                  "target_url": {
+                    "value": "'"${DOWNLOAD_URL}"'"
+                  }
+                }
+              },
+              "description": "Notero download",
+              "enabled": true,
+              "expression": "(http.host eq \"notero.vanoni.dev\" and starts_with(http.request.uri.path, \"/download\"))"
+            }'
+
+          echo "✅ Redirect updated successfully!"

@@ -97,6 +97,6 @@
     "typescript-eslint": "^8.54.0",
     "vitest": "^4.0.18",
     "vitest-mock-extended": "^3.1.0",
-    "web-ext": "^9.2.0"
+    "web-ext": "^10.0.0"
   }
 }

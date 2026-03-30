@@ -79,7 +79,7 @@ export const logger = new Proxy(
       }
 
       if (!isProxiedMethod(prop)) {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+        // oxlint-disable-next-line @typescript-eslint/no-unsafe-return
         return console ? Reflect.get(console, prop, receiver) : noOp;
       }
 

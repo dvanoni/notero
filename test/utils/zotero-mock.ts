@@ -1,4 +1,4 @@
-import { beforeAll } from 'vitest';
+import { beforeAll } from 'vite-plus/test';
 import { DeepMockProxy, MockProxy, mock } from 'vitest-mock-extended';
 
 const collectionsStore = new Map<Zotero.Collection['id'], Zotero.Collection>();

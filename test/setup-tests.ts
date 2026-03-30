@@ -1,4 +1,4 @@
-import { vi } from 'vitest';
+import { vi } from 'vite-plus/test';
 import { mockDeep } from 'vitest-mock-extended';
 
 import type { logger } from '../src/content/utils/logger';

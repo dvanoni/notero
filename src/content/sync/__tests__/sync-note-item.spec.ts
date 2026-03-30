@@ -3,7 +3,7 @@ import type {
   AppendBlockChildrenResponse,
   PartialBlockObjectResponse,
 } from '@notionhq/client/build/src/api-endpoints';
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vite-plus/test';
 import { mockDeep, objectContainsValue } from 'vitest-mock-extended';
 
 import { createZoteroItemMock } from '../../../../test/utils';

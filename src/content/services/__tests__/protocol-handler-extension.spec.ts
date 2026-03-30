@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it } from 'vite-plus/test';
 import { DeepMockProxy, mock } from 'vitest-mock-extended';
 
 import type { NotionAuthManager } from '../../auth';
@@ -101,7 +101,7 @@ describe('ProtocolHandlerExtension', () => {
     const expectedParams = new URLSearchParams({ key1: 'val1', key2: 'val2' });
 
     expect(
-      // eslint-disable-next-line @typescript-eslint/unbound-method
+      // oxlint-disable-next-line @typescript-eslint/unbound-method
       notionAuthManager.handleTokenResponse,
     ).toHaveBeenCalledExactlyOnceWith(expectedParams);
   });

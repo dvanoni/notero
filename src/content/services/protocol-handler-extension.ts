@@ -57,7 +57,7 @@ export class ProtocolHandlerExtension implements Service {
 
   private unregisterExtension() {
     if (!this.zoteroProtocolHandler) return;
-    // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
+    // oxlint-disable-next-line @typescript-eslint/no-dynamic-delete
     delete this.zoteroProtocolHandler._extensions[EXTENSION_SPEC];
   }
 

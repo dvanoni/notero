@@ -66,7 +66,7 @@ class Preferences {
     this.eventManager = getGlobalNotero().eventManager;
     this.notionAuthManager = getGlobalNotero().notionAuthManager;
 
-    /* eslint-disable @typescript-eslint/no-non-null-assertion */
+    /* oxlint-disable @typescript-eslint/no-non-null-assertion */
     this.notionConnectionContainer = getXULElementById(
       'notero-notionConnection-container',
     )!;
@@ -85,9 +85,9 @@ class Preferences {
     )!;
     this.notionWorkspaceLabel = getXULElementById('notero-notionWorkspace')!;
     this.pageTitleFormatMenu = getXULElementById('notero-pageTitleFormat')!;
-    /* eslint-enable @typescript-eslint/no-non-null-assertion */
+    /* oxlint-enable @typescript-eslint/no-non-null-assertion */
 
-    /* eslint-disable @typescript-eslint/no-misused-promises */
+    /* oxlint-disable @typescript-eslint/no-misused-promises */
     this.notionConnectButton.addEventListener('command', this.connectNotion);
     this.notionDisconnectButton.addEventListener(
       'command',
@@ -98,7 +98,7 @@ class Preferences {
       this.upgradeNotionConnection,
     );
     this.notionTokenContainer.addEventListener('input', this.handleTokenInput);
-    /* eslint-enable @typescript-eslint/no-misused-promises */
+    /* oxlint-enable @typescript-eslint/no-misused-promises */
 
     window.addEventListener('unload', () => {
       this.deinit();
@@ -150,7 +150,7 @@ class Preferences {
   }
 
   private async initSyncConfigsTable(): Promise<void> {
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    // oxlint-disable-next-line @typescript-eslint/no-non-null-assertion
     const syncConfigsTableContainer = document.getElementById(
       'notero-syncConfigsTable-container',
     )!;

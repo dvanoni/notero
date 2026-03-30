@@ -228,7 +228,7 @@ declare const Components: {
     initializer?: K,
   ): {
     new (
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      // oxlint-disable-next-line @typescript-eslint/no-explicit-any
       ...args: Parameters<I[K] extends (...args: any) => any ? I[K] : never>
     ): I;
   };

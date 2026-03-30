@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it } from 'vite-plus/test';
 
 import { createZoteroItemMock, mockZoteroPrefs } from '../../../../test/utils';
 import { NoteroPref, setNoteroPref } from '../../prefs/notero-pref';
@@ -71,7 +71,7 @@ describe('saveNotionLinkAttachment', () => {
 
     await saveNotionLinkAttachment(item, pageURL);
 
-    // eslint-disable-next-line @typescript-eslint/unbound-method
+    // oxlint-disable-next-line @typescript-eslint/unbound-method
     expect(attachment.setNote).toHaveBeenCalledExactlyOnceWith(
       expect.stringContaining(syncedNotes),
     );
@@ -92,7 +92,7 @@ describe('saveNotionLinkAttachment', () => {
 
     await saveNotionLinkAttachment(item, pageURL);
 
-    // eslint-disable-next-line @typescript-eslint/unbound-method
+    // oxlint-disable-next-line @typescript-eslint/unbound-method
     expect(attachment.setNote).toHaveBeenCalledExactlyOnceWith(
       expect.stringContaining(syncedNotes),
     );
@@ -115,7 +115,7 @@ describe('saveNotionLinkAttachment', () => {
 
     await saveNotionLinkAttachment(item, newPageURL);
 
-    // eslint-disable-next-line @typescript-eslint/unbound-method
+    // oxlint-disable-next-line @typescript-eslint/unbound-method
     expect(attachment.setNote).toHaveBeenCalledExactlyOnceWith(
       expect.stringContaining('<pre id="notero-synced-notes">{}</pre>'),
     );

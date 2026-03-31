@@ -2,6 +2,18 @@
   "name": "notero",
   "version": "1.2.2",
   "description": "Sync Zotero items and notes into Notion",
+  "homepage": "https://github.com/dvanoni/notero",
+  "bugs": {
+    "url": "https://github.com/dvanoni/notero/issues"
+  },
+  "author": {
+    "name": "David Hoff-Vanoni",
+    "email": "david@vanoni.dev"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dvanoni/notero.git"
+  },
   "scripts": {
     "build": "node scripts/build.mts",
     "build:watch": "npm run build -- --watch",
@@ -25,36 +37,6 @@
     "typecheck": "tsc",
     "preverify": "npm run generate-fluent-types",
     "verify": "concurrently -c auto -P npm:prettier 'npm:lint {@}' 'npm:typecheck {@}' 'npm:test {@}' -- --ignore-scripts"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/dvanoni/notero.git"
-  },
-  "author": {
-    "name": "David Hoff-Vanoni",
-    "email": "david@vanoni.dev"
-  },
-  "bugs": {
-    "url": "https://github.com/dvanoni/notero/issues"
-  },
-  "homepage": "https://github.com/dvanoni/notero",
-  "engines": {
-    "node": ">=24.3.0"
-  },
-  "xpi": {
-    "icons": {
-      "48": "content/style/notero-48.png",
-      "96": "content/style/notero-96.png"
-    },
-    "id": "notero@vanoni.dev",
-    "name": "Notero",
-    "updateURL": "https://github.com/dvanoni/notero/releases/download/release/updates.json",
-    "zoteroMinVersion": "7.0",
-    "zoteroMaxVersion": "9.0.*",
-    "zotero6": {
-      "version": "0.5.17",
-      "updateLink": "https://github.com/dvanoni/notero/releases/download/v0.5.17/notero-0.5.17.xpi"
-    }
   },
   "dependencies": {
     "@notionhq/client": "^4.0.1",
@@ -92,14 +74,32 @@
     "tslib": "^2.8.1",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.54.0",
+    "vite-plus": "latest",
     "vitest": "npm:@voidzero-dev/vite-plus-test@latest",
     "vitest-mock-extended": "^3.1.0",
-    "web-ext": "^9.2.0",
-    "vite-plus": "latest"
+    "web-ext": "^9.2.0"
   },
-  "packageManager": "npm@11.12.1",
   "overrides": {
     "vite": "npm:@voidzero-dev/vite-plus-core@latest",
     "vitest": "npm:@voidzero-dev/vite-plus-test@latest"
+  },
+  "engines": {
+    "node": ">=24.3.0"
+  },
+  "packageManager": "npm@11.12.1",
+  "xpi": {
+    "icons": {
+      "48": "content/style/notero-48.png",
+      "96": "content/style/notero-96.png"
+    },
+    "id": "notero@vanoni.dev",
+    "name": "Notero",
+    "updateURL": "https://github.com/dvanoni/notero/releases/download/release/updates.json",
+    "zoteroMinVersion": "7.0",
+    "zoteroMaxVersion": "9.0.*",
+    "zotero6": {
+      "version": "0.5.17",
+      "updateLink": "https://github.com/dvanoni/notero/releases/download/v0.5.17/notero-0.5.17.xpi"
+    }
   }
 }

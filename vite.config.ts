@@ -49,7 +49,7 @@ export default defineConfig({
   fmt: {
     singleQuote: true,
     printWidth: 80,
-    sortPackageJson: false,
+    sortPackageJson: true,
     ignorePatterns: ['CHANGELOG.md'],
   },
 });

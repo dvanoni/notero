@@ -35,7 +35,7 @@ jobs:
           path: build/
       - name: Comment PR build
         if: github.event_name == 'pull_request'
-        uses: mshick/add-pr-comment@v2
+        uses: mshick/add-pr-comment@v3
         with:
           message: |
             ## 🤖 Build Bot

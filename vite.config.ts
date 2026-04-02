@@ -49,6 +49,17 @@ export default defineConfig({
   fmt: {
     singleQuote: true,
     printWidth: 80,
+    sortImports: {
+      groups: [
+        'builtin',
+        'external',
+        ['internal', 'subpath'],
+        'parent',
+        ['sibling', 'index'],
+        'style',
+        'unknown',
+      ],
+    },
     sortPackageJson: true,
     ignorePatterns: ['CHANGELOG.md'],
   },

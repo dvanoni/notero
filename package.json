@@ -61,9 +61,6 @@
     "chokidar": "^5.0.0",
     "concurrently": "^9.2.1",
     "esbuild": "^0.27.2",
-    "eslint-config-prettier": "^10.1.8",
-    "eslint-import-resolver-typescript": "^4.4.4",
-    "eslint-plugin-import-x": "^4.16.1",
     "fs-extra": "^11.3.3",
     "globals": "^17.3.0",
     "jsdom": "^27.4.0",
@@ -75,8 +72,7 @@
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.54.0",
     "vite-plus": "latest",
-    "vitest": "npm:@voidzero-dev/vite-plus-test@latest",
-    "vitest-mock-extended": "^3.1.0",
+    "vitest-mock-extended": "^3.1.1",
     "web-ext": "^9.2.0"
   },
   "overrides": {

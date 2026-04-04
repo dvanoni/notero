@@ -16,6 +16,7 @@ const pluginInfo = {
 
 function setup() {
   const zoteroProtocolHandler = mock<Zotero.ZoteroProtocolHandler>();
+  // oxlint-disable-next-line typescript/no-unsafe-type-assertion
   const servicesMock = Services as DeepMockProxy<typeof Services>;
   servicesMock.io.getProtocolHandler.mockReturnValue(
     mock<XPCOM.nsIProtocolHandler>({ wrappedJSObject: zoteroProtocolHandler }),
@@ -101,7 +102,7 @@ describe('ProtocolHandlerExtension', () => {
     const expectedParams = new URLSearchParams({ key1: 'val1', key2: 'val2' });
 
     expect(
-      // oxlint-disable-next-line @typescript-eslint/unbound-method
+      // oxlint-disable-next-line typescript/unbound-method
       notionAuthManager.handleTokenResponse,
     ).toHaveBeenCalledExactlyOnceWith(expectedParams);
   });

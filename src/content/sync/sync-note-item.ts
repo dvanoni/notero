@@ -181,7 +181,7 @@ function buildNoteBlockBatches(noteItem: Zotero.Item): BlockObjectRequest[][] {
   }
 
   const numBatches = Math.ceil(blocks.length / LIMITS.BLOCK_ARRAY_ELEMENTS);
-  const batches = new Array<ChildBlock[]>(numBatches);
+  const batches = Array.from<ChildBlock[]>({ length: numBatches });
   let offset = 0;
   let nextOffset = LIMITS.BLOCK_ARRAY_ELEMENTS;
 

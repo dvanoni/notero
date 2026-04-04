@@ -14,6 +14,7 @@ function getDataObjectID(): Zotero.DataObjectID {
   return ++idCounter;
 }
 
+// oxlint-disable-next-line typescript/no-unsafe-type-assertion
 export const zoteroMock = Zotero as DeepMockProxy<typeof Zotero>;
 
 export function createZoteroCollectionMock(

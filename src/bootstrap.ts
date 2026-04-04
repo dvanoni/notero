@@ -22,7 +22,7 @@ function log(msg: string) {
  * application calls before the first call to `startup()` after the extension is
  * installed, upgraded, or downgraded.
  */
-// oxlint-disable-next-line @typescript-eslint/no-unused-vars
+// oxlint-disable-next-line no-unused-vars
 function install({ version }: BootstrapData, _reason: Zotero.Plugins.REASONS) {
   log(`Installed v${version}`);
 }
@@ -33,7 +33,7 @@ function install({ version }: BootstrapData, _reason: Zotero.Plugins.REASONS) {
  * or after it has been shut down in order to install an update. As such, this
  * can be called many times during the lifetime of the application.
  */
-// oxlint-disable-next-line @typescript-eslint/no-unused-vars
+// oxlint-disable-next-line no-unused-vars
 async function startup(
   { id, resourceURI, rootURI = resourceURI.spec, version }: BootstrapData,
   _reason: Zotero.Plugins.REASONS,
@@ -50,7 +50,7 @@ async function startup(
  * @since Zotero 7
  * @see https://www.zotero.org/support/dev/zotero_7_for_developers#window_hooks
  */
-// oxlint-disable-next-line @typescript-eslint/no-unused-vars
+// oxlint-disable-next-line no-unused-vars
 function onMainWindowLoad({ window }: { window: Zotero.ZoteroWindow }) {
   Zotero.Notero?.addToWindow(window);
 }
@@ -60,7 +60,7 @@ function onMainWindowLoad({ window }: { window: Zotero.ZoteroWindow }) {
  * @since Zotero 7
  * @see https://www.zotero.org/support/dev/zotero_7_for_developers#window_hooks
  */
-// oxlint-disable-next-line @typescript-eslint/no-unused-vars
+// oxlint-disable-next-line no-unused-vars
 function onMainWindowUnload({ window }: { window: Zotero.ZoteroWindow }) {
   Zotero.Notero?.removeFromWindow(window);
 }
@@ -71,7 +71,7 @@ function onMainWindowUnload({ window }: { window: Zotero.ZoteroWindow }) {
  * disabled. Any user interface that has been injected must be removed, tasks
  * shut down, and objects disposed of.
  */
-// oxlint-disable-next-line @typescript-eslint/no-unused-vars
+// oxlint-disable-next-line no-unused-vars
 function shutdown({ version }: BootstrapData, _reason: Zotero.Plugins.REASONS) {
   log(`Shutting down v${version}`);
 
@@ -84,7 +84,7 @@ function shutdown({ version }: BootstrapData, _reason: Zotero.Plugins.REASONS) {
  * This function is called after the last call to `shutdown()` before a
  * particular version of an extension is uninstalled.
  */
-// oxlint-disable-next-line @typescript-eslint/no-unused-vars
+// oxlint-disable-next-line no-unused-vars
 function uninstall(
   { version }: BootstrapData,
   _reason: Zotero.Plugins.REASONS,

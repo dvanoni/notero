@@ -151,9 +151,8 @@ declare module 'components/virtualized-table' {
     getRowData: (index: number) => { [dataKey: string]: unknown },
   ): RenderItem<DataKey>;
 
-  // oxlint-disable-next-line import-x/no-default-export
   export default VirtualizedTable;
 
-  // oxlint-disable-next-line @typescript-eslint/no-extraneous-class
+  // oxlint-disable-next-line typescript/no-extraneous-class
   class WindowedList {}
 }

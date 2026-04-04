@@ -66,7 +66,7 @@ class Preferences {
     this.eventManager = getGlobalNotero().eventManager;
     this.notionAuthManager = getGlobalNotero().notionAuthManager;
 
-    /* oxlint-disable @typescript-eslint/no-non-null-assertion */
+    /* oxlint-disable typescript/no-non-null-assertion */
     this.notionConnectionContainer = getXULElementById(
       'notero-notionConnection-container',
     )!;
@@ -85,9 +85,9 @@ class Preferences {
     )!;
     this.notionWorkspaceLabel = getXULElementById('notero-notionWorkspace')!;
     this.pageTitleFormatMenu = getXULElementById('notero-pageTitleFormat')!;
-    /* oxlint-enable @typescript-eslint/no-non-null-assertion */
+    /* oxlint-enable typescript/no-non-null-assertion */
 
-    /* oxlint-disable @typescript-eslint/no-misused-promises */
+    /* oxlint-disable typescript/no-misused-promises */
     this.notionConnectButton.addEventListener('command', this.connectNotion);
     this.notionDisconnectButton.addEventListener(
       'command',
@@ -98,7 +98,7 @@ class Preferences {
       this.upgradeNotionConnection,
     );
     this.notionTokenContainer.addEventListener('input', this.handleTokenInput);
-    /* oxlint-enable @typescript-eslint/no-misused-promises */
+    /* oxlint-enable typescript/no-misused-promises */
 
     window.addEventListener('unload', () => {
       this.deinit();
@@ -150,7 +150,7 @@ class Preferences {
   }
 
   private async initSyncConfigsTable(): Promise<void> {
-    // oxlint-disable-next-line @typescript-eslint/no-non-null-assertion
+    // oxlint-disable-next-line typescript/no-non-null-assertion
     const syncConfigsTableContainer = document.getElementById(
       'notero-syncConfigsTable-container',
     )!;
@@ -165,6 +165,7 @@ class Preferences {
       syncEnabled: syncEnabled || 'Sync Enabled',
     };
 
+    // oxlint-disable-next-line typescript/no-unsafe-type-assertion
     (ReactDOM as ReactDOMClient)
       .createRoot(syncConfigsTableContainer)
       .render(
@@ -280,6 +281,7 @@ class Preferences {
   }
 
   private connectNotion = async (event: XUL.CommandEvent): Promise<void> => {
+    // oxlint-disable-next-line typescript/no-unsafe-type-assertion
     const button = event.target as XUL.ButtonElement;
 
     button.disabled = true;
@@ -336,6 +338,7 @@ class Preferences {
   };
 
   private handleTokenInput = async (event: Event): Promise<void> => {
+    // oxlint-disable-next-line typescript/no-unsafe-type-assertion
     const tokenInput = (event.target as HTMLInputElement).value.trim();
     const params = new URLSearchParams(tokenInput);
     try {
@@ -351,4 +354,5 @@ type WindowWithNoteroPreferences = typeof window & {
   Notero_Preferences: Preferences;
 };
 
+// oxlint-disable-next-line typescript/no-unsafe-type-assertion
 (window as WindowWithNoteroPreferences).Notero_Preferences = new Preferences();

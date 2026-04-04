@@ -13,6 +13,7 @@ type MockedGlobal = typeof globalThis & {
   Zotero: typeof Zotero;
 };
 
+// oxlint-disable-next-line typescript/no-unsafe-type-assertion
 const mockedGlobal = global as MockedGlobal;
 
 mockedGlobal.Components = mockDeep<typeof Components>();

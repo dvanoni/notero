@@ -7,6 +7,6 @@ export function keyValue<K extends PropertyKey, const V>(
   key: K,
   value: V,
 ): { [P in K]: { [Q in P]: V } }[K] {
-  // oxlint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any, typescript/no-unsafe-return, typescript/no-unsafe-type-assertion
   return { [key]: value } as any;
 }

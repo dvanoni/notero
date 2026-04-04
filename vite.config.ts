@@ -21,6 +21,7 @@ export default defineConfig({
       suspicious: 'warn',
     },
     options: {
+      reportUnusedDisableDirectives: 'error',
       typeAware: true,
       typeCheck: true,
     },
@@ -32,10 +33,14 @@ export default defineConfig({
     rules: {
       'import/no-default-export': 'error',
       'no-console': 'error',
+      'typescript/no-explicit-any': 'error',
       'typescript/no-invalid-void-type': [
         'error',
         { allowAsThisParameter: true },
       ],
+      'typescript/no-misused-promises': 'error',
+      'typescript/no-non-null-assertion': 'error',
+      'typescript/no-unsafe-return': 'error',
     },
     overrides: [
       {

@@ -14,9 +14,11 @@ export async function getVersion(): Promise<string> {
   const versionJsonExists = await fs.pathExists(versionJsonPath);
 
   if (versionJsonExists) {
-    const version = (await fs.readJson(versionJsonPath)) as string;
-    console.log(`Found ${relativeToRoot(versionJsonPath)} with ${version}`);
-    return version;
+    const version = await fs.readJson(versionJsonPath);
+    if (typeof version === 'string') {
+      console.log(`Found ${relativeToRoot(versionJsonPath)} with ${version}`);
+      return version;
+    }
   }
 
   const version = computeVersion();

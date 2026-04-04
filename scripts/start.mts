@@ -66,9 +66,12 @@ function getZoteroArgs(version: Version): string[] {
 
 function getZoteroPath(version: Version): string {
   if (version === 'beta' || version === 'dev') {
-    const path = config.zotero?.[`${version}Path`];
-    assert.ok(path && fs.existsSync(path), `Invalid path to Zotero ${version}`);
-    return path;
+    const zoteroPath = config.zotero?.[`${version}Path`];
+    assert.ok(
+      zoteroPath && fs.existsSync(zoteroPath),
+      `Invalid path to Zotero ${version}`,
+    );
+    return zoteroPath;
   }
   if (config.zotero?.path) {
     assert.ok(fs.existsSync(config.zotero.path), 'Invalid path to Zotero');

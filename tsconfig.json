@@ -9,7 +9,7 @@
     "esModuleInterop": true,
     "importHelpers": true,
     "jsx": "react",
-    "lib": ["ES2022", "dom"],
+    "lib": ["ES2023", "dom"],
     "module": "preserve",
     "moduleResolution": "bundler",
     "noEmit": true,

@@ -1,6 +1,5 @@
 import VirtualizedTable, {
   makeRowRenderer,
-  // eslint-disable-next-line import-x/no-unresolved
 } from 'components/virtualized-table';
 import React from 'react';
 
@@ -64,7 +63,6 @@ const COMPARATORS: Record<DataKey, RowSortCompareFn> = {
   },
 };
 
-// eslint-disable-next-line import-x/no-named-as-default-member
 export class SyncConfigsTable extends React.Component<Props> {
   private _rows?: SyncConfigsTableRow[];
   private _syncConfigs?: CollectionSyncConfigsRecord;
@@ -100,7 +98,7 @@ export class SyncConfigsTable extends React.Component<Props> {
         collectionFullName: buildCollectionFullName(collection),
         ...(this.syncConfigs[collection.id] || { syncEnabled: false }),
       }))
-      .sort((a, b) => COMPARATORS[this.sortKey](a, b, this.sortDirection));
+      .toSorted((a, b) => COMPARATORS[this.sortKey](a, b, this.sortDirection));
   }
 
   private get rows(): SyncConfigsTableRow[] {

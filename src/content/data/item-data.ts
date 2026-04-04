@@ -19,7 +19,7 @@ function getAllNotionLinkAttachments(item: Zotero.Item): Zotero.Item[] {
     .getAttachments(false)
     .slice()
     // Sort to get largest ID first
-    .sort((a, b) => b - a);
+    .toSorted((a, b) => b - a);
 
   return Zotero.Items.get(attachmentIDs).filter((attachment) =>
     isNotionURL(attachment.getField('url')),

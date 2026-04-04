@@ -167,10 +167,16 @@ export class NotionAuthManager implements Service {
     const jsonResponse = decoder.decode(jsonResponseBuffer);
 
     const parsedResponse = JSON.parse(jsonResponse);
-    if (isObject(parsedResponse) && parsedResponse.access_token) {
-      return parsedResponse as OauthTokenResponse;
+    if (NotionAuthManager.isOauthTokenResponse(parsedResponse)) {
+      return parsedResponse;
     }
 
     throw new Error('Invalid access token response');
+  }
+
+  private static isOauthTokenResponse(
+    response: unknown,
+  ): response is OauthTokenResponse {
+    return isObject(response) && typeof response.access_token === 'string';
   }
 }

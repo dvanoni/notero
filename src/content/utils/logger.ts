@@ -68,6 +68,7 @@ function zoteroDebug(level: LogLevel, args: unknown[]): void {
   );
 }
 
+// oxlint-disable-next-line typescript/no-unsafe-type-assertion
 export const logger = new Proxy(
   {},
   {
@@ -79,7 +80,7 @@ export const logger = new Proxy(
       }
 
       if (!isProxiedMethod(prop)) {
-        // oxlint-disable-next-line @typescript-eslint/no-unsafe-return
+        // oxlint-disable-next-line typescript/no-unsafe-return
         return console ? Reflect.get(console, prop, receiver) : noOp;
       }
 

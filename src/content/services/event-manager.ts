@@ -88,6 +88,7 @@ export class EventManager implements Service {
         case 'collection.delete':
         case 'collection.modify':
         case 'item.modify':
+          // oxlint-disable-next-line typescript/no-unsafe-type-assertion
           this.emitter.emit('notifier-event', eventName, ids as number[]);
           break;
         case 'collection-item.add':
@@ -103,10 +104,15 @@ export class EventManager implements Service {
     },
   };
 
-  private mapCompoundIDs(this: void, ids: NotifierIDs): [number, number][] {
-    return (ids as string[]).map((compoundID) => {
+  private mapCompoundIDs(
+    this: void,
+    compoundIDs: NotifierIDs,
+  ): [number, number][] {
+    /* oxlint-disable typescript/no-unsafe-type-assertion */
+    return (compoundIDs as string[]).map((compoundID) => {
       const ids = compoundID.split('-').map(Number) as [number, number];
       return [ids[0], ids[1]];
     });
+    /* oxlint-enable typescript/no-unsafe-type-assertion */
   }
 }

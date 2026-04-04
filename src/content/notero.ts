@@ -71,7 +71,7 @@ export class Notero {
 
   private shutDownServices() {
     logger.groupCollapsed('Shutting down services');
-    [...this.services].reverse().forEach((service) => {
+    this.services.toReversed().forEach((service) => {
       if (!service.shutdown) return;
       logger.log(`Shutting down ${service.constructor.name}`);
       service.shutdown();

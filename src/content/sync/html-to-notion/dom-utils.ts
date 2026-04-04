@@ -14,12 +14,12 @@ enum NodeType {
 }
 
 export function isTextNode(node: Node): node is Text {
-  // oxlint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
+  // oxlint-disable-next-line typescript/no-unsafe-enum-comparison
   return node.nodeType === NodeType.TEXT_NODE;
 }
 
 export function isHTMLElement(node: Node): node is HTMLElement {
-  // oxlint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
+  // oxlint-disable-next-line typescript/no-unsafe-enum-comparison
   return node.nodeType === NodeType.ELEMENT_NODE;
 }
 

@@ -1,6 +1,6 @@
 export function chunkString(str: string, chunkSize: number): string[] {
   const numChunks = Math.ceil(str.length / chunkSize);
-  const chunks = new Array<string>(numChunks);
+  const chunks = Array.from<string>({ length: numChunks });
   let offset = 0;
   let nextOffset = chunkSize;
 

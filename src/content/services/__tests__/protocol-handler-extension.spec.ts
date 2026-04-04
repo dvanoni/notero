@@ -15,12 +15,17 @@ const pluginInfo = {
 };
 
 function setup() {
-  const zoteroProtocolHandler = mock<Zotero.ZoteroProtocolHandler>();
+  const zoteroProtocolHandler: Zotero.ZoteroProtocolHandler = {
+    _extensions: {},
+  };
   // oxlint-disable-next-line typescript/no-unsafe-type-assertion
   const servicesMock = Services as DeepMockProxy<typeof Services>;
-  servicesMock.io.getProtocolHandler.mockReturnValue(
-    mock<XPCOM.nsIProtocolHandler>({ wrappedJSObject: zoteroProtocolHandler }),
-  );
+  servicesMock.io.getProtocolHandler.mockReturnValue({
+    wrappedJSObject: zoteroProtocolHandler,
+    QueryInterface() {
+      throw new Error('Function not implemented.');
+    },
+  });
 
   const notionAuthManager = mock<NotionAuthManager>();
   const protocolHandlerExtension = new ProtocolHandlerExtension();

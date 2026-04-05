@@ -3,6 +3,10 @@ import { defineConfig } from 'vite-plus';
 // oxlint-disable-next-line import/no-default-export
 export default defineConfig({
   staged: {
+    'src/locale/en-US/notero.ftl': [
+      'vp run generate-fluent-types',
+      'git add src/locale/fluent-types.ts',
+    ],
     '*': 'vp check --fix',
   },
   lint: {

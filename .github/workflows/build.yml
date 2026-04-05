@@ -19,6 +19,10 @@ jobs:
           node-version-file: '.node-version'
           cache: 'npm'
       - run: npm ci
+      - name: Ensure fluent-types.ts is up to date
+        run: |
+          npm run generate-fluent-types
+          git diff --exit-code src/locale/fluent-types.ts
       - run: npm run verify
       - run: npm run build
       - id: artifact-name

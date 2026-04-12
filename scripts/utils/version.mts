@@ -30,8 +30,8 @@ function computeVersion(): string {
 
   if (!GITHUB_ACTIONS) return getLocalVersion();
 
-  const isPublish = GITHUB_JOB === 'publish-artifacts';
-  if (isPublish) return pkg.version;
+  const isBuildJob = GITHUB_JOB === 'build';
+  if (!isBuildJob) return pkg.version;
 
   const isReleasePR = Boolean(GITHUB_HEAD_REF?.startsWith('release-please'));
   const baseVersion = isReleasePR ? pkg.version : getPatchBumpVersion();

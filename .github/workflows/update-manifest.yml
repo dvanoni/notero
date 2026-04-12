@@ -1,0 +1,31 @@
+name: Update Manifest
+
+on:
+  workflow_dispatch:
+
+jobs:
+  generate-and-publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: '.node-version'
+          cache: 'npm'
+      - run: npm ci
+      - name: Get latest release asset URL
+        id: get-asset
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          URL=$(gh release view --json assets --jq '.assets[0].url')
+          echo "asset_url=$URL" >> "$GITHUB_OUTPUT"
+      - name: Generate update manifest
+        run: npm run generate-update-manifest -- ${{ steps.get-asset.outputs.asset_url }}
+      - name: Publish update manifest
+        uses: softprops/action-gh-release@v3
+        with:
+          tag_name: release
+          files: gen/update*

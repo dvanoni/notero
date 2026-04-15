@@ -7,7 +7,7 @@ export default defineConfig({
       'vp run generate-fluent-types',
       'git add src/locale/fluent-types.ts',
     ],
-    '*': 'vp check --fix',
+    '*.{js,mts,ts,tsx}': 'vp check --fix',
   },
   lint: {
     plugins: [

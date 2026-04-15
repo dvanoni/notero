@@ -57,7 +57,7 @@ function convertNode(
 ): ContentResult | undefined {
   const parsedNode = parseNode(node);
 
-  if (!parsedNode) return;
+  if (!parsedNode) return undefined;
 
   switch (parsedNode.type) {
     case 'block':
@@ -177,6 +177,7 @@ function convertListElement(
         ) {
           return convertParentElement(parsedChild, options);
         }
+        return undefined;
       })
       .filter(Boolean),
   );

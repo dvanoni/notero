@@ -17,6 +17,7 @@ export function createXULElement<N extends keyof XUL.XULElementTagNameMap>(
   return doc.createElementNS(XUL_NS, name) as XUL.XULElementTagNameMap[N];
 }
 
+// oxlint-disable-next-line typescript/no-unnecessary-type-parameters
 export function getXULElementById<E extends XUL.XULElement>(
   id: string,
 ): E | null {

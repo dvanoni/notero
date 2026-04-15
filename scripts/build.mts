@@ -56,7 +56,7 @@ export async function build({
     await contentContext.rebuild();
     await contentContext.dispose();
     await copyAssets();
-    return;
+    return undefined;
   }
 
   await bootstrapContext.watch();

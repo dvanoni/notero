@@ -89,6 +89,7 @@ const propertyConfigs = {
   ...propertyConfig('Zotero URI', 'url'),
 } satisfies DatabaseProperties;
 
+// oxlint-disable-next-line typescript/consistent-return
 function propertyConfig<N extends string>(
   name: N,
   type: 'date' | 'multi_select' | 'number' | 'rich_text' | 'select' | 'url',

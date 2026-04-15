@@ -162,7 +162,9 @@ describe('syncNoteItem', () => {
       .calledWith(objectContainsValue(fakeContainerID))
       .mockRejectedValue(new Error('Failed to append children'));
 
-    await expect(() => syncNoteItem(noteItem, notion)).rejects.toThrow();
+    await expect(() => syncNoteItem(noteItem, notion)).rejects.toThrow(
+      'Failed to append children',
+    );
 
     expect(saveSyncedNote).toHaveBeenCalledExactlyOnceWith(
       regularItem,
@@ -181,7 +183,9 @@ describe('syncNoteItem', () => {
       .calledWith(objectContainsValue(fakeNoteBlockID))
       .mockRejectedValue(new Error('Failed to append children'));
 
-    await expect(() => syncNoteItem(noteItem, notion)).rejects.toThrow();
+    await expect(() => syncNoteItem(noteItem, notion)).rejects.toThrow(
+      'Failed to append children',
+    );
 
     expect(saveSyncedNote).toHaveBeenCalledExactlyOnceWith(
       regularItem,

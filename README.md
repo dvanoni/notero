@@ -390,6 +390,11 @@ Many thanks to [@retorquere](https://github.com/retorquere) for creating these.
 
 ### Local Setup
 
+Notero uses [Vite+][], a unified toolchain built on top of Vite, Rolldown,
+Vitest, tsdown, Oxlint, Oxfmt, and Vite Task. You'll need to install the `vp`
+CLI before getting started. See the [Vite+ website][Vite+] for installation
+instructions.
+
 The steps below are based on the [Zotero Plugin Development][plugin-development]
 documentation and should allow you to build and run Notero yourself.
 
@@ -403,16 +408,16 @@ documentation and should allow you to build and run Notero yourself.
 
 3.  Install dependencies:
 
-        npm ci
+        vp install
 
 4.  Build Notero and start Zotero with the plugin installed:
 
-        npm start
+        vp run start
 
     Alternatively, you can start your desired beta or dev version of Zotero:
 
-        npm run start:beta
-        npm run start:dev
+        vp run start:beta
+        vp run start:dev
 
     The `start` script performs a number of steps:
     1.  Run `scripts/build.mts` to build the plugin into the `build` directory
@@ -427,6 +432,7 @@ documentation and should allow you to build and run Notero yourself.
 [zotero-plugin]: https://github.com/retorquere/zotero-plugin
 [plugin-development]: https://www.zotero.org/support/dev/client_coding/plugin_development
 [zotero-profiles]: https://www.zotero.org/support/kb/multiple_profiles
+[Vite+]: https://viteplus.dev
 [web-ext]: https://github.com/mozilla/web-ext
 
 ### Releasing a New Version

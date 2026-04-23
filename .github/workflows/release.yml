@@ -32,14 +32,15 @@ jobs:
       download_url: ${{ fromJSON(steps.publish-xpi.outputs.assets)[0].browser_download_url }}
     steps:
       - uses: actions/checkout@v6
-      - uses: actions/setup-node@v6
+      - uses: voidzero-dev/setup-vp@v1
         with:
+          cache: true
           node-version-file: '.node-version'
-          cache: 'npm'
-      - run: npm ci
-      - run: npm run verify
-      - run: npm run build
-      - run: npm run create-xpi
+          run-install: |
+            - args: ['--frozen-lockfile']
+      - run: vp run verify
+      - run: vp run build
+      - run: vp run create-xpi
       - id: publish-xpi
         name: Publish xpi
         uses: softprops/action-gh-release@v2
@@ -47,7 +48,7 @@ jobs:
           tag_name: ${{ needs.release-please.outputs.tag_name }}
           files: xpi/*.xpi
       - name: Generate update manifest
-        run: npm run generate-update-manifest -- ${{ fromJSON(steps.publish-xpi.outputs.assets)[0].browser_download_url }}
+        run: vp run generate-update-manifest -- ${{ fromJSON(steps.publish-xpi.outputs.assets)[0].browser_download_url }}
       - name: Publish update manifest
         uses: softprops/action-gh-release@v2
         with:

@@ -390,9 +390,10 @@ Many thanks to [@retorquere](https://github.com/retorquere) for creating these.
 
 ### Local Setup
 
-Notero uses [Vite+][], a unified toolchain built on top of Vite, Rolldown,
-Vitest, tsdown, Oxlint, Oxfmt, and Vite Task. You'll need to install the `vp`
-CLI before getting started. See the [Vite+ website][Vite+] for installation
+Notero uses [Vite+][], a unified toolchain for dependency management, linting,
+formatting, testing, and task orchestration. The plugin build still runs through
+the project's existing esbuild scripts. You'll need to install the `vp` CLI
+before getting started. See the [Vite+ website][Vite+] for installation
 instructions.
 
 The steps below are based on the [Zotero Plugin Development][plugin-development]

@@ -79,11 +79,11 @@ function getClosestNotionColor(target: RGB, palette: Map<Color, RGB>): Color {
 }
 
 function getRGBFromStyleString(color: string): RGB | undefined {
-  if (!color) return;
+  if (!color) return undefined;
 
   const matches = color.match(/^rgba?\((\d+),\s*(\d+),\s*(\d+)/);
 
-  if (!matches) return;
+  if (!matches) return undefined;
 
   const r = Number(matches[1]);
   const g = Number(matches[2]);
@@ -110,6 +110,8 @@ export function getNotionColor(element: HTMLElement): Color {
       return getClosestNotionColor(rgb, TEXT_COLORS);
     }
   }
+
+  return undefined;
 }
 
 export function getAnnotations(element: HTMLElement): NonNullable<Annotations> {

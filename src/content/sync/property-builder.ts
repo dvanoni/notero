@@ -86,6 +86,7 @@ class PropertyBuilder {
     for (const { name, type, buildRequest } of validPropertyDefinitions) {
       const request = await buildRequest();
 
+      // oxlint-disable-next-line typescript/no-unsafe-type-assertion
       properties[name] = {
         type,
         [type]: request,

@@ -5,6 +5,7 @@ export function createHTMLElement<N extends keyof HTMLElementTagNameMap>(
   doc: Document,
   name: N,
 ) {
+  // oxlint-disable-next-line typescript/no-unsafe-type-assertion
   return doc.createElementNS(HTML_NS, name) as HTMLElementTagNameMap[N];
 }
 
@@ -12,13 +13,15 @@ export function createXULElement<N extends keyof XUL.XULElementTagNameMap>(
   doc: Document,
   name: N,
 ) {
+  // oxlint-disable-next-line typescript/no-unsafe-type-assertion
   return doc.createElementNS(XUL_NS, name) as XUL.XULElementTagNameMap[N];
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unnecessary-type-parameters
+// oxlint-disable-next-line typescript/no-unnecessary-type-parameters
 export function getXULElementById<E extends XUL.XULElement>(
   id: string,
 ): E | null {
+  // oxlint-disable-next-line typescript/no-unsafe-type-assertion
   return document.getElementById(id) as E | null;
 }
 

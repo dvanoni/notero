@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vite-plus/test';
 import { any, mock } from 'vitest-mock-extended';
 
 import { createZoteroCollectionMock, zoteroMock } from '../../../../test/utils';
@@ -122,6 +122,10 @@ function propertyConfig<N extends string>(
       });
     case 'url':
       return keyValue(name, { ...idNameDescription, type, [type]: {} });
+    default: {
+      const _exhaustive: never = type;
+      throw new Error(`Unhandled type: ${String(_exhaustive)}`);
+    }
   }
 }
 

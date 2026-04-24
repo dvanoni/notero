@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it } from 'vite-plus/test';
 
 import { createZoteroCollectionMock } from '../../../../test/utils';
 import { buildCollectionFullName } from '../build-collection-full-name';

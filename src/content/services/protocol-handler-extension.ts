@@ -1,5 +1,5 @@
 import type { NotionAuthManager } from '../auth';
-import { logger } from '../utils';
+import { isObject, logger } from '../utils';
 
 import type { Service, ServiceParams } from './service';
 
@@ -27,6 +27,12 @@ export function parseHandlerNameFromPathname(
   return matches?.[1];
 }
 
+function isZoteroProtocolHandler(
+  protocolHandler: unknown,
+): protocolHandler is Zotero.ZoteroProtocolHandler {
+  return isObject(protocolHandler) && '_extensions' in protocolHandler;
+}
+
 export class ProtocolHandlerExtension implements Service {
   private notionAuthManager!: NotionAuthManager;
   private zoteroProtocolHandler?: Zotero.ZoteroProtocolHandler;
@@ -44,20 +50,18 @@ export class ProtocolHandlerExtension implements Service {
     const protocolHandler =
       Services.io.getProtocolHandler(ZOTERO_SCHEME).wrappedJSObject;
 
-    if (!protocolHandler) {
+    if (!isZoteroProtocolHandler(protocolHandler)) {
       logger.error('Failed to get Zotero protocol handler');
       return;
     }
 
-    this.zoteroProtocolHandler =
-      protocolHandler as Zotero.ZoteroProtocolHandler;
+    this.zoteroProtocolHandler = protocolHandler;
 
     this.zoteroProtocolHandler._extensions[EXTENSION_SPEC] = this.extension;
   }
 
   private unregisterExtension() {
     if (!this.zoteroProtocolHandler) return;
-    // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
     delete this.zoteroProtocolHandler._extensions[EXTENSION_SPEC];
   }
 

@@ -2,45 +2,79 @@
   "name": "notero",
   "version": "1.2.2",
   "description": "Sync Zotero items and notes into Notion",
-  "scripts": {
-    "build": "node scripts/build.mts",
-    "build:watch": "npm run build -- --watch",
-    "clean": "rm -r .eslintcache build gen xpi src/locale/fluent-types.ts",
-    "create-xpi": "node scripts/create-xpi.mts",
-    "generate-fluent-types": "node scripts/generate-fluent-types.mts",
-    "generate-update-manifest": "node scripts/generate-update-manifest.mts",
-    "prelint": "npm run generate-fluent-types",
-    "lint": "eslint --cache .",
-    "lint:fix": "eslint --fix .",
-    "prepare": "husky",
-    "prettier": "prettier --check .",
-    "prettier:fix": "prettier --write .",
-    "start": "node scripts/start.mts",
-    "start:beta": "npm start -- --beta",
-    "start:dev": "npm start -- --dev",
-    "pretest": "npm run generate-fluent-types",
-    "test": "vitest run",
-    "test:watch": "vitest",
-    "pretypecheck": "npm run generate-fluent-types",
-    "typecheck": "tsc",
-    "preverify": "npm run generate-fluent-types",
-    "verify": "concurrently -c auto -P npm:prettier 'npm:lint {@}' 'npm:typecheck {@}' 'npm:test {@}' -- --ignore-scripts"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/dvanoni/notero.git"
+  "homepage": "https://github.com/dvanoni/notero",
+  "bugs": {
+    "url": "https://github.com/dvanoni/notero/issues"
   },
   "author": {
     "name": "David Hoff-Vanoni",
     "email": "david@vanoni.dev"
   },
-  "bugs": {
-    "url": "https://github.com/dvanoni/notero/issues"
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dvanoni/notero.git"
   },
-  "homepage": "https://github.com/dvanoni/notero",
+  "scripts": {
+    "build": "node scripts/build.mts",
+    "build:watch": "npm run build -- --watch",
+    "clean": "rm -rf build gen xpi",
+    "check": "vp check",
+    "create-xpi": "node scripts/create-xpi.mts",
+    "fmt": "vp fmt",
+    "fmt:check": "vp fmt --check",
+    "generate-fluent-types": "node scripts/generate-fluent-types.mts",
+    "generate-update-manifest": "node scripts/generate-update-manifest.mts",
+    "lint": "vp lint",
+    "lint:fix": "vp lint --fix",
+    "prepare": "vp config",
+    "start": "node scripts/start.mts",
+    "start:beta": "npm start -- --beta",
+    "start:dev": "npm start -- --dev",
+    "test": "vp test",
+    "test:watch": "vp test watch",
+    "typecheck": "tsc",
+    "verify": "vp check && vp test"
+  },
+  "dependencies": {
+    "@notionhq/client": "^4.0.1",
+    "eventemitter3": "^5.0.4",
+    "zod": "^4.3.6"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^20.4.0",
+    "@commitlint/config-conventional": "^20.4.0",
+    "@fluent/syntax": "^0.19.0",
+    "@total-typescript/ts-reset": "^0.6.1",
+    "@types/adm-zip": "^0.5.7",
+    "@types/fs-extra": "^11.0.4",
+    "@types/jsdom": "^27.0.0",
+    "@types/react": "^18.3.5",
+    "@types/react-dom": "^18.3.0",
+    "@types/semver": "^7.7.1",
+    "adm-zip": "^0.5.16",
+    "chokidar": "^5.0.0",
+    "esbuild": "^0.27.2",
+    "fs-extra": "^11.3.3",
+    "globals": "^17.3.0",
+    "jsdom": "^27.4.0",
+    "json5": "^2.2.3",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "semver": "^7.7.3",
+    "tslib": "^2.8.1",
+    "typescript": "^5.9.3",
+    "vite-plus": "latest",
+    "vitest-mock-extended": "^3.1.1",
+    "web-ext": "^9.2.0"
+  },
+  "overrides": {
+    "vite": "npm:@voidzero-dev/vite-plus-core@latest",
+    "vitest": "npm:@voidzero-dev/vite-plus-test@latest"
+  },
   "engines": {
     "node": ">=24.3.0"
   },
+  "packageManager": "npm@11.12.1",
   "xpi": {
     "icons": {
       "48": "content/style/notero-48.png",
@@ -55,48 +89,5 @@
       "version": "0.5.17",
       "updateLink": "https://github.com/dvanoni/notero/releases/download/v0.5.17/notero-0.5.17.xpi"
     }
-  },
-  "dependencies": {
-    "@notionhq/client": "^4.0.1",
-    "eventemitter3": "^5.0.4",
-    "zod": "^4.3.6"
-  },
-  "devDependencies": {
-    "@commitlint/cli": "^20.4.0",
-    "@commitlint/config-conventional": "^20.4.0",
-    "@eslint/js": "^9.39.2",
-    "@fluent/syntax": "^0.19.0",
-    "@total-typescript/ts-reset": "^0.6.1",
-    "@types/adm-zip": "^0.5.7",
-    "@types/eslint-config-prettier": "^6.11.3",
-    "@types/fs-extra": "^11.0.4",
-    "@types/jsdom": "^27.0.0",
-    "@types/react": "^18.3.5",
-    "@types/react-dom": "^18.3.0",
-    "@types/semver": "^7.7.1",
-    "@vitest/eslint-plugin": "^1.6.6",
-    "adm-zip": "^0.5.16",
-    "chokidar": "^5.0.0",
-    "concurrently": "^9.2.1",
-    "esbuild": "^0.27.2",
-    "eslint": "^9.39.2",
-    "eslint-config-prettier": "^10.1.8",
-    "eslint-import-resolver-typescript": "^4.4.4",
-    "eslint-plugin-import-x": "^4.16.1",
-    "fs-extra": "^11.3.3",
-    "globals": "^17.3.0",
-    "husky": "^9.1.7",
-    "jsdom": "^27.4.0",
-    "json5": "^2.2.3",
-    "prettier": "3.8.1",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "semver": "^7.7.3",
-    "tslib": "^2.8.1",
-    "typescript": "^5.9.3",
-    "typescript-eslint": "^8.54.0",
-    "vitest": "^4.0.18",
-    "vitest-mock-extended": "^3.1.0",
-    "web-ext": "^9.2.0"
   }
 }

@@ -1,6 +1,6 @@
 import { APIErrorCode } from '@notionhq/client';
 import { APIResponseError } from '@notionhq/client/build/src/errors';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it } from 'vite-plus/test';
 import { mock } from 'vitest-mock-extended';
 
 import { isArchivedOrNotFoundError, isNotionErrorWithCode } from '../error';

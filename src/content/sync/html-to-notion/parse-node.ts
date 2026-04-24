@@ -172,6 +172,7 @@ export function parseNode(node: Node): ParsedNode | undefined {
 
   switch (node.tagName) {
     case 'A':
+      // oxlint-disable-next-line typescript/no-unsafe-type-assertion
       return parseAnchorElement(node as HTMLAnchorElement);
     case 'BLOCKQUOTE':
       return parseBlockElement(node, 'quote');

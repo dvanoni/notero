@@ -1,4 +1,4 @@
-import { vi } from 'vitest';
+import { vi } from 'vite-plus/test';
 import { mockDeep } from 'vitest-mock-extended';
 
 import type { logger } from '../src/content/utils/logger';
@@ -13,6 +13,7 @@ type MockedGlobal = typeof globalThis & {
   Zotero: typeof Zotero;
 };
 
+// oxlint-disable-next-line typescript/no-unsafe-type-assertion
 const mockedGlobal = global as MockedGlobal;
 
 mockedGlobal.Components = mockDeep<typeof Components>();

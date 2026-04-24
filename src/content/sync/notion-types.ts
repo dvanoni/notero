@@ -47,7 +47,7 @@ export type ChildBlock = {
   [T in ChildBlockType]: T extends ParentBlockType
     ? Omit<Extract<BlockObjectRequest, { [K in T]: unknown }>, T> & {
         [K in T]: Omit<
-          Extract<BlockObjectRequest, { [K in T]: unknown }>[T],
+          Extract<BlockObjectRequest, { [KK in T]: unknown }>[T],
           'children'
         > & {
           children?: ChildBlock[];

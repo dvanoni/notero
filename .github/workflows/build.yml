@@ -14,13 +14,18 @@ jobs:
       pull-requests: write
     steps:
       - uses: actions/checkout@v6
-      - uses: actions/setup-node@v6
+      - uses: voidzero-dev/setup-vp@v1
         with:
+          cache: true
           node-version-file: '.node-version'
-          cache: 'npm'
-      - run: npm ci
-      - run: npm run verify
-      - run: npm run build
+          run-install: |
+            - args: ['--frozen-lockfile']
+      - name: Ensure fluent-types.ts is up to date
+        run: |
+          vp run generate-fluent-types
+          git diff --exit-code src/locale/fluent-types.ts
+      - run: vp run verify
+      - run: vp run build
       - id: artifact-name
         name: Generate xpi artifact name
         uses: actions/github-script@v8

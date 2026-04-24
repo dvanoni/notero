@@ -1,3 +1,4 @@
+// oxlint-disable-next-line unicorn/require-module-specifiers
 export {};
 
 declare global {
@@ -11,7 +12,7 @@ declare global {
   interface Window {
     arguments?: unknown[];
     openDialog: typeof window.open extends (...args: infer A) => infer R
-      ? (...args: [...A, ...any]) => R // eslint-disable-line @typescript-eslint/no-explicit-any
+      ? (...args: [...A, ...any]) => R // oxlint-disable-line typescript/no-explicit-any
       : never;
     MozXULElement: XUL.MozXULElement;
   }

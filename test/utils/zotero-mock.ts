@@ -1,4 +1,4 @@
-import { beforeAll } from 'vitest';
+import { beforeAll } from 'vite-plus/test';
 import { DeepMockProxy, MockProxy, mock } from 'vitest-mock-extended';
 
 const collectionsStore = new Map<Zotero.Collection['id'], Zotero.Collection>();
@@ -14,6 +14,7 @@ function getDataObjectID(): Zotero.DataObjectID {
   return ++idCounter;
 }
 
+// oxlint-disable-next-line typescript/no-unsafe-type-assertion
 export const zoteroMock = Zotero as DeepMockProxy<typeof Zotero>;
 
 export function createZoteroCollectionMock(

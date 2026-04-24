@@ -1,5 +1,3 @@
-/* eslint-disable no-undef */
-
 pref('extensions.notero.collectionSyncConfigs', '');
 pref('extensions.notero.notionDatabaseID', '');
 pref('extensions.notero.pageTitleFormat', 'itemAuthorDateCitation');

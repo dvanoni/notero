@@ -81,13 +81,11 @@ declare module 'web-ext' {
   }
 
   // Docs command types
-  // eslint-disable-next-line @typescript-eslint/no-empty-object-type
   export interface DocsOptions {
     // No specific options documented for docs command
   }
 
   // Dump config command types
-  // eslint-disable-next-line @typescript-eslint/no-empty-object-type
   export interface DumpConfigOptions extends BaseOptions {
     // Inherits from BaseOptions
   }
@@ -164,7 +162,6 @@ declare module 'web-ext' {
 
   // Default export
   const webext: WebExtInterface;
-  // eslint-disable-next-line import-x/no-default-export
   export default webext;
 
   // Named exports

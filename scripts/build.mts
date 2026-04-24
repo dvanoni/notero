@@ -15,10 +15,10 @@ const TARGET = 'firefox115';
 
 const buildPlugin: Plugin = {
   name: 'notero-build-plugin',
-  setup(build) {
-    build.onStart(() => {
+  setup(pluginBuild) {
+    pluginBuild.onStart(() => {
       console.log(
-        `Building ${JSON.stringify(build.initialOptions.entryPoints)}`,
+        `Building ${JSON.stringify(pluginBuild.initialOptions.entryPoints)}`,
       );
     });
   },
@@ -56,7 +56,7 @@ export async function build({
     await contentContext.rebuild();
     await contentContext.dispose();
     await copyAssets();
-    return;
+    return undefined;
   }
 
   await bootstrapContext.watch();

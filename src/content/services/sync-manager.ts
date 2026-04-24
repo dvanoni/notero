@@ -148,14 +148,14 @@ export class SyncManager implements Service {
   }
 
   private getItemsFromCollectionIDs(this: void, ids: number[]) {
-    const items = Zotero.Collections.get(ids).reduce(
+    const allItems = Zotero.Collections.get(ids).reduce(
       (items: Zotero.Item[], collection) =>
         items.concat(getAllCollectionItems(collection)),
       [],
     );
 
     // Deduplicate items in multiple collections
-    return Array.from(new Set(items));
+    return Array.from(new Set(allItems));
   }
 
   private getNotesToSync(items: Zotero.Item[]): Zotero.Item[] {

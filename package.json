@@ -17,7 +17,7 @@
   "scripts": {
     "build": "node scripts/build.mts",
     "build:watch": "npm run build -- --watch",
-    "clean": "rm -r build gen xpi",
+    "clean": "rm -rf build gen xpi",
     "check": "vp check",
     "create-xpi": "node scripts/create-xpi.mts",
     "fmt": "vp fmt",

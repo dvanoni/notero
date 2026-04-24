@@ -89,7 +89,6 @@ const propertyConfigs = {
   ...propertyConfig('Zotero URI', 'url'),
 } satisfies DatabaseProperties;
 
-// oxlint-disable-next-line typescript/consistent-return
 function propertyConfig<N extends string>(
   name: N,
   type: 'date' | 'multi_select' | 'number' | 'rich_text' | 'select' | 'url',
@@ -123,6 +122,10 @@ function propertyConfig<N extends string>(
       });
     case 'url':
       return keyValue(name, { ...idNameDescription, type, [type]: {} });
+    default: {
+      const _exhaustive: never = type;
+      throw new Error(`Unhandled type: ${String(_exhaustive)}`);
+    }
   }
 }
 

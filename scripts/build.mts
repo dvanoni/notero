@@ -73,7 +73,6 @@ export async function build({
   return cleanup;
 }
 
-// @ts-expect-error Type for `main` is not available yet
 if (import.meta.main) {
   const args = process.argv.slice(2);
   const sourcemap = args.includes('--sourcemap');

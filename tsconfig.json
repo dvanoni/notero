@@ -5,7 +5,6 @@
     "allowJs": true,
     "checkJs": true,
     "disableSizeLimit": true,
-    "downlevelIteration": true,
     "esModuleInterop": true,
     "importHelpers": true,
     "jsx": "react",

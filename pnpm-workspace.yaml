@@ -1,0 +1,18 @@
+allowBuilds:
+  esbuild: true
+  spawn-sync: false
+catalog:
+  vite: npm:@voidzero-dev/vite-plus-core@latest
+  vite-plus: latest
+  vitest: npm:@voidzero-dev/vite-plus-test@latest
+overrides:
+  vite: 'catalog:'
+  vitest: 'catalog:'
+  web-ext@^10.1.0>addons-linter: '-'
+peerDependencyRules:
+  allowAny:
+    - vite
+    - vitest
+  allowedVersions:
+    vite: '*'
+    vitest: '*'

@@ -2,7 +2,7 @@
 [
   {
     "label": "Build",
-    "command": "npm run build",
+    "command": "vp run build",
     // rest of the parameters are optional
     // "args": [],
     // Env overrides for the command, will be appended to the terminal's environment from the settings.
@@ -20,37 +20,37 @@
   },
   {
     "label": "Build with source maps",
-    "command": "npm run build -- --sourcemap",
+    "command": "vp run build -- --sourcemap",
     "reveal": "never"
   },
   {
     "label": "Generate Fluent types",
-    "command": "npm run generate-fluent-types",
+    "command": "vp run generate-fluent-types",
     "reveal": "never"
   },
   {
     "label": "Start Zotero",
-    "command": "npm run start",
+    "command": "vp run start",
     "reveal": "never"
   },
   {
     "label": "Start Zotero Beta",
-    "command": "npm run start:beta",
+    "command": "vp run start:beta",
     "reveal": "never"
   },
   {
     "label": "Start Zotero Dev",
-    "command": "npm run start:dev",
+    "command": "vp run start:dev",
     "reveal": "never"
   },
   {
     "label": "Test all (once)",
-    "command": "npm run test",
+    "command": "vp run test",
     "reveal": "no_focus"
   },
   {
     "label": "Test all (watch)",
-    "command": "npm run test:watch",
+    "command": "vp run test:watch",
     "reveal": "no_focus"
   },
   {

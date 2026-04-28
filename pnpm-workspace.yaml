@@ -8,6 +8,7 @@ catalog:
 overrides:
   vite: 'catalog:'
   vitest: 'catalog:'
+  web-ext@^10.1.0>addons-linter: '-'
 peerDependencyRules:
   allowAny:
     - vite

@@ -24,7 +24,7 @@ jobs:
           URL=$(gh release view --json assets --jq '.assets[0].url')
           echo "asset_url=$URL" >> "$GITHUB_OUTPUT"
       - name: Generate update manifest
-        run: vp run generate-update-manifest -- ${{ steps.get-asset.outputs.asset_url }}
+        run: vp run generate-update-manifest ${{ steps.get-asset.outputs.asset_url }}
       - name: Publish update manifest
         uses: softprops/action-gh-release@v3
         with:

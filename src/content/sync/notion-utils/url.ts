@@ -15,7 +15,7 @@ export function getPageIDFromURL(url: string): string | undefined {
   return matches ? matches[1] : undefined;
 }
 
-export function isNotionURL(value: unknown): value is string {
+export function isNotionPageURL(value: unknown): value is string {
   if (typeof value !== 'string') return false;
   return PAGE_URL_REGEX.test(value);
 }

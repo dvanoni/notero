@@ -3,7 +3,7 @@ const WEB_URL_PROTOCOL = 'https:';
 const WEB_URL_PROTOCOL_REGEX = new RegExp(`^${WEB_URL_PROTOCOL}`);
 
 const PAGE_URL_REGEX = new RegExp(
-  `^(?:${APP_URL_PROTOCOL}|${WEB_URL_PROTOCOL})//www.notion.so/.*([0-9a-f]{32})$`,
+  `^(?:${APP_URL_PROTOCOL}|${WEB_URL_PROTOCOL})//(?:www.notion.so|app.notion.com)/.*([0-9a-f]{32})$`,
 );
 
 export function convertWebURLToAppURL(url: string): string {
@@ -15,7 +15,7 @@ export function getPageIDFromURL(url: string): string | undefined {
   return matches ? matches[1] : undefined;
 }
 
-export function isNotionURL(value: unknown): value is string {
+export function isNotionPageURL(value: unknown): value is string {
   if (typeof value !== 'string') return false;
   return PAGE_URL_REGEX.test(value);
 }

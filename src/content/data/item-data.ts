@@ -1,5 +1,5 @@
 import { NOTION_TAG_NAME } from '../constants';
-import { getPageIDFromURL, isNotionURL } from '../sync/notion-utils';
+import { getPageIDFromURL, isNotionPageURL } from '../sync/notion-utils';
 import { isObject } from '../utils';
 
 const SYNCED_NOTES_ID = 'notero-synced-notes';
@@ -22,7 +22,7 @@ function getAllNotionLinkAttachments(item: Zotero.Item): Zotero.Item[] {
     .toSorted((a, b) => b - a);
 
   return Zotero.Items.get(attachmentIDs).filter((attachment) =>
-    isNotionURL(attachment.getField('url')),
+    isNotionPageURL(attachment.getField('url')),
   );
 }
 

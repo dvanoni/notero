@@ -3,7 +3,7 @@ const WEB_URL_PROTOCOL = 'https:';
 const WEB_URL_PROTOCOL_REGEX = new RegExp(`^${WEB_URL_PROTOCOL}`);
 
 const PAGE_URL_REGEX = new RegExp(
-  `^(?:${APP_URL_PROTOCOL}|${WEB_URL_PROTOCOL})//www.notion.so/.*([0-9a-f]{32})$`,
+  `^(?:${APP_URL_PROTOCOL}|${WEB_URL_PROTOCOL})//(?:www.notion.so|app.notion.com)/.*([0-9a-f]{32})$`,
 );
 
 export function convertWebURLToAppURL(url: string): string {

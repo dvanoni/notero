@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.2.3](https://github.com/dvanoni/notero/compare/v1.2.2...v1.2.3) (2026-04-29)
+
+
+### Bug Fixes
+
+* **sync:** Support new `app.notion.com` URLs ([#825](https://github.com/dvanoni/notero/issues/825)) ([46b7d6f](https://github.com/dvanoni/notero/commit/46b7d6f502f834ebb4dfb7f8482d0da3cf4b9835)), closes [#823](https://github.com/dvanoni/notero/issues/823)
+
 ## [1.2.2](https://github.com/dvanoni/notero/compare/v1.2.1...v1.2.2) (2025-12-29)
 
 

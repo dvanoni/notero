@@ -20,7 +20,7 @@
   },
   {
     "label": "Build with source maps",
-    "command": "vp run build -- --sourcemap",
+    "command": "vp run build --sourcemap",
     "reveal": "never"
   },
   {

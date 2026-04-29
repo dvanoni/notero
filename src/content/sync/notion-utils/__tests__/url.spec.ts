@@ -39,6 +39,13 @@ describe('getPageIDFromURL', () => {
 });
 
 describe('isNotionPageURL', () => {
+  it.each([undefined, null, 123, {}])(
+    'returns false for non-string input: %s',
+    (value) => {
+      expect(isNotionPageURL(value)).toBe(false);
+    },
+  );
+
   it('returns false for a non-Notion URL', () => {
     const url = 'https://www.example.com';
     expect(isNotionPageURL(url)).toBe(false);

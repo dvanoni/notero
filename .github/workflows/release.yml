@@ -43,14 +43,14 @@ jobs:
       - run: vp run create-xpi
       - id: publish-xpi
         name: Publish xpi
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         with:
           tag_name: ${{ needs.release-please.outputs.tag_name }}
           files: xpi/*.xpi
       - name: Generate update manifest
         run: vp run generate-update-manifest ${{ fromJSON(steps.publish-xpi.outputs.assets)[0].browser_download_url }}
       - name: Publish update manifest
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         with:
           tag_name: release
           files: gen/update*

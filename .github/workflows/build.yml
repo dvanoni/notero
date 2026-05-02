@@ -28,7 +28,7 @@ jobs:
       - run: vp run build
       - id: artifact-name
         name: Generate xpi artifact name
-        uses: actions/github-script@v8
+        uses: actions/github-script@v9
         with:
           result-encoding: string
           script: return `notero-${require('./gen/version')}`

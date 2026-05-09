@@ -11,7 +11,6 @@ import { logger } from '../utils';
 
 import type { DatabaseRequestProperties } from './notion-types';
 import {
-  convertWebURLToAppURL,
   isArchivedOrNotFoundError,
   isNotionErrorWithCode,
   normalizeID,
@@ -28,8 +27,7 @@ export async function syncRegularItem(
   await saveNotionTag(item);
 
   if (isFullPage(response)) {
-    const appURL = convertWebURLToAppURL(response.url);
-    await saveNotionLinkAttachment(item, appURL);
+    await saveNotionLinkAttachment(item, response.url);
   } else {
     throw new LocalizableError(
       'Failed to create Notion link attachment',

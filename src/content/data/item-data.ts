@@ -39,7 +39,7 @@ export function getNotionPageID(item: Zotero.Item): string | undefined {
 
 export async function saveNotionLinkAttachment(
   item: Zotero.Item,
-  appURL: string,
+  url: string,
 ): Promise<void> {
   const attachments = getAllNotionLinkAttachments(item);
 
@@ -54,13 +54,13 @@ export async function saveNotionLinkAttachment(
   if (attachment) {
     const currentURL = attachment.getField('url');
     pageIDChanged =
-      !currentURL || getPageIDFromURL(currentURL) !== getPageIDFromURL(appURL);
-    attachment.setField('url', appURL);
+      !currentURL || getPageIDFromURL(currentURL) !== getPageIDFromURL(url);
+    attachment.setField('url', url);
   } else {
     attachment = await Zotero.Attachments.linkFromURL({
       parentItemID: item.id,
       title: 'Notion',
-      url: appURL,
+      url,
       saveOptions: {
         skipNotifier: true,
       },

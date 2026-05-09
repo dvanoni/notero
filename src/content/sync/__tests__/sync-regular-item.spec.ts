@@ -4,7 +4,10 @@ import { describe, expect, it, vi } from 'vite-plus/test';
 import { mockDeep } from 'vitest-mock-extended';
 
 import { createZoteroItemMock } from '../../../../test/utils';
-import { getNotionPageID } from '../../data/item-data';
+import {
+  getNotionPageID,
+  saveNotionLinkAttachment,
+} from '../../data/item-data';
 import { PageTitleFormat } from '../../prefs/notero-pref';
 import type { DatabaseRequestProperties } from '../notion-types';
 import { buildProperties } from '../property-builder';
@@ -33,7 +36,7 @@ const validationError = new APIResponseError({
 const fakeCitationFormat = 'fake-style';
 const fakeDatabaseID = 'fake-database-id';
 const fakeDatabaseProperties = {};
-const fakePageID = 'fake-page-id';
+const fakePageID = '34028626a44f8144b2f3ea986abcd5f9';
 const fakePageProperties: DatabaseRequestProperties = { title: { title: [] } };
 const fakePageTitleFormat = PageTitleFormat.itemAuthorDateCitation;
 const fakePageResponse: PageObjectResponse = {
@@ -50,7 +53,7 @@ const fakePageResponse: PageObjectResponse = {
   parent: { database_id: fakeDatabaseID, type: 'database_id' },
   properties: {},
   public_url: null,
-  url: 'fake-url',
+  url: `https://app.notion.com/page-title-here-${fakePageID}`,
 };
 
 function setup({ pageID }: { pageID?: string }) {
@@ -157,6 +160,17 @@ describe('syncRegularItem', () => {
       parent: { database_id: fakeDatabaseID },
       properties: fakePageProperties,
     });
+  });
+
+  it('saves Notion link attachment using exact URL from response', async () => {
+    const { params, regularItem } = setup({ pageID: fakePageID });
+
+    await syncRegularItem(regularItem, params);
+
+    expect(saveNotionLinkAttachment).toHaveBeenCalledExactlyOnceWith(
+      regularItem,
+      fakePageResponse.url,
+    );
   });
 
   it('throws error when validation error is not caused by differing database', async () => {

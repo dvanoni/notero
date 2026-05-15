@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vite-plus/test';
 
-import { getPageIDFromURL, isNotionPageURL } from '../url';
+import { getPageIDFromURL, isNotionPageURL, normalizeURL } from '../url';
 
 describe('getPageIDFromURL', () => {
   it('returns undefined for a www.notion.so URL with an invalid page ID', () => {
@@ -84,5 +84,23 @@ describe('isNotionPageURL', () => {
     ],
   ])('returns %s for a %s', (expected, _description, url) => {
     expect(isNotionPageURL(url)).toBe(expected);
+  });
+});
+
+describe('normalizeURL', () => {
+  it('returns a web URL when given a web URL', () => {
+    const url =
+      'https://www.notion.so/page-title-here-34028626a44f8144b2f3ea986abcd5f9';
+    expect(normalizeURL(url)).toBe(
+      'https://www.notion.so/page-title-here-34028626a44f8144b2f3ea986abcd5f9',
+    );
+  });
+
+  it('returns a web URL when given an app URL', () => {
+    const url =
+      'notion://www.notion.so/page-title-here-34028626a44f8144b2f3ea986abcd5f9';
+    expect(normalizeURL(url)).toBe(
+      'https://www.notion.so/page-title-here-34028626a44f8144b2f3ea986abcd5f9',
+    );
   });
 });

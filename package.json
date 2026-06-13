@@ -53,7 +53,7 @@
     "@types/semver": "^7.7.1",
     "adm-zip": "^0.5.17",
     "chokidar": "^5.0.0",
-    "esbuild": "^0.28.0",
+    "esbuild": "^0.28.1",
     "fs-extra": "^11.3.4",
     "globals": "^17.6.0",
     "jsdom": "^29.1.1",

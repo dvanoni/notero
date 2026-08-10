@@ -7,7 +7,7 @@ assignees: ''
 ---
 
 <!--
-Have you checked the [FAQ section](https://github.com/dvanoni/notero#frequently-asked-questions) in the README? There may already be an answer for you there. If there isn't, please provide the info below!
+Have you checked the [FAQ section](https://github.com/oyvindbso/captero#frequently-asked-questions) in the README? There may already be an answer for you there. If there isn't, please provide the info below!
 -->
 
 **Describe the issue**

@@ -7,7 +7,7 @@ assignees: ''
 ---
 
 <!--
-Don't forget to check the [existing issues](https://github.com/dvanoni/notero/issues) to see if a similar suggestion has already been proposed.
+Don't forget to check the [existing issues](https://github.com/oyvindbso/captero/issues) to see if a similar suggestion has already been proposed.
 -->
 
 **Is your feature request related to a problem? Please describe.**

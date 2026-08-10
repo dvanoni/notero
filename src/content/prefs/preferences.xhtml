@@ -5,64 +5,65 @@
 <!-- `Notero_Preferences` is defined in `src/content/prefs/preferences.tsx` -->
 <groupbox class="notero-groupbox" onload="Notero_Preferences.init()">
   <label>
-    <html:h2 data-l10n-id="notero-preferences-notion-groupbox-heading" />
+    <html:h2 data-l10n-id="notero-preferences-capacities-groupbox-heading" />
   </label>
-  <hbox>
-    <button
-      class="notero-margin-block-end"
-      data-l10n-id="notero-preferences-notion-connect-button"
-      hidden="true"
-      id="notero-notionConnect"
-    />
-  </hbox>
-  <image class="zotero-spinner-16" id="notero-notionConnection-spinner" />
-  <hbox
-    align="center"
-    class="notero-margin-block-end"
-    hidden="true"
-    id="notero-notionToken-container"
-  >
+  <hbox align="center" class="notero-margin-block-end" id="notero-capacitiesToken-container">
     <label
-      control="notero-notionToken"
-      data-l10n-id="notero-preferences-notion-token-label"
+      control="notero-capacitiesToken"
+      data-l10n-id="notero-preferences-capacities-token-label"
     />
     <html:input
-      data-l10n-id="notero-preferences-notion-token-input"
-      id="notero-notionToken"
-      type="text"
+      data-l10n-id="notero-preferences-capacities-token-input"
+      id="notero-capacitiesToken"
+      type="password"
+    />
+    <button
+      data-l10n-id="notero-preferences-capacities-connect-button"
+      id="notero-capacitiesConnect"
     />
   </hbox>
-  <vbox align="start" hidden="true" id="notero-notionConnection-container">
+  <image class="zotero-spinner-16" id="notero-capacitiesConnection-spinner" />
+  <vbox align="start" hidden="true" id="notero-capacitiesConnection-container">
     <hbox align="center">
       <label
-        data-l10n-id="notero-preferences-notion-workspace"
-        id="notero-notionWorkspace"
+        data-l10n-id="notero-preferences-capacities-space"
+        id="notero-capacitiesSpace"
       />
       <button
-        data-l10n-id="notero-preferences-notion-upgrade-button"
-        id="notero-notionUpgradeConnection"
-      />
-      <button
-        data-l10n-id="notero-preferences-notion-disconnect-button"
-        id="notero-notionDisconnect"
+        data-l10n-id="notero-preferences-capacities-disconnect-button"
+        id="notero-capacitiesDisconnect"
       />
     </hbox>
     <hbox align="center" class="notero-margin-block-start">
       <label
-        control="notero-notionDatabase"
-        data-l10n-id="notero-preferences-notion-database"
+        control="notero-capacitiesStructure"
+        data-l10n-id="notero-preferences-capacities-structure"
       />
       <menulist
-        id="notero-notionDatabase"
+        id="notero-capacitiesStructure"
         disabled="true"
         native="true"
-        preference="extensions.notero.notionDatabaseID"
+        preference="extensions.notero.capacitiesStructureID"
+      >
+        <menupopup />
+      </menulist>
+    </hbox>
+    <hbox align="center" class="notero-margin-block-start">
+      <label
+        control="notero-capacitiesCollection"
+        data-l10n-id="notero-preferences-capacities-collection"
+      />
+      <menulist
+        id="notero-capacitiesCollection"
+        disabled="true"
+        native="true"
+        preference="extensions.notero.capacitiesCollectionID"
       >
         <menupopup />
       </menulist>
     </hbox>
   </vbox>
-  <label class="notero-error" hidden="true" id="notero-notionError" />
+  <label class="notero-error" hidden="true" id="notero-capacitiesError" />
 </groupbox>
 
 <groupbox class="notero-groupbox">

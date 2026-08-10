@@ -1,33 +1,32 @@
 ## Menus
 
 notero-collection-menu-sync =
-    .label = Sync Items to Notion
+    .label = Sync Items to Capacities
 notero-item-menu-sync =
-    .label = Sync to Notion
+    .label = Sync to Capacities
 notero-tools-menu-preferences =
-    .label = Notero Preferences…
+    .label = Captero Preferences…
 
-## Notion preferences
+## Capacities preferences
 
-notero-preferences-notion-groupbox-heading = Notion Connection
-notero-preferences-notion-connect-button = Connect to Notion
-notero-preferences-notion-disconnect-button = Disconnect…
-notero-preferences-notion-disconnect-dialog-title = Disconnect Notion Workspace
-notero-preferences-notion-disconnect-dialog-text = Disconnecting your Notion workspace will prevent further syncing. It will not remove any content that has already been synced.
-notero-preferences-notion-upgrade-button = Upgrade Connection…
-notero-preferences-notion-upgrade-dialog-title = Upgrade Notion Connection
-notero-preferences-notion-upgrade-dialog-text = Notero has evolved into a Notion public integration, enabling enhanced features and security. To upgrade, click OK and you'll be redirected to Notion to authorize the new Notero integration. After completing this one-time process, you can safely delete your previous internal integration. See the Notero README for more details.
-notero-preferences-notion-token-label = Connection Token:
-notero-preferences-notion-token-input =
-    .placeholder = Paste your connection token here
-notero-preferences-notion-workspace = Workspace: { $workspace-name }
-notero-preferences-notion-database = Database:
+notero-preferences-capacities-groupbox-heading = Capacities Connection
+notero-preferences-capacities-token-label = API Token:
+notero-preferences-capacities-token-input =
+    .placeholder = Paste your Capacities API token here
+notero-preferences-capacities-connect-button = Connect
+notero-preferences-capacities-disconnect-button = Disconnect…
+notero-preferences-capacities-disconnect-dialog-title = Disconnect Capacities
+notero-preferences-capacities-disconnect-dialog-text = Disconnecting will prevent further syncing. It will not remove any content that has already been synced.
+notero-preferences-capacities-space = Space: { $space-name }
+notero-preferences-capacities-structure = Structure:
+notero-preferences-capacities-collection = Collection:
+notero-preferences-capacities-collection-default = (Structure default)
 
 ## Property preferences
 
 notero-preferences-properties-groupbox-heading = Property Preferences
-notero-preferences-properties-groupbox-description = Customize how item properties sync to Notion.
-notero-preferences-page-title-format = Notion Page Title:
+notero-preferences-properties-groupbox-description = Customize how item properties sync to Capacities.
+notero-preferences-page-title-format = Capacities Title:
 
 ## Page title format options
 
@@ -47,7 +46,7 @@ notero-page-title-format-item-title =
 ## Sync preferences
 
 notero-preferences-sync-groupbox-heading = Sync Preferences
-notero-preferences-sync-groupbox-description1 = Notero will monitor the collections enabled below. Items in the enabled collections will sync to Notion when added to that collection and whenever the items are modified.
+notero-preferences-sync-groupbox-description1 = Captero will monitor the collections enabled below. Items in the enabled collections will sync to Capacities when added to that collection and whenever the items are modified.
 notero-preferences-sync-groupbox-description2 = To enable/disable a collection, either select the row and press the {"[Enter]"} key or double-click the row. To select multiple rows, hold {"[Shift]"} and then click.
 notero-preferences-collection-column = Collection
 notero-preferences-sync-enabled-column = Sync Enabled
@@ -58,17 +57,15 @@ notero-preferences-sync-notes =
 
 ## Progress window
 
-notero-progress-headline = Syncing items to Notion…
+notero-progress-headline = Syncing items to Capacities…
 notero-progress-item = Item { $step } of { $total }
 
 ## Errors
 
-notero-error-missing-notion-database = Notion database not selected. Please select your database in Notero preferences.
-notero-error-missing-notion-token = Not authorized with Notion. Please connect to Notion in Notero preferences.
-notero-error-missing-pref = Missing value for { $pref }. Please enter it in Notero preferences.
-notero-error-no-notion-databases = No Notion databases are accessible.
-notero-error-note-conversion-failed = Failed to convert note content to Notion blocks.
+notero-error-missing-structure = Capacities structure not selected. Please select your structure in Captero preferences.
+notero-error-missing-api-token = Not connected to Capacities. Please enter your API token in Captero preferences.
+notero-error-missing-pref = Missing value for { $pref }. Please enter it in Captero preferences.
+notero-error-note-conversion-failed = Failed to convert note content to Markdown.
 notero-error-note-parent-not-synced = Cannot sync note because its parent item is not synced.
-notero-error-note-sync-failed = Failed to sync note to Notion.
+notero-error-note-sync-failed = Failed to sync note to Capacities.
 notero-error-note-without-parent = Cannot sync note without a parent item.
-notero-error-notion-link-attachment = Failed to create Notion link attachment. This will result in duplicate Notion pages. Please ensure that the "read content" capability is enabled for the Notero integration at www.notion.so/my-integrations.

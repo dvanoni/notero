@@ -1,40 +1,85 @@
-import { NOTION_TAG_NAME } from '../constants';
+import { CAPACITIES_TAG_NAME } from '../constants';
 import { PageTitleFormat } from '../prefs/notero-pref';
-import {
-  buildCollectionFullName,
-  getItemURL,
-  parseItemDate,
-  truncateMiddle,
-} from '../utils';
+import { buildCollectionFullName, getItemURL, parseItemDate } from '../utils';
 
-import { LIMITS } from './notion-limits';
 import type {
-  DatabaseProperties,
-  DatabaseRequestProperties,
-  DatabaseRequestProperty,
-  PropertyRequest,
-  RequestPropertyType,
-} from './notion-types';
-import { buildDate, buildRichText } from './notion-utils';
+  LabelOption,
+  PropertyDefinition,
+  PropertyDefinitionType,
+  Structure,
+  WritableLabelProperty,
+  WritableObjectProperties,
+  WritablePropertyValue,
+} from './capacities-types';
 
 type PropertyBuilderParams = {
   citationFormat: string;
-  databaseProperties: DatabaseProperties;
+  structure: Structure;
   item: Zotero.Item;
   pageTitleFormat: PageTitleFormat;
 };
 
-type PropertyDefinition<T extends RequestPropertyType = RequestPropertyType> = {
-  [P in T]: {
-    name: string;
-    type: P;
-    buildRequest: () => PropertyRequest<P> | Promise<PropertyRequest<P>>;
+type FieldDefinition = {
+  name: string;
+  type: PropertyDefinitionType;
+  buildValue: (
+    propertyDefinition: PropertyDefinition,
+  ) => WritablePropertyValue | Promise<WritablePropertyValue>;
+};
+
+function buildTextValue(
+  value: string | null | undefined,
+): WritablePropertyValue {
+  return { type: 'text', text: { value: value || null } };
+}
+
+function buildUrlValue(
+  value: string | null | undefined,
+): WritablePropertyValue {
+  return { type: 'url', url: { value: value || null } };
+}
+
+function buildNumberValue(value: number | null): WritablePropertyValue {
+  return { type: 'number', number: { value } };
+}
+
+function buildDateValue(
+  date: Date | false | null | undefined,
+): WritablePropertyValue {
+  return {
+    type: 'date',
+    date: { dateResolution: 'day', start: date ? date.toISOString() : null },
   };
-}[T];
+}
+
+/**
+ * Build a `label` property value by matching option names against the
+ * property definition's fixed `labelSet`. Unlike Notion's `select`/
+ * `multi_select`, Capacities cannot create new label options via the API, so
+ * names without a matching existing option are silently dropped.
+ *
+ * @see https://developers.capacities.io/api/concepts/properties
+ */
+function buildLabelValue(
+  propertyDefinition: PropertyDefinition,
+  names: string[],
+): WritableLabelProperty {
+  const labelSet = propertyDefinition.labelSet || [];
+
+  const label = names.reduce<LabelOption[]>((options, name) => {
+    const option = labelSet.find(
+      (candidate) => candidate.name.toLowerCase() === name.toLowerCase(),
+    );
+    if (option) options.push(option);
+    return options;
+  }, []);
+
+  return { type: 'label', label };
+}
 
 export function buildProperties(
   params: PropertyBuilderParams,
-): Promise<DatabaseRequestProperties> {
+): Promise<WritableObjectProperties> {
   const propertyBuilder = new PropertyBuilder(params);
   return propertyBuilder.buildProperties();
 }
@@ -43,61 +88,58 @@ function formatCreatorName({ firstName, lastName }: Zotero.Creator) {
   return [lastName, firstName].filter((name) => name).join(', ');
 }
 
-/**
- * Sanitize name of select option to conform to the following constraints:
- * - Commas (`,`) are not valid
- * - Length must be <= 100
- *
- * @see https://developers.notion.com/reference/property-object#select
- */
-function sanitizeSelectOption(text: string): string {
-  return truncateMiddle(
-    text.replace(/,/g, ';'),
-    LIMITS.SELECT_OPTION_CHARACTERS,
-  );
-}
-
 class PropertyBuilder {
   private readonly cachedCitations = new Map<string, string | null>();
 
   private readonly citationFormat: string;
-  private readonly databaseProperties: DatabaseProperties;
+  private readonly structure: Structure;
   private readonly item: Zotero.Item;
   private readonly pageTitleFormat: PageTitleFormat;
 
   public constructor(params: PropertyBuilderParams) {
     this.citationFormat = params.citationFormat;
-    this.databaseProperties = params.databaseProperties;
+    this.structure = params.structure;
     this.item = params.item;
     this.pageTitleFormat = params.pageTitleFormat;
   }
 
-  public async buildProperties(): Promise<DatabaseRequestProperties> {
-    const properties: DatabaseRequestProperties = {
-      title: {
-        title: buildRichText(await this.getPageTitle()),
-      },
-    };
+  public async buildProperties(): Promise<WritableObjectProperties> {
+    const properties: WritableObjectProperties = {};
 
-    const validPropertyDefinitions = this.propertyDefinitions.filter(
-      this.databaseHasProperty,
-    );
+    const titleDefinition = this.findPropertyDefinition('title', 'title');
+    if (titleDefinition) {
+      properties[titleDefinition.id] = {
+        type: 'title',
+        title: { value: await this.getPageTitle() },
+      };
+    }
 
-    for (const { name, type, buildRequest } of validPropertyDefinitions) {
-      const request = await buildRequest();
+    for (const fieldDefinition of this.fieldDefinitions) {
+      const propertyDefinition = this.findPropertyDefinition(
+        fieldDefinition.name,
+        fieldDefinition.type,
+      );
+      if (!propertyDefinition) continue;
 
-      // oxlint-disable-next-line typescript/no-unsafe-type-assertion
-      properties[name] = {
-        type,
-        [type]: request,
-      } as DatabaseRequestProperty;
+      properties[propertyDefinition.id] =
+        await fieldDefinition.buildValue(propertyDefinition);
     }
 
     return properties;
   }
 
-  private databaseHasProperty = ({ name, type }: PropertyDefinition) =>
-    this.databaseProperties[name]?.type === type;
+  private findPropertyDefinition(
+    name: string,
+    type: PropertyDefinitionType,
+  ): PropertyDefinition | undefined {
+    return this.structure.propertyDefinitions.find(
+      (definition) =>
+        definition.writable &&
+        definition.type === type &&
+        (type === 'title' ||
+          definition.name.toLowerCase() === name.toLowerCase()),
+    );
+  }
 
   private pageTitleBuilders: Record<
     PageTitleFormat,
@@ -185,23 +227,20 @@ class PropertyBuilder {
     return this.item.getDisplayTitle();
   }
 
-  private propertyDefinitions: PropertyDefinition[] = [
+  private fieldDefinitions: FieldDefinition[] = [
     {
       name: 'Abstract',
-      type: 'rich_text',
-      buildRequest: () =>
-        buildRichText(this.item.getField('abstractNote'), {
-          preserveWhitespace: true,
-        }),
+      type: 'text',
+      buildValue: () => buildTextValue(this.item.getField('abstractNote')),
     },
     {
       name: 'Authors',
-      type: 'rich_text',
-      buildRequest: () => {
+      type: 'text',
+      buildValue: () => {
         const primaryCreatorTypeID = Zotero.CreatorTypes.getPrimaryIDForType(
           this.item.itemTypeID,
         );
-        if (!primaryCreatorTypeID) return [];
+        if (!primaryCreatorTypeID) return buildTextValue(null);
 
         const authors = this.item
           .getCreators()
@@ -209,53 +248,53 @@ class PropertyBuilder {
           .map(formatCreatorName)
           .join('\n');
 
-        return buildRichText(authors, { preserveWhitespace: true });
+        return buildTextValue(authors);
       },
     },
     {
       name: 'Citation Key',
-      type: 'rich_text',
-      buildRequest: () => buildRichText(this.getCitationKey()),
+      type: 'text',
+      buildValue: () => buildTextValue(this.getCitationKey()),
     },
     {
       name: 'Collections',
-      type: 'multi_select',
-      buildRequest: () =>
-        Zotero.Collections.get(this.item.getCollections()).map(
-          (collection) => ({
-            name: sanitizeSelectOption(buildCollectionFullName(collection)),
-          }),
+      type: 'text',
+      buildValue: () =>
+        buildTextValue(
+          Zotero.Collections.get(this.item.getCollections())
+            .map(buildCollectionFullName)
+            .join(', '),
         ),
     },
     {
       name: 'Date',
-      type: 'rich_text',
-      buildRequest: () => buildRichText(this.item.getField('date')),
+      type: 'text',
+      buildValue: () => buildTextValue(this.item.getField('date')),
     },
     {
       name: 'Date Added',
       type: 'date',
-      buildRequest: () => buildDate(parseItemDate(this.item.dateAdded)),
+      buildValue: () => buildDateValue(parseItemDate(this.item.dateAdded)),
     },
     {
       name: 'Date Modified',
       type: 'date',
-      buildRequest: () => buildDate(parseItemDate(this.item.dateModified)),
+      buildValue: () => buildDateValue(parseItemDate(this.item.dateModified)),
     },
     {
       name: 'DOI',
       type: 'url',
-      buildRequest: () => {
+      buildValue: () => {
         const doi = this.item.getField('DOI');
-        return doi ? `https://doi.org/${doi}` : null;
+        return buildUrlValue(doi ? `https://doi.org/${doi}` : null);
       },
     },
     {
       name: 'Editors',
-      type: 'rich_text',
-      buildRequest: () => {
+      type: 'text',
+      buildValue: () => {
         const editorTypeID = Zotero.CreatorTypes.getID('editor');
-        if (!editorTypeID) return [];
+        if (!editorTypeID) return buildTextValue(null);
 
         const editors = this.item
           .getCreators()
@@ -263,103 +302,101 @@ class PropertyBuilder {
           .map(formatCreatorName)
           .join('\n');
 
-        return buildRichText(editors, { preserveWhitespace: true });
+        return buildTextValue(editors);
       },
     },
     {
       name: 'Extra',
-      type: 'rich_text',
-      buildRequest: () =>
-        buildRichText(this.item.getField('extra'), {
-          preserveWhitespace: true,
-        }),
+      type: 'text',
+      buildValue: () => buildTextValue(this.item.getField('extra')),
     },
     {
       name: 'File Path',
-      type: 'rich_text',
-      buildRequest: async () => {
+      type: 'text',
+      buildValue: async () => {
         const attachment = await this.item.getBestAttachment();
-        if (!attachment) return [];
+        if (!attachment) return buildTextValue(null);
 
-        return buildRichText((await attachment.getFilePathAsync()) || null);
+        return buildTextValue((await attachment.getFilePathAsync()) || null);
       },
     },
     {
       name: 'Full Citation',
-      type: 'rich_text',
-      buildRequest: async () =>
-        buildRichText(await this.getFullCitation(), {
-          preserveWhitespace: true,
-        }),
+      type: 'text',
+      buildValue: async () => buildTextValue(await this.getFullCitation()),
     },
     {
       name: 'In-Text Citation',
-      type: 'rich_text',
-      buildRequest: async () => buildRichText(await this.getInTextCitation()),
+      type: 'text',
+      buildValue: async () => buildTextValue(await this.getInTextCitation()),
     },
     {
       name: 'Item Type',
-      type: 'select',
-      buildRequest: () => ({
-        name: Zotero.ItemTypes.getLocalizedString(this.item.itemTypeID),
-      }),
+      type: 'label',
+      buildValue: (propertyDefinition) =>
+        buildLabelValue(propertyDefinition, [
+          Zotero.ItemTypes.getLocalizedString(this.item.itemTypeID),
+        ]),
     },
     {
       name: 'Place',
-      type: 'rich_text',
-      buildRequest: () => buildRichText(this.item.getField('place')),
+      type: 'text',
+      buildValue: () => buildTextValue(this.item.getField('place')),
     },
     {
       name: 'Proceedings Title',
-      type: 'rich_text',
-      buildRequest: () => buildRichText(this.item.getField('proceedingsTitle')),
+      type: 'text',
+      buildValue: () => buildTextValue(this.item.getField('proceedingsTitle')),
     },
     {
       name: 'Publication',
-      type: 'rich_text',
-      buildRequest: () => buildRichText(this.item.getField('publicationTitle')),
+      type: 'text',
+      buildValue: () => buildTextValue(this.item.getField('publicationTitle')),
     },
     {
       name: 'Series Title',
-      type: 'rich_text',
-      buildRequest: () => buildRichText(this.item.getField('seriesTitle')),
+      type: 'text',
+      buildValue: () => buildTextValue(this.item.getField('seriesTitle')),
     },
     {
       name: 'Short Title',
-      type: 'rich_text',
-      buildRequest: () => buildRichText(this.getShortTitle()),
+      type: 'text',
+      buildValue: () => buildTextValue(this.getShortTitle()),
     },
     {
       name: 'Tags',
-      type: 'multi_select',
-      buildRequest: () =>
-        this.item
-          .getTags()
-          .filter(({ tag }) => tag !== NOTION_TAG_NAME)
-          .map(({ tag }) => ({ name: sanitizeSelectOption(tag) })),
+      type: 'text',
+      buildValue: () =>
+        buildTextValue(
+          this.item
+            .getTags()
+            .filter(({ tag }) => tag !== CAPACITIES_TAG_NAME)
+            .map(({ tag }) => tag)
+            .join(', '),
+        ),
     },
     {
       name: 'Title',
-      type: 'rich_text',
-      buildRequest: () => buildRichText(this.getTitle()),
+      type: 'text',
+      buildValue: () => buildTextValue(this.getTitle()),
     },
     {
       name: 'URL',
       type: 'url',
-      buildRequest: () => this.item.getField('url') || null,
+      buildValue: () => buildUrlValue(this.item.getField('url')),
     },
     {
       name: 'Year',
       type: 'number',
-      buildRequest: () => {
+      buildValue: () => {
         const year = Number.parseInt(this.item.getField('year') || '');
-        return Number.isNaN(year) ? null : year;
+        return buildNumberValue(Number.isNaN(year) ? null : year);
       },
     },
     {
       name: 'Zotero URI',
       type: 'url',
-      buildRequest: () => getItemURL(this.item),
+      buildValue: () => buildUrlValue(getItemURL(this.item)),
     },
   ];
 }

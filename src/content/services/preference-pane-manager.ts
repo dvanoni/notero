@@ -9,7 +9,7 @@ export class PreferencePaneManager implements Service {
       src: 'content/prefs/preferences.xhtml',
       scripts: ['content/prefs/preferences.js'],
       stylesheets: ['content/style/preferences.css'],
-      helpURL: 'https://github.com/dvanoni/notero#readme',
+      helpURL: 'https://github.com/oyvindbso/captero#readme',
     });
   }
 

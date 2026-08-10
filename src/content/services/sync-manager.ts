@@ -17,19 +17,19 @@ type QueuedSync = {
 export class SyncManager implements Service {
   private eventManager!: EventManager;
 
-  private getNotionAuthToken!: () => Promise<string>;
+  private getCapacitiesAuthToken!: () => Promise<string>;
 
   private queuedSync?: QueuedSync;
 
   private syncInProgress = false;
 
   public startup({
-    dependencies: { eventManager, notionAuthManager },
-  }: ServiceParams<'eventManager' | 'notionAuthManager'>) {
+    dependencies: { eventManager, capacitiesAuthManager },
+  }: ServiceParams<'eventManager' | 'capacitiesAuthManager'>) {
     this.eventManager = eventManager;
 
-    this.getNotionAuthToken =
-      notionAuthManager.getRequiredAuthToken.bind(notionAuthManager);
+    this.getCapacitiesAuthToken =
+      capacitiesAuthManager.getRequiredAuthToken.bind(capacitiesAuthManager);
 
     const { addListener } = this.eventManager;
 
@@ -184,12 +184,12 @@ export class SyncManager implements Service {
   }
 
   /**
-   * Enqueue Zotero items to sync to Notion.
+   * Enqueue Zotero items to sync to Capacities.
    *
    * Because Zotero items can be updated multiple times in short succession,
    * any subsequent updates after the first can sometimes occur before the
-   * initial sync has finished and added the Notion link attachment. This has
-   * the potential to end up creating duplicate Notion pages.
+   * initial sync has finished and added the Capacities link attachment. This
+   * has the potential to end up creating duplicate Capacities objects.
    *
    * To address this, we use two strategies:
    * - Debounce syncs so that they occur, at most, every `SYNC_DEBOUNCE_MS` ms
@@ -208,7 +208,7 @@ export class SyncManager implements Service {
    *    - If there is one with a remaining timeout, let it run when it times out
    *    - Otherwise, do nothing
    *
-   * @param items the Zotero items to sync to Notion
+   * @param items the Zotero items to sync to Capacities
    */
   private enqueueItemsToSync(items: readonly Zotero.Item[]) {
     if (!items.length) {
@@ -259,7 +259,7 @@ export class SyncManager implements Service {
     this.queuedSync = undefined as QueuedSync | undefined;
     this.syncInProgress = true;
 
-    await performSyncJob(itemIDs, this.getNotionAuthToken, mainWindow);
+    await performSyncJob(itemIDs, this.getCapacitiesAuthToken, mainWindow);
 
     if (this.queuedSync && !this.queuedSync.timeoutID) {
       await this.performSync();

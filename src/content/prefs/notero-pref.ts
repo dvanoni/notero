@@ -2,9 +2,9 @@ import { FluentMessageId } from '../../locale/fluent-types';
 import { MissingPrefError } from '../errors';
 
 export enum NoteroPref {
+  capacitiesCollectionID = 'capacitiesCollectionID',
+  capacitiesStructureID = 'capacitiesStructureID',
   collectionSyncConfigs = 'collectionSyncConfigs',
-  notionDatabaseID = 'notionDatabaseID',
-  notionToken = 'notionToken',
   pageTitleFormat = 'pageTitleFormat',
   syncNotes = 'syncNotes',
   syncOnModifyItems = 'syncOnModifyItems',
@@ -36,9 +36,9 @@ export const PAGE_TITLE_FORMAT_L10N_IDS: Record<
 };
 
 type NoteroPrefValue = Partial<{
+  [NoteroPref.capacitiesCollectionID]: string;
+  [NoteroPref.capacitiesStructureID]: string;
   [NoteroPref.collectionSyncConfigs]: string;
-  [NoteroPref.notionDatabaseID]: string;
-  [NoteroPref.notionToken]: string;
   [NoteroPref.pageTitleFormat]: PageTitleFormat;
   [NoteroPref.syncNotes]: boolean;
   [NoteroPref.syncOnModifyItems]: boolean;
@@ -83,9 +83,9 @@ function convertRawPrefValue<P extends NoteroPref>(
     undefined;
 
   return {
+    [NoteroPref.capacitiesCollectionID]: stringPref,
+    [NoteroPref.capacitiesStructureID]: stringPref,
     [NoteroPref.collectionSyncConfigs]: stringPref,
-    [NoteroPref.notionDatabaseID]: stringPref,
-    [NoteroPref.notionToken]: stringPref,
     [NoteroPref.pageTitleFormat]: pageTitleFormatPref,
     [NoteroPref.syncNotes]: booleanPref,
     [NoteroPref.syncOnModifyItems]: booleanPref,

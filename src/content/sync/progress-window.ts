@@ -14,7 +14,9 @@ export class ProgressWindow {
 
   public async show() {
     const headline = await this.l10n.formatValue('notero-progress-headline');
-    this.progressWindow.changeHeadline(headline || 'Syncing items to Notion…');
+    this.progressWindow.changeHeadline(
+      headline || 'Syncing items to Capacities…',
+    );
     this.progressWindow.show();
     this.itemProgress = new this.progressWindow.ItemProgress('document', '');
   }

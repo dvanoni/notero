@@ -1,7 +1,5 @@
-import { type Client } from '@notionhq/client';
-
 import { APA_STYLE } from '../constants';
-import { ItemSyncError } from '../errors';
+import { ItemSyncError, LocalizableError } from '../errors';
 import {
   NoteroPref,
   PageTitleFormat,
@@ -10,23 +8,24 @@ import {
 } from '../prefs/notero-pref';
 import { getLocalizedErrorMessage, logger } from '../utils';
 
-import { getNotionClient } from './notion-client';
-import type { DatabaseProperties } from './notion-types';
+import { CapacitiesClient, getCapacitiesClient } from './capacities-client';
+import type { Structure } from './capacities-types';
 import { ProgressWindow } from './progress-window';
 import { syncNoteItem } from './sync-note-item';
 import { syncRegularItem } from './sync-regular-item';
 
 export type SyncJobParams = {
+  capacities: CapacitiesClient;
   citationFormat: string;
-  databaseID: string;
-  databaseProperties: DatabaseProperties;
-  notion: Client;
+  collectionID?: string;
   pageTitleFormat: PageTitleFormat;
+  spaceID: string;
+  structure: Structure;
 };
 
 export async function performSyncJob(
   itemIDs: Set<Zotero.Item['id']>,
-  getNotionAuthToken: () => Promise<string>,
+  getCapacitiesAuthToken: () => Promise<string>,
   window: Window,
 ): Promise<void> {
   const items = Zotero.Items.get(Array.from(itemIDs));
@@ -36,7 +35,7 @@ export async function performSyncJob(
   await progressWindow.show();
 
   try {
-    const params = await prepareSyncJob(getNotionAuthToken, window);
+    const params = await prepareSyncJob(getCapacitiesAuthToken, window);
     await syncItems(items, progressWindow, params);
   } catch (error) {
     await handleError(error, progressWindow, window);
@@ -44,25 +43,28 @@ export async function performSyncJob(
 }
 
 async function prepareSyncJob(
-  getNotionAuthToken: () => Promise<string>,
+  getCapacitiesAuthToken: () => Promise<string>,
   window: Window,
 ): Promise<SyncJobParams> {
-  const authToken = await getNotionAuthToken();
-  const notion = getNotionClient(authToken, window);
-  const databaseID = getRequiredNoteroPref(NoteroPref.notionDatabaseID);
-  const databaseProperties = await retrieveDatabaseProperties(
-    notion,
-    databaseID,
-  );
+  const authToken = await getCapacitiesAuthToken();
+  const capacities = getCapacitiesClient(authToken, window);
+
+  const structureID = getRequiredNoteroPref(NoteroPref.capacitiesStructureID);
+  const collectionID = getNoteroPref(NoteroPref.capacitiesCollectionID);
+
+  const structure = await retrieveStructure(capacities, structureID);
+  const space = await capacities.getSpace();
+
   const citationFormat = getCitationFormat();
   const pageTitleFormat = getPageTitleFormat();
 
   return {
+    capacities,
     citationFormat,
-    databaseID,
-    databaseProperties,
-    notion,
+    collectionID,
     pageTitleFormat,
+    spaceID: space.id,
+    structure,
   };
 }
 
@@ -78,15 +80,22 @@ function getPageTitleFormat(): PageTitleFormat {
   return getNoteroPref(NoteroPref.pageTitleFormat) || PageTitleFormat.itemTitle;
 }
 
-async function retrieveDatabaseProperties(
-  notion: Client,
-  databaseID: string,
-): Promise<DatabaseProperties> {
-  const database = await notion.databases.retrieve({
-    database_id: databaseID,
-  });
+async function retrieveStructure(
+  capacities: CapacitiesClient,
+  structureID: string,
+): Promise<Structure> {
+  const structures = await capacities.getStructures();
 
-  return database.properties;
+  const structure = structures.find(({ id }) => id === structureID);
+
+  if (!structure) {
+    throw new LocalizableError(
+      'Configured Capacities structure not found',
+      'notero-error-missing-structure',
+    );
+  }
+
+  return structure;
 }
 
 async function syncItems(
@@ -106,7 +115,7 @@ async function syncItems(
 
     try {
       if (item.isNote()) {
-        await syncNoteItem(item, params.notion);
+        await syncNoteItem(item, params);
       } else {
         await syncRegularItem(item, params);
       }

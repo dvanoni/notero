@@ -3,12 +3,12 @@ import { any, mock } from 'vitest-mock-extended';
 
 import { createZoteroCollectionMock, zoteroMock } from '../../../../test/utils';
 import { PageTitleFormat } from '../../prefs/notero-pref';
-import { getItemURL, keyValue } from '../../utils';
+import { getItemURL } from '../../utils';
 import type {
-  DatabaseProperties,
-  DatabasePropertyConfig,
-  DatabaseRequestProperties,
-} from '../notion-types';
+  PropertyDefinition,
+  Structure,
+  WritableObjectProperties,
+} from '../capacities-types';
 import { buildProperties } from '../property-builder';
 
 vi.mock('../../utils/get-item-url');
@@ -69,64 +69,53 @@ const pageTitleTestCases: {
   },
 ];
 
-const propertyConfigs = {
-  ...propertyConfig('Abstract', 'rich_text'),
-  ...propertyConfig('Authors', 'rich_text'),
-  ...propertyConfig('Collections', 'multi_select'),
-  ...propertyConfig('Date', 'rich_text'),
-  ...propertyConfig('Date Added', 'date'),
-  ...propertyConfig('DOI', 'url'),
-  ...propertyConfig('Editors', 'rich_text'),
-  ...propertyConfig('File Path', 'rich_text'),
-  ...propertyConfig('Full Citation', 'rich_text'),
-  ...propertyConfig('In-Text Citation', 'rich_text'),
-  ...propertyConfig('Item Type', 'select'),
-  ...propertyConfig('Short Title', 'rich_text'),
-  ...propertyConfig('Tags', 'multi_select'),
-  ...propertyConfig('Title', 'rich_text'),
-  ...propertyConfig('URL', 'url'),
-  ...propertyConfig('Year', 'number'),
-  ...propertyConfig('Zotero URI', 'url'),
-} satisfies DatabaseProperties;
+const titleDefinition: PropertyDefinition = {
+  id: 'title',
+  name: '',
+  type: 'title',
+  writable: true,
+};
 
-function propertyConfig<N extends string>(
-  name: N,
-  type: 'date' | 'multi_select' | 'number' | 'rich_text' | 'select' | 'url',
-): Record<N, DatabasePropertyConfig<typeof type>> {
-  type SelectOptions = DatabasePropertyConfig<'select'>['select']['options'];
+function definition(
+  id: string,
+  name: string,
+  type: PropertyDefinition['type'],
+  extra: Partial<PropertyDefinition> = {},
+): PropertyDefinition {
+  return { id, name, type, writable: true, ...extra };
+}
 
-  const idNameDescription = { id: 'id', name, description: null };
+const propertyDefinitions = {
+  Abstract: definition('abstract', 'Abstract', 'text'),
+  Authors: definition('authors', 'Authors', 'text'),
+  Collections: definition('collections', 'Collections', 'text'),
+  Date: definition('date', 'Date', 'text'),
+  'Date Added': definition('dateAdded', 'Date Added', 'date'),
+  DOI: definition('doi', 'DOI', 'url'),
+  Editors: definition('editors', 'Editors', 'text'),
+  'File Path': definition('filePath', 'File Path', 'text'),
+  'Full Citation': definition('fullCitation', 'Full Citation', 'text'),
+  'In-Text Citation': definition('inTextCitation', 'In-Text Citation', 'text'),
+  'Item Type': definition('itemType', 'Item Type', 'label', {
+    labelSet: [{ id: 'journalArticle', name: fakeItemType }],
+  }),
+  'Short Title': definition('shortTitle', 'Short Title', 'text'),
+  Tags: definition('tags', 'Tags', 'text'),
+  Title: definition('title2', 'Title', 'text'),
+  URL: definition('url', 'URL', 'url'),
+  Year: definition('year', 'Year', 'number'),
+  'Zotero URI': definition('zoteroUri', 'Zotero URI', 'url'),
+};
 
-  switch (type) {
-    case 'date':
-      return keyValue(name, { ...idNameDescription, type, [type]: {} });
-    case 'multi_select':
-      return keyValue(name, {
-        ...idNameDescription,
-        type,
-        [type]: { options: [] as SelectOptions },
-      });
-    case 'number':
-      return keyValue(name, {
-        ...idNameDescription,
-        type,
-        [type]: { format: 'number' },
-      });
-    case 'rich_text':
-      return keyValue(name, { ...idNameDescription, type, [type]: {} });
-    case 'select':
-      return keyValue(name, {
-        ...idNameDescription,
-        type,
-        [type]: { options: [] as SelectOptions },
-      });
-    case 'url':
-      return keyValue(name, { ...idNameDescription, type, [type]: {} });
-    default: {
-      const _exhaustive: never = type;
-      throw new Error(`Unhandled type: ${String(_exhaustive)}`);
-    }
-  }
+function buildStructure(definitions: PropertyDefinition[]): Structure {
+  return {
+    id: 'fake-structure-id',
+    title: 'Fake Structure',
+    pluralName: 'Fake Structures',
+    propertyDefinitions: [titleDefinition, ...definitions],
+    labelColor: '#000000',
+    collections: [],
+  };
 }
 
 function setup() {
@@ -181,15 +170,13 @@ describe('buildProperties', () => {
 
         const result = await buildProperties({
           citationFormat: 'style',
-          databaseProperties: {},
+          structure: buildStructure([]),
           item,
           pageTitleFormat: format,
         });
 
         expect(result).toStrictEqual({
-          title: {
-            title: [{ text: { content: expected } }],
-          },
+          title: { type: 'title', title: { value: expected } },
         });
       });
     });
@@ -201,110 +188,80 @@ describe('buildProperties', () => {
 
       const result = await buildProperties({
         citationFormat: 'style',
-        databaseProperties: {},
+        structure: buildStructure([]),
         item,
         pageTitleFormat: PageTitleFormat.itemCitationKey,
       });
 
       expect(result).toStrictEqual({
-        title: {
-          title: [{ text: { content: fakeTitle } }],
-        },
+        title: { type: 'title', title: { value: fakeTitle } },
       });
     });
   });
 
-  it('returns only properties that exist in database', async () => {
+  it('returns only properties that exist in structure', async () => {
     const { item } = setup();
 
     const result = await buildProperties({
       citationFormat: 'style',
-      databaseProperties: {
-        Authors: propertyConfigs.Authors,
-        Year: propertyConfigs.Year,
-      },
+      structure: buildStructure([
+        propertyDefinitions.Authors,
+        propertyDefinitions.Year,
+      ]),
       item,
       pageTitleFormat: PageTitleFormat.itemTitle,
     });
 
-    const expected: DatabaseRequestProperties = {
-      title: {
-        title: [{ text: { content: fakeTitle } }],
-      },
-      Authors: {
-        rich_text: [
-          {
-            text: {
-              content: `${fakeLastName1}, ${fakeFirstName1}\n${fakeLastName2}, ${fakeFirstName2}`,
-            },
-          },
-        ],
-        type: 'rich_text',
-      },
-      Year: {
-        number: fakeYear,
-        type: 'number',
-      },
-    };
-
-    expect(result).toStrictEqual(expected);
-  });
-
-  it('exludes properties that do not have corect type', async () => {
-    const { item } = setup();
-
-    const result = await buildProperties({
-      citationFormat: 'style',
-      databaseProperties: {
-        Authors: {
-          ...propertyConfigs.Authors,
-          type: 'checkbox',
-          checkbox: {},
+    const expected: WritableObjectProperties = {
+      title: { type: 'title', title: { value: fakeTitle } },
+      authors: {
+        type: 'text',
+        text: {
+          value: `${fakeLastName1}, ${fakeFirstName1}\n${fakeLastName2}, ${fakeFirstName2}`,
         },
-        Year: propertyConfigs.Year,
       },
-      item,
-      pageTitleFormat: PageTitleFormat.itemTitle,
-    });
-
-    const expected: DatabaseRequestProperties = {
-      title: {
-        title: [{ text: { content: fakeTitle } }],
-      },
-      Year: {
-        number: fakeYear,
-        type: 'number',
-      },
+      year: { type: 'number', number: { value: fakeYear } },
     };
 
     expect(result).toStrictEqual(expected);
   });
 
-  it('returns truncated value when collection name exceeds limit', async () => {
-    const { collection, item } = setup();
-
-    const nameWithOver100Characters =
-      'This name has 27 characters ▸ This name has 27 characters ▸ This name has 27 characters ▸ This name has 27 characters';
-    const truncatedName =
-      'This name has 27 characters ▸ This name has 27 cha…e has 27 characters ▸ This name has 27 characters';
-
-    collection.name = nameWithOver100Characters;
+  it('excludes properties that do not have correct type', async () => {
+    const { item } = setup();
 
     const result = await buildProperties({
       citationFormat: 'style',
-      databaseProperties: {
-        Collections: propertyConfigs.Collections,
-      },
+      structure: buildStructure([
+        { ...propertyDefinitions.Authors, type: 'number' },
+        propertyDefinitions.Year,
+      ]),
       item,
-      pageTitleFormat: PageTitleFormat.itemCitationKey,
+      pageTitleFormat: PageTitleFormat.itemTitle,
+    });
+
+    const expected: WritableObjectProperties = {
+      title: { type: 'title', title: { value: fakeTitle } },
+      year: { type: 'number', number: { value: fakeYear } },
+    };
+
+    expect(result).toStrictEqual(expected);
+  });
+
+  it('excludes label options that do not match any existing labelSet option', async () => {
+    const { item } = setup();
+
+    const result = await buildProperties({
+      citationFormat: 'style',
+      structure: buildStructure([
+        { ...propertyDefinitions['Item Type'], labelSet: [] },
+      ]),
+      item,
+      pageTitleFormat: PageTitleFormat.itemTitle,
     });
 
     expect(result).toStrictEqual(
       expect.objectContaining({
-        Collections: {
-          multi_select: [{ name: truncatedName }],
-          type: 'multi_select',
-        },
+        itemType: { type: 'label', label: [] },
       }),
     );
   });
@@ -314,89 +271,41 @@ describe('buildProperties', () => {
 
     const result = await buildProperties({
       citationFormat: 'style',
-      databaseProperties: propertyConfigs,
+      structure: buildStructure(Object.values(propertyDefinitions)),
       item,
       pageTitleFormat: PageTitleFormat.itemTitle,
     });
 
-    const expected: DatabaseRequestProperties = {
-      title: {
-        title: [{ text: { content: fakeTitle } }],
+    const expected: WritableObjectProperties = {
+      title: { type: 'title', title: { value: fakeTitle } },
+      abstract: { type: 'text', text: { value: fakeAbstract } },
+      authors: {
+        type: 'text',
+        text: {
+          value: `${fakeLastName1}, ${fakeFirstName1}\n${fakeLastName2}, ${fakeFirstName2}`,
+        },
       },
-      Abstract: {
-        rich_text: [{ text: { content: fakeAbstract } }],
-        type: 'rich_text',
-      },
-      Authors: {
-        rich_text: [
-          {
-            text: {
-              content: `${fakeLastName1}, ${fakeFirstName1}\n${fakeLastName2}, ${fakeFirstName2}`,
-            },
-          },
-        ],
-        type: 'rich_text',
-      },
-      Collections: {
-        multi_select: [{ name: fakeCollectionName }],
-        type: 'multi_select',
-      },
-      DOI: {
-        url: null,
-        type: 'url',
-      },
-      Date: {
-        rich_text: [{ text: { content: fakeDate } }],
-        type: 'rich_text',
-      },
-      'Date Added': {
-        date: null,
+      collections: { type: 'text', text: { value: fakeCollectionName } },
+      date: { type: 'text', text: { value: fakeDate } },
+      dateAdded: {
         type: 'date',
+        date: { dateResolution: 'day', start: null },
       },
-      Editors: {
-        rich_text: [],
-        type: 'rich_text',
+      doi: { type: 'url', url: { value: null } },
+      editors: { type: 'text', text: { value: null } },
+      filePath: { type: 'text', text: { value: null } },
+      fullCitation: { type: 'text', text: { value: fakeFullCitation } },
+      inTextCitation: { type: 'text', text: { value: fakeInTextCitation } },
+      itemType: {
+        type: 'label',
+        label: [{ id: 'journalArticle', name: fakeItemType }],
       },
-      'File Path': {
-        rich_text: [],
-        type: 'rich_text',
-      },
-      'Full Citation': {
-        rich_text: [{ text: { content: fakeFullCitation } }],
-        type: 'rich_text',
-      },
-      'In-Text Citation': {
-        rich_text: [{ text: { content: fakeInTextCitation } }],
-        type: 'rich_text',
-      },
-      'Item Type': {
-        select: { name: fakeItemType },
-        type: 'select',
-      },
-      'Short Title': {
-        rich_text: [{ text: { content: fakeShortTitle } }],
-        type: 'rich_text',
-      },
-      Tags: {
-        multi_select: [{ name: fakeTag }],
-        type: 'multi_select',
-      },
-      Title: {
-        rich_text: [{ text: { content: fakeTitle } }],
-        type: 'rich_text',
-      },
-      URL: {
-        url: null,
-        type: 'url',
-      },
-      Year: {
-        number: fakeYear,
-        type: 'number',
-      },
-      'Zotero URI': {
-        url: fakeURI,
-        type: 'url',
-      },
+      shortTitle: { type: 'text', text: { value: fakeShortTitle } },
+      tags: { type: 'text', text: { value: fakeTag } },
+      title2: { type: 'text', text: { value: fakeTitle } },
+      url: { type: 'url', url: { value: null } },
+      year: { type: 'number', number: { value: fakeYear } },
+      zoteroUri: { type: 'url', url: { value: fakeURI } },
     };
 
     expect(result).toStrictEqual(expected);

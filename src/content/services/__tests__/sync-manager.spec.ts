@@ -14,7 +14,7 @@ import {
   mockZoteroPrefs,
   zoteroMock,
 } from '../../../../test/utils';
-import { NotionAuthManager } from '../../auth';
+import { CapacitiesAuthManager } from '../../auth';
 import { getSyncedNotes } from '../../data/item-data';
 import { saveSyncConfigs } from '../../prefs/collection-sync-config';
 import { NoteroPref, setNoteroPref } from '../../prefs/notero-pref';
@@ -144,10 +144,10 @@ function setup({
   mockZoteroPrefs();
 
   const eventManager = new EventManager();
-  const notionAuthManager = new NotionAuthManager();
+  const capacitiesAuthManager = new CapacitiesAuthManager();
   const syncManager = new SyncManager();
 
-  const dependencies = { eventManager, notionAuthManager };
+  const dependencies = { eventManager, capacitiesAuthManager };
 
   syncManager.startup({ dependencies, pluginInfo });
 

@@ -1,37 +1,35 @@
-import type { Client } from '@notionhq/client';
-
-import { NotionAuthManager } from './auth';
+import { CapacitiesAuthManager } from './auth';
 import type { PluginInfo } from './plugin-info';
 import {
   EventManager,
   PreferencePaneManager,
-  ProtocolHandlerExtension,
   Service,
   ServiceParams,
   SyncManager,
   UIManager,
 } from './services';
-import { findDuplicates } from './sync/find-duplicates';
-import { getNotionClient } from './sync/notion-client';
+import {
+  CapacitiesClient,
+  getCapacitiesClient,
+} from './sync/capacities-client';
 import { logger } from './utils';
 
 export class Notero {
   public readonly eventManager: EventManager;
-  public readonly notionAuthManager: NotionAuthManager;
+  public readonly capacitiesAuthManager: CapacitiesAuthManager;
 
   private readonly preferencePaneManager: PreferencePaneManager;
   private readonly services: Service[];
 
   public constructor() {
     this.eventManager = new EventManager();
-    this.notionAuthManager = new NotionAuthManager();
+    this.capacitiesAuthManager = new CapacitiesAuthManager();
     this.preferencePaneManager = new PreferencePaneManager();
 
     this.services = [
       this.eventManager,
-      this.notionAuthManager,
+      this.capacitiesAuthManager,
       this.preferencePaneManager,
-      new ProtocolHandlerExtension(),
       new SyncManager(),
       new UIManager(),
     ];
@@ -51,8 +49,8 @@ export class Notero {
 
   private async startServices(pluginInfo: PluginInfo) {
     const dependencies: ServiceParams['dependencies'] = {
+      capacitiesAuthManager: this.capacitiesAuthManager,
       eventManager: this.eventManager,
-      notionAuthManager: this.notionAuthManager,
       preferencePaneManager: this.preferencePaneManager,
     };
 
@@ -113,19 +111,13 @@ export class Notero {
     logger.groupEnd();
   }
 
-  public async getNotionClient(): Promise<Client> {
+  public async getCapacitiesClient(): Promise<CapacitiesClient> {
     const mainWindow = Zotero.getMainWindow();
     if (!mainWindow) throw new Error('No window available');
 
-    const authToken = await this.notionAuthManager.getRequiredAuthToken();
+    const authToken = await this.capacitiesAuthManager.getRequiredAuthToken();
 
-    return getNotionClient(authToken, mainWindow);
-  }
-
-  public async findDuplicates(
-    propertyName: string = 'title',
-  ): Promise<Set<string>> {
-    return findDuplicates(await this.getNotionClient(), propertyName);
+    return getCapacitiesClient(authToken, mainWindow);
   }
 }
 

@@ -15,7 +15,6 @@ export async function generateInstallManifest() {
   console.log(`Generating ${relativeToRoot(manifestJsonPath)}`);
 
   const manifestJson = {
-    author: pkg.author.name,
     description: pkg.description,
     homepage_url: pkg.homepage,
     icons: pkg.xpi.icons,

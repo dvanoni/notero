@@ -1,6 +1,6 @@
 import { EventEmitter } from 'eventemitter3';
 
-import type { NotionConnection } from '../auth';
+import type { CapacitiesConnection } from '../auth';
 import { logger } from '../utils';
 
 import type { Service } from './service';
@@ -34,8 +34,8 @@ export type NotifierEventParams = Parameters<NotifierEventListener>;
 
 type EventTypes = {
   'notifier-event': NotifierEventListener;
-  'notion-connection.add': (connection: NotionConnection) => void;
-  'notion-connection.remove': (connection: NotionConnection) => void;
+  'capacities-connection.add': (connection: CapacitiesConnection) => void;
+  'capacities-connection.remove': (connection: CapacitiesConnection) => void;
   'request-sync-collection': (collection: Zotero.Collection) => void;
   'request-sync-items': (items: Zotero.Item[]) => void;
 };

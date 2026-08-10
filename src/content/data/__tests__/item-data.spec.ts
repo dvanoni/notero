@@ -4,33 +4,15 @@ import { createZoteroItemMock, mockZoteroPrefs } from '../../../../test/utils';
 import { NoteroPref, setNoteroPref } from '../../prefs/notero-pref';
 import {
   getSyncedNotesFromAttachment,
-  saveNotionLinkAttachment,
+  saveCapacitiesLinkAttachment,
 } from '../item-data';
 
+const fakeSpaceID = '11111111-1111-1111-1111-111111111111';
+const fakeObjectID = '22222222-2222-2222-2222-222222222222';
+const fakeOtherObjectID = '33333333-3333-3333-3333-333333333333';
+
 describe('getSyncedNotesFromAttachment', () => {
-  it('loads expected data when synced notes are saved in original format', () => {
-    const json = JSON.stringify({
-      containerBlockID: 'container',
-      noteBlockIDs: {
-        keyA: 'blockA',
-        keyB: 'blockB',
-      },
-    });
-    const attachment = createZoteroItemMock();
-    attachment.getNote.mockReturnValue(
-      `<pre id="notero-synced-notes">${json}</pre>`,
-    );
-
-    expect(getSyncedNotesFromAttachment(attachment)).toStrictEqual({
-      containerBlockID: 'container',
-      notes: {
-        keyA: { blockID: 'blockA' },
-        keyB: { blockID: 'blockB' },
-      },
-    });
-  });
-
-  it('loads expected data when synced notes are saved in updated format', () => {
+  it('loads expected data when synced notes are saved', () => {
     const dateA = new Date(1000000000000);
     const dateB = new Date(1777777777777);
     const json = JSON.stringify({
@@ -55,21 +37,20 @@ describe('getSyncedNotesFromAttachment', () => {
   });
 });
 
-describe('saveNotionLinkAttachment', () => {
+describe('saveCapacitiesLinkAttachment', () => {
   it('preserves synced notes when `syncNotes` is disabled', async () => {
     mockZoteroPrefs();
     setNoteroPref(NoteroPref.syncNotes, false);
-    const pageURL =
-      'notion://www.notion.so/page-00000000000000000000000000000000';
+    const objectURL = `https://app.capacities.io/${fakeSpaceID}/${fakeObjectID}`;
     const syncedNotes =
       '<pre id="notero-synced-notes">{"existing":"notes"}</pre>';
     const item = createZoteroItemMock();
     const attachment = createZoteroItemMock();
     item.getAttachments.mockReturnValue([attachment.id]);
-    attachment.getField.calledWith('url').mockReturnValue(pageURL);
+    attachment.getField.calledWith('url').mockReturnValue(objectURL);
     attachment.getNote.mockReturnValue(syncedNotes);
 
-    await saveNotionLinkAttachment(item, pageURL);
+    await saveCapacitiesLinkAttachment(item, objectURL);
 
     // oxlint-disable-next-line typescript/unbound-method
     expect(attachment.setNote).toHaveBeenCalledExactlyOnceWith(
@@ -77,20 +58,19 @@ describe('saveNotionLinkAttachment', () => {
     );
   });
 
-  it('preserves synced notes when page ID does not change', async () => {
+  it('preserves synced notes when object ID does not change', async () => {
     mockZoteroPrefs();
     setNoteroPref(NoteroPref.syncNotes, true);
-    const pageURL =
-      'notion://www.notion.so/page-00000000000000000000000000000000';
+    const objectURL = `https://app.capacities.io/${fakeSpaceID}/${fakeObjectID}`;
     const syncedNotes =
       '<pre id="notero-synced-notes">{"existing":"notes"}</pre>';
     const item = createZoteroItemMock();
     const attachment = createZoteroItemMock();
     item.getAttachments.mockReturnValue([attachment.id]);
-    attachment.getField.calledWith('url').mockReturnValue(pageURL);
+    attachment.getField.calledWith('url').mockReturnValue(objectURL);
     attachment.getNote.mockReturnValue(syncedNotes);
 
-    await saveNotionLinkAttachment(item, pageURL);
+    await saveCapacitiesLinkAttachment(item, objectURL);
 
     // oxlint-disable-next-line typescript/unbound-method
     expect(attachment.setNote).toHaveBeenCalledExactlyOnceWith(
@@ -98,22 +78,20 @@ describe('saveNotionLinkAttachment', () => {
     );
   });
 
-  it('resets synced notes when page ID changes', async () => {
+  it('resets synced notes when object ID changes', async () => {
     mockZoteroPrefs();
     setNoteroPref(NoteroPref.syncNotes, true);
-    const oldPageURL =
-      'notion://www.notion.so/old-page-00000000000000000000000000000000';
-    const newPageURL =
-      'notion://www.notion.so/new-page-77777777777777777777777777777777';
+    const oldObjectURL = `https://app.capacities.io/${fakeSpaceID}/${fakeObjectID}`;
+    const newObjectURL = `https://app.capacities.io/${fakeSpaceID}/${fakeOtherObjectID}`;
     const syncedNotes =
       '<pre id="notero-synced-notes">{"existing":"notes"}</pre>';
     const item = createZoteroItemMock();
     const attachment = createZoteroItemMock();
     item.getAttachments.mockReturnValue([attachment.id]);
-    attachment.getField.calledWith('url').mockReturnValue(oldPageURL);
+    attachment.getField.calledWith('url').mockReturnValue(oldObjectURL);
     attachment.getNote.mockReturnValue(syncedNotes);
 
-    await saveNotionLinkAttachment(item, newPageURL);
+    await saveCapacitiesLinkAttachment(item, newObjectURL);
 
     // oxlint-disable-next-line typescript/unbound-method
     expect(attachment.setNote).toHaveBeenCalledExactlyOnceWith(

@@ -1,94 +1,77 @@
-import type { OauthTokenResponse } from '@notionhq/client/build/src/api-endpoints';
 import { z } from 'zod';
 
 import { logger } from '../utils';
 
-const NOTION_API_DOMAIN = 'api.notion.com';
-const NOTION_API_ORIGIN = `https://${NOTION_API_DOMAIN}`;
+const CAPACITIES_API_ORIGIN = 'https://api.capacities.io';
+const HTTP_REALM = 'captero/api-token';
 
-const notionConnectionSchema = z.object({
-  access_token: z.string(),
-  bot_id: z.string(),
-  duplicated_template_id: z.string().nullable(),
-  workspace_icon: z.string().nullable(),
-  workspace_id: z.string(),
-  workspace_name: z.string().nullable(),
-}) satisfies z.ZodType<Omit<OauthTokenResponse, 'owner' | 'token_type'>>;
+const capacitiesConnectionSchema = z.object({
+  apiToken: z.string(),
+  spaceId: z.string(),
+  spaceTitle: z.string(),
+});
 
-export type NotionConnection = z.infer<typeof notionConnectionSchema>;
+export type CapacitiesConnection = z.infer<typeof capacitiesConnectionSchema>;
 
-function getHttpRealm(botId: string): string {
-  return `notero/${botId}@${NOTION_API_DOMAIN}`;
-}
-
-function buildLoginInfo(tokenResponse: OauthTokenResponse): XPCOM.nsILoginInfo {
+function buildLoginInfo(connection: CapacitiesConnection): XPCOM.nsILoginInfo {
   const nsLoginInfo = Components.Constructor(
     '@mozilla.org/login-manager/loginInfo;1',
     Components.interfaces.nsILoginInfo,
     'init',
   );
   return new nsLoginInfo(
-    NOTION_API_ORIGIN,
+    CAPACITIES_API_ORIGIN,
     null,
-    getHttpRealm(tokenResponse.bot_id),
-    tokenResponse.bot_id,
-    JSON.stringify(tokenResponse),
+    HTTP_REALM,
+    connection.spaceId,
+    JSON.stringify(connection),
   );
 }
 
-async function findLogin(
-  botId: string,
-): Promise<XPCOM.nsILoginInfo | undefined> {
+async function findLogin(): Promise<XPCOM.nsILoginInfo | undefined> {
   const logins = await Services.logins.searchLoginsAsync({
-    origin: NOTION_API_ORIGIN,
-    httpRealm: getHttpRealm(botId),
+    origin: CAPACITIES_API_ORIGIN,
+    httpRealm: HTTP_REALM,
   });
   return logins[0];
 }
 
-export async function getAllConnections(): Promise<NotionConnection[]> {
-  const logins = await Services.logins.searchLoginsAsync({
-    origin: NOTION_API_ORIGIN,
-  });
+export async function getConnection(): Promise<
+  CapacitiesConnection | undefined
+> {
+  const login = await findLogin();
+  if (!login) return undefined;
 
-  return logins
-    .map((login) => {
-      try {
-        return notionConnectionSchema.parse(JSON.parse(login.password));
-      } catch (error) {
-        logger.warn(
-          'Encountered invalid login with HTTP realm:',
-          login.httpRealm,
-          error,
-        );
-        return null;
-      }
-    })
-    .filter(Boolean);
+  try {
+    return capacitiesConnectionSchema.parse(JSON.parse(login.password));
+  } catch (error) {
+    logger.warn('Encountered invalid Capacities connection:', error);
+    return undefined;
+  }
 }
 
 export async function saveConnection(
-  tokenResponse: OauthTokenResponse,
+  connection: CapacitiesConnection,
 ): Promise<void> {
-  const loginInfo = buildLoginInfo(tokenResponse);
-  const existingLogin = await findLogin(tokenResponse.bot_id);
+  const loginInfo = buildLoginInfo(connection);
+  const existingLogin = await findLogin();
 
   if (existingLogin) {
-    logger.debug('Updating existing login for bot ID:', tokenResponse.bot_id);
+    logger.debug('Updating existing Capacities connection');
     Services.logins.modifyLogin(existingLogin, loginInfo);
   } else {
-    logger.debug('Adding new login for bot ID:', tokenResponse.bot_id);
+    logger.debug('Adding new Capacities connection');
     await Services.logins.addLoginAsync(loginInfo);
   }
 }
 
-export async function removeConnection(botId: string): Promise<void> {
-  const login = await findLogin(botId);
+export async function removeConnection(): Promise<void> {
+  const login = await findLogin();
 
   if (login) {
-    logger.debug('Removing login for bot ID:', botId);
+    logger.debug('Removing Capacities connection');
     Services.logins.removeLogin(login);
   } else {
-    logger.warn('No login found for bot ID:', botId);
+    logger.warn('No Capacities connection found to remove');
   }
 }

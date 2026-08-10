@@ -1,15 +1,14 @@
-import { APIErrorCode, type Client, isFullDatabase } from '@notionhq/client';
-import type { DatabaseObjectResponse } from '@notionhq/client/build/src/api-endpoints';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import type { createRoot } from 'react-dom/client';
 
 import type { FluentMessageId } from '../../locale/fluent-types';
-import type { NotionAuthManager } from '../auth';
-import { LocalizableError } from '../errors';
-import type { EventManager } from '../services';
-import { getNotionClient } from '../sync/notion-client';
-import { isNotionErrorWithCode, normalizeID } from '../sync/notion-utils';
+import type { CapacitiesAuthManager } from '../auth';
+import {
+  getCapacitiesClient,
+  isCapacitiesUnauthorizedError,
+} from '../sync/capacities-client';
+import type { Structure } from '../sync/capacities-types';
 import {
   createXULElement,
   getGlobalNotero,
@@ -47,90 +46,91 @@ function setMenuItems(menuList: XUL.MenuListElement, items: MenuItem[]): void {
 }
 
 class Preferences {
-  private eventManager!: EventManager;
-  private notionAuthManager!: NotionAuthManager;
-  private notionConnectionContainer!: XUL.XULElement;
-  private notionConnectionSpinner!: XUL.XULElement;
-  private notionConnectButton!: XUL.ButtonElement;
-  private notionDisconnectButton!: XUL.ButtonElement;
-  private notionUpgradeConnectionButton!: XUL.ButtonElement;
-  private notionDatabaseMenu!: XUL.MenuListElement;
-  private notionError!: XUL.LabelElement;
-  private notionTokenContainer!: XUL.XULElement;
-  private notionWorkspaceLabel!: XUL.LabelElement;
+  private capacitiesAuthManager!: CapacitiesAuthManager;
+  private capacitiesConnectButton!: XUL.ButtonElement;
+  private capacitiesConnectionContainer!: XUL.XULElement;
+  private capacitiesConnectionSpinner!: XUL.XULElement;
+  private capacitiesDisconnectButton!: XUL.ButtonElement;
+  private capacitiesCollectionMenu!: XUL.MenuListElement;
+  private capacitiesError!: XUL.LabelElement;
+  private capacitiesSpaceLabel!: XUL.LabelElement;
+  private capacitiesStructureMenu!: XUL.MenuListElement;
+  private capacitiesTokenContainer!: XUL.XULElement;
+  private capacitiesTokenInput!: HTMLInputElement;
   private pageTitleFormatMenu!: XUL.MenuListElement;
+
+  private structures: Structure[] = [];
 
   public async init(): Promise<void> {
     await Zotero.uiReadyPromise;
 
-    this.eventManager = getGlobalNotero().eventManager;
-    this.notionAuthManager = getGlobalNotero().notionAuthManager;
+    this.capacitiesAuthManager = getGlobalNotero().capacitiesAuthManager;
 
     /* oxlint-disable typescript/no-non-null-assertion */
-    this.notionConnectionContainer = getXULElementById(
-      'notero-notionConnection-container',
+    this.capacitiesTokenContainer = getXULElementById(
+      'notero-capacitiesToken-container',
     )!;
-    this.notionConnectionSpinner = getXULElementById(
-      'notero-notionConnection-spinner',
+    // oxlint-disable-next-line typescript/no-unsafe-type-assertion
+    this.capacitiesTokenInput = document.getElementById(
+      'notero-capacitiesToken',
+    ) as HTMLInputElement;
+    this.capacitiesConnectButton = getXULElementById(
+      'notero-capacitiesConnect',
     )!;
-    this.notionConnectButton = getXULElementById('notero-notionConnect')!;
-    this.notionDisconnectButton = getXULElementById('notero-notionDisconnect')!;
-    this.notionUpgradeConnectionButton = getXULElementById(
-      'notero-notionUpgradeConnection',
+    this.capacitiesConnectionSpinner = getXULElementById(
+      'notero-capacitiesConnection-spinner',
     )!;
-    this.notionDatabaseMenu = getXULElementById('notero-notionDatabase')!;
-    this.notionError = getXULElementById('notero-notionError')!;
-    this.notionTokenContainer = getXULElementById(
-      'notero-notionToken-container',
+    this.capacitiesConnectionContainer = getXULElementById(
+      'notero-capacitiesConnection-container',
     )!;
-    this.notionWorkspaceLabel = getXULElementById('notero-notionWorkspace')!;
+    this.capacitiesDisconnectButton = getXULElementById(
+      'notero-capacitiesDisconnect',
+    )!;
+    this.capacitiesStructureMenu = getXULElementById(
+      'notero-capacitiesStructure',
+    )!;
+    this.capacitiesCollectionMenu = getXULElementById(
+      'notero-capacitiesCollection',
+    )!;
+    this.capacitiesError = getXULElementById('notero-capacitiesError')!;
+    this.capacitiesSpaceLabel = getXULElementById('notero-capacitiesSpace')!;
     this.pageTitleFormatMenu = getXULElementById('notero-pageTitleFormat')!;
     /* oxlint-enable typescript/no-non-null-assertion */
 
     /* oxlint-disable typescript/no-misused-promises */
-    this.notionConnectButton.addEventListener('command', this.connectNotion);
-    this.notionDisconnectButton.addEventListener(
+    this.capacitiesConnectButton.addEventListener(
       'command',
-      this.disconnectNotion,
+      this.connectCapacities,
     );
-    this.notionUpgradeConnectionButton.addEventListener(
+    this.capacitiesDisconnectButton.addEventListener(
       'command',
-      this.upgradeNotionConnection,
+      this.disconnectCapacities,
     );
-    this.notionTokenContainer.addEventListener('input', this.handleTokenInput);
     /* oxlint-enable typescript/no-misused-promises */
-
-    window.addEventListener('unload', () => {
-      this.deinit();
-    });
+    this.capacitiesStructureMenu.addEventListener(
+      'command',
+      this.handleStructureChange,
+    );
 
     await this.initPageTitleFormatMenu();
     await this.initSyncConfigsTable();
 
     // Don't block window from loading while waiting for network responses
     setTimeout(() => {
-      void this.refreshNotionConnectionSection();
+      void this.refreshCapacitiesConnectionSection();
     }, 100);
-
-    this.eventManager.addListener(
-      'notion-connection.add',
-      this.handleNotionConnectionAdd,
-    );
-  }
-
-  private deinit(): void {
-    this.eventManager.removeListener(
-      'notion-connection.add',
-      this.handleNotionConnectionAdd,
-    );
   }
 
   private async showError(error: unknown): Promise<void> {
-    this.notionError.hidden = false;
-    this.notionError.value = await getLocalizedErrorMessage(
+    this.capacitiesError.hidden = false;
+    this.capacitiesError.value = await getLocalizedErrorMessage(
       error,
       document.l10n,
     );
+  }
+
+  private hideError(): void {
+    this.capacitiesError.hidden = true;
   }
 
   private async initPageTitleFormatMenu(): Promise<void> {
@@ -186,167 +186,114 @@ class Preferences {
     return Boolean(addon?.isActive);
   }
 
-  private handleNotionConnectionAdd = () => {
-    void this.refreshNotionConnectionSection();
-  };
+  private async refreshCapacitiesConnectionSection(): Promise<void> {
+    this.hideError();
 
-  private async refreshNotionConnectionSection(): Promise<void> {
-    const connection = await this.notionAuthManager.getFirstConnection();
-    const legacyToken = this.notionAuthManager.getLegacyAuthToken();
+    const connection = await this.capacitiesAuthManager.getConnection();
 
-    const authToken = connection?.access_token || legacyToken;
-
-    this.notionError.hidden = true;
-
-    if (!authToken) {
-      this.notionConnectButton.hidden = false;
-      this.notionConnectionContainer.hidden = true;
+    if (!connection) {
+      this.capacitiesTokenContainer.hidden = false;
+      this.capacitiesConnectionContainer.hidden = true;
       return;
     }
 
-    this.notionConnectionSpinner.setAttribute('status', 'animate');
-    this.notionTokenContainer.hidden = true;
+    this.capacitiesConnectionSpinner.setAttribute('status', 'animate');
+    this.capacitiesTokenContainer.hidden = true;
 
     try {
-      const notion = getNotionClient(authToken, window);
+      const capacities = getCapacitiesClient(connection.apiToken, window);
 
-      const user = await notion.users.me({});
-      const workspaceName =
-        (user.type === 'bot' && user.bot.workspace_name) || 'Connected';
-
-      document.l10n.setArgs(this.notionWorkspaceLabel, {
-        'workspace-name': workspaceName,
+      document.l10n.setArgs(this.capacitiesSpaceLabel, {
+        'space-name': connection.spaceTitle,
       });
 
-      this.notionConnectButton.hidden = true;
-      this.notionUpgradeConnectionButton.hidden = Boolean(connection);
-      this.notionConnectionContainer.hidden = false;
-      this.notionConnectionSpinner.removeAttribute('status');
+      this.structures = await capacities.getStructures();
 
-      await this.refreshNotionDatabaseMenu(notion);
+      this.capacitiesConnectionContainer.hidden = false;
+      this.capacitiesConnectionSpinner.removeAttribute('status');
+
+      this.refreshStructureMenu();
+      this.refreshCollectionMenu();
     } catch (error) {
       logger.error(error);
 
-      this.notionConnectionSpinner.removeAttribute('status');
+      this.capacitiesConnectionSpinner.removeAttribute('status');
       await this.showError(error);
 
-      if (isNotionErrorWithCode(error, APIErrorCode.Unauthorized)) {
-        this.notionConnectButton.hidden = false;
+      if (isCapacitiesUnauthorizedError(error)) {
+        this.capacitiesTokenContainer.hidden = false;
       }
     }
   }
 
-  private async refreshNotionDatabaseMenu(notion: Client): Promise<void> {
-    let menuItems: MenuItem[] = [];
+  private refreshStructureMenu(): void {
+    const menuItems: MenuItem[] = this.structures.map((structure) => ({
+      label: structure.title,
+      value: structure.id,
+    }));
 
-    this.notionDatabaseMenu.disabled = true;
-
-    try {
-      const databases = await this.retrieveNotionDatabases(notion);
-
-      menuItems = databases.map<MenuItem>((database) => {
-        const title = database.title.map((t) => t.plain_text).join('');
-        const icon =
-          database.icon?.type === 'emoji' ? database.icon.emoji : null;
-
-        return {
-          label: icon ? `${icon} ${title}` : title,
-          value: normalizeID(database.id),
-        };
-      });
-
-      this.notionDatabaseMenu.disabled = false;
-    } finally {
-      setMenuItems(this.notionDatabaseMenu, menuItems);
-    }
+    setMenuItems(this.capacitiesStructureMenu, menuItems);
+    this.capacitiesStructureMenu.disabled = menuItems.length === 0;
   }
 
-  private async retrieveNotionDatabases(
-    notion: Client,
-  ): Promise<DatabaseObjectResponse[]> {
-    const response = await notion.search({
-      filter: { property: 'object', value: 'database' },
-    });
-
-    const databases = response.results.filter(isFullDatabase);
-
-    if (databases.length === 0) {
-      throw new LocalizableError(
-        'No Notion databases are accessible',
-        'notero-error-no-notion-databases',
-      );
-    }
-
-    return databases;
-  }
-
-  private connectNotion = async (event: XUL.CommandEvent): Promise<void> => {
-    // oxlint-disable-next-line typescript/no-unsafe-type-assertion
-    const button = event.target as XUL.ButtonElement;
-
-    button.disabled = true;
-
-    window.addEventListener(
-      'blur',
-      () => {
-        button.disabled = false;
-        this.notionTokenContainer.hidden = false;
-      },
-      { once: true },
+  private refreshCollectionMenu(): void {
+    const selectedStructure = this.structures.find(
+      (structure) => structure.id === this.capacitiesStructureMenu.value,
     );
 
-    await this.notionAuthManager.openLogin();
+    const menuItems: MenuItem[] = [
+      { l10nId: 'notero-preferences-capacities-collection-default', value: '' },
+      ...(selectedStructure?.collections.map((collection) => ({
+        label: collection.title,
+        value: collection.id,
+      })) || []),
+    ];
+
+    setMenuItems(this.capacitiesCollectionMenu, menuItems);
+    this.capacitiesCollectionMenu.disabled = !selectedStructure;
+  }
+
+  private handleStructureChange = (): void => {
+    this.refreshCollectionMenu();
   };
 
-  private disconnectNotion = async (): Promise<void> => {
-    const dialogTitle =
-      (await document.l10n.formatValue(
-        'notero-preferences-notion-disconnect-dialog-title',
-      )) || 'Disconnect Notion Workspace';
-    const dialogText =
-      (await document.l10n.formatValue(
-        'notero-preferences-notion-disconnect-dialog-text',
-      )) || 'Disconnect workspace';
+  private connectCapacities = async (): Promise<void> => {
+    const apiToken = this.capacitiesTokenInput.value.trim();
+    if (!apiToken) return;
 
-    const confirmed = Services.prompt.confirm(null, dialogTitle, dialogText);
-    if (!confirmed) return;
+    this.hideError();
+    this.capacitiesConnectButton.disabled = true;
+    this.capacitiesConnectionSpinner.setAttribute('status', 'animate');
 
-    await this.notionAuthManager.removeAllConnections();
-
-    await this.refreshNotionConnectionSection();
-  };
-
-  private upgradeNotionConnection = async (
-    event: XUL.CommandEvent,
-  ): Promise<void> => {
-    const dialogTitle =
-      (await document.l10n.formatValue(
-        'notero-preferences-notion-upgrade-dialog-title',
-      )) || 'Upgrade Notion Connection';
-    const dialogText =
-      (await document.l10n.formatValue(
-        'notero-preferences-notion-upgrade-dialog-text',
-      )) || 'Upgrade connection';
-
-    const confirmed = Services.prompt.confirm(null, dialogTitle, dialogText);
-    if (!confirmed) return;
-
-    // Ensure window blur listener works as expected
-    setTimeout(() => {
-      void this.connectNotion(event);
-    }, 100);
-  };
-
-  private handleTokenInput = async (event: Event): Promise<void> => {
-    // oxlint-disable-next-line typescript/no-unsafe-type-assertion
-    const tokenInput = (event.target as HTMLInputElement).value.trim();
-    const params = new URLSearchParams(tokenInput);
     try {
-      await this.notionAuthManager.handleTokenResponse(params);
+      await this.capacitiesAuthManager.connect(apiToken, window);
+      this.capacitiesTokenInput.value = '';
+      await this.refreshCapacitiesConnectionSection();
     } catch (error) {
       logger.error(error);
+      this.capacitiesConnectionSpinner.removeAttribute('status');
       await this.showError(error);
+    } finally {
+      this.capacitiesConnectButton.disabled = false;
     }
+  };
+
+  private disconnectCapacities = async (): Promise<void> => {
+    const dialogTitle =
+      (await document.l10n.formatValue(
+        'notero-preferences-capacities-disconnect-dialog-title',
+      )) || 'Disconnect Capacities';
+    const dialogText =
+      (await document.l10n.formatValue(
+        'notero-preferences-capacities-disconnect-dialog-text',
+      )) || 'Disconnect space';
+
+    const confirmed = Services.prompt.confirm(null, dialogTitle, dialogText);
+    if (!confirmed) return;
+
+    await this.capacitiesAuthManager.disconnect();
+
+    await this.refreshCapacitiesConnectionSection();
   };
 }
 

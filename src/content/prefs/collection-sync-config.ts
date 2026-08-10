@@ -3,7 +3,6 @@ import { isObject, logger } from '../utils';
 import { getNoteroPref, NoteroPref, setNoteroPref } from './notero-pref';
 
 export type CollectionSyncConfig = {
-  notionOptionID?: string;
   syncEnabled: boolean;
 };
 

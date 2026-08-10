@@ -1,5 +1,8 @@
-import { NOTION_TAG_NAME } from '../constants';
-import { getPageIDFromURL, isNotionPageURL } from '../sync/notion-utils';
+import { CAPACITIES_TAG_NAME } from '../constants';
+import {
+  isCapacitiesObjectURL,
+  getObjectIDFromURL,
+} from '../sync/capacities-utils';
 import { isObject } from '../utils';
 
 const SYNCED_NOTES_ID = 'notero-synced-notes';
@@ -14,7 +17,7 @@ export type SyncedNotes = {
   };
 };
 
-function getAllNotionLinkAttachments(item: Zotero.Item): Zotero.Item[] {
+function getAllCapacitiesLinkAttachments(item: Zotero.Item): Zotero.Item[] {
   const attachmentIDs = item
     .getAttachments(false)
     .slice()
@@ -22,26 +25,26 @@ function getAllNotionLinkAttachments(item: Zotero.Item): Zotero.Item[] {
     .toSorted((a, b) => b - a);
 
   return Zotero.Items.get(attachmentIDs).filter((attachment) =>
-    isNotionPageURL(attachment.getField('url')),
+    isCapacitiesObjectURL(attachment.getField('url')),
   );
 }
 
-export function getNotionLinkAttachment(
+export function getCapacitiesLinkAttachment(
   item: Zotero.Item,
 ): Zotero.Item | undefined {
-  return getAllNotionLinkAttachments(item)[0];
+  return getAllCapacitiesLinkAttachments(item)[0];
 }
 
-export function getNotionPageID(item: Zotero.Item): string | undefined {
-  const notionURL = getNotionLinkAttachment(item)?.getField('url');
-  return notionURL && getPageIDFromURL(notionURL);
+export function getCapacitiesObjectID(item: Zotero.Item): string | undefined {
+  const objectURL = getCapacitiesLinkAttachment(item)?.getField('url');
+  return objectURL && getObjectIDFromURL(objectURL);
 }
 
-export async function saveNotionLinkAttachment(
+export async function saveCapacitiesLinkAttachment(
   item: Zotero.Item,
   url: string,
 ): Promise<void> {
-  const attachments = getAllNotionLinkAttachments(item);
+  const attachments = getAllCapacitiesLinkAttachments(item);
 
   if (attachments.length > 1) {
     const attachmentIDs = attachments.slice(1).map(({ id }) => id);
@@ -49,17 +52,17 @@ export async function saveNotionLinkAttachment(
   }
 
   let attachment = attachments[0];
-  let pageIDChanged = false;
+  let objectIDChanged = false;
 
   if (attachment) {
     const currentURL = attachment.getField('url');
-    pageIDChanged =
-      !currentURL || getPageIDFromURL(currentURL) !== getPageIDFromURL(url);
+    objectIDChanged =
+      !currentURL || getObjectIDFromURL(currentURL) !== getObjectIDFromURL(url);
     attachment.setField('url', url);
   } else {
     attachment = await Zotero.Attachments.linkFromURL({
       parentItemID: item.id,
-      title: 'Notion',
+      title: 'Capacities',
       url,
       saveOptions: {
         skipNotifier: true,
@@ -67,8 +70,8 @@ export async function saveNotionLinkAttachment(
     });
   }
 
-  const syncedNotes = pageIDChanged ? {} : undefined;
-  updateNotionLinkAttachmentNote(attachment, syncedNotes);
+  const syncedNotes = objectIDChanged ? {} : undefined;
+  updateCapacitiesLinkAttachmentNote(attachment, syncedNotes);
 
   await attachment.saveTx();
 }
@@ -81,7 +84,7 @@ function getSyncedNotesJSON(attachment: Zotero.Item): string | undefined {
 }
 
 export function getSyncedNotes(item: Zotero.Item): SyncedNotes {
-  const attachment = getNotionLinkAttachment(item);
+  const attachment = getCapacitiesLinkAttachment(item);
   if (!attachment) return {};
 
   return getSyncedNotesFromAttachment(attachment);
@@ -102,15 +105,6 @@ export function getSyncedNotesFromAttachment(
 
   if (typeof parsedValue.containerBlockID === 'string') {
     containerBlockID = parsedValue.containerBlockID;
-  }
-
-  if (isObject(parsedValue.noteBlockIDs)) {
-    // Convert from original format
-    Object.entries(parsedValue.noteBlockIDs).forEach(([key, value]) => {
-      if (typeof value === 'string') {
-        notes[key] = { blockID: value };
-      }
-    });
   }
 
   if (isObject(parsedValue.notes)) {
@@ -136,7 +130,7 @@ export async function saveSyncedNote(
   noteBlockID: string | undefined,
   noteItemKey: Zotero.DataObjectKey,
 ) {
-  const attachment = getNotionLinkAttachment(item);
+  const attachment = getCapacitiesLinkAttachment(item);
   if (!attachment) return;
 
   const { notes } = getSyncedNotesFromAttachment(attachment);
@@ -154,20 +148,20 @@ export async function saveSyncedNote(
     },
   };
 
-  updateNotionLinkAttachmentNote(attachment, syncedNotes);
+  updateCapacitiesLinkAttachmentNote(attachment, syncedNotes);
 
   await attachment.saveTx();
 }
 
-function updateNotionLinkAttachmentNote(
+function updateCapacitiesLinkAttachmentNote(
   attachment: Zotero.Item,
   syncedNotes?: SyncedNotes,
 ) {
   let note = `
 <h2 style="background-color: #ff666680;">Do not modify or delete!</h2>
 <p>This link attachment serves as a reference for
-<a href="https://github.com/dvanoni/notero">Notero</a>
-so that it can properly update the Notion page for this item.</p>
+<a href="https://github.com/oyvindbso/captero">Captero</a>
+so that it can properly update the Capacities object for this item.</p>
 <p>Last synced: ${new Date().toLocaleString()}</p>
 `;
 
@@ -182,7 +176,7 @@ so that it can properly update the Notion page for this item.</p>
   attachment.setNote(note);
 }
 
-export async function saveNotionTag(item: Zotero.Item): Promise<void> {
-  item.addTag(NOTION_TAG_NAME);
+export async function saveCapacitiesTag(item: Zotero.Item): Promise<void> {
+  item.addTag(CAPACITIES_TAG_NAME);
   await item.saveTx({ skipNotifier: true });
 }

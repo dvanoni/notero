@@ -19,9 +19,6 @@ importers:
 
   .:
     dependencies:
-      '@notionhq/client':
-        specifier: ^4.0.1
-        version: 4.0.1
       eventemitter3:
         specifier: ^5.0.4
         version: 5.0.4
@@ -454,10 +451,6 @@ packages:
     peerDependencies:
       '@emnapi/core': ^1.7.1
       '@emnapi/runtime': ^1.7.1
-
-  '@notionhq/client@4.0.1':
-    resolution: {integrity: sha512-SdILqiiThECLR2KDUOvl4JqRaJWBwDYaEw/f0qu+G6rKN/QUCkaJ84vN5MgBw1yKsMAsKxBlDazs3Jw6vv2ikA==}
-    engines: {node: '>=18'}
 
   '@oxc-project/runtime@0.127.0':
     resolution: {integrity: sha512-UQYLxAhDDPHm++szfa4z0RTdcPq5vaywrAoEA2n1YaAKeanXQdjHsoT6x1gP3U97RN8LZ7yHsSOrKPCcA6mCqw==}
@@ -2665,8 +2658,6 @@ snapshots:
       '@emnapi/runtime': 1.10.0
       '@tybys/wasm-util': 0.10.1
     optional: true
-
-  '@notionhq/client@4.0.1': {}
 
   '@oxc-project/runtime@0.127.0': {}
 

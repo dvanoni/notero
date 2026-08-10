@@ -1,18 +1,14 @@
 {
-  "name": "notero",
-  "version": "1.2.3",
-  "description": "Sync Zotero items and notes into Notion",
-  "homepage": "https://github.com/dvanoni/notero",
+  "name": "captero",
+  "version": "0.1.0",
+  "description": "Sync Zotero items and notes into Capacities",
+  "homepage": "https://github.com/oyvindbso/captero",
   "bugs": {
-    "url": "https://github.com/dvanoni/notero/issues"
-  },
-  "author": {
-    "name": "David Hoff-Vanoni",
-    "email": "david@vanoni.dev"
+    "url": "https://github.com/oyvindbso/captero/issues"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/dvanoni/notero.git"
+    "url": "https://github.com/oyvindbso/captero.git"
   },
   "scripts": {
     "build": "node scripts/build.mts",
@@ -36,7 +32,6 @@
     "verify": "vp check && vp test"
   },
   "dependencies": {
-    "@notionhq/client": "^4.0.1",
     "eventemitter3": "^5.0.4",
     "zod": "^4.4.2"
   },
@@ -76,14 +71,10 @@
       "48": "content/style/notero-48.png",
       "96": "content/style/notero-96.png"
     },
-    "id": "notero@vanoni.dev",
-    "name": "Notero",
-    "updateURL": "https://github.com/dvanoni/notero/releases/download/release/updates.json",
+    "id": "captero@oyvindbso.github.io",
+    "name": "Captero",
+    "updateURL": "https://github.com/oyvindbso/captero/releases/download/release/updates.json",
     "zoteroMinVersion": "7.0",
-    "zoteroMaxVersion": "9.0.*",
-    "zotero6": {
-      "version": "0.5.17",
-      "updateLink": "https://github.com/dvanoni/notero/releases/download/v0.5.17/notero-0.5.17.xpi"
-    }
+    "zoteroMaxVersion": "9.0.*"
   }
 }

@@ -1,20 +1,18 @@
-import { APIErrorCode, type Client, isFullPage } from '@notionhq/client';
-import type { CreatePageResponse } from '@notionhq/client/build/src/api-endpoints';
-
 import {
-  getNotionPageID,
-  saveNotionLinkAttachment,
-  saveNotionTag,
+  getCapacitiesObjectID,
+  saveCapacitiesLinkAttachment,
+  saveCapacitiesTag,
 } from '../data/item-data';
-import { LocalizableError } from '../errors';
 import { logger } from '../utils';
 
-import type { DatabaseRequestProperties } from './notion-types';
-import {
-  isArchivedOrNotFoundError,
-  isNotionErrorWithCode,
-  normalizeID,
-} from './notion-utils';
+import type { CapacitiesClient } from './capacities-client';
+import { isCapacitiesNotFoundError } from './capacities-client';
+import type {
+  CapacitiesObject,
+  Structure,
+  WritableObjectProperties,
+} from './capacities-types';
+import { buildObjectURL } from './capacities-utils';
 import { buildProperties } from './property-builder';
 import type { SyncJobParams } from './sync-job';
 
@@ -22,103 +20,77 @@ export async function syncRegularItem(
   item: Zotero.Item,
   params: SyncJobParams,
 ): Promise<void> {
-  const response = await saveItemToDatabase(item, params);
+  const object = await saveItemToObject(item, params);
 
-  await saveNotionTag(item);
+  await saveCapacitiesTag(item);
 
-  if (isFullPage(response)) {
-    await saveNotionLinkAttachment(item, response.url);
-  } else {
-    throw new LocalizableError(
-      'Failed to create Notion link attachment',
-      'notero-error-notion-link-attachment',
+  await saveCapacitiesLinkAttachment(
+    item,
+    buildObjectURL(params.spaceID, object.id),
+  );
+}
+
+async function saveItemToObject(
+  item: Zotero.Item,
+  { capacities, collectionID, structure, ...params }: SyncJobParams,
+): Promise<CapacitiesObject> {
+  const objectID = getCapacitiesObjectID(item);
+
+  const properties = await buildProperties({ item, structure, ...params });
+
+  if (objectID) {
+    return updateObject(
+      capacities,
+      structure,
+      collectionID,
+      objectID,
+      properties,
     );
   }
+
+  return createObject(capacities, structure, collectionID, properties);
 }
 
-async function saveItemToDatabase(
-  item: Zotero.Item,
-  { databaseID, notion, ...params }: SyncJobParams,
-): Promise<CreatePageResponse> {
-  const pageID = getNotionPageID(item);
-
-  const properties = await buildProperties({ item, ...params });
-
-  if (pageID) {
-    return updatePage(notion, databaseID, pageID, properties);
-  }
-
-  return createPage(notion, databaseID, properties);
-}
-
-function createPage(
-  notion: Client,
-  databaseID: string,
-  properties: DatabaseRequestProperties,
-): Promise<CreatePageResponse> {
-  logger.debug('Creating page in database', databaseID, properties);
-  return notion.pages.create({
-    parent: { database_id: databaseID },
+function createObject(
+  capacities: CapacitiesClient,
+  structure: Structure,
+  collectionID: string | undefined,
+  properties: WritableObjectProperties,
+): Promise<CapacitiesObject> {
+  logger.debug('Creating object in structure', structure.id, properties);
+  return capacities.createObject({
+    structureId: structure.id,
+    collections: collectionID ? [collectionID] : undefined,
     properties,
   });
 }
 
-async function updatePage(
-  notion: Client,
-  databaseID: string,
-  pageID: string,
-  properties: DatabaseRequestProperties,
-): Promise<CreatePageResponse> {
-  logger.debug('Updating page', pageID, 'in database', databaseID, properties);
+async function updateObject(
+  capacities: CapacitiesClient,
+  structure: Structure,
+  collectionID: string | undefined,
+  objectID: string,
+  properties: WritableObjectProperties,
+): Promise<CapacitiesObject> {
+  logger.debug('Updating object', objectID, properties);
+
   try {
-    const response = await notion.pages.update({ page_id: pageID, properties });
-    return await recreatePageIfDatabaseDiffers(
-      notion,
-      databaseID,
+    const object = await capacities.updateObject({
+      id: objectID,
       properties,
-      response,
+    });
+
+    if (object.structureId === structure.id) return object;
+
+    logger.debug(
+      'Recreating object found with different structure',
+      object.structureId,
     );
+    return createObject(capacities, structure, collectionID, properties);
   } catch (error) {
-    if (isArchivedOrNotFoundError(error)) {
-      logger.debug('Recreating page that was not found');
-      return createPage(notion, databaseID, properties);
-    }
-    if (!isNotionErrorWithCode(error, APIErrorCode.ValidationError)) {
-      throw error;
-    }
-    const retrieveResponse = await notion.pages.retrieve({ page_id: pageID });
-    const createResponse = await recreatePageIfDatabaseDiffers(
-      notion,
-      databaseID,
-      properties,
-      retrieveResponse,
-    );
-    // Throw the original error if the page was not recreated
-    if (createResponse === retrieveResponse) {
-      throw error;
-    }
-    return createResponse;
-  }
-}
+    if (!isCapacitiesNotFoundError(error)) throw error;
 
-async function recreatePageIfDatabaseDiffers(
-  notion: Client,
-  desiredDatabaseID: string,
-  properties: DatabaseRequestProperties,
-  response: CreatePageResponse,
-): Promise<CreatePageResponse> {
-  if (!isFullPage(response) || response.parent.type !== 'database_id') {
-    return response;
+    logger.debug('Recreating object that was not found');
+    return createObject(capacities, structure, collectionID, properties);
   }
-
-  const currentDatabaseID = normalizeID(response.parent.database_id);
-  if (currentDatabaseID === normalizeID(desiredDatabaseID)) {
-    return response;
-  }
-
-  logger.debug(
-    'Recreating page found in different database',
-    currentDatabaseID,
-  );
-  return createPage(notion, desiredDatabaseID, properties);
 }

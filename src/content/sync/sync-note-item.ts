@@ -1,46 +1,39 @@
-import { type Client, isFullBlock } from '@notionhq/client';
-import type { BlockObjectRequest } from '@notionhq/client/build/src/api-endpoints';
-
 import {
-  getNotionPageID,
+  getCapacitiesObjectID,
   getSyncedNotes,
   saveSyncedNote,
 } from '../data/item-data';
 import { LocalizableError } from '../errors';
+import { isObject } from '../utils';
 
-import { convertHtmlToBlocks } from './html-to-notion';
-import { LIMITS } from './notion-limits';
-import { ChildBlock } from './notion-types';
-import { isArchivedOrNotFoundError } from './notion-utils';
+import type { CapacitiesClient } from './capacities-client';
+import { isCapacitiesNotFoundError } from './capacities-client';
+import type { CapacitiesObject } from './capacities-types';
+import { convertHtmlToMarkdown } from './html-to-markdown';
+import type { SyncJobParams } from './sync-job';
 
 /**
- * Sync a Zotero note item to Notion as children blocks of the page for its
- * parent regular item.
+ * Sync a Zotero note item to Capacities as blocks nested within the object
+ * for its parent regular item.
  *
- * All notes are children of a single toggle heading block on the page. This
- * enables Notero to have a single container on the page where it can update
- * note content without impacting anything else on the page added by the user.
- * Within this top-level container block, each note is contained within its own
- * toggle heading block using the note title.
+ * All notes are nested under a single "Zotero Notes" container block on the
+ * object. This gives Captero a single place it can update note content
+ * without impacting anything else on the object added by the user. Within
+ * this container, each note has its own heading block using the note title.
  *
  * Syncing a note performs the following steps:
- * 1. If the top-level container block ID is not saved in Zotero, create the
- *    block by appending it to the page and save its ID.
- * 2. If a block ID is saved in Zotero for the note's toggle heading, delete
- *    the block (including all its children).
- * 3. Append a new toggle heading block with the note content as a child of
- *    the desired container block.
- *    - For new notes, the container is the top-level container block.
- *    - For existing notes, the container is the existing parent block. This
- *      supports notes within synced blocks as the synced block is used as the
- *      container rather than the top-level container.
+ * 1. If the container block ID is not saved in Zotero, create it by
+ *    appending it to the object and save its ID.
+ * 2. If a block ID is saved in Zotero for the note's heading, delete that
+ *    block (including all its children).
+ * 3. Append a new heading block with the note title, nested under the
+ *    container block, then append the note's content nested under that.
  *
- * @param noteItem the Zotero note item to sync to Notion
- * @param notion an initialized Notion `Client` instance
+ * @param noteItem the Zotero note item to sync to Capacities
  */
 export async function syncNoteItem(
   noteItem: Zotero.Item,
-  notion: Client,
+  { capacities }: SyncJobParams,
 ): Promise<void> {
   if (noteItem.isTopLevelItem()) {
     throw new LocalizableError(
@@ -50,9 +43,9 @@ export async function syncNoteItem(
   }
 
   const regularItem = noteItem.topLevelItem;
-  const pageID = getNotionPageID(regularItem);
+  const objectID = getCapacitiesObjectID(regularItem);
 
-  if (!pageID) {
+  if (!objectID) {
     throw new LocalizableError(
       'Cannot sync note because its parent item is not synced',
       'notero-error-note-parent-not-synced',
@@ -60,34 +53,37 @@ export async function syncNoteItem(
   }
 
   const syncedNotes = getSyncedNotes(regularItem);
-  let { containerBlockID } = syncedNotes;
+  let containerBlockID = syncedNotes.containerBlockID;
 
   if (!containerBlockID) {
-    containerBlockID = await createContainerBlock(notion, pageID);
+    containerBlockID = await createContainerBlock(capacities, objectID);
   }
 
   const existingNoteBlockID = syncedNotes.notes?.[noteItem.key]?.blockID;
 
   if (existingNoteBlockID) {
-    containerBlockID = await getEffectiveContainerBlockID(
-      notion,
-      existingNoteBlockID,
-      containerBlockID,
-    );
-    await deleteNoteBlock(notion, existingNoteBlockID);
+    await deleteNoteBlock(capacities, objectID, existingNoteBlockID);
   }
 
-  let newNoteBlockID;
+  let newNoteBlockID: string | undefined;
 
   try {
-    newNoteBlockID = await createNoteBlock(notion, containerBlockID, noteItem);
+    newNoteBlockID = await createNoteBlock(
+      capacities,
+      objectID,
+      containerBlockID,
+      noteItem,
+    );
   } catch (error) {
-    if (!isArchivedOrNotFoundError(error)) {
-      throw error;
-    }
+    if (!isCapacitiesNotFoundError(error)) throw error;
 
-    containerBlockID = await createContainerBlock(notion, pageID);
-    newNoteBlockID = await createNoteBlock(notion, containerBlockID, noteItem);
+    containerBlockID = await createContainerBlock(capacities, objectID);
+    newNoteBlockID = await createNoteBlock(
+      capacities,
+      objectID,
+      containerBlockID,
+      noteItem,
+    );
   } finally {
     await saveSyncedNote(
       regularItem,
@@ -97,136 +93,89 @@ export async function syncNoteItem(
     );
   }
 
-  await addNoteBlockContent(notion, newNoteBlockID, noteItem);
+  await addNoteBlockContent(capacities, objectID, newNoteBlockID, noteItem);
 }
 
 async function createContainerBlock(
-  notion: Client,
-  pageID: string,
+  capacities: CapacitiesClient,
+  objectID: string,
 ): Promise<string> {
-  const { results } = await notion.blocks.children.append({
-    block_id: pageID,
-    children: [
-      {
-        heading_1: {
-          rich_text: [{ text: { content: 'Zotero Notes' } }],
-          is_toggleable: true,
-        },
-      },
-    ],
-  });
+  const response = await capacities.appendMarkdown(objectID, '## Zotero Notes');
+  const blockID = getFirstAppendedBlockID(response);
 
-  if (!results[0]) {
+  if (!blockID) {
     throw new LocalizableError(
       'Failed to create container block',
       'notero-error-note-sync-failed',
     );
   }
 
-  return results[0].id;
+  return blockID;
 }
 
 async function createNoteBlock(
-  notion: Client,
+  capacities: CapacitiesClient,
+  objectID: string,
   containerBlockID: string,
   noteItem: Zotero.Item,
 ): Promise<string> {
-  const { results } = await notion.blocks.children.append({
-    block_id: containerBlockID,
-    children: [
-      {
-        heading_1: {
-          rich_text: [{ text: { content: noteItem.getNoteTitle() } }],
-          is_toggleable: true,
-        },
-      },
-    ],
-  });
+  const response = await capacities.appendMarkdown(
+    objectID,
+    `### ${noteItem.getNoteTitle()}`,
+    { parentBlockId: containerBlockID },
+  );
+  const blockID = getFirstAppendedBlockID(response);
 
-  if (!results[0]) {
+  if (!blockID) {
     throw new LocalizableError(
       'Failed to create note block',
       'notero-error-note-sync-failed',
     );
   }
 
-  return results[0].id;
+  return blockID;
 }
 
 async function addNoteBlockContent(
-  notion: Client,
+  capacities: CapacitiesClient,
+  objectID: string,
   noteBlockID: string,
   noteItem: Zotero.Item,
 ): Promise<void> {
-  const blockBatches = buildNoteBlockBatches(noteItem);
-
-  for (const blocks of blockBatches) {
-    await notion.blocks.children.append({
-      block_id: noteBlockID,
-      children: blocks,
-    });
-  }
-}
-
-function buildNoteBlockBatches(noteItem: Zotero.Item): BlockObjectRequest[][] {
-  let blocks;
+  let markdown: string;
   try {
-    blocks = convertHtmlToBlocks(noteItem.getNote());
+    markdown = convertHtmlToMarkdown(noteItem.getNote());
   } catch (error) {
     throw new LocalizableError(
-      'Failed to convert note content to Notion blocks',
+      'Failed to convert note content to Markdown',
       'notero-error-note-conversion-failed',
       { cause: error },
     );
   }
 
-  const numBatches = Math.ceil(blocks.length / LIMITS.BLOCK_ARRAY_ELEMENTS);
-  const batches = Array.from<ChildBlock[]>({ length: numBatches });
-  let offset = 0;
-  let nextOffset = LIMITS.BLOCK_ARRAY_ELEMENTS;
+  if (!markdown) return;
 
-  for (let i = 0; i < numBatches; ++i) {
-    batches[i] = blocks.slice(offset, nextOffset);
-    offset = nextOffset;
-    nextOffset += LIMITS.BLOCK_ARRAY_ELEMENTS;
-  }
-
-  // @ts-expect-error FIXME: This will result in errors if `batches` contains
-  // more than two levels of nested blocks.
-  // https://github.com/dvanoni/notero/issues/463
-  return batches;
+  await capacities.appendMarkdown(objectID, markdown, {
+    parentBlockId: noteBlockID,
+  });
 }
 
-async function deleteNoteBlock(notion: Client, blockID: string): Promise<void> {
+async function deleteNoteBlock(
+  capacities: CapacitiesClient,
+  objectID: string,
+  blockID: string,
+): Promise<void> {
   try {
-    await notion.blocks.delete({ block_id: blockID });
+    await capacities.deleteBlock(objectID, blockID);
   } catch (error) {
-    if (!isArchivedOrNotFoundError(error)) {
-      throw error;
-    }
+    if (!isCapacitiesNotFoundError(error)) throw error;
   }
 }
 
-async function getEffectiveContainerBlockID(
-  notion: Client,
-  noteBlockID: string,
-  containerBlockID: string,
-): Promise<string> {
-  const block = await notion.blocks.retrieve({ block_id: noteBlockID });
-
-  if (
-    isFullBlock(block) &&
-    'block_id' in block.parent &&
-    block.parent.block_id !== containerBlockID
-  ) {
-    const parentBlock = await notion.blocks.retrieve({
-      block_id: block.parent.block_id,
-    });
-
-    if (isFullBlock(parentBlock) && !parentBlock.in_trash) {
-      return parentBlock.id;
-    }
-  }
-
-  return containerBlockID;
+function getFirstAppendedBlockID(object: CapacitiesObject): string | undefined {
+  const [firstBlockList] = Object.values(object.blocks ?? {});
+  const firstBlock = firstBlockList?.[0];
+  return isObject(firstBlock) && typeof firstBlock.id === 'string'
+    ? firstBlock.id
+    : undefined;
 }

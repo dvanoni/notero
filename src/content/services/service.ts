@@ -1,11 +1,11 @@
-import type { NotionAuthManager } from '../auth';
+import type { CapacitiesAuthManager } from '../auth';
 import type { PluginInfo } from '../plugin-info';
 
 import type { EventManager, PreferencePaneManager } from '.';
 
 type Dependencies = {
+  capacitiesAuthManager: CapacitiesAuthManager;
   eventManager: EventManager;
-  notionAuthManager: NotionAuthManager;
   preferencePaneManager: PreferencePaneManager;
 };
 

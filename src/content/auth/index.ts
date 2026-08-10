@@ -1,2 +1,2 @@
-export { NotionAuthManager } from './notion-auth-manager';
-export type { NotionConnection } from './storage';
+export { CapacitiesAuthManager } from './capacities-auth-manager';
+export type { CapacitiesConnection } from './storage';

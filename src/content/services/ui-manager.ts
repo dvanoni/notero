@@ -1,5 +1,4 @@
-import { FluentMessageId } from '../../locale/fluent-types';
-import { createXULElement, logger } from '../utils';
+import { logger } from '../utils';
 
 import type { EventManager } from './event-manager';
 import type { PreferencePaneManager } from './preference-pane-manager';
@@ -8,6 +7,7 @@ import type { Service, ServiceParams } from './service';
 const FTL_FILE = 'notero.ftl';
 
 export class UIManager implements Service {
+  private pluginID!: string;
   private eventManager!: EventManager;
   private preferencePaneManager!: PreferencePaneManager;
 
@@ -15,16 +15,19 @@ export class UIManager implements Service {
 
   public startup({
     dependencies,
+    pluginInfo: { pluginID },
   }: ServiceParams<'eventManager' | 'preferencePaneManager'>) {
+    this.pluginID = pluginID;
     this.eventManager = dependencies.eventManager;
     this.preferencePaneManager = dependencies.preferencePaneManager;
+
+    this.registerCollectionMenu();
+    this.registerItemMenu();
+    this.registerToolsMenu();
   }
 
   public addToWindow(window: Zotero.ZoteroWindow) {
     this.initLocalization(window);
-    this.initCollectionMenuItem(window);
-    this.initItemMenuItem(window);
-    this.initToolsMenuItem(window);
   }
 
   public removeFromWindow(window: Zotero.ZoteroWindow) {
@@ -51,77 +54,74 @@ export class UIManager implements Service {
     }
   }
 
-  private initCollectionMenuItem(window: Zotero.ZoteroWindow) {
-    this.createMenuItem({
-      window,
-      l10nId: 'notero-collection-menu-sync',
-      parentId: 'zotero-collectionmenu',
-      onCommand: () => {
-        const collection =
-          Zotero.getActiveZoteroPane()?.getSelectedCollection(false);
-        if (collection) {
-          logger.log('Request sync for collection:', collection.name);
-          this.eventManager.emit('request-sync-collection', collection);
-        }
-      },
+  private registerCollectionMenu() {
+    Zotero.MenuManager.registerMenu({
+      menuID: 'notero-collection-menu',
+      pluginID: this.pluginID,
+      target: 'main/library/collection',
+      menus: [
+        {
+          menuType: 'menuitem',
+          l10nID: 'notero-collection-menu-sync',
+          onShowing: (event, context) => {
+            const anyCollectionSelected = context.collectionTreeRows.some(
+              (row) => row.isCollection(),
+            );
+            context.setVisible(anyCollectionSelected);
+          },
+          onCommand: (event, context) => {
+            context.collectionTreeRows
+              .filter(
+                (row): row is Zotero.CollectionTreeRow<Zotero.Collection> =>
+                  row.isCollection(),
+              )
+              .forEach(({ ref: collection }) => {
+                logger.log('Request sync for collection:', collection.name);
+                this.eventManager.emit('request-sync-collection', collection);
+              });
+          },
+        },
+      ],
     });
   }
 
-  private initItemMenuItem(window: Zotero.ZoteroWindow) {
-    this.createMenuItem({
-      window,
-      l10nId: 'notero-item-menu-sync',
-      parentId: 'zotero-itemmenu',
-      onCommand: () => {
-        const items = Zotero.getActiveZoteroPane()?.getSelectedItems(false);
-        if (items) {
-          logger.groupCollapsed(
-            `Request sync for ${items.length} item(s) with IDs`,
-            items.map((item) => item.id),
-          );
-          logger.table(items, ['_id', '_displayTitle']);
-          logger.groupEnd();
-          this.eventManager.emit('request-sync-items', items);
-        }
-      },
+  private registerItemMenu() {
+    Zotero.MenuManager.registerMenu({
+      menuID: 'notero-item-menu',
+      pluginID: this.pluginID,
+      target: 'main/library/item',
+      menus: [
+        {
+          menuType: 'menuitem',
+          l10nID: 'notero-item-menu-sync',
+          onCommand: (event, context) => {
+            logger.groupCollapsed(
+              `Request sync for ${context.items.length} item(s) with IDs`,
+              context.items.map((item) => item.id),
+            );
+            logger.table(context.items, ['_id', '_displayTitle']);
+            logger.groupEnd();
+            this.eventManager.emit('request-sync-items', context.items);
+          },
+        },
+      ],
     });
   }
 
-  private initToolsMenuItem(window: Zotero.ZoteroWindow) {
-    this.createMenuItem({
-      window,
-      l10nId: 'notero-tools-menu-preferences',
-      parentId: 'menu_ToolsPopup',
-      onCommand: () => {
-        this.preferencePaneManager.openPreferences();
-      },
+  private registerToolsMenu() {
+    Zotero.MenuManager.registerMenu({
+      menuID: 'notero-tools-menu',
+      pluginID: this.pluginID,
+      target: 'main/menubar/tools',
+      menus: [
+        {
+          menuType: 'menuitem',
+          l10nID: 'notero-tools-menu-preferences',
+          onCommand: () => {
+            this.preferencePaneManager.openPreferences();
+          },
+        },
+      ],
     });
-  }
-
-  private createMenuItem({
-    l10nId,
-    onCommand,
-    parentId,
-    window,
-  }: {
-    l10nId: FluentMessageId;
-    onCommand: (event: Event) => void;
-    parentId: string;
-    window: Zotero.ZoteroWindow;
-  }): XUL.MenuItemElement | null {
-    const parentMenu = window.document.getElementById(parentId);
-    if (!parentMenu) {
-      logger.error(`Failed to find element '${parentId}'`);
-      return null;
-    }
-
-    let menuItem = createXULElement(window.document, 'menuitem');
-    window.document.l10n.setAttributes(menuItem, l10nId);
-    menuItem.addEventListener('command', onCommand);
-
-    menuItem = parentMenu.appendChild(menuItem);
-    this.addManagedElement(window, menuItem);
-
-    return menuItem;
   }
 }

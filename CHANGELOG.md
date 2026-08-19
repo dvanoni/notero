@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.0.0](https://github.com/dvanoni/notero/compare/v1.2.3...v2.0.0) (2026-08-19)
+
+
+### ⚠ BREAKING CHANGES
+
+* **menus:** Requires Zotero 10. `MenuManager` is only available in Z8+, and Z10 replaces `collectionTreeRow` with `collectionTreeRows`.
+
+### Features
+
+* **menus:** Use Zotero 10 menu API and support "Open in Notion" ([#855](https://github.com/dvanoni/notero/issues/855)) ([a13cba3](https://github.com/dvanoni/notero/commit/a13cba3818e32eb0cc17860d167a1fe3d9cec67a))
+* Save Notion web URLs instead of desktop app URLs ([#837](https://github.com/dvanoni/notero/issues/837)) ([5563590](https://github.com/dvanoni/notero/commit/556359043a4b61df5802b6650cbdbec6450bf9d4))
+
 ## [1.2.3](https://github.com/dvanoni/notero/compare/v1.2.2...v1.2.3) (2026-04-29)
 
 

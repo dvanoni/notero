@@ -2,6 +2,8 @@
 
 notero-collection-menu-sync =
     .label = Sync Items to Notion
+notero-item-menu-open =
+    .label = Open in Notion
 notero-item-menu-sync =
     .label = Sync to Notion
 notero-tools-menu-preferences =

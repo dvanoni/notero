@@ -1,3 +1,5 @@
+import { getNotionURL } from '../data/item-data';
+import { normalizeURL } from '../sync/notion-utils';
 import { logger } from '../utils';
 
 import type { EventManager } from './event-manager';
@@ -5,6 +7,16 @@ import type { PreferencePaneManager } from './preference-pane-manager';
 import type { Service, ServiceParams } from './service';
 
 const FTL_FILE = 'notero.ftl';
+
+function isSingleItem(items: Zotero.Item[]): items is [Zotero.Item] {
+  return items.length === 1 && Boolean(items[0]);
+}
+
+function isSingleRegularItemOrNote(
+  items: Zotero.Item[],
+): items is [Zotero.Item] {
+  return isSingleItem(items) && (items[0].isRegularItem() || items[0].isNote());
+}
 
 export class UIManager implements Service {
   private pluginID!: string;
@@ -102,6 +114,26 @@ export class UIManager implements Service {
             logger.table(context.items, ['_id', '_displayTitle']);
             logger.groupEnd();
             this.eventManager.emit('request-sync-items', context.items);
+          },
+        },
+        {
+          menuType: 'menuitem',
+          l10nID: 'notero-item-menu-open',
+          onShowing: (event, context) => {
+            if (!isSingleRegularItemOrNote(context.items)) {
+              context.setVisible(false);
+              return;
+            }
+            context.setVisible(true);
+            const hasNotionURL = Boolean(getNotionURL(context.items[0]));
+            context.setEnabled(hasNotionURL);
+          },
+          onCommand: (event, context) => {
+            if (!isSingleRegularItemOrNote(context.items)) return;
+            const notionURL = getNotionURL(context.items[0]);
+            if (notionURL) {
+              Zotero.launchURL(normalizeURL(notionURL));
+            }
           },
         },
       ],

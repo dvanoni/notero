@@ -2,6 +2,7 @@
 
 export type FluentMessageId =
   | 'notero-collection-menu-sync'
+  | 'notero-item-menu-open'
   | 'notero-item-menu-sync'
   | 'notero-tools-menu-preferences'
   | 'notero-preferences-notion-groupbox-heading'

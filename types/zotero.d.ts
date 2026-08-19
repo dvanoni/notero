@@ -49,6 +49,21 @@ declare namespace Zotero {
 
   type Collections = DataObjects<Collection>;
 
+  /**
+   * Represents a single row in the collection tree (left-hand pane).
+   * A row may be a library, collection, saved search, or similar.
+   */
+  interface CollectionTreeRow<R extends object = object> {
+    /** The row type (e.g. `"library"`, `"collection"`, `"search"`). */
+    type: string;
+    /** The underlying data object for this row. */
+    ref: R;
+
+    isLibrary(includeGlobal?: boolean): boolean;
+    isCollection(): boolean;
+    isSearch(): boolean;
+  }
+
   interface Creator {
     firstName: string;
     lastName: string;
@@ -212,6 +227,265 @@ declare namespace Zotero {
   interface ItemTypes extends CachedTypes {
     getImageSrc(itemType: string): string;
     getLocalizedString(idOrName: number | string): string;
+  }
+
+  interface MenuManager {
+    /**
+     * Register a custom menu.
+     *
+     * @param options
+     * @returns The menu ID if successfully registered, or false
+     */
+    registerMenu<T extends MenuManager.Target>(
+      options: MenuManager.MenuOptions<T>,
+    ): string | false;
+
+    /**
+     * Unregister a custom menu.
+     *
+     * @param paneID The unique ID of the menu
+     * @returns True if successfully unregistered
+     */
+    unregisterMenu(paneID: string): boolean;
+
+    updateMenuPopup(
+      popupElem: Element,
+      targetType: MenuManager.Target,
+      args?: MenuManager.MenuPopupArgs,
+    ): void;
+  }
+
+  namespace MenuManager {
+    /** Valid `menuType` values for a menu item. */
+    type MenuType = 'menuitem' | 'separator' | 'submenu';
+
+    /**
+     * Valid targets for menu registration.
+     */
+    type Target =
+      // Main window menubar menus
+      | 'main/menubar/file'
+      | 'main/menubar/edit'
+      | 'main/menubar/view'
+      | 'main/menubar/go'
+      | 'main/menubar/tools'
+      | 'main/menubar/help'
+      // Main window library context menus
+      | 'main/library/item'
+      | 'main/library/collection'
+      // Main window toolbar & file menu submenu: "Add attachment"
+      | 'main/library/addAttachment'
+      // Main window toolbar & file menu submenu: "New note"
+      | 'main/library/addNote'
+      // Main window tab context menus
+      | 'main/tab'
+      // Reader window menubar menus
+      | 'reader/menubar/file'
+      | 'reader/menubar/edit'
+      | 'reader/menubar/view'
+      | 'reader/menubar/go'
+      | 'reader/menubar/window'
+      // Item pane context menus
+      | 'itemPane/info/row'
+      // Notes pane add note buttons
+      | 'notesPane/addItemNote'
+      | 'notesPane/addStandaloneNote'
+      // Sidenav buttons
+      | 'sidenav/locate';
+
+    /**
+     * Base context object present in every menu callback.
+     * Provides helpers to imperatively update the menu item at show-time.
+     */
+    interface MenuBaseContext {
+      /** The menu's DOM element, if still alive. */
+      readonly menuElem: XUL.XULElement | undefined;
+      /** Update the menu item's l10n arguments. */
+      setL10nArgs(l10nArgs: string): void;
+      /** Enable or disable the menu item. */
+      setEnabled(enabled: boolean): void;
+      /** Show or hide the menu item. */
+      setVisible(visible: boolean): void;
+      /**
+       * Update the menu item's icon.
+       *
+       * @param icon URI of the light-mode icon
+       * @param darkIcon URI of the dark-mode icon; falls back to `icon` if omitted
+       */
+      setIcon(icon: string, darkIcon?: string): void;
+    }
+
+    /** The type of an open Zotero tab. */
+    type TabType = 'library' | 'reader' | 'note' | (string & {});
+
+    /**
+     * The subtype of a reader tab, derived from the attachment type.
+     * `undefined` for non-reader tabs.
+     */
+    type ReaderTabSubType = 'pdf' | 'epub' | 'snapshot' | undefined;
+
+    /**
+     * Context passed to callbacks registered on `main/menubar/*` targets
+     * (file, edit, view, go, tools, help).
+     *
+     * When the active tab is a library tab, `items` contains the currently
+     * selected items from the library pane. When it is a reader tab, `items`
+     * contains the single item open in that tab.
+     */
+    interface MenubarMenuContext extends MenuBaseContext {
+      /**
+       * Items relevant to the current tab.
+       * May be an empty array if nothing is selected / no item is open.
+       */
+      items: Zotero.Item[];
+      /** Type of the currently active tab. */
+      tabType: TabType;
+      /**
+       * Reader subtype of the active tab.
+       * `undefined` when the active tab is not a reader tab.
+       */
+      tabSubType: ReaderTabSubType;
+      /** ID of the currently active tab (`Zotero_Tabs.selectedID`). */
+      tabID: string;
+    }
+
+    /**
+     * Context passed to callbacks registered on the `main/library/item` target
+     * (the right-click context menu in the items list).
+     */
+    interface LibraryItemMenuContext extends MenuBaseContext {
+      /** The rows selected in the collection tree. */
+      collectionTreeRows: Zotero.CollectionTreeRow[];
+      /** The items currently selected in the items list. */
+      items: Zotero.Item[];
+      /** Always `"library"` for this menu. */
+      tabType: 'library';
+      /** Always `undefined` for this menu. */
+      tabSubType: undefined;
+      /** Always `"zotero-pane"` for this menu. */
+      tabID: 'zotero-pane';
+    }
+
+    /**
+     * Context passed to callbacks registered on the `main/library/collection`
+     * target (the right-click context menu in the collection tree).
+     *
+     * Note: unlike the item menu, there is no `items` field here.
+     */
+    interface LibraryCollectionMenuContext extends MenuBaseContext {
+      /** The rows that were right-clicked in the collection tree. */
+      collectionTreeRows: Zotero.CollectionTreeRow[];
+      /** Always `"library"` for this menu. */
+      tabType: 'library';
+      /** Always `undefined` for this menu. */
+      tabSubType: undefined;
+      /** Always `"zotero-pane"` for this menu. */
+      tabID: 'zotero-pane';
+    }
+
+    /**
+     * Maps a `Target` value to the context type injected into its callbacks.
+     * Falls back to `MenuBaseContext` for targets with no documented extra fields.
+     */
+    type TargetContext<T extends Target> = T extends `main/menubar/${string}`
+      ? MenubarMenuContext
+      : T extends 'main/library/item'
+        ? LibraryItemMenuContext
+        : T extends 'main/library/collection'
+          ? LibraryCollectionMenuContext
+          : MenuBaseContext;
+
+    /**
+     * Data describing a single menu item.
+     *
+     * The type parameter `C` is the context object injected into callbacks;
+     * it is inferred automatically from `MenuOptions<T>` and need not be
+     * supplied manually.
+     */
+    type MenuData<C extends MenuBaseContext = MenuBaseContext> = {
+      /** The type of the menu item. */
+      menuType: MenuType;
+      /** The l10n ID for the menu item. */
+      l10nID?: string;
+      /** Arguments for the l10n ID. Support for object type is deprecated. */
+      l10nArgs?: string;
+      /**
+       * The icon for the menu item.
+       * For menu icons, it is recommended to use an SVG icon with a size of 16x16.
+       * Use `fill="context-fill"` in the SVG to use the default icon color
+       * for automatic hover and dark mode support.
+       */
+      icon?: string;
+      /**
+       * The dark-mode icon for the menu item.
+       * If not provided, the light icon will be used for both light and dark mode.
+       */
+      darkIcon?: string;
+      /**
+       * Tab types for which the menu item should be enabled.
+       * Common values: `"library"`, `"reader/*"`, `"reader/pdf"`,
+       * `"reader/epub"`, `"reader/snapshot"`; custom tab types are also allowed.
+       * By default the menu item is always enabled.
+       * Only applies to main window and reader window menubar menus.
+       */
+      enableForTabTypes?: string[];
+      /** Called when the menu is about to be shown. */
+      onShowing?: (event: Event, context: C) => void;
+      /** Called when the menu is shown. */
+      onShown?: (event: Event, context: C) => void;
+      /** Called when the menu is about to be hidden. */
+      onHiding?: (event: Event, context: C) => void;
+      /** Called when the menu is hidden. */
+      onHidden?: (event: Event, context: C) => void;
+      /** Called when the menu item is clicked. */
+      onCommand?: (event: Event, context: C) => void;
+      /**
+       * Child menu items. Required when `menuType` is `"submenu"`;
+       * ignored for `"menuitem"` and `"separator"`.
+       */
+      menus?: MenuData<C>[];
+    };
+
+    /**
+     * Options for registering a menu.
+     *
+     * The type parameter `T` is inferred from the `target` field and
+     * determines the context type passed to all menu item callbacks.
+     */
+    type MenuOptions<T extends Target = Target> = {
+      /** The unique ID of the menu. */
+      menuID: string;
+      /** The ID of the plugin registering the menu. */
+      pluginID: string;
+      /** The target location for the menu. */
+      target: T;
+      /** The menu items to add. Must be non-empty. */
+      menus: MenuData<TargetContext<T>>[];
+    };
+
+    /**
+     * Optional arguments passed to `updateMenuPopup`.
+     */
+    type MenuPopupArgs = {
+      /**
+       * The event that triggered the menu.
+       * Because the `popupshowing` event has already fired by the time menus
+       * are updated, it is passed manually so plugins can access it in their
+       * `onShowing` callbacks.
+       */
+      event?: Event;
+      /** Returns additional properties to merge into the `MenuContext`. */
+      getContext?: () => Record<string, unknown>;
+      /** The active tab type; only relevant for main window menubar menus. */
+      tabType?: string;
+      /**
+       * The active tab subtype / reader type.
+       * Only relevant for main window and reader window menubar menus.
+       */
+      tabSubType?: string;
+      /** When true, skip automatic grouping of menu items. */
+      skipGrouping?: boolean;
+    };
   }
 
   interface Notifier {
@@ -481,6 +755,7 @@ declare interface Zotero {
   Date: Zotero.Date;
   Items: Zotero.Items;
   ItemTypes: Zotero.ItemTypes;
+  MenuManager: Zotero.MenuManager;
   Notifier: Zotero.Notifier;
   PreferencePanes: Zotero.PreferencePanes;
   Prefs: Zotero.Prefs;

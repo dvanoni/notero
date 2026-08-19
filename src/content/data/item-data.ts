@@ -1,5 +1,9 @@
 import { NOTION_TAG_NAME } from '../constants';
-import { getPageIDFromURL, isNotionPageURL } from '../sync/notion-utils';
+import {
+  getPageIDFromURL,
+  isNotionPageURL,
+  normalizeID,
+} from '../sync/notion-utils';
 import { isObject } from '../utils';
 
 const SYNCED_NOTES_ID = 'notero-synced-notes';
@@ -32,8 +36,34 @@ export function getNotionLinkAttachment(
   return getAllNotionLinkAttachments(item)[0];
 }
 
+/**
+ * Returns the Notion URL for the given item, if one exists.
+ *
+ * For regular items, this is the URL of the page.
+ * For notes, this is the URL of the note block within the page.
+ *
+ * @param item The Zotero item to get the Notion URL for.
+ * @returns The Notion URL, or `undefined` if one does not exist.
+ */
+export function getNotionURL(item: Zotero.Item): string | undefined {
+  if (item.isRegularItem()) {
+    return getNotionLinkAttachment(item)?.getField('url');
+  }
+  if (item.isNote()) {
+    const attachment = getNotionLinkAttachment(item.topLevelItem);
+    if (!attachment) return undefined;
+    const pageURL = attachment.getField('url');
+    if (!pageURL) return undefined;
+    const syncedNotes = getSyncedNotesFromAttachment(attachment);
+    const blockID = syncedNotes.notes?.[item.key]?.blockID;
+    if (!blockID) return undefined;
+    return `${pageURL}#${normalizeID(blockID)}`;
+  }
+  return undefined;
+}
+
 export function getNotionPageID(item: Zotero.Item): string | undefined {
-  const notionURL = getNotionLinkAttachment(item)?.getField('url');
+  const notionURL = getNotionURL(item);
   return notionURL && getPageIDFromURL(notionURL);
 }
 

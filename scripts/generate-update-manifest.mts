@@ -28,8 +28,9 @@ const updatesJson = {
     [pkg.xpi.id]: {
       updates: [
         {
-          version: pkg.xpi.zotero6.version,
-          update_link: pkg.xpi.zotero6.updateLink,
+          version: '0.5.17',
+          update_link:
+            'https://github.com/dvanoni/notero/releases/download/v0.5.17/notero-0.5.17.xpi',
           applications: {
             gecko: {
               strict_min_version: '60.9',
@@ -38,6 +39,17 @@ const updatesJson = {
             zotero: {
               strict_min_version: '6.999',
               strict_max_version: '7.0.*',
+            },
+          },
+        },
+        {
+          version: '1.2.3',
+          update_link:
+            'https://github.com/dvanoni/notero/releases/download/v1.2.3/notero-1.2.3.xpi',
+          applications: {
+            zotero: {
+              strict_min_version: '7.0',
+              strict_max_version: '9.0.*',
             },
           },
         },

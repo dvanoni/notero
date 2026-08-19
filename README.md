@@ -111,8 +111,8 @@ Notion database. Detailed setup instructions are below.
 
 > [!IMPORTANT]
 >
-> - The latest release of Notero requires Zotero 7.0 or above.
-> - Support for Zotero 6.0.27 and above is available in Notero [v0.5.17][].
+> - The latest release of Notero requires Zotero 10 or above.
+> - Support for Zotero 7, 8, and 9 is available in Notero [v1.2.3][].
 > - See the [changelog](CHANGELOG.md) for all release notes.
 
 1. [Download][] the latest release of the `.xpi` file.
@@ -131,7 +131,7 @@ Notion database. Detailed setup instructions are below.
 
 [download]: https://notero.vanoni.dev/download
 [latest release]: https://github.com/dvanoni/notero/releases/latest
-[v0.5.17]: https://github.com/dvanoni/notero/releases/tag/v0.5.17
+[v1.2.3]: https://github.com/dvanoni/notero/releases/tag/v1.2.3
 
 ### Connect to Notion
 

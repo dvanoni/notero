@@ -1,6 +1,6 @@
 {
   "name": "notero",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "Sync Zotero items and notes into Notion",
   "homepage": "https://github.com/dvanoni/notero",
   "bugs": {

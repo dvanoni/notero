@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.1.0](https://github.com/dvanoni/notero/compare/v2.0.0...v2.1.0) (2026-08-19)
+
+
+### Features
+
+* **localization:** New Crowdin translations ([#856](https://github.com/dvanoni/notero/issues/856)) ([75b7db9](https://github.com/dvanoni/notero/commit/75b7db986e021fe074db5732d66c9268af0d2875))
+
 ## [2.0.0](https://github.com/dvanoni/notero/compare/v1.2.3...v2.0.0) (2026-08-19)
 
 

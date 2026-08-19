@@ -2,6 +2,8 @@
 
 notero-collection-menu-sync = 
     .label = 同步条目至 Notion
+notero-item-menu-open = 
+    .label = 在 Notion 中打开
 notero-item-menu-sync = 
     .label = 同步到 Notion
 notero-tools-menu-preferences = 

@@ -63,7 +63,9 @@
     "semver": "^7.7.4",
     "tslib": "^2.8.1",
     "typescript": "^6.0.3",
+    "vite": "catalog:",
     "vite-plus": "catalog:",
+    "vitest": "catalog:",
     "vitest-mock-extended": "^4.0.0",
     "web-ext": "^10.1.0"
   },

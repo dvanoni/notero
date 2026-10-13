@@ -13,3 +13,4 @@ zotero.config.json
 *.swp
 *.tmp
 *.xpi
+.vitest/

@@ -32,7 +32,7 @@ jobs:
       download_url: ${{ fromJSON(steps.publish-xpi.outputs.assets)[0].browser_download_url }}
     steps:
       - uses: actions/checkout@v6
-      - uses: voidzero-dev/setup-vp@v1
+      - uses: voidzero-dev/setup-vp@v1.21.1
         with:
           cache: true
           node-version-file: '.node-version'

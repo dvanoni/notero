@@ -285,6 +285,16 @@ class PropertyBuilder {
       },
     },
     {
+      name: 'Zotero App URI',
+      type: 'url',
+      buildRequest: async () => {
+        const attachment = await this.item.getBestAttachment();
+        return attachment
+          ? `zotero://open-pdf/library/items/${attachment.key}`
+          : null;
+      },
+    },
+    {
       name: 'Full Citation',
       type: 'rich_text',
       buildRequest: async () =>

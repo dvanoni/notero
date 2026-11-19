@@ -86,6 +86,7 @@ const propertyConfigs = {
   ...propertyConfig('Title', 'rich_text'),
   ...propertyConfig('URL', 'url'),
   ...propertyConfig('Year', 'number'),
+  ...propertyConfig('Zotero App URI', 'url'),
   ...propertyConfig('Zotero URI', 'url'),
 } satisfies DatabaseProperties;
 
@@ -123,8 +124,8 @@ function propertyConfig<N extends string>(
     case 'url':
       return keyValue(name, { ...idNameDescription, type, [type]: {} });
     default: {
-      const _exhaustive: never = type;
-      throw new Error(`Unhandled type: ${String(_exhaustive)}`);
+      const exhaustiveCheck: never = type;
+      throw new Error(`Unhandled type: ${String(exhaustiveCheck)}`);
     }
   }
 }
@@ -361,6 +362,10 @@ describe('buildProperties', () => {
         rich_text: [],
         type: 'rich_text',
       },
+      'Zotero App URI': {
+        url: null,
+        type: 'url',
+      },
       'Full Citation': {
         rich_text: [{ text: { content: fakeFullCitation } }],
         type: 'rich_text',
@@ -400,5 +405,30 @@ describe('buildProperties', () => {
     };
 
     expect(result).toStrictEqual(expected);
+  });
+
+  it('returns a Zotero app URI for the best attachment', async () => {
+    const { item } = setup();
+    const attachment = mock<Zotero.Item>({ key: 'ABC123' });
+    item.getBestAttachment.mockResolvedValue(attachment);
+
+    const result = await buildProperties({
+      citationFormat: 'style',
+      databaseProperties: {
+        'Zotero App URI': propertyConfigs['Zotero App URI'],
+      },
+      item,
+      pageTitleFormat: PageTitleFormat.itemTitle,
+    });
+
+    expect(result).toStrictEqual({
+      title: {
+        title: [{ text: { content: fakeTitle } }],
+      },
+      'Zotero App URI': {
+        url: 'zotero://open-pdf/library/items/ABC123',
+        type: 'url',
+      },
+    });
   });
 });
